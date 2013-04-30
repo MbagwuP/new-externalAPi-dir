@@ -1,0 +1,7 @@
+#api_internal_svc_url: http://devservices.carecloud.local/
+api_internal_svc_url: http://localservices.carecloud.local:3000/
+api_internal_doc_srv_upld_url: http://uploads-dev.carecloud.local/
+logging_level: DEBUG
+
+
+memcache_servers: cc-bl-mcache00-dev.carecloud.local:11211
