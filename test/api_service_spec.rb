@@ -314,8 +314,8 @@ describe "ApiService" do
 
             var1 = '{
         "appointment": {
-            "start_time": "2013-04-24 10:35",
-            "end_time": "2013-04-24 11:00",
+            "start_time": "2014-04-24 10:35",
+            "end_time": "2014-04-24 11:00",
             "location_id": 2,
             "nature_of_visit_id": 2,
             "provider_id": 2,

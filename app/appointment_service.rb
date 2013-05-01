@@ -281,7 +281,7 @@ class ApiService < Sinatra::Base
         response_code = map_response(resp.code)
 
         if response_code == HTTP_OK
-                body(esp.body)
+                body(resp.body)
         else
             body(resp.body)
         end
