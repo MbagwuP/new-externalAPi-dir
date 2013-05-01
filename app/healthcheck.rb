@@ -10,7 +10,7 @@ class ApiService < Sinatra::Base
     
     # perform_healthcheck
     #
-    # 
+    # TODO: determine what is in the healthcheck
 
     def perform_healthcheck
         

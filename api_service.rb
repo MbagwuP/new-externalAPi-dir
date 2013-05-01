@@ -1,13 +1,6 @@
 #
 # File:       pass_server.rb
 #
-# TODO
-#  newrelic
-#  test cases
-#  amazon
-#  cleanup
-#  apigee
-#  wrapper to return 500 on all cases exception
 # Version:    1.0
 
 require 'sinatra/base'
@@ -41,15 +34,20 @@ HTTP_INTERNAL_ERROR = 500
 
 class ApiService < Sinatra::Base
 
+
+  configure do
+
+    # Setup logger & format
+    LOG = Logger.new('log/external_api.log', 'weekly')
+    LOG.formatter = proc do |severity, datetime, progname, msg|
+        "#{datetime} #{severity}: #{msg}\n"
+    end
+
+  end
+
   configure :development do
     
-        # Setup logger & format
-        LOG = Logger.new(STDOUT)
-        LOG.formatter = proc do |severity, datetime, progname, msg|
-            "#{datetime} #{severity}: #{msg}\n"
-        end
-   
-        config_path = Dir.pwd + "/config/settings.yml"
+        config_path = Dir.pwd + "/config/settings_development.yml"
         config = YAML::load(File.read(config_path))
         if config  == nil
             LOG.error("Missing settings file!")
@@ -65,16 +63,72 @@ class ApiService < Sinatra::Base
         ENV_CLASS = "dev"
 
         ## cache
-        cahcelocation = config["memcache_servers"]
-        CACHESTORE = Dalli::Client.new(cahcelocation,
-                                        :expires_in => 20)
+        set :memcached_server, config["memcache_servers"]
         
-
         LOG.debug(config_path)
         LOG.debug(API_SVC_URL)
         
-        LOG.info ("API-Service launched")
+        LOG.info ("API-Service (Development) launched")
     end
+
+    configure :qa do
+
+        config_path = Dir.pwd + "/config/settings_qa.yml"
+        config = YAML::load(File.read(config_path))
+        if config  == nil
+            LOG.error("Missing settings file!")
+            exit
+        end
+        
+        # Set logging level
+        LOG.level = Logger::WARN
+
+        # configurations
+        API_SVC_URL = config["api_internal_svc_url"]
+        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
+        ENV_CLASS = "qa"
+
+        ## cache
+        set :memcached_server, config["memcache_servers"]
+        
+        LOG.debug(config_path)
+        LOG.debug(API_SVC_URL)
+        
+        LOG.info ("API-Service (QA) launched")
+
+    end
+
+    configure :staging do
+
+        config_path = Dir.pwd + "/config/settings_staging.yml"
+        config = YAML::load(File.read(config_path))
+        if config  == nil
+            LOG.error("Missing settings file!")
+            exit
+        end
+        
+        # Set logging level
+        LOG.level = Logger::ERROR
+
+        # configurations
+        API_SVC_URL = config["api_internal_svc_url"]
+        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
+        ENV_CLASS = "staging"
+
+        ## cache
+        set :memcached_server, config["memcache_servers"]
+        
+        LOG.debug(config_path)
+        LOG.debug(API_SVC_URL)
+        
+        LOG.info ("API-Service (Staging) launched")
+
+    end
+
+    # initialize the cache
+
+    set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
+
 
     # Test route
     get '/' do
@@ -85,14 +139,14 @@ class ApiService < Sinatra::Base
 
     get '/testcache' do
 
-        originalvalue = CACHESTORE.get("testvalue1")
+        originalvalue = settings.cache.get("testvalue1")
         
         unless originalvalue.nil?
             return HTTP_BAD_REQUEST
         end
 
-        CACHESTORE.set("testvalue", "12346", 20)
-        newvalue = CACHESTORE.get("testvalue")
+        settings.cache.set("testvalue", "12346", 20)
+        newvalue = settings.cache.get("testvalue")
 
         if newvalue != "12346"
             return HTTP_BAD_REQUEST

@@ -355,7 +355,7 @@ class ApiService < Sinatra::Base
 
         ## cache the result
         begin
-            CACHESTORE.set(cache_key, resp.body.to_s, 50000)
+            settings.cache.set(cache_key, resp.body.to_s, 50000)
             LOG.debug("++++++++++cache set")
         rescue => e
             LOG.error("cannot reach cache store")

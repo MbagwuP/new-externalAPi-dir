@@ -167,7 +167,7 @@ class ApiService < Sinatra::Base
         LOG.debug("cache key: " + cache_key)
         
         begin
-            returned_business_entity_id = CACHESTORE.get(cache_key)
+            returned_business_entity_id = settings.cache.get(cache_key)
         rescue => e
             returned_business_entity_id = ""
             LOG.error("cannot reach cache store")
@@ -203,7 +203,7 @@ class ApiService < Sinatra::Base
 
                 ## cache the result
                 begin
-                    CACHESTORE.set(cache_key, returned_business_entity_id.to_s, 500000)
+                    settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
                     LOG.debug("++++++++++cache set")
                 rescue => e
                     LOG.error("cannot reach cache store")
@@ -231,7 +231,7 @@ class ApiService < Sinatra::Base
         LOG.debug("cache key: " + cache_key)
         
         begin
-            returned_providers_by_business_entity = CACHESTORE.get(cache_key)
+            returned_providers_by_business_entity = settings.cache.get(cache_key)
         rescue => e
             returned_providers_by_business_entity = ""
             LOG.error("cannot reach cache store")
@@ -258,7 +258,7 @@ class ApiService < Sinatra::Base
 
             ## cache the result
             begin
-                CACHESTORE.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
+                settings.cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
                 LOG.debug("++++++++++cache set")
             rescue => e
                 LOG.error("cannot reach cache store")
