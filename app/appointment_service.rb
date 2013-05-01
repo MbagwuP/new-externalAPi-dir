@@ -29,45 +29,6 @@ class ApiService < Sinatra::Base
     #     }
     # }
     #
-    # server action: Return appointment payload after create
-    #
-    # Example response:
-    #
-    # {
-    #     "appointment": {
-    #         "admit_diagnosis_id": null,
-    #         "appointment_cancellation_reason_id": null,
-    #         "appointment_status_id": 5,
-    #         "arrived_at": null,
-    #         "business_entity_id": 1,
-    #         "cancellation_comments": null,
-    #         "cancellation_details": null,
-    #         "confirmation_details": null,
-    #         "contrast": null,
-    #         "created_at": "2013-04-25T10:43:14-04:00",
-    #         "created_by": 9125,
-    #         "departed_at": null,
-    #         "document_set_id": 29682651,
-    #         "end_time": "2013-04-24T11:00:00-04:00",
-    #         "exam_room_id": null,
-    #         "external_id": null,
-    #         "id": 2888760,
-    #         "is_confirmed": null,
-    #         "laterality": null,
-    #         "location_id": 2,
-    #         "nature_of_visit_id": 11,
-    #         "note_set_id": 25886216,
-    #         "reason_for_visit": null,
-    #         "recurrence_id": null,
-    #         "recurrence_index": null,
-    #         "resource_id": 1,
-    #         "start_time": "2013-04-24T10:00:00-04:00",
-    #         "task_id": null,
-    #         "updated_at": "2013-04-25T10:43:18-04:00",
-    #         "updated_by": 9125
-    #     }
-    # }
-
     # server response:
     # --> if appointment created: 201, with appointment id returned
     # --> if not authorized: 401
@@ -83,7 +44,7 @@ class ApiService < Sinatra::Base
         #business_entity = 1
         
         begin
-            provider_id = request_body['appointment']['provider_id']
+            providerid = request_body['appointment']['provider_id']
             request_body['appointment'].delete('provider_id')
         rescue 
             api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
@@ -92,12 +53,77 @@ class ApiService < Sinatra::Base
         ## add business entity to the request
         request_body['appointment']['business_entity_id'] = business_entity
 
+        ## validate the provider
+        providerids = get_providers_by_business_entity(business_entity, params[:authentication])
+
+        begin
+            invalid_provider = true
+            providerids['providers'].each { |x| 
+                
+                if x['id'].to_s == providerid.to_s
+                    invalid_provider = false
+                    break
+                end
+            }
+
+            if invalid_provider
+                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+            end
+
+        rescue
+            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+        end
+
+        ## retrieve the internal patient id for the request
+        patientid = ''
+        request_body['appointment']['patients'].each { |x| 
+
+            patientid = x['id'].to_s
+ 
+            LOG.debug(patientid)
+
+            if !is_this_numeric(patientid)
+
+                urlpatient = ''
+                urlpatient << API_SVC_URL
+                urlpatient << 'businesses/'
+                urlpatient << business_entity
+                urlpatient << '/patients/'
+                urlpatient << patientid
+                urlpatient << '/externalid.json?token='
+                urlpatient << URI::encode(params[:authentication])
+
+                LOG.debug("url for patient: " + urlpatient)
+
+                resp = generate_http_request(urlpatient, "", "", "GET")
+
+                LOG.debug(resp.body)
+
+                response_code = map_response(resp.code)
+                if response_code == HTTP_OK
+
+                    parsed = JSON.parse(resp.body)
+
+                    patientid = parsed["patient"]["id"].to_s
+
+                    LOG.debug(patientid)
+
+                    x['id'] = patientid
+
+                else
+                    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}' 
+                end
+
+            end
+        }
+
+        LOG.debug(request_body)
 
         ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
         urlapptcrt = ''
         urlapptcrt << API_SVC_URL
         urlapptcrt << 'providers/'
-        urlapptcrt << provider_id.to_s
+        urlapptcrt << providerid.to_s
         urlapptcrt << '/appointments.json?token='
         urlapptcrt << URI::encode(params[:authentication])
 
@@ -109,14 +135,13 @@ class ApiService < Sinatra::Base
         LOG.debug(resp.body)
         response_code = map_response(resp.code)
 
-        if response_code == HTTP_CREATED
+        ## ruby app returns 200
+        if response_code == HTTP_OK
 
                 parsed = JSON.parse(resp.body)
-                LOG.debug(parsed)
+                response_code = HTTP_CREATED                
+                body(parsed['appointment']['external_id'].to_s)
 
-                returned_value = parsed
-
-                body(returned_value.to_s)
         else
             body(resp.body)
         end
@@ -212,11 +237,38 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     delete '/v1/appointment/:providerid/:appointmentid?' do
 
+        ## request parameter validation
+        business_entity = get_business_entity(params[:authentication])
+
+        providerid = params[:providerid]
+
+         ## validate the provider
+        providerids = get_providers_by_business_entity(business_entity, params[:authentication])
+
+        begin
+            invalid_provider = true
+            providerids['providers'].each { |x| 
+                
+                if x['id'].to_s == providerid.to_s
+                    invalid_provider = false
+                    break
+                end
+            }
+
+            if invalid_provider
+                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+            end
+
+        rescue
+            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+        end
+
+
         ## /providers/:provider_id/appointments/:id(.:format)  {:action=>"destroy", :controller=>"provider_appointments"}
         urlapptdel = ''
         urlapptdel << API_SVC_URL
         urlapptdel << 'providers/'
-        urlapptdel << params[:providerid]
+        urlapptdel << providerid
         urlapptdel << '/appointments/'
         urlapptdel << params[:appointmentid]
         urlapptdel << '.json?token='
@@ -305,11 +357,30 @@ class ApiService < Sinatra::Base
 
         resp = generate_http_request(urlappt, "", "", "GET")
 
+        response_code = map_response(resp.code)
+
         LOG.debug(resp.body)
 
-        body(resp.body)
+        # muck with the return to take away internal ids
+        if response_code == HTTP_OK
 
-        status map_response(resp.code)
+                parsed = JSON.parse(resp.body)
+                
+                # iterate the array of appointments
+                parsed["appointments"].each { |x|
+                    LOG.debug('here') 
+                    LOG.debug(x['id'])
+                    x['id'] = x['external_id']
+                    x['patient']['id'] = x['patient']['external_id']
+                }
+
+                LOG.debug(parsed)
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
 
     end
 

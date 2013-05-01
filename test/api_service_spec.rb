@@ -226,10 +226,12 @@ describe "ApiService" do
             puts last_response.body
             last_response.status.should == 200
         end
-    end
+     end
 
 
     describe "Should save appointment data" do
+
+      the_appt_id_to_use = ''
 
       it "should return 200 if locations request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
@@ -275,14 +277,91 @@ describe "ApiService" do
           last_response.status.should == 200
       end
 
-      ## todo - create/delete
+        it "should return 400 if request is in invalid provider" do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/create?authentication='
+            url << var1
 
+            var1 = '{
+        "appointment": {
+            "start_time": "2013-04-24 10:20",
+            "end_time": "2013-04-24 11:00",
+            "location_id": 2,
+            "nature_of_visit_id": 2,
+            "provider_id": 222222222222222,
+            "patients": [
+                {
+                    "id": 1819622,
+                    "comments": "patienthasheadache"
+                }]
+        }
+    }'
+
+
+            post url, var1
+            puts last_response.body
+            last_response.status.should == 400
+        end
+
+        it "should return 200 if request is in valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/create?authentication='
+            url << var1
+
+            var1 = '{
+        "appointment": {
+            "start_time": "2013-04-24 10:35",
+            "end_time": "2013-04-24 11:00",
+            "location_id": 2,
+            "nature_of_visit_id": 2,
+            "provider_id": 2,
+            "patients": [
+                {
+                    "id": "85093a6d-8c43-47ec-ab9d-82a30cc1db25",
+                    "comments": "patienthasheadache"
+                }]
+        }
+    }'
+
+
+            post url, var1
+            puts last_response.body
+            the_appt_id_to_use = last_response.body
+            last_response.status.should == 201
+        end
+
+        it "should return 400 bad provider to delete appointment " do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/22222222222222222/' 
+            url << the_appt_id_to_use
+            url << '?authentication='
+            url << var1
+
+            delete url, var1
+            puts last_response.body
+            last_response.status.should == 400
+        end
+
+        it "should return 200 to delete appointment " do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/2/' 
+            url << the_appt_id_to_use
+            url << '?authentication='
+            url << var1
+
+            delete url, var1
+            puts last_response.body
+            last_response.status.should == 200
+        end
 
     end
-
-        
-
-    
-
 
 end
