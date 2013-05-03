@@ -128,7 +128,7 @@ class ApiService < Sinatra::Base
     # initialize the cache
 
     set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
-
+    set :public_folder, 'public'
 
     # Test route
     get '/' do
