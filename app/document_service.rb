@@ -44,40 +44,14 @@ class ApiService < Sinatra::Base
         validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
         patientid = params[:patientid]
 
+        ## muck with the request based on what internal needs
+        business_entity = get_business_entity(params[:authentication])
+
         #format to what the devservice needs
         patientid.slice!(/^patient-/)
 
         ## if external id, lookup internal
-        if !is_this_numeric(patientid)
-
-            urlpatient = ''
-            urlpatient << API_SVC_URL
-            urlpatient << 'businesses/'
-            urlpatient << business_entity
-            urlpatient << '/patients/'
-            urlpatient << patientid
-            urlpatient << '/externalid.json?token='
-            urlpatient << URI::encode(params[:authentication])
-
-            LOG.debug("url for patient: " + urlpatient)
-
-            resp = generate_http_request(urlpatient, "", "", "GET")
-
-            LOG.debug(resp.body)
-
-            response_code = map_response(resp.code)
-            if response_code == HTTP_OK
-
-                parsed = JSON.parse(resp.body)
-                LOG.debug(parsed)
-
-                patientid = parsed["patient"]["id"].to_s
-
-            else
-                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}' 
-            end
-
-        end
+        patientid = get_internal_patient_id(patientid, business_entity, params[:authentication])
 
         # Now the picture is an IO object!
         document_binary = params[:payload][:tempfile]

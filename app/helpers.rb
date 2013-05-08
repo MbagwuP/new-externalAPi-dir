@@ -270,6 +270,67 @@ class ApiService < Sinatra::Base
 
     end
 
+    def check_for_valid_provider ( provider_list, provider_id)
+
+        begin
+            invalid_provider = true
+            provider_list['providers'].each { |x| 
+                
+                if x['id'].to_s == provider_id.to_s
+                    invalid_provider = false
+                    break
+                end
+            }
+
+            if invalid_provider
+                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+            end
+
+        rescue
+            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
+        end
+    end
+
+    def get_internal_patient_id ( patientid, business_entity_id, pass_in_token) 
+
+        pass_in_token = URI::decode(pass_in_token)
+
+        if !is_this_numeric(patientid)
+
+            urlpatient = ''
+            urlpatient << API_SVC_URL
+            urlpatient << 'businesses/'
+            urlpatient << business_entity_id
+            urlpatient << '/patients/'
+            urlpatient << patientid
+            urlpatient << '/externalid.json?token='
+            urlpatient << URI::encode(pass_in_token)
+
+            LOG.debug("url for patient: " + urlpatient)
+
+            resp = generate_http_request(urlpatient, "", "", "GET")
+
+            LOG.debug(resp.body)
+
+            response_code = map_response(resp.code)
+            if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+
+                patientid = parsed["patient"]["id"].to_s
+
+                LOG.debug(patientid)
+
+            else
+                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}' 
+            end
+
+        end
+
+        return patientid
+
+    end
+
 
     # Control the level of logging based on settings
     before do

@@ -56,23 +56,8 @@ class ApiService < Sinatra::Base
         ## validate the provider
         providerids = get_providers_by_business_entity(business_entity, params[:authentication])
 
-        begin
-            invalid_provider = true
-            providerids['providers'].each { |x| 
-                
-                if x['id'].to_s == providerid.to_s
-                    invalid_provider = false
-                    break
-                end
-            }
-
-            if invalid_provider
-                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-            end
-
-        rescue
-            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-        end
+        ## validate the request based on token
+        check_for_valid_provider(providerids, providerid)
 
         ## retrieve the internal patient id for the request
         patientid = ''
@@ -82,39 +67,11 @@ class ApiService < Sinatra::Base
  
             LOG.debug(patientid)
 
-            if !is_this_numeric(patientid)
+            patientid = get_internal_patient_id(patientid, business_entity, params[:authentication])
 
-                urlpatient = ''
-                urlpatient << API_SVC_URL
-                urlpatient << 'businesses/'
-                urlpatient << business_entity
-                urlpatient << '/patients/'
-                urlpatient << patientid
-                urlpatient << '/externalid.json?token='
-                urlpatient << URI::encode(params[:authentication])
+            x['id'] = patientid
 
-                LOG.debug("url for patient: " + urlpatient)
-
-                resp = generate_http_request(urlpatient, "", "", "GET")
-
-                LOG.debug(resp.body)
-
-                response_code = map_response(resp.code)
-                if response_code == HTTP_OK
-
-                    parsed = JSON.parse(resp.body)
-
-                    patientid = parsed["patient"]["id"].to_s
-
-                    LOG.debug(patientid)
-
-                    x['id'] = patientid
-
-                else
-                    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}' 
-                end
-
-            end
+            LOG.debug(patientid)
         }
 
         LOG.debug(request_body)
@@ -245,23 +202,8 @@ class ApiService < Sinatra::Base
          ## validate the provider
         providerids = get_providers_by_business_entity(business_entity, params[:authentication])
 
-        begin
-            invalid_provider = true
-            providerids['providers'].each { |x| 
-                
-                if x['id'].to_s == providerid.to_s
-                    invalid_provider = false
-                    break
-                end
-            }
-
-            if invalid_provider
-                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-            end
-
-        rescue
-            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-        end
+        ## validate the request based on token
+        check_for_valid_provider(providerids, providerid)
 
 
         ## /providers/:provider_id/appointments/:id(.:format)  {:action=>"destroy", :controller=>"provider_appointments"}
@@ -325,23 +267,8 @@ class ApiService < Sinatra::Base
 
         providerids = get_providers_by_business_entity(business_entity, params[:authentication])
 
-        begin
-            invalid_provider = true
-            providerids['providers'].each { |x| 
-                
-                if x['id'].to_s == providerid.to_s
-                    invalid_provider = false
-                    break
-                end
-            }
-
-            if invalid_provider
-                api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-            end
-
-        rescue
-            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid provider presented"}'
-        end
+        ## validate the request based on token
+        check_for_valid_provider(providerids, providerid)
 
         #http://devservices.carecloud.local/providers/2/appointments.json?token=&date=20130424
         urlappt = ''
