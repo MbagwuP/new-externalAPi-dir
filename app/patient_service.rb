@@ -101,17 +101,17 @@ class ApiService < Sinatra::Base
     #         "gender_id": "1",
     #         "date_of_birth": "2000-03-12"
     #     },
-    #     "addresses": {
+    #     "addresses": [{
     #         "line1": "123 fake st",
     #         "line2": "apt3",
     #         "city": "newton",
-    #         "state_code": "ma",
+    #         "state_id": "22",
     #         "zip_code": "07488",
     #         "county_name": "suffolk",
     #         "latitude": "",
     #         "longitude": "",
     #         "country_id": "225"
-    #     },
+    #     }],
     #     "phones": [
     #         {
     #             "phone_number": "5552221212",
@@ -375,6 +375,249 @@ class ApiService < Sinatra::Base
     end
 
     #todo - search patient
+
+    #  get gender information
+    #
+    # GET /v1/person/genders?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return gender information for authenticated user
+    # server response:
+    # --> if data found: 200, with gender data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/genders?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_genders.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for genders: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    #  get ethnicity information
+    #
+    # GET /v1/person/ethnicities?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return ethnicities information for authenticated user
+    # server response:
+    # --> if data found: 200, with ethnicities data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/ethnicities?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_ethnicities.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for ethnicities: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    #  get languge information
+    #
+    # GET /v1/person/languges?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return languge information for authenticated user
+    # server response:
+    # --> if data found: 200, with languge data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/languages?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_languages.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for languge: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    #  get races information
+    #
+    # GET /v1/person/races?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return races information for authenticated user
+    # server response:
+    # --> if data found: 200, with races data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/races?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_races.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for races: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    #  get maritalstatuses information
+    #
+    # GET /v1/person/maritalstatuses?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return maritalstatuses information for authenticated user
+    # server response:
+    # --> if data found: 200, with maritalstatuses data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/maritalstatuses?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_marital_statuses.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for maritalstatuses: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+
+    #  get religions information
+    #
+    # GET /v1/person/religions?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return religions information for authenticated user
+    # server response:
+    # --> if data found: 200, with religions data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/religions?' do
+
+
+        #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'people/list_all_religions.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for religions: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    #  get state information
+    #
+    # GET /v1/person/states?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return state information for authenticated user
+    # server response:
+    # --> if data found: 200, with state data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/person/states?' do
+
+
+        #http://localservices.carecloud.local:3000/addresses/list_all_states.json?token=
+        urlreference = ''
+        urlreference << API_SVC_URL
+        urlreference << 'addresses/list_all_states.json?token='
+        urlreference << URI::encode(params[:authentication])
+
+        LOG.debug("url for states: " + urlreference)
+
+        resp = generate_http_request(urlreference, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end 
+
+    # http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+    #   get :list_all_phone_types
+    #   get :list_all_employment_statuses
 
 
 end

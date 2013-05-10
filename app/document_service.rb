@@ -68,6 +68,8 @@ class ApiService < Sinatra::Base
         # post copy to alfresco
         # remove local copy
 
+        ## TODO: check mime-type for PDF
+
         internal_file_name = ''
         internal_file_name << patientid 
         internal_file_name << '-' 
@@ -129,6 +131,7 @@ class ApiService < Sinatra::Base
         request_body['document']['patient_id'] = patientid
         request_body['document']['handler'] = handler_id
         request_body['document']['source'] = 1
+        request_body['document']['format'] = "PDF"
 
         LOG.debug(request_body.to_s)
 

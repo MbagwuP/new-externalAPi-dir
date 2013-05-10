@@ -83,4 +83,41 @@ class ApiService < Sinatra::Base
 
 	end
 
+
+    #  logout 
+    #
+    # POST /v1/service/logout
+    #
+    # Params definition
+    #   - authentication - token to logout
+    #  
+    # server response:
+    # --> if logged out: 200
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    post '/v1/service/logout?' do
+
+        # Validate the input parameters
+        token = params[:authentication]
+
+        ## /logout.json?token=
+        urllogout = ''
+        urllogout << API_SVC_URL
+        urllogout << 'logout.json?token='
+        urllogout << URI::encode(token)
+
+        LOG.debug("url for logout: " + urllogout)
+
+        resp = generate_http_request(urllogout, "", "", "POST")
+
+        LOG.debug(resp.body)
+        response_code = map_response(resp.code)
+
+        body(resp.body)
+        
+        status response_code
+
+    end
+
 end

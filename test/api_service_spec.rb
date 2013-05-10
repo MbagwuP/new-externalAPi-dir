@@ -48,6 +48,17 @@ describe "ApiService" do
             last_response.status.should == 200
         end
 
+        it "should return 200 if logout goes correctly" do
+            authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/service/logout?authentication='
+            url << var1
+            post url
+            puts last_response.body
+            last_response.status.should == 200
+        end
+
     end
 
 	describe "Should get patient data correctly" do
@@ -56,6 +67,72 @@ describe "ApiService" do
     		get '/v1/patients/222'
     		last_response.status.should == 400
     end
+
+    it "should return 200 if gender request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/genders?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+       it "should return 200 if ethnicities request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/ethnicities?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if languges request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/languages?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if races request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/races?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if maritalstatuses request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/maritalstatuses?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if religions request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/person/religions?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
 
     it "should return 400 if request is not valid" do
     		get '/v1/patients/patient-2222222222222222222222222222222222222222222222222222222222222222222222222222222222'
@@ -270,7 +347,40 @@ describe "ApiService" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
           var1 = last_response.body
-          url = '/v1/appointment/20130423/provider-2?authentication='
+          url = '/v1/appointment/listbydate/20130423/provider-2?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if appt by provider request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/appointment/listbyprovider/provider-2?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if appt by patient request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/appointment/listbypatient/patient-1234?authentication='
+          url << var1
+          get url
+          puts last_response.body
+          last_response.status.should == 200
+      end
+
+      it "should return 200 if appt by resource request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = last_response.body
+          url = '/v1/appointment/listbyresource/1?authentication='
           url << var1
           get url
           puts last_response.body

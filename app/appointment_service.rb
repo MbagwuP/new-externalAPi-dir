@@ -235,7 +235,7 @@ class ApiService < Sinatra::Base
 
     ##  get appointments by provider id and date
     #
-    # GET /v1/appointment/<date>/<providerid#>?authentication=<authenticationToken>
+    # GET /v1/appointment/listbydate/<date>/<providerid#>?authentication=<authenticationToken>
     #
     # Params definition
     # :date - the date for the appointment.
@@ -249,7 +249,7 @@ class ApiService < Sinatra::Base
     # --> if not authorized: 401
     # --> if provider not found: 404
     # --> if exception: 500
-    get '/v1/appointment/:date/:providerid?' do
+    get '/v1/appointment/listbydate/:date/:providerid?' do
 
         # Validate the input parameters
         validate_param(params[:providerid], PROVIDER_REGEX, PROVIDER_MAX_LEN)
@@ -311,6 +311,199 @@ class ApiService < Sinatra::Base
 
     end
 
+    ##  get appointments by provider id
+    #
+    # GET /v1/appointment/listbyprovider/<providerid#>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :providerid     - the provider identifier number
+    #    (ex: provider-1234)
+    #
+    # server action: Return appointment information for selected provider
+    # server response:
+    # --> if data found: 200, with array of appointment data in response body
+    # --> if not authorized: 401
+    # --> if provider not found: 404
+    # --> if exception: 500
+    get '/v1/appointment/listbyprovider/:providerid?' do
+
+        # Validate the input parameters
+        validate_param(params[:providerid], PROVIDER_REGEX, PROVIDER_MAX_LEN)
+        providerid = params[:providerid]
+
+        #format to what the devservice needs
+        providerid.slice!(/^provider-/)
+
+        ##  get providers by business entity - check to make sure they are legit in pass in
+        business_entity = get_business_entity(params[:authentication])
+
+        providerids = get_providers_by_business_entity(business_entity, params[:authentication])
+
+        ## validate the request based on token
+        check_for_valid_provider(providerids, providerid)
+
+        #http://devservices.carecloud.local/appointments/1/2/listbyprovider.json?token=&date=20130424
+        urlappt = ''
+        urlappt << API_SVC_URL
+        urlappt << 'appointments/'
+        urlappt << business_entity
+        urlappt << '/'
+        urlappt << providerid
+        urlappt << '/listbyprovider.json?token='
+        urlappt << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment: " + urlappt)
+
+        resp = generate_http_request(urlappt, "", "", "GET")
+
+        response_code = map_response(resp.code)
+
+        LOG.debug(resp.body)
+
+        # muck with the return to take away internal ids
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                
+                # iterate the array of appointments
+                parsed.each { |x|
+                    x['appointment']['id'] = x['appointment']['external_id']
+                }
+
+                LOG.debug(parsed)
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end
+
+
+    ##  get appointments by patient id
+    #
+    # GET /v1/appointment/listbypatient/<patientid>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :patientid     - the CareCloud patient identifier number
+    #    (ex: patient-1234)
+    #
+    # server action: Return appointment information for selected patient
+    # server response:
+    # --> if data found: 200, with array of appointment data in response body
+    # --> if not authorized: 401
+    # --> if provider not found: 404
+    # --> if exception: 500
+    get '/v1/appointment/listbypatient/:patientid?' do
+
+        # Validate the input parameters
+        validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+        patientid = params[:patientid]
+
+        #format to what the devservice needs
+        patientid.slice!(/^patient-/)
+
+        ##  get providers by business entity - check to make sure they are legit in pass in
+        business_entity = get_business_entity(params[:authentication])
+
+        #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
+        urlappt = ''
+        urlappt << API_SVC_URL
+        urlappt << 'appointments/'
+        urlappt << business_entity
+        urlappt << '/'
+        urlappt << patientid
+        urlappt << '/listbypatient.json?token='
+        urlappt << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment: " + urlappt)
+
+        resp = generate_http_request(urlappt, "", "", "GET")
+
+        response_code = map_response(resp.code)
+
+        LOG.debug(resp.body)
+
+        # muck with the return to take away internal ids
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                
+                # iterate the array of appointments
+                parsed.each { |x|
+                    x['appointment']['id'] = x['appointment']['external_id']
+                }
+
+                LOG.debug(parsed)
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end
+
+    ##  get appointments by resource id
+    #
+    # GET /v1/appointment/listbyresource/<resource>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :resource     - the resource identifier number
+    #    (ex: 1234)
+    #
+    # server action: Return appointment information for selected resource
+    # server response:
+    # --> if data found: 200, with array of appointment data in response body
+    # --> if not authorized: 401
+    # --> if provider not found: 404
+    # --> if exception: 500
+    get '/v1/appointment/listbyresource/:resourceid?' do
+
+        # Validate the input parameters
+        resourceid = params[:resourceid]
+
+        ##  get providers by business entity - check to make sure they are legit in pass in
+        business_entity = get_business_entity(params[:authentication])
+
+        #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
+        urlappt = ''
+        urlappt << API_SVC_URL
+        urlappt << 'appointments/'
+        urlappt << business_entity
+        urlappt << '/'
+        urlappt << resourceid
+        urlappt << '/listbyresource.json?token='
+        urlappt << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment: " + urlappt)
+
+        resp = generate_http_request(urlappt, "", "", "GET")
+
+        response_code = map_response(resp.code)
+
+        LOG.debug(resp.body)
+
+        # muck with the return to take away internal ids
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                
+                # iterate the array of appointments
+                parsed.each { |x|
+                    x['appointment']['id'] = x['appointment']['external_id']
+                }
+
+                LOG.debug(parsed)
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end
     
 
     #  get provider information
