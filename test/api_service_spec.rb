@@ -309,6 +309,7 @@ describe "ApiService" do
     describe "Should save appointment data" do
 
       the_appt_id_to_use = ''
+      the_appt_register_id_to_use = ''
 
       it "should return 200 if locations request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
@@ -471,6 +472,63 @@ describe "ApiService" do
             puts last_response.body
             last_response.status.should == 200
         end
+
+        it "should return 200 to register callback for appointment " do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/register?authentication='
+            url << var1
+
+            var2 = ' {
+        "notification_active": true,
+        "notification_callback_url": "https://www.here.com"
+    }'
+
+            post url, var2
+            puts last_response.body
+            the_appt_register_id_to_use = last_response.body["id"]
+            last_response.status.should == 200
+        end
+
+
+        it "should return 200 to update callback for appointment " do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/register?authentication='
+            url << var1
+
+            var2 = ' {
+            "id": "#{the_appt_register_id_to_use}"
+        "notification_active": true,
+        "notification_callback_url": "https://www.here.com"
+    }'
+
+            put url, var2
+            puts last_response.body
+            last_response.status.should == 200
+        end
+
+        it "should return 200 to delete callback for appointment " do
+          authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/appointment/register?authentication='
+            url << var1
+
+            var2 = ' {
+            "id": "#{the_appt_register_id_to_use}"
+        "notification_active": true,
+        "notification_callback_url": "https://www.here.com"
+    }'
+
+            delete url, var2
+            puts last_response.body
+            last_response.status.should == 200
+        end
+
+        
 
     end
 

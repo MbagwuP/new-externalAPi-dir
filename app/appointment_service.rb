@@ -636,4 +636,179 @@ class ApiService < Sinatra::Base
 
     end    
 
+
+    #  register for appointment notifications
+    #
+    # POST /v1/appointment/register?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :notification_active  - flag to indicate if the callback should be made
+    # :notification_callback_url - URL address to make the callback to when appointment changes
+    #
+    # {
+    #     "notification_active": true,
+    #     "notification_callback_url": "https://www.here.com"
+    # }
+    # server action: Return callback information
+    # server response:
+    # --> if registered successfully: 200, with callback data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    post '/v1/appointment/register?' do
+
+        # Validate the input parameters
+        request_body = get_request_JSON
+
+        ## muck with the request based on what internal needs
+        business_entity = get_business_entity(params[:authentication])
+        #business_entity = 1
+        
+        ## add business entity to the request
+        request_body['business_entity_id'] = business_entity
+        request_body['notification_type'] = 2
+
+        ## register callback url
+        LOG.debug(request_body)
+
+        ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
+        urlapptreg = ''
+        urlapptreg << API_SVC_URL
+        urlapptreg << 'notification_callbacks.json?token='
+        urlapptreg << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment register: " + urlapptreg)
+        #LOG.debug(request_body.to_json)
+        
+        resp = generate_http_request(urlapptreg, "", request_body.to_json, "POST")
+
+        LOG.debug(resp.body)
+        response_code = map_response(resp.code)
+
+        body(resp.body)
+
+        status response_code
+
+    end
+
+    #  update register for appointment notifications
+    #
+    # PUT /v1/appointment/register?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :id - the register callback id
+    # :notification_active  - flag to indicate if the callback should be made
+    # :notification_callback_url - URL address to make the callback to when appointment changes
+    #
+    # {
+    #     "id" : 3343434,
+    #     "notification_active": true,
+    #     "notification_callback_url": "https://www.here.com"
+    # }
+    # server action: Return callback information
+    # server response:
+    # --> if registered successfully: 200, with callback data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    put '/v1/appointment/register?' do
+
+        # Validate the input parameters
+        request_body = get_request_JSON
+
+        ## muck with the request based on what internal needs
+        business_entity = get_business_entity(params[:authentication])
+        #business_entity = 1
+        
+        callbackid = request_body['id']
+
+        ## add business entity to the request
+        request_body['business_entity_id'] = business_entity
+        request_body['notification_type'] = 2
+
+        ## register callback url
+        LOG.debug(request_body)
+
+        ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
+        urlapptreg = ''
+        urlapptreg << API_SVC_URL
+        urlapptreg << 'notification_callbacks/'
+        urlapptreg << callbackid
+        urlapptreg << '.json?token='
+        urlapptreg << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment register: " + urlapptreg)
+        #LOG.debug(request_body.to_json)
+        
+        resp = generate_http_request(urlapptreg, "", request_body.to_json, "PUT")
+
+        LOG.debug(resp.body)
+        response_code = map_response(resp.code)
+
+        body(resp.body)
+
+        status response_code
+
+    end
+
+    #  delete register for appointment notifications
+    #
+    # DELETE /v1/appointment/register?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :id - the register callback id
+    # :notification_active  - flag to indicate if the callback should be made
+    # :notification_callback_url - URL address to make the callback to when appointment changes
+    #
+    # {
+    #     "id" : 3343434,
+    #     "notification_active": true,
+    #     "notification_callback_url": "https://www.here.com"
+    # }
+    # server action: Return callback information
+    # server response:
+    # --> if registered deleted successfully: 200, with callback data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    delete '/v1/appointment/register?' do
+
+        # Validate the input parameters
+        request_body = get_request_JSON
+
+        ## muck with the request based on what internal needs
+        business_entity = get_business_entity(params[:authentication])
+        #business_entity = 1
+        
+        callbackid = request_body['id']
+
+        ## add business entity to the request
+        request_body['business_entity_id'] = business_entity
+        request_body['notification_type'] = 2
+
+        ## register callback url
+        LOG.debug(request_body)
+
+        ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
+        urlapptreg = ''
+        urlapptreg << API_SVC_URL
+        urlapptreg << 'notification_callbacks/'
+        urlapptreg << callbackid
+        urlapptreg << '.json?token='
+        urlapptreg << URI::encode(params[:authentication])
+
+        LOG.debug("url for appointment register: " + urlapptreg)
+        #LOG.debug(request_body.to_json)
+        
+        resp = generate_http_request(urlapptreg, "", request_body.to_json, "DELETE")
+
+        LOG.debug(resp.body)
+        response_code = map_response(resp.code)
+
+        body(resp.body)
+
+        status response_code
+
+    end
+
 end
