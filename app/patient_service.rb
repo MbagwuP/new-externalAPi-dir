@@ -30,7 +30,10 @@ class ApiService < Sinatra::Base
         #format to what the devservice needs
         patientid.slice!(/^patient-/)
 
-        business_entity = get_business_entity(params[:authentication])
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
         LOG.debug(business_entity)
 
         ## if the patient id is all numeric call getById
@@ -43,7 +46,7 @@ class ApiService < Sinatra::Base
             urlpatient << '/patients/'
             urlpatient << patientid
             urlpatient << '.json?token='
-            urlpatient << URI::encode(params[:authentication])
+            urlpatient << URI::encode(pass_in_token)
 
         else
 
@@ -54,7 +57,7 @@ class ApiService < Sinatra::Base
             urlpatient << '/patients/'
             urlpatient << patientid
             urlpatient << '/externalid.json?token='
-            urlpatient << URI::encode(params[:authentication])
+            urlpatient << URI::encode(pass_in_token)
 
 
         end
@@ -216,11 +219,14 @@ class ApiService < Sinatra::Base
         #format to what the devservice needs
         patientid.slice!(/^patient-/)
 
-        business_entity = get_business_entity(params[:authentication])
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
         LOG.debug(business_entity)
 
         ## if external id, lookup internal
-        patientid = get_internal_patient_id(patientid, business_entity, params[:authentication])
+        patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
         #DELETE /businesses/:business_entity_id/patients/:id(.:format) {:action=>"destroy", :controller=>"patients"}
         urlpatient = ''
@@ -230,7 +236,7 @@ class ApiService < Sinatra::Base
         urlpatient << '/patients/'
         urlpatient << patientid
         urlpatient << '.json?token='
-        urlpatient << URI::encode(params[:authentication])
+        urlpatient << URI::encode(pass_in_token)
 
         LOG.debug("url for patient delete: " + urlpatient)
 
@@ -334,11 +340,14 @@ class ApiService < Sinatra::Base
         #format to what the devservice needs
         patientid.slice!(/^patient-/)
 
-        business_entity = get_business_entity(params[:authentication])
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
         LOG.debug(business_entity)
 
         ## if external id, lookup internal
-        patientid = get_internal_patient_id(patientid, business_entity, params[:authentication])
+        patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
 
         # PUT    /businesses/:business_entity_id/patients/:id(.:format) {:action=>"update", :controller=>"patients"}
@@ -350,7 +359,7 @@ class ApiService < Sinatra::Base
         urlpatient << '/patients/'
         urlpatient << patientid
         urlpatient << '.json?token='
-        urlpatient << URI::encode(params[:authentication])
+        urlpatient << URI::encode(pass_in_token)
 
         LOG.debug("url for patient update: " + urlpatient)
 
@@ -391,12 +400,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/genders?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_genders.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for genders: " + urlreference)
 
@@ -425,12 +436,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/ethnicities?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_ethnicities.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for ethnicities: " + urlreference)
 
@@ -459,12 +472,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/languages?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_languages.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for languge: " + urlreference)
 
@@ -493,12 +508,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/races?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_races.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for races: " + urlreference)
 
@@ -527,12 +544,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/maritalstatuses?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_marital_statuses.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for maritalstatuses: " + urlreference)
 
@@ -562,12 +581,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/religions?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'people/list_all_religions.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for religions: " + urlreference)
 
@@ -596,12 +617,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     get '/v1/person/states?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
         #http://localservices.carecloud.local:3000/addresses/list_all_states.json?token=
         urlreference = ''
         urlreference << API_SVC_URL
         urlreference << 'addresses/list_all_states.json?token='
-        urlreference << URI::encode(params[:authentication])
+        urlreference << URI::encode(pass_in_token)
 
         LOG.debug("url for states: " + urlreference)
 
@@ -640,11 +663,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     post '/v1/patient/register?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
         # Validate the input parameters
         request_body = get_request_JSON
 
         ## muck with the request based on what internal needs
-        business_entity = get_business_entity(params[:authentication])
+        business_entity = get_business_entity(pass_in_token)
         #business_entity = 1
         
         ## add business entity to the request
@@ -658,7 +684,7 @@ class ApiService < Sinatra::Base
         urlptreg = ''
         urlptreg << API_SVC_URL
         urlptreg << 'notification_callbacks.json?token='
-        urlptreg << URI::encode(params[:authentication])
+        urlptreg << URI::encode(pass_in_token)
 
         LOG.debug("url for patient register: " + urlptreg)
         #LOG.debug(request_body.to_json)
@@ -696,11 +722,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     put '/v1/patient/register?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
         # Validate the input parameters
         request_body = get_request_JSON
 
         ## muck with the request based on what internal needs
-        business_entity = get_business_entity(params[:authentication])
+        business_entity = get_business_entity(pass_in_token)
         #business_entity = 1
         
         callbackid = request_body['id']
@@ -718,7 +747,7 @@ class ApiService < Sinatra::Base
         urlptreg << 'notification_callbacks/'
         urlptreg << callbackid
         urlptreg << '.json?token='
-        urlptreg << URI::encode(params[:authentication])
+        urlptreg << URI::encode(pass_in_token)
 
         LOG.debug("url for appointment register: " + urlptreg)
         #LOG.debug(request_body.to_json)
@@ -756,11 +785,14 @@ class ApiService < Sinatra::Base
     # --> if exception: 500
     delete '/v1/patient/register?' do
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
         # Validate the input parameters
         request_body = get_request_JSON
 
         ## muck with the request based on what internal needs
-        business_entity = get_business_entity(params[:authentication])
+        business_entity = get_business_entity(pass_in_token)
         #business_entity = 1
         
         callbackid = request_body['id']
@@ -778,7 +810,7 @@ class ApiService < Sinatra::Base
         urlptreg << 'notification_callbacks/'
         urlptreg << callbackid
         urlptreg << '.json?token='
-        urlptreg << URI::encode(params[:authentication])
+        urlptreg << URI::encode(pass_in_token)
 
         LOG.debug("url for appointment register: " + urlptreg)
         #LOG.debug(request_body.to_json)

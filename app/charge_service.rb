@@ -39,7 +39,10 @@ class ApiService < Sinatra::Base
         # Validate the input parameters
         request_body = get_request_JSON
 
-        business_entity = get_business_entity(params[:authentication])
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
 
         ## add business entity to debit controller
         request_body['charges']['debit']['business_entity_id'] = business_entity
@@ -48,7 +51,7 @@ class ApiService < Sinatra::Base
         providerid = request_body['charges']['charge']['provider_id']
 
         ## validate the provider
-        providerids = get_providers_by_business_entity(business_entity, params[:authentication])
+        providerids = get_providers_by_business_entity(business_entity, pass_in_token)
 
         ## validate the request based on token
         check_for_valid_provider(providerids, providerid)
@@ -57,7 +60,7 @@ class ApiService < Sinatra::Base
         urlcharge = ''
         urlcharge << API_SVC_URL
         urlcharge << 'charges/create.json?token='
-        urlcharge << URI::encode(params[:authentication])
+        urlcharge << URI::encode(pass_in_token)
 
         LOG.debug("url for charge create: " + urlcharge)
         LOG.debug(request_body.to_json)

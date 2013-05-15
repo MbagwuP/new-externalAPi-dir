@@ -44,14 +44,17 @@ class ApiService < Sinatra::Base
         validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
         patientid = params[:patientid]
 
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
         ## muck with the request based on what internal needs
-        business_entity = get_business_entity(params[:authentication])
+        business_entity = get_business_entity(pass_in_token)
 
         #format to what the devservice needs
         patientid.slice!(/^patient-/)
 
         ## if external id, lookup internal
-        patientid = get_internal_patient_id(patientid, business_entity, params[:authentication])
+        patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
         # Now the picture is an IO object!
         document_binary = params[:payload][:tempfile]
@@ -88,7 +91,7 @@ class ApiService < Sinatra::Base
         ##
         ## Request test:
         ##   curl -F "metadata=<documenttest.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/patient-1819622/upload\?authentication\=
-        alfresco_upload(internal_file_name, params[:authentication])
+        alfresco_upload(internal_file_name, pass_in_token)
 
         ## use rest client to do multipart form upload
         FileUtils.remove(internal_file_name)
@@ -105,7 +108,7 @@ class ApiService < Sinatra::Base
         urldochndlr << 'documents/'
         urldochndlr << internal_file_name
         urldochndlr << '/node-id?token='
-        urldochndlr << URI::encode(params[:authentication])
+        urldochndlr << URI::encode(pass_in_token)
 
         LOG.debug("url for document node retrieve: " + urldochndlr)
 
@@ -141,7 +144,7 @@ class ApiService < Sinatra::Base
         urldoccrt << 'patients/'
         urldoccrt << patientid.to_s
         urldoccrt << '/documents/create.json?token='
-        urldoccrt << URI::encode(params[:authentication])
+        urldoccrt << URI::encode(pass_in_token)
 
         LOG.debug("url for document create: " + urldoccrt)
 
