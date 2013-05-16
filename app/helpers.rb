@@ -343,12 +343,53 @@ class ApiService < Sinatra::Base
     after do
         request_duration = ((Time.now - @start_time) * 1000.0).to_i
         statuscode = @statuscode || response.status
+
+        auditoptions = {
+            :ip => "#{request.ip}",
+            :status => "#{statuscode}",
+            :duration => "#{request_duration}",
+            :request_method => "#{request.request_method}",
+            :path => "#{request.fullpath}"
+        } 
+
+        audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
         
         if statuscode >= HTTP_BAD_REQUEST
             LOG.warn("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message} - #{request_duration} ms")
         else
             LOG.info("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message} - #{request_duration} ms")
         end
+    end
+
+    ## use AUDIT_TYPE and AUDIT_SEVERITY
+    def audit_log(type, severity, options={})
+
+        ## get the audit collection
+        begin
+            unless MONGO.nil?
+                auditcollection = MONGO.collection("audit_events")
+
+                insertdocument = {
+                    "type" => "#{type}",
+                    "severity" => "#{severity}",
+                    "ip_address" => "#{options[:ip]}",
+                    "status" => "#{options[:status]}",
+                    "duration" => "#{options[:duration]}",
+                    "request_method" => "#{options[:request_method]}",
+                    "request_path" => "#{options[:path]}",
+                    "msg" => "#{options[:msg]}"
+
+                }
+
+                auditcollection.insert(insertdocument)
+
+                LOG.debug("++mongo inserted")
+            end
+
+        rescue => e
+            LOG.error("cannot reach mongo store")
+        end
+
     end
 
     def api_svc_halt(statuscode, message="{}")
