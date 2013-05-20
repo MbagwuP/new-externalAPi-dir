@@ -86,6 +86,67 @@ class ApiService < Sinatra::Base
 
 	end
 
+    #  get patient by legacy id
+    #
+    # GET /v1/patients/legacy/<patientid#>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :legacy-patientid     - the legacy patient identifier number
+    #    (ex: patient-1234)
+    #
+    # server action: Return patient information
+    # server response:
+    # --> if patient found: 200, with patient data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/patients/legacy/:patientid?' do
+
+        # Validate the input parameters
+        patientid = params[:patientid]
+
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
+        
+        ## http://localservices.carecloud.local:3000/businesses/1/patients/1304202/legacyid.json?token=
+
+        urlpatient = ''
+        urlpatient << API_SVC_URL
+        urlpatient << 'businesses/'
+        urlpatient << business_entity
+        urlpatient << '/patients/'
+        urlpatient << patientid
+        urlpatient << '/legacyid.json?token='
+        urlpatient << URI::encode(pass_in_token)
+
+
+        LOG.debug("url for patient: " + urlpatient)
+
+        resp = generate_http_request(urlpatient, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        response_code = map_response(resp.code)
+
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                LOG.debug(parsed)
+
+                parsed["patient"]["id"] = parsed["patient"]["external_id"]
+
+                body(parsed.to_s)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end
+
+
     #  create a patient
     #
     #  POST /v1/patients/create?authentication=<authenticationToken>

@@ -304,8 +304,6 @@ class ApiService < Sinatra::Base
                 
                 # iterate the array of appointments
                 parsed["appointments"].each { |x|
-                    LOG.debug('here') 
-                    LOG.debug(x['id'])
                     x['id'] = x['external_id']
                     x['patient']['id'] = x['patient']['external_id']
                 }
@@ -317,6 +315,70 @@ class ApiService < Sinatra::Base
         end
 
         status response_code
+
+    end
+
+    ##  get appointments by id
+    #
+    # GET /v1/appointment/listbyid/<appointmentid#>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :appointmentid - the appointment identification number
+    #    (ex: abcd1234)
+    #
+    # server action: Return appointment information for id
+    # server response:
+    # --> if data found: 200, with array of appointment data in response body
+    # --> if not authorized: 401
+    # --> if provider not found: 404
+    # --> if exception: 500
+    get '/v1/appointment/listbyid/:appointmentid?' do
+
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        appointmentid = params[:appointmentid]
+
+        ##  get providers by business entity - check to make sure they are legit in pass in
+        business_entity = get_business_entity(pass_in_token)
+
+        #http://devservices.carecloud.local/appointments/1/abcd93832/listbyexternalid.json?token=
+        urlappt = ''
+        urlappt << API_SVC_URL
+        urlappt << 'appointments/'
+        urlappt << business_entity
+        urlappt << '/'
+        urlappt << appointmentid
+        urlappt << '/listbyexternalid.json?token='
+        urlappt << URI::encode(pass_in_token)
+
+        LOG.debug("url for appointment: " + urlappt)
+
+        resp = generate_http_request(urlappt, "", "", "GET")
+
+        response_code = map_response(resp.code)
+
+        LOG.debug(resp.body)
+
+        # muck with the return to take away internal ids
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                
+                # iterate the array of appointments
+                 # iterate the array of appointments
+                parsed.each { |x|
+                    x['appointment']['id'] = x['appointment']['external_id']
+                }
+
+                LOG.debug(parsed)
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
 
     end
 
@@ -523,61 +585,6 @@ class ApiService < Sinatra::Base
 
     end
     
-
-    #  get provider information
-    #
-    # GET /v1/appointment/providers?authentication=<authenticationToken>
-    #
-    # Params definition
-    # :none  - will be based on authentication
-    #
-    # server action: Return provider information for authenticated user
-    # server response:
-    # --> if data found: 200, with provider data payload
-    # --> if not authorized: 401
-    # --> if not found: 404
-    # --> if exception: 500
-    get '/v1/appointment/providers?' do
-
-
-        ## token management. Need unencoded tokens!
-        pass_in_token = URI::decode(params[:authentication])
-
-        business_entity = get_business_entity(pass_in_token)
-        LOG.debug(business_entity)
-
-        ## save the result of this to the cache
-        cache_key = "business-entity-" + business_entity + "-providers-" + URI::decode(pass_in_token)
-
-        LOG.debug("cache key: " + cache_key)
-
-        #http://localservices.carecloud.local:3000/public/businesses/1/providers.json?token=
-        urlprovider = ''
-        urlprovider << API_SVC_URL
-        urlprovider << 'public/businesses/'
-        urlprovider << business_entity
-        urlprovider << '/providers.json?token='
-        urlprovider << URI::encode(pass_in_token)
-
-        LOG.debug("url for providers: " + urlprovider)
-
-        resp = generate_http_request(urlprovider, "", "", "GET")
-
-        LOG.debug(resp.body)
-
-        ## cache the result
-        begin
-            settings.cache.set(cache_key, resp.body.to_s, 50000)
-            LOG.debug("++++++++++cache set")
-        rescue => e
-            LOG.error("cannot reach cache store")
-        end
-
-        body(resp.body)
-
-        status map_response(resp.code)
-
-    end
 
     #  get location information
     #

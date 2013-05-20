@@ -322,16 +322,6 @@ describe "ApiService" do
           last_response.status.should == 200
       end
      
-      it "should return 200 if providers request is valid" do
-          authorize 'dev@carecloud.com', 'welcome'
-          post '/v1/service/authenticate'
-          var1 = last_response.body
-          url = '/v1/appointment/providers?authentication='
-          url << var1
-          get url
-          puts last_response.body
-          last_response.status.should == 200
-      end
 
        it "should return 200 if resources request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
@@ -529,6 +519,22 @@ describe "ApiService" do
         end
 
         
+
+    end
+
+
+    describe "Should work with provider data" do
+
+      it "should return 200 if providers request is valid" do
+            authorize 'dev@carecloud.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = last_response.body
+            url = '/v1/provider/list?authentication='
+            url << var1
+            get url
+            puts last_response.body
+            last_response.status.should == 200
+        end
 
     end
 

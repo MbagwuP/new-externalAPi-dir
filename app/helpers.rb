@@ -377,13 +377,16 @@ class ApiService < Sinatra::Base
                     "duration" => "#{options[:duration]}",
                     "request_method" => "#{options[:request_method]}",
                     "request_path" => "#{options[:path]}",
-                    "msg" => "#{options[:msg]}"
+                    "msg" => "#{options[:msg]}",
+                    "timestamp" => "#{Time.now}"
 
                 }
 
-                auditcollection.insert(insertdocument)
+                mongo_id = auditcollection.insert(insertdocument)
 
-                LOG.debug("++mongo inserted")
+                LOG.debug("++mongo inserted: " + insertdocument.to_json)
+
+                return mongo_id
             end
 
         rescue => e

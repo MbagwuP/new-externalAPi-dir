@@ -8,27 +8,27 @@
 class ApiService < Sinatra::Base
 
 
-# {
-#     "charges": {
-#         "charge": {
-#             "provider_id": 2,
-#             "insurance_profile_id": 1,
-#             "attending_provider_id": 2,
-#             "supervising_provider_id": 2,
-#             "units": "each",
-#             "diagnosis1_code": "010.16",
-#             "diagnosis1_pointer": 1,
-#             "procedure_code": "51798",
-#             "location_id": 2,
-#             "start_time": "2013-05-08"
-#         },
-#         "debit": {
-#             "amount": 355.75,
-#             "patient_id": 36910,
-#             "effective_date": "2013-05-08"
-#         }
-#     }
-# }
+    # {
+    #     "charges": {
+    #         "charge": {
+    #             "provider_id": 2,
+    #             "insurance_profile_id": 1,
+    #             "attending_provider_id": 2,
+    #             "supervising_provider_id": 2,
+    #             "units": "each",
+    #             "diagnosis1_code": "010.16",
+    #             "diagnosis1_pointer": 1,
+    #             "procedure_code": "51798",
+    #             "location_id": 2,
+    #             "start_time": "2013-05-08"
+    #         },
+    #         "debit": {
+    #             "amount": 355.75,
+    #             "patient_id": 36910,
+    #             "effective_date": "2013-05-08"
+    #         }
+    #     }
+    # }
     # server response:
     # --> if appointment created: 201, with charge id returned
     # --> if not authorized: 401

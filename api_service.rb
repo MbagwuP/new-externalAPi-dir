@@ -38,6 +38,7 @@ HTTP_INTERNAL_ERROR = 500
 
 ## AUDIT TYPES
 AUDIT_TYPE_TRANS = "transaction"
+AUDIT_TYPE_OUTSIDE = "outside-call"
 
 ## SEVERITY TYPES
 SEVERITY_TYPE_LOG = "LOG"
@@ -90,6 +91,10 @@ class ApiService < Sinatra::Base
         # MONGO1 = MongoClient.new("54.242.195.20", 27017)
         # LOG.info(MONGO1.database_names)
         # MONGO1.database_info.each { |info| LOG.info info.inspect }
+
+         # set :raise_errors, false
+         # #  enable :raise_errors
+         # set :show_exceptions, false
         
         LOG.info ("API-Service (Development) launched")
     end
@@ -187,6 +192,32 @@ class ApiService < Sinatra::Base
         if newvalue != "12346"
             return HTTP_BAD_REQUEST
         end
+    end
+
+    not_found do
+
+        auditoptions = {
+            :ip => "#{request.ip}",
+            :request_method => "#{request.request_method}",
+            :path => "#{request.fullpath}"
+        }
+
+        audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_ERROR, auditoptions)
+
+    end
+
+    error do
+
+        auditoptions = {
+            :ip => "#{request.ip}",
+            :request_method => "#{request.request_method}",
+            :path => "#{request.fullpath}",
+            :msg => "#{request.env['sinatra.error'].name} :: #{request.env['sinatra.error'].message}"
+        }
+
+        audit_id = audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_FATAL, auditoptions)
+
+        "Application error. Please try again later. If the issue continues please contact customer support with: #{audit_id}"
 
     end
 end
