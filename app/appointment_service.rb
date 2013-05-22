@@ -627,6 +627,48 @@ class ApiService < Sinatra::Base
 
     end  
 
+    #  get status information
+    #
+    # GET /v1/appointment/statuses?authentication=<authenticationToken>
+    #
+    # Params definition
+    # :none  - will be based on authentication
+    #
+    # server action: Return status information for authenticated user
+    # server response:
+    # --> if data found: 200, with status data payload
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    get '/v1/appointment/statuses?' do
+
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
+        LOG.debug(business_entity)
+
+        #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
+        urllocation = ''
+        urllocation << API_SVC_URL
+        urllocation << 'appointments/'
+        urllocation << business_entity
+        urllocation << '/statuses.json?token='
+        urllocation << URI::encode(pass_in_token)
+
+        LOG.debug("url for appt sts: " + urllocation)
+
+        resp = generate_http_request(urllocation, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        body(resp.body)
+
+        status map_response(resp.code)
+
+    end  
+
+
     #  get resource information
     #
     # GET /v1/appointment/resources?authentication=<authenticationToken>
