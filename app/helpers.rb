@@ -337,6 +337,7 @@ class ApiService < Sinatra::Base
 
     # Control the level of logging based on settings
     before do
+        content_type 'application/json', :charset => 'utf-8'
         @start_time = Time.now
     end
 
