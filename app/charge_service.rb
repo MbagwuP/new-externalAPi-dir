@@ -76,8 +76,8 @@ class ApiService < Sinatra::Base
                 LOG.debug(parsed)
 
                 returned_value = parsed["patient"]["external_id"]
-
-                body(returned_value.to_s)
+                the_response_hash = { :patient => returned_value }
+                body(the_response_hash.to_json)
         else
             body(resp.body)
         end

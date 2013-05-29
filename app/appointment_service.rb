@@ -99,8 +99,9 @@ class ApiService < Sinatra::Base
         if response_code == HTTP_OK
 
                 parsed = JSON.parse(resp.body)
-                response_code = HTTP_CREATED                
-                body(parsed['appointment']['external_id'].to_s)
+                response_code = HTTP_CREATED    
+                the_response_hash = { :appointment => parsed['appointment']['external_id'].to_s }            
+                body(the_response_hash.to_json)
 
         else
             body(resp.body)

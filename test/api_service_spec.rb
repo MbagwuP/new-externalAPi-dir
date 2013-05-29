@@ -16,7 +16,7 @@ describe "ApiService" do
 
     describe "Should authenticate correctly" do
 
-    	it "should return 500 if request is bogus" do
+    	  it "should return 500 if request is bogus" do
             request_header = {}
             request_header['HTTP_AUTHORIZATION'] = "PassAuthToken"
     		post '/v1/service/authenticate', {}, request_header 
@@ -51,7 +51,7 @@ describe "ApiService" do
         it "should return 200 if logout goes correctly" do
             authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/service/logout?authentication='
             url << var1
             post url
@@ -71,7 +71,7 @@ describe "ApiService" do
     it "should return 200 if gender request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/genders?authentication='
           url << var1
           get url
@@ -82,7 +82,7 @@ describe "ApiService" do
        it "should return 200 if ethnicities request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/ethnicities?authentication='
           url << var1
           get url
@@ -93,7 +93,7 @@ describe "ApiService" do
       it "should return 200 if languges request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/languages?authentication='
           url << var1
           get url
@@ -104,7 +104,7 @@ describe "ApiService" do
       it "should return 200 if races request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/races?authentication='
           url << var1
           get url
@@ -115,7 +115,7 @@ describe "ApiService" do
       it "should return 200 if maritalstatuses request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/maritalstatuses?authentication='
           url << var1
           get url
@@ -126,7 +126,7 @@ describe "ApiService" do
       it "should return 200 if religions request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/person/religions?authentication='
           url << var1
           get url
@@ -154,7 +154,7 @@ describe "ApiService" do
     it "should return 200 if request is valid" do
         	authorize 'dev@carecloud.com', 'welcome'
     		post '/v1/service/authenticate'
-    		var1 = last_response.body
+    		var1 = URI::encode(JSON.parse(last_response.body)["token"])
     		url = '/v1/patients/patient-1234?authentication='
     		url << var1
     		get url
@@ -178,7 +178,7 @@ describe "ApiService" do
         it "should return 400 if request is in valid" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/patients/create?authentication='
             url << var1
 
@@ -191,7 +191,7 @@ describe "ApiService" do
         it "should return 200 if request is in valid" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/patients/create?authentication='
             url << var1
 
@@ -235,14 +235,14 @@ describe "ApiService" do
 
             post url, var1
             puts last_response.body
-            the_patient_id_to_use = last_response.body
+            the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
             last_response.status.should == 201
         end
 
         it "should update the patient" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/patients/patient-' 
             url << the_patient_id_to_use 
             url << '?authentication='
@@ -293,7 +293,7 @@ describe "ApiService" do
         it "should return delete the patient" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/patients/patient-' 
             url << the_patient_id_to_use
             url << '?authentication='
@@ -314,7 +314,7 @@ describe "ApiService" do
       it "should return 200 if locations request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/locations?authentication='
           url << var1
           get url
@@ -326,7 +326,7 @@ describe "ApiService" do
        it "should return 200 if resources request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/resources?authentication='
           url << var1
           get url
@@ -337,7 +337,7 @@ describe "ApiService" do
       it "should return 200 if appt by date request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/listbydate/20130423/provider-2?authentication='
           url << var1
           get url
@@ -348,7 +348,7 @@ describe "ApiService" do
       it "should return 200 if appt by provider request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/listbyprovider/provider-2?authentication='
           url << var1
           get url
@@ -359,7 +359,7 @@ describe "ApiService" do
       it "should return 200 if appt by patient request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/listbypatient/patient-1234?authentication='
           url << var1
           get url
@@ -370,7 +370,7 @@ describe "ApiService" do
       it "should return 200 if appt by resource request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
           post '/v1/service/authenticate'
-          var1 = last_response.body
+          var1 = URI::encode(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/listbyresource/1?authentication='
           url << var1
           get url
@@ -381,7 +381,7 @@ describe "ApiService" do
         it "should return 400 if request is in invalid provider" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/create?authentication='
             url << var1
 
@@ -409,14 +409,14 @@ describe "ApiService" do
         it "should return 200 if request is in valid" do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/create?authentication='
             url << var1
 
             var1 = '{
         "appointment": {
-            "start_time": "2014-05-25 10:35",
-            "end_time": "2014-05-25 11:00",
+            "start_time": "2014-05-26 10:35",
+            "end_time": "2014-05-26 11:00",
             "location_id": 2,
             "nature_of_visit_id": 2,
             "provider_id": 2,
@@ -431,14 +431,14 @@ describe "ApiService" do
 
             post url, var1
             puts last_response.body
-            the_appt_id_to_use = last_response.body
+            the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
             last_response.status.should == 201
         end
 
         it "should return 400 bad provider to delete appointment " do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/22222222222222222/' 
             url << the_appt_id_to_use
             url << '?authentication='
@@ -452,7 +452,7 @@ describe "ApiService" do
         it "should return 200 to delete appointment " do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/2/' 
             url << the_appt_id_to_use
             url << '?authentication='
@@ -466,18 +466,20 @@ describe "ApiService" do
         it "should return 200 to register callback for appointment " do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/register?authentication='
             url << var1
 
             var2 = ' {
         "notification_active": true,
-        "notification_callback_url": "https://www.here.com"
+        "notification_callback_url": "https://www.here.com",
+        "notification_shared_key" : "testingssss"
     }'
 
             post url, var2
             puts last_response.body
-            the_appt_register_id_to_use = last_response.body["id"]
+            the_appt_register_id_to_use = JSON.parse(last_response.body)["notification_callback"]["id"]
+            puts the_appt_register_id_to_use
             last_response.status.should == 200
         end
 
@@ -485,15 +487,15 @@ describe "ApiService" do
         it "should return 200 to update callback for appointment " do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/register?authentication='
             url << var1
 
-            var2 = ' {
-            "id": "#{the_appt_register_id_to_use}"
-        "notification_active": true,
-        "notification_callback_url": "https://www.here.com"
-    }'
+            var2 = ' { "id": "'
+            var2 << the_appt_register_id_to_use
+            var2 << '", "notification_active": true, "notification_callback_url": "https://www.here.com", "notification_shared_key" : "testingtttttt" }'
+
+
 
             put url, var2
             puts last_response.body
@@ -503,15 +505,13 @@ describe "ApiService" do
         it "should return 200 to delete callback for appointment " do
           authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/appointment/register?authentication='
             url << var1
 
-            var2 = ' {
-            "id": "#{the_appt_register_id_to_use}"
-        "notification_active": true,
-        "notification_callback_url": "https://www.here.com"
-    }'
+            var2 = ' { "id": "'
+            var2 << the_appt_register_id_to_use
+            var2 << '", "notification_active": true, "notification_callback_url": "https://www.here.com" }'
 
             delete url, var2
             puts last_response.body
@@ -528,7 +528,7 @@ describe "ApiService" do
       it "should return 200 if providers request is valid" do
             authorize 'dev@carecloud.com', 'welcome'
             post '/v1/service/authenticate'
-            var1 = last_response.body
+            var1 = URI::encode(JSON.parse(last_response.body)["token"])
             url = '/v1/provider/list?authentication='
             url << var1
             get url

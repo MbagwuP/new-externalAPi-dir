@@ -69,7 +69,8 @@ class ApiService < Sinatra::Base
                 ##TODO: this works, check in apps/model/login in main WS
                 ##John wants the token to not have any encoded content - darren investigating
                 LOG.debug(parsed["authtoken_nonencoded"])
-        		body(parsed["authtoken"])
+                the_token_hash  = { :token => URI::decode(parsed["authtoken"]) }
+        		body(the_token_hash.to_json)
 
             else
                 body(resp.body)
