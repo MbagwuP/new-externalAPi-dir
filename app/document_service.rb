@@ -8,6 +8,8 @@
 class ApiService < Sinatra::Base
 
 
+    DOCUMENT_TYPE_REGEX = '\Aapplication\/pdf'
+
 	# Upload document to patient
 	#
 	# POST /v1/documents/<patientid>/upload?authentication=<authenticationToken>
@@ -70,9 +72,6 @@ class ApiService < Sinatra::Base
         # get file, save local copy
         # post copy to alfresco
         # remove local copy
-
-        ## TODO: check mime-type for PDF
-
         internal_file_name = ''
         internal_file_name << patientid 
         internal_file_name << '-' 
@@ -84,6 +83,13 @@ class ApiService < Sinatra::Base
         File.open(internal_file_name, "wb") do |file|
           file.write(document_binary.read)
         end
+        
+
+        # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
+        file_type = determine_file_type(internal_file_name)
+
+        #application/pdf; charset=binary
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF"}' if file_type.match(DOCUMENT_TYPE_REGEX) == nil
         
         ## helpful articles
         ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
@@ -114,12 +120,12 @@ class ApiService < Sinatra::Base
 
         resp = generate_http_request(urldochndlr, "", "", "GET")
 
-        #invalid JSON is returned from this request
-        resp.body.gsub!(':null',':""')
-        resp.body.gsub!(':nil',':""')
-
         response_code = map_response(resp.code)
         if response_code == HTTP_OK
+
+            #invalid JSON is returned from this request
+            resp.body.gsub!(':null',':""')
+            resp.body.gsub!(':nil',':""')
 
             parsed = JSON.parse(resp.body)
             LOG.debug(parsed)
@@ -185,9 +191,18 @@ class ApiService < Sinatra::Base
         urluplddoc << URI::encode(token)
 
         LOG.debug("curl -F RemoteFile=@#{file} #{urluplddoc}")
-        `curl -F RemoteFile=@#{file} #{urluplddoc}`
-
+        response = `curl -F RemoteFile=@#{file} #{urluplddoc}`
         ## note: there is no response from this call. This i am told is due to the scanner software were response indicates failure
+
+    end
+
+    def determine_file_type(file)
+
+        LOG.debug("file -Ib #{file}")
+        mimetype = `file -Ib #{file}`.gsub(/\n/,"")
+        LOG.debug(mimetype)
+
+        return mimetype
 
     end
 

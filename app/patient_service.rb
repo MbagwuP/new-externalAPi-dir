@@ -444,7 +444,9 @@ class ApiService < Sinatra::Base
 
     end
 
-    #todo - search patient
+# business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format                                               {:controller=>"patients", :action=>"search_by_business_entity"}
+#            search_by_business_entity_business_entity_patients GET    /businesses/:business_entity_id/patients/search_by_business_entity(.:format)                          {:action=>"search_by_business_entity", :controller=>"patients"}
+#                 search_by_filters_business_entity_invitations GET    /businesses/:business_entity_id/invitations/search_by_filters(.:format)                               {:action=>"search_by_filters", :controller=>"invitations"}    #todo - search patient
 
     #  get gender information
     #

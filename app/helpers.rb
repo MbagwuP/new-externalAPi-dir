@@ -97,7 +97,7 @@ class ApiService < Sinatra::Base
     end
 
     # convenience routine to POST, PUT or GET a http request
-    def generate_http_request (target_url, authorization_hdr, body, method="POST", username=nil, password=nil)
+    def generate_http_request (target_url, authorization_hdr, body, method="POST", username=nil, password=nil, abortonfail=true)
         begin
             uri = URI.parse(target_url)
             http = Net::HTTP.new(uri.host, uri.port)
@@ -147,7 +147,12 @@ class ApiService < Sinatra::Base
             
         rescue => e
             LOG.error("#{method} #{target_url} FAILED - #{e.message}")
-            return nil
+            if abortonfail
+                api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"Internal error while calling method. Please try again later"}'
+            else
+                return nil
+            end
+            
         end
     end
 

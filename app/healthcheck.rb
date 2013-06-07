@@ -4,37 +4,83 @@
 #
 # Version:    1.0
 #
+require 'timeout'
+require 'socket'
 
 class ApiService < Sinatra::Base
 
     
     # perform_healthcheck
     #
-    # TODO: determine what is in the healthcheck
-
     def perform_healthcheck
         
         # check to see if we can talk to the DB
-        
+        webserviceUp = false
+        cacheUp = true
+        mongoUp = false
+        docStoreUp = false
+
+        ## WebService
         begin
-            cert = nil
-        rescue => e
-            LOG.error ("Healthcheck failed #{e.message})")
-            cert = nil
+
+            server = API_SVC_URL
+            #server = "dev.carecloud.local"
+
+            ping_count = 10
+            result = `ping -q -c #{ping_count} #{server}`
+
+            if ($?.exitstatus == 0)
+              webserviceUp = true
+            end
+
+        rescue Exception => e
+            LOG.fatal e
+            webserviceUp = false
         end
-        
-        db_health = {   "description" => "Check Pass Service database connection",
-                        "faultSeverity" => "CRITICAL",
-                        "status" => { "result" => (cert ? "OK" : "FAILED") }
-        }
+
+        ## Cache
+        begin
+            settings.cache.set("testvalue", "12346", 20)
+            newvalue = settings.cache.get("testvalue")
+
+            if newvalue != "12346"
+                cacheUp = false
+            end
+        rescue Exception => e
+            cacheUp = false
+        end
+
+        ## Mongo
+        begin
+            if !MONGO.nil?
+                mongoUp = true
+            end
+        rescue Exception => e
+            mongoUp = false
+        end
+
+        ## Doc Store
+        begin
+            server = DOC_SERVICE_URL
+
+            ping_count = 10
+            result = `ping -q -c #{ping_count} #{server}`
+
+            if ($?.exitstatus == 0)
+              docStoreUp = true
+            end
+
+        rescue Exception => e
+            LOG.fatal e
+            docStoreUp = false
+        end
 
         health = {  "applicationName" => "ApiService",
-                    "systemStatus" => (cert ? "The system is currently up and healthy." : "The system is currently up but BROKEN"),
-                    "healthStatus" => (cert ? "HEALTHY" : "BROKEN"),
-                    "loadbalancerStatus" => (cert ? "UP" : "DOWN"),
-                    "serverStatusBean" => (cert ? "UP" : "DOWN"),
-                    "healthchecks" => { "databaseHealthCheck" => db_health }
-        }
+                    "webserviceHealth" => (webserviceUp ? "UP" : "DOWN"),
+                    "cacheHealth" => (cacheUp ? "UP" : "DOWN"),
+                    "nosqlStorageHealth" => (mongoUp ? "UP" : "DOWN"),
+                    "documentStorageHealth" => (docStoreUp ? "UP" : "DOWN")
+                }
 
         health.to_json
 
@@ -75,5 +121,4 @@ class ApiService < Sinatra::Base
         
     end
 
-    
 end
