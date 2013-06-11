@@ -336,10 +336,6 @@ class ApiService < Sinatra::Base
 
     end
 
-
-#todo mongo logging:
-#http://docs.mongodb.org/manual/use-cases/storing-log-data/
-
     # Control the level of logging based on settings
     before do
         content_type 'application/json', :charset => 'utf-8'

@@ -76,8 +76,7 @@ class ApiService < Sinatra::Base
                 LOG.debug(parsed)
 
                 parsed["patient"]["id"] = parsed["patient"]["external_id"]
-                the_response_hash = { :patient => parsed.to_s}
-                body(the_response_hash.to_json)
+                body(parsed.to_json)
         else
             body(resp.body)
         end
@@ -136,8 +135,8 @@ class ApiService < Sinatra::Base
                 LOG.debug(parsed)
 
                 parsed["patient"]["id"] = parsed["patient"]["external_id"]
-                the_response_hash = { :patient => parsed.to_s}
-                body(the_response_hash.to_json)
+                
+                body(parsed.to_json)
         else
             body(resp.body)
         end
@@ -225,7 +224,10 @@ class ApiService < Sinatra::Base
         # Validate the input parameters
         request_body = get_request_JSON
 
-        business_entity = get_business_entity(params[:authentication])
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
         
         urlpatient = ''
         urlpatient << API_SVC_URL
@@ -434,8 +436,8 @@ class ApiService < Sinatra::Base
                 LOG.debug(parsed)
 
                 parsed["patient"]["id"] = parsed["patient"]["external_id"]
-                the_response_hash = { :patient => parsed.to_s}
-                body(the_response_hash.to_json)
+                
+                body(parsed.to_json)
         else
             body(resp.body)
         end
@@ -890,276 +892,196 @@ class ApiService < Sinatra::Base
     end
 
 
-    ## create extended
-    ## insurance_profile
-#     {
-#     "insurance_profile": {
-#         "business_entity_id": 1,
-#         "responsible_party_relationship": "FATHER",
-#         "is_default": true,
-#         "responsible_party": {
-#           "first_name": "bob",
-#           "last_name": "smith",
-#           "middle_initial": "A",
-#           "date_of_birth": "2000-08-09",
-#           "ssn": "333-55-6666",
-#           "gender_id": 1,
-#           "email": "no@email.com",
-#           "addresses": [
-#              {
-#                  "line1": "123 fake st",
-#                  "line2": "apt3",
-#                  "city": "newton",
-#                  "state_id": 22,
-#                  "zip_code": "07488",
-#                  "country_id": 225,
-#                  "is_primary": true
-#               }
-#           ],
-#             "phones": [
-#                 {
-#                     "phone_number": "5552221212",
-#                     "phone_type_id": "3",
-#                     "extension": "3433"
-#                 },
-#                 {
-#                     "phone_number": "3332221212",
-#                     "phone_type_id": "2",
-#                     "extension": "5566",
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     }
-# }
+    #  update a patient extended information
+    #
+    #  PUT /v1/patientsextended/<patientid#>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # JSON: 
+    # {
+    #     "insurance_profile": {
+    #         "business_entity_id": 1,
+    #         "responsible_party_relationship": "FATHER", (OPTIONS: map_constants("SELF" => '18', "SPOUSE" => '01', "CHILD" => '19', "OTHER" => 'G8', "ATTORNEY" => '60'))
+    #         "is_default": true,
+    #         "responsible_party": {
+    #             "first_name": "bob",
+    #             "last_name": "smith",
+    #             "middle_initial": "A",
+    #             "date_of_birth": "2000-08-09",
+    #             "ssn": "333-55-6666",
+    #             "gender_id": 1,
+    #             "email": "no@email.com",
+    #             "addresses": [
+    #                 {
+    #                     "line1": "123 fake st",
+    #                     "line2": "apt3",
+    #                     "city": "newton",
+    #                     "state_id": 22,
+    #                     "zip_code": "07488",
+    #                     "country_id": 225,
+    #                     "is_primary": true
+    #                 }
+    #             ],
+    #             "phones": [
+    #                 {
+    #                     "phone_number": "5552221212",
+    #                     "phone_type_id": "3",
+    #                     "extension": "3433"
+    #                 },
+    #                 {
+    #                     "phone_number": "3332221212",
+    #                     "phone_type_id": "2",
+    #                     "extension": "5566",
+    #                     "is_primary": true
+    #                 }
+    #             ]
+    #         }
+    #     },
+    #     "primary_insurance": {
+    #         "interface_id": 1,
+    #         "business_entity_id": 1,
+    #         "insured_person_relationship_type": "SELF",
+    #         "member_number": "M4847575754",
+    #         "policy_id": 232455,
+    #         "effective_date": "2010-03-04",
+    #         "type": "SELF",
+    #         "payer": {
+    #             "id": 1,
+    #             "name": "BCBS Mass",
+    #             "name2": "Boston Branch",
+    #             "address": {
+    #                 "line1": "123 fake st",
+    #                 "line2": "apt3",
+    #                 "city": "newton",
+    #                 "state_id": 22,
+    #                 "zip_code": "07488",
+    #                 "country_id": 225
+    #             },
+    #             "group_number": "G393988444",
+    #             "group_name": "Special Group 001",
+    #             "phone": "3334445555"
+    #         },
+    #         "insured": {
+    #             "first_name": "bob",
+    #             "last_name": "smith",
+    #             "middle_initial": "A",
+    #             "date_of_birth": "2000-08-09",
+    #             "ssn": "333-55-6666",
+    #             "gender_id": 1,
+    #             "email": "no@email.com",
+    #             "addresses": [
+    #                 {
+    #                     "line1": "123 fake st",
+    #                     "line2": "apt3",
+    #                     "city": "newton",
+    #                     "state_id": 22,
+    #                     "zip_code": "07488",
+    #                     "country_id": 225,
+    #                     "is_primary": true
+    #                 }
+    #             ]
+    #         }
+    #     },
+    #     "secondary_insurance": {
+    #         "interface_id": 1,
+    #         "business_entity_id": 1,
+    #         "insured_person_relationship_type": "OTHER",
+    #         "member_number": "M4335754",
+    #         "policy_id": 2455,
+    #         "effective_date": "2010-07-04",
+    #         "type": "OTHER",
+    #         "payer": {
+    #             "id": 1,
+    #             "name": "Aetna",
+    #             "name2": "Grove Dist",
+    #             "address": {
+    #                 "line1": "127 fake st",
+    #                 "line2": "apt3",
+    #                 "city": "newton",
+    #                 "state_id": 22,
+    #                 "zip_code": "07488",
+    #                 "country_id": 225
+    #             },
+    #             "group_number": "G3788444",
+    #             "group_name": "Special Group 004",
+    #             "phone": "3334488555"
+    #         },
+    #         "insured": {
+    #             "first_name": "bob",
+    #             "last_name": "smith",
+    #             "middle_initial": "A",
+    #             "date_of_birth": "2000-08-09",
+    #             "ssn": "333-55-6666",
+    #             "gender_id": 1,
+    #             "email": "no@email.com",
+    #             "addresses": [
+    #                 {
+    #                     "line1": "123 fake st",
+    #                     "line2": "apt3",
+    #                     "city": "newton",
+    #                     "state_id": 22,
+    #                     "zip_code": "07488",
+    #                     "country_id": 225,
+    #                     "is_primary": true
+    #                 }
+    #             ]
+    #         }
+    #     }
+    # }
+    # server action: Return patient id
+    # server response:
+    # --> if success: 200, with patient id
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    put '/v1/patientsextended/:patientid?' do
 
+        ## Validate the input parameters
+        request_body = get_request_JSON
 
-# # insurance policy
-# {
-#     "primary_insurance": {
-#         "interface_id": 1,
-#         "business_entity_id": 1,
-#         "insured_person_relationship_type": "SELF",
-#         "member_number": "M4847575754",
-#         "policy_id": 232455,
-#         "effective_date": "2010-03-04",
-#         "type": "SELF",
-#         "payer": {
-#             "id": 1,
-#             "name": "BCBS Mass",
-#             "name2": "Boston Branch",
-#             "address": {
-#                 "line1": "123 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "group_number": "G393988444",
-#             "group_name": "Special Group 001",
-#             "phone": "3334445555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     },
-#     "secondary_insurance": {
-#         "interface_id": 1,
-#         "business_entity_id": 1,
-#         "insured_person_relationship_type": "OTHER",
-#         "member_number": "M4335754",
-#         "policy_id": 2455,
-#         "effective_date": "2010-07-04",
-#         "type": "OTHER",
-#         "payer": {
-#             "id": 1,
-#             "name": "Aetna",
-#             "name2": "Grove Dist",
-#             "address": {
-#                 "line1": "127 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "group_number": "G3788444",
-#             "group_name": "Special Group 004",
-#             "phone": "3334488555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     }
-# }
+        validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+        patientid = params[:patientid]
 
+        #format to what the devservice needs
+        patientid.slice!(/^patient-/)
 
-######all together
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
 
-# {
-#     "insurance_profile": {
-#         "business_entity_id": 1,
-#         "responsible_party_relationship": "FATHER", (OPTIONS: map_constants("SELF" => '18', "SPOUSE" => '01', "CHILD" => '19', "OTHER" => 'G8', "ATTORNEY" => '60'))
-#         "is_default": true,
-#         "responsible_party": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ],
-#             "phones": [
-#                 {
-#                     "phone_number": "5552221212",
-#                     "phone_type_id": "3",
-#                     "extension": "3433"
-#                 },
-#                 {
-#                     "phone_number": "3332221212",
-#                     "phone_type_id": "2",
-#                     "extension": "5566",
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     },
-#     "primary_insurance": {
-#         "interface_id": 1,
-#         "business_entity_id": 1,
-#         "insured_person_relationship_type": "SELF",
-#         "member_number": "M4847575754",
-#         "policy_id": 232455,
-#         "effective_date": "2010-03-04",
-#         "type": "SELF",
-#         "payer": {
-#             "id": 1,
-#             "name": "BCBS Mass",
-#             "name2": "Boston Branch",
-#             "address": {
-#                 "line1": "123 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "group_number": "G393988444",
-#             "group_name": "Special Group 001",
-#             "phone": "3334445555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     },
-#     "secondary_insurance": {
-#         "interface_id": 1,
-#         "business_entity_id": 1,
-#         "insured_person_relationship_type": "OTHER",
-#         "member_number": "M4335754",
-#         "policy_id": 2455,
-#         "effective_date": "2010-07-04",
-#         "type": "OTHER",
-#         "payer": {
-#             "id": 1,
-#             "name": "Aetna",
-#             "name2": "Grove Dist",
-#             "address": {
-#                 "line1": "127 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "group_number": "G3788444",
-#             "group_name": "Special Group 004",
-#             "phone": "3334488555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     }
-# }
+        business_entity = get_business_entity(pass_in_token)
+
+        ## if external id, lookup internal
+        patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
+
+        # http://localservices.carecloud.local:3000/patients/2/createextended.json?token=
+        urlpatient = ''
+        urlpatient << API_SVC_URL
+        urlpatient << 'patients/'
+        urlpatient << patientid
+        urlpatient << '/createextended.json?token='
+        urlpatient << URI::encode(params[:authentication])
+
+        LOG.debug("url for patient-extended create: " + urlpatient)
+
+        resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
+
+        LOG.debug(resp.body)
+        response_code = map_response(resp.code)
+
+        if response_code == HTTP_CREATED
+
+                parsed = JSON.parse(resp.body)
+                LOG.debug(parsed)
+
+                returned_value = parsed["patient"]["external_id"]
+                the_response_hash = { :patient => returned_value.to_s}
+                body(the_response_hash.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end 
 
 end

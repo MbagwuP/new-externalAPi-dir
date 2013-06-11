@@ -34,7 +34,6 @@ class ApiService < Sinatra::Base
         patientid.slice!(/^user-/)
 
         # AuthenticationToken can be provided in the body of the request or as a GET parameter
-        # todo: are we using OAuth or just URL token for these
         #api_svc_halt HTTP_NOT_AUTHORIZED, '{"error":"Authorizatoin Failed"}' if pass[:auth_token] != (params[:authentication] || get_auth_token)
 
         body("ok")
