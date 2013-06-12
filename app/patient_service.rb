@@ -110,7 +110,6 @@ class ApiService < Sinatra::Base
         business_entity = get_business_entity(pass_in_token)
         
         ## http://localservices.carecloud.local:3000/businesses/1/patients/1304202/legacyid.json?token=
-
         urlpatient = ''
         urlpatient << API_SVC_URL
         urlpatient << 'businesses/'

@@ -349,8 +349,10 @@ class ApiService < Sinatra::Base
         auditoptions = {
             :ip => "#{request.ip}",
             :status => "#{statuscode}",
-            :duration => "#{request_duration}",
+            :duration => "#{request_duration} ms",
             :request_method => "#{request.request_method}",
+            :requestbody => "#{request.body.read}",
+            :responsebody => "#{response.body.to_s}",
             :path => "#{request.fullpath}"
         } 
 
@@ -368,8 +370,8 @@ class ApiService < Sinatra::Base
 
         ## get the audit collection
         begin
-            unless MONGO.nil?
-                auditcollection = MONGO.collection("audit_events")
+            unless settings.mongo.nil?
+                auditcollection = settings.mongo.collection("audit_events")
 
                 insertdocument = {
                     "type" => "#{type}",
@@ -380,6 +382,8 @@ class ApiService < Sinatra::Base
                     "request_method" => "#{options[:request_method]}",
                     "request_path" => "#{options[:path]}",
                     "msg" => "#{options[:msg]}",
+                    "request_body" => "#{options[:requestbody]}",
+                    "response_body" => "#{options[:responsebody]}",
                     "timestamp" => "#{Time.now}"
 
                 }

@@ -4,8 +4,6 @@
 #
 # Version:    1.0
 #
-require 'timeout'
-require 'socket'
 
 class ApiService < Sinatra::Base
 

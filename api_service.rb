@@ -9,6 +9,7 @@ require 'socket'
 require 'net/https'
 require 'net/http'
 require 'uri'
+require 'newrelic_rpm'
 require 'logger'
 require 'color'
 require 'yaml'
@@ -49,48 +50,54 @@ SEVERITY_TYPE_WARN = "WARN"
 class ApiService < Sinatra::Base
 
 
-  configure do
+    configure do
 
-    # Setup logger & format
-    LOG = Logger.new('log/external_api.log', 'weekly')
-    LOG.formatter = proc do |severity, datetime, progname, msg|
-        "#{datetime} #{severity}: #{msg}\n"
-    end
+        # Setup logger & format
+        LOG = Logger.new('log/external_api.log', 'weekly')
+        LOG.formatter = proc do |severity, datetime, progname, msg|
+            "#{datetime} #{severity}: #{msg}\n"
+        end
 
-  end
+        config_path = Dir.pwd + "/config/settings.yml"
 
-  configure :development do
-    
-        config_path = Dir.pwd + "/config/settings_development.yml"
-        config = YAML::load(File.read(config_path))
+        config = YAML.load(File.open(config_path))[settings.environment.to_s]
+        
         if config  == nil
             LOG.error("Missing settings file!")
             exit
         end
-        
+
+        API_SVC_URL = config["api_internal_svc_url"]
+        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
+
+        set :memcached_server, config["memcache_servers"]
+        set :mongo_server, config["mongo_server"]
+        set :mongo_port, config["mongo_port"]
+
+        # initialize the cache
+        set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
+        set :public_folder, 'public'
+
+        begin
+            set :mongo, MongoClient.new(settings.mongo_server, settings.mongo_port).db("auditlog")
+        rescue
+            LOG.error("Cannot connect to Mongo") 
+            set :mongo, nil
+        end
+
+        LOG.debug("++++++++++++++++++++++++++")
+        LOG.debug(config_path)
+        LOG.debug(API_SVC_URL)
+        LOG.debug(config)
+    end
+
+    configure :development do
+    
         # Set logging level
         LOG.level = Logger::DEBUG
 
         # configurations
-        API_SVC_URL = config["api_internal_svc_url"]
-        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         ENV_CLASS = "dev"
-
-        ## cache
-        set :memcached_server, config["memcache_servers"]
-        
-        LOG.debug(config_path)
-        LOG.debug(API_SVC_URL)
-
-        begin
-            MONGO = MongoClient.new("54.242.195.20", 27017).db("auditlog")
-        rescue
-            LOG.error("Cannot connect to Mongo") 
-            MONGO = nil
-        end
-        # MONGO1 = MongoClient.new("54.242.195.20", 27017)
-        # LOG.info(MONGO1.database_names)
-        # MONGO1.database_info.each { |info| LOG.info info.inspect }
 
          # set :raise_errors, false
          # #  enable :raise_errors
@@ -101,26 +108,10 @@ class ApiService < Sinatra::Base
 
     configure :qa do
 
-        config_path = Dir.pwd + "/config/settings_qa.yml"
-        config = YAML::load(File.read(config_path))
-        if config  == nil
-            LOG.error("Missing settings file!")
-            exit
-        end
-        
         # Set logging level
         LOG.level = Logger::WARN
 
-        # configurations
-        API_SVC_URL = config["api_internal_svc_url"]
-        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         ENV_CLASS = "qa"
-
-        ## cache
-        set :memcached_server, config["memcache_servers"]
-        
-        LOG.debug(config_path)
-        LOG.debug(API_SVC_URL)
         
         LOG.info ("API-Service (QA) launched")
 
@@ -128,34 +119,26 @@ class ApiService < Sinatra::Base
 
     configure :staging do
 
-        config_path = Dir.pwd + "/config/settings_staging.yml"
-        config = YAML::load(File.read(config_path))
-        if config  == nil
-            LOG.error("Missing settings file!")
-            exit
-        end
-        
         # Set logging level
         LOG.level = Logger::ERROR
 
-        # configurations
-        API_SVC_URL = config["api_internal_svc_url"]
-        DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         ENV_CLASS = "staging"
-
-        ## cache
-        set :memcached_server, config["memcache_servers"]
-        
-        LOG.debug(config_path)
-        LOG.debug(API_SVC_URL)
         
         LOG.info ("API-Service (Staging) launched")
 
     end
 
-    # initialize the cache
-    set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
-    set :public_folder, 'public'
+    configure :production do
+
+        # Set logging level
+        LOG.level = Logger::ERROR
+
+        ENV_CLASS = "production"
+        
+        LOG.info ("API-Service (Production) launched")
+
+    end
+
 
     # Test route
     get '/' do
@@ -172,7 +155,7 @@ class ApiService < Sinatra::Base
 
         audit_log(AUDIT_TYPE_TRANS, AUDIT_TYPE_TRANS, auditoptions)
 
-        auditcollection = MONGO.collection("audit_events")
+        auditcollection = settings.mongo.collection("audit_events")
 
         auditcollection.find.each { |row| LOG.debug row.inspect }
 
