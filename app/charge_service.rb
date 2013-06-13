@@ -20,7 +20,7 @@ class ApiService < Sinatra::Base
     #             "diagnosis1_pointer": 1,
     #             "procedure_code": "51798",
     #             "location_id": 2,
-    #             "start_time": "2013-05-08"
+    #             "start_time": "2013-05-08" (date_of_service)
     #         },
     #         "debit": {
     #             "amount": 355.75,

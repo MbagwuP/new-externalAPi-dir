@@ -79,6 +79,9 @@ class ApiService < Sinatra::Base
         set :public_folder, 'public'
 
         begin
+            LOG.debug ("Connecting to Mongo at: ")
+            LOG.debug (settings.mongo_server)
+            LOG.debug (settings.mongo_port)
             set :mongo, MongoClient.new(settings.mongo_server, settings.mongo_port).db("auditlog")
         rescue
             LOG.error("Cannot connect to Mongo") 
