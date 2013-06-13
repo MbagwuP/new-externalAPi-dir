@@ -9,7 +9,6 @@ require 'socket'
 require 'net/https'
 require 'net/http'
 require 'uri'
-require 'newrelic_rpm'
 require 'logger'
 require 'color'
 require 'yaml'
@@ -24,6 +23,8 @@ include Mongo
 # include other endpoints
 Dir.glob("models/*.rb").each { |r| require_relative r }
 Dir.glob("app/*.rb").each { |r| require_relative r }
+
+require 'newrelic_rpm'
 
 # Define http response codes
 HTTP_OK = 200
@@ -66,6 +67,8 @@ class ApiService < Sinatra::Base
             LOG.error("Missing settings file!")
             exit
         end
+
+        NewRelic::Agent.after_fork(:force_reconnect => true)
 
         API_SVC_URL = config["api_internal_svc_url"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]

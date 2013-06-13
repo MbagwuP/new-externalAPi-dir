@@ -10,7 +10,7 @@ GEM
     json (1.7.7)
     mongo (1.8.5)
       bson (~> 1.8.5)
-    newrelic_rpm (3.5.8.70)
+    newrelic_rpm (3.6.3.111)
     rack (1.5.2)
     rack-protection (1.5.0)
       rack
@@ -39,7 +39,7 @@ DEPENDENCIES
   dalli (~> 2.6)
   json
   mongo
-  newrelic_rpm
+  newrelic_rpm (~> 3.6.3.111)
   rack-test
   rspec
   sinatra
