@@ -230,7 +230,7 @@ development:
   # 'enabled').
   # NOTE: for initial evaluation purposes, you may want to temporarily 
   # turn the agent on in development mode.
-  monitor_mode: false
+  monitor_mode: true
   app_name: CC-ThirdPartyAPI (Development)
 
   # Rails Only - when running in Developer Mode, the New Relic Agent will 

@@ -445,6 +445,165 @@ class ApiService < Sinatra::Base
 
     end
 
+
+    #  update a patient by legacy id - helper method for interface
+    #
+    #  PUT /v1/patients/legacy/<patientid#>?authentication=<authenticationToken>
+    #
+    # Params definition
+    # JSON: 
+    #     {
+    #     "patient": {
+    #         "first_name": "bob",
+    #         "last_name": "smith",
+    #         "middle_initial": "E",
+    #         "email": "no@email.com",
+    #         "prefix": "mr",
+    #         "suffix": "jr",
+    #         "ssn": "123-45-6789",
+    #         "gender_id": "1",
+    #         "date_of_birth": "2000-03-12"
+    #     },
+    #     "addresses": {
+    #         "line1": "123 fake st",
+    #         "line2": "apt3",
+    #         "city": "newton",
+    #         "state_code": "ma",
+    #         "zip_code": "07488",
+    #         "county_name": "suffolk",
+    #         "latitude": "",
+    #         "longitude": "",
+    #         "country_id": "225"
+    #     },
+    #     "phones": [
+    #         {
+    #             "phone_number": "5552221212",
+    #             "phone_type_id": "3",
+    #             "extension": "3433"
+    #         },
+    #         {
+    #             "phone_number": "3332221212",
+    #             "phone_type_id": "2",
+    #             "extension": "5566"
+    #         }
+    #     ]
+    # }
+    #
+    # Input requirements
+    #   - date_of_birth: must be a valid Date. Hint: YYYY-MM-DD, YYYY/MM/DD, YYYYMMDD
+    #   - gender ids:
+    #       id;description;code
+    #       3;"Unknown";"U"
+    #       2;"Female";"F"
+    #       1;"Male";"M"
+    #   - country_id:
+    #       225;United States
+    #   - phone_type_id:
+    #       id;description;code
+    #       1;"Business";"B"
+    #       11;"Main";"M"
+    #       9;"Fax";"F"
+    #       7;"TollFree";"TF"
+    #       6;"VOIP";"V"
+    #       5;"Skype";"S"
+    #       4;"Pager";"P"
+    #       3;"Cell";"C"
+    #       2;"Home";"H"
+    #       8;"SMS";"SMS"
+    #       10;"State 800";"S800"
+    #       12;"National 800";"N800"
+    #
+    # server action: Return patient id
+    # server response:
+    # --> if success: 200, with patient id
+    # --> if not authorized: 401
+    # --> if not found: 404
+    # --> if exception: 500
+    put '/v1/patients/legacy/:patientid?' do
+
+
+        ## Validate the input parameters
+        request_body = get_request_JSON
+
+        validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+        patientid = params[:patientid]
+
+        #format to what the devservice needs
+        patientid.slice!(/^patient-/)
+
+        ## token management. Need unencoded tokens!
+        pass_in_token = URI::decode(params[:authentication])
+
+        business_entity = get_business_entity(pass_in_token)
+
+        ## this will be the legacy id from the interface. Get the internal id for the update
+
+        ## http://localservices.carecloud.local:3000/businesses/1/patients/1304202/legacyid.json?token=
+        urlpatient = ''
+        urlpatient << API_SVC_URL
+        urlpatient << 'businesses/'
+        urlpatient << business_entity
+        urlpatient << '/patients/'
+        urlpatient << patientid
+        urlpatient << '/legacyid.json?token='
+        urlpatient << URI::encode(pass_in_token)
+
+
+        LOG.debug("url for legacy find patient (update): " + urlpatient)
+
+        resp = generate_http_request(urlpatient, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        response_code = map_response(resp.code)
+
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                LOG.debug(parsed)
+
+                internal_patient_id = parsed["patient"]["id"]
+                
+        else
+            api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient by legacy id"}'
+        end
+
+        LOG.debug(internal_patient_id)
+
+        # PUT    /businesses/:business_entity_id/patients/:id(.:format) {:action=>"update", :controller=>"patients"}
+        ## PUT http://localservices.carecloud.local:3000/businesses/1/patients/4751459.json?token=
+        urlpatient = ''
+        urlpatient << API_SVC_URL
+        urlpatient << 'businesses/'
+        urlpatient << business_entity
+        urlpatient << '/patients/'
+        urlpatient << internal_patient_id.to_s
+        urlpatient << '.json?token='
+        urlpatient << URI::encode(pass_in_token)
+
+        LOG.debug("url for patient update: " + urlpatient)
+
+        resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
+
+        response_code = map_response(resp.code)
+
+        if response_code == HTTP_OK
+
+                parsed = JSON.parse(resp.body)
+                LOG.debug(parsed)
+
+                parsed["patient"]["id"] = parsed["patient"]["external_id"]
+                
+                body(parsed.to_json)
+        else
+            body(resp.body)
+        end
+
+        status response_code
+
+    end
+
+
 # business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format                                               {:controller=>"patients", :action=>"search_by_business_entity"}
 #            search_by_business_entity_business_entity_patients GET    /businesses/:business_entity_id/patients/search_by_business_entity(.:format)                          {:action=>"search_by_business_entity", :controller=>"patients"}
 #                 search_by_filters_business_entity_invitations GET    /businesses/:business_entity_id/invitations/search_by_filters(.:format)                               {:action=>"search_by_filters", :controller=>"invitations"}    #todo - search patient
