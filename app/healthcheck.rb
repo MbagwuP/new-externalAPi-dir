@@ -26,6 +26,7 @@ class ApiService < Sinatra::Base
 
             server = API_SVC_URL
             #server = "dev.carecloud.local"
+            server = server.sub(/^https?\:\/\//, '').sub(/^www./,'').sub(/\/$/, '')
 
             ping_count = 10
             result = `ping -q -c #{ping_count} #{server}`
@@ -64,6 +65,8 @@ class ApiService < Sinatra::Base
         begin
             server = DOC_SERVICE_URL
 
+            server = server.sub(/^https?\:\/\//, '').sub(/^www./,'').sub(/\/$/, '')
+            
             ping_count = 10
             result = `ping -q -c #{ping_count} #{server}`
 
