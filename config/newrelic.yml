@@ -201,6 +201,8 @@ development:
   # Do not use for production or load testing.
   developer_mode: true
 
+  app_name: ExternalApi (Development)
+
   # Enable textmate links
   # textmate: true
 

@@ -4,6 +4,9 @@
 #
 # Version:    1.0
 #
+#(git clone git@smoke.carecloud.com:ruby/sinatra/external_api)
+#(/etc/init.d/nginx restart)
+#api_internal_svc_url: http://localservices.carecloud.local:3000/
 
 class ApiService < Sinatra::Base
 
