@@ -10,119 +10,119 @@
 
 class ApiService < Sinatra::Base
 
-    
-    # perform_healthcheck
-    #
-    def perform_healthcheck
-        
-        # check to see if we can talk to the DB
-        webserviceUp = false
-        cacheUp = true
-        mongoUp = false
-        docStoreUp = false
 
-        ## WebService
-        begin
+  # perform_healthcheck
+  #
+  def perform_healthcheck
 
-            server = API_SVC_URL
-            #server = "dev.carecloud.local"
-            server = server.sub(/^https?\:\/\//, '').sub(/^www./,'').sub(/\/$/, '')
+    # check to see if we can talk to the DB
+    webserviceUp = false
+    cacheUp = true
+    mongoUp = false
+    docStoreUp = false
 
-            ping_count = 10
-            result = `ping -q -c #{ping_count} #{server}`
+    ## WebService
+    begin
 
-            if ($?.exitstatus == 0)
-              webserviceUp = true
-            end
+      server = API_SVC_URL
+      #server = "dev.carecloud.local"
+      server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
 
-        rescue Exception => e
-            LOG.fatal e
-            webserviceUp = false
-        end
+      ping_count = 10
+      result = `ping -q -c #{ping_count} #{server}`
 
-        ## Cache
-        begin
-            settings.cache.set("testvalue", "12346", 20)
-            newvalue = settings.cache.get("testvalue")
+      if ($?.exitstatus == 0)
+        webserviceUp = true
+      end
 
-            if newvalue != "12346"
-                cacheUp = false
-            end
-        rescue Exception => e
-            cacheUp = false
-        end
-
-        ## Mongo
-        begin
-            if !MONGO.nil?
-                mongoUp = true
-            end
-        rescue Exception => e
-            mongoUp = false
-        end
-
-        ## Doc Store
-        begin
-            server = DOC_SERVICE_URL
-
-            server = server.sub(/^https?\:\/\//, '').sub(/^www./,'').sub(/\/$/, '')
-            
-            ping_count = 10
-            result = `ping -q -c #{ping_count} #{server}`
-
-            if ($?.exitstatus == 0)
-              docStoreUp = true
-            end
-
-        rescue Exception => e
-            LOG.fatal e
-            docStoreUp = false
-        end
-
-        health = {  "applicationName" => "ApiService",
-                    "webserviceHealth" => (webserviceUp ? "UP" : "DOWN"),
-                    "cacheHealth" => (cacheUp ? "UP" : "DOWN"),
-                    "nosqlStorageHealth" => (mongoUp ? "UP" : "DOWN"),
-                    "documentStorageHealth" => (docStoreUp ? "UP" : "DOWN")
-                }
-
-        health.to_json
-
-    end
-    
-    # HealthCheck
-    #
-    # GET /healthcheck
-    #
-    
-    get '/healthcheck' do
-    
-        perform_healthcheck
-        
+    rescue Exception => e
+      LOG.fatal e
+      webserviceUp = false
     end
 
-    # Load Balancer Status
-    #
-    # GET /lb_status
-    #
+    ## Cache
+    begin
+      settings.cache.set("testvalue", "12346", 20)
+      newvalue = settings.cache.get("testvalue")
 
-    get '/lb_status' do
-        
-        health = JSON.parse(perform_healthcheck)
-        
-        health["loadbalancerStatus"].downcase   
-        
+      if newvalue != "12346"
+        cacheUp = false
+      end
+    rescue Exception => e
+      cacheUp = false
     end
 
-    # Healthcheck ping
-    #
-    # GET /healthcheck_ping
-    #
-
-    get '/healthcheck_ping' do
-        
-        "pong"
-        
+    ## Mongo
+    begin
+      if !MONGO.nil?
+        mongoUp = true
+      end
+    rescue Exception => e
+      mongoUp = false
     end
+
+    ## Doc Store
+    begin
+      server = DOC_SERVICE_URL
+
+      server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
+
+      ping_count = 10
+      result = `ping -q -c #{ping_count} #{server}`
+
+      if ($?.exitstatus == 0)
+        docStoreUp = true
+      end
+
+    rescue Exception => e
+      LOG.fatal e
+      docStoreUp = false
+    end
+
+    health = {"applicationName" => "ApiService",
+              "webserviceHealth" => (webserviceUp ? "UP" : "DOWN"),
+              "cacheHealth" => (cacheUp ? "UP" : "DOWN"),
+              "nosqlStorageHealth" => (mongoUp ? "UP" : "DOWN"),
+              "documentStorageHealth" => (docStoreUp ? "UP" : "DOWN")
+    }
+
+    health.to_json
+
+  end
+
+  # HealthCheck
+  #
+  # GET /healthcheck
+  #
+
+  get '/healthcheck' do
+
+    perform_healthcheck
+
+  end
+
+  # Load Balancer Status
+  #
+  # GET /lb_status
+  #
+
+  get '/lb_status' do
+
+    health = JSON.parse(perform_healthcheck)
+
+    health["loadbalancerStatus"].downcase
+
+  end
+
+  # Healthcheck ping
+  #
+  # GET /healthcheck_ping
+  #
+
+  get '/healthcheck_ping' do
+
+    "pong"
+
+  end
 
 end
