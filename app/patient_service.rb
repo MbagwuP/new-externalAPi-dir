@@ -604,23 +604,96 @@ class ApiService < Sinatra::Base
   end
 
 
-# business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format                                               {:controller=>"patients", :action=>"search_by_business_entity"}
-#            search_by_business_entity_business_entity_patients GET    /businesses/:business_entity_id/patients/search_by_business_entity(.:format)                          {:action=>"search_by_business_entity", :controller=>"patients"}
-#                 search_by_filters_business_entity_invitations GET    /businesses/:business_entity_id/invitations/search_by_filters(.:format)                               {:action=>"search_by_filters", :controller=>"invitations"}    #todo - search patient
+  # search for patient
+  # currently this implementation is incredibly basic.
+  # in the rails app it builds a search against first name and last name, filtering by business entity
+  # we need to add other criteria
+  #
+  # the rails app accepts "search" and "limit". Search is a whitespace separated token of criteria
 
-#  get gender information
-#
-# GET /v1/person/genders?authentication=<authenticationToken>
-#
-# Params definition
-# :none  - will be based on authentication
-#
-# server action: Return gender information for authenticated user
-# server response:
-# --> if data found: 200, with gender data payload
-# --> if not authorized: 401
-# --> if not found: 404
-# --> if exception: 500
+  #{
+  #    "limit": 5,
+  #    "search": [
+  #    {
+  #        "term": "test"
+  #    },
+  #    {
+  #        "term": "smith"
+  #    }
+  #    ]
+  #}
+  post '/v1/patients/search?' do
+
+    ## Validate the input parameters
+    request_body = get_request_JSON
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = URI::decode(params[:authentication])
+
+    business_entity = get_business_entity(pass_in_token)
+
+    #TODO: Build search_limit and search_data variables smarter then whats there
+    search_data = ""
+    request_body['search'].each { |x|
+      search_data = search_data + x["term"] + " "
+      LOG.debug(search_data)
+    }
+
+    search_limit = request_body['limit'].to_s
+    #TODO: add external id to patient search
+    #TODO: replace id with external id
+
+    #business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format  {:controller=>"patients", :action=>"search_by_business_entity"}
+    #http://localservices.carecloud.local:3000/businesses/1/patients/search.json?token=<token>&search=test%20smith&limit=50
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/patients/search.json?token='
+    urlpatient << URI::encode(pass_in_token)
+    urlpatient << '&limit='
+    urlpatient << search_limit
+    urlpatient << '&search='
+    urlpatient << URI::encode(search_data)
+
+    LOG.debug("url for patient search: " + urlpatient)
+
+    resp = generate_http_request(urlpatient, "", "", "GET")
+
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_OK
+
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      #parsed["patient"]["id"] = parsed["patient"]["external_id"]
+
+      body(parsed.to_json)
+    else
+      body(resp.body)
+    end
+
+    status response_code
+
+
+  end
+
+
+
+  #  get gender information
+  #
+  # GET /v1/person/genders?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :none  - will be based on authentication
+  #
+  # server action: Return gender information for authenticated user
+  # server response:
+  # --> if data found: 200, with gender data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
   get '/v1/person/genders?' do
 
     ## token management. Need unencoded tokens!
