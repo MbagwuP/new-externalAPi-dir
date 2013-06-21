@@ -54,7 +54,7 @@ class ApiService < Sinatra::Base
 
     ## Mongo
     begin
-      if !MONGO.nil?
+      unless settings.mongo.nil?
         mongoUp = true
       end
     rescue Exception => e
