@@ -69,7 +69,7 @@ class ApiService < Sinatra::Base
         ##TODO: this works, check in apps/model/login in main WS
         ##John wants the token to not have any encoded content - darren investigating
         LOG.debug(parsed["authtoken_nonencoded"])
-        the_token_hash = {:token => URI::decode(parsed["authtoken"])}
+        the_token_hash = {:token => CGI::unescape(parsed["authtoken"])}
         body(the_token_hash.to_json)
 
       else
@@ -106,7 +106,7 @@ class ApiService < Sinatra::Base
     urllogout = ''
     urllogout << API_SVC_URL
     urllogout << 'logout.json?token='
-    urllogout << URI::encode(token)
+    urllogout << CGI::escape(token)
 
     LOG.debug("url for logout: " + urllogout)
 

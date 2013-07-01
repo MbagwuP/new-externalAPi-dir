@@ -43,7 +43,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -63,7 +63,7 @@ class ApiService < Sinatra::Base
     urlcharge = ''
     urlcharge << API_SVC_URL
     urlcharge << 'charges/create.json?token='
-    urlcharge << URI::encode(pass_in_token)
+    urlcharge << CGI::escape(pass_in_token)
 
     LOG.debug("url for charge create: " + urlcharge)
     LOG.debug(request_body.to_json)

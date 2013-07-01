@@ -163,7 +163,7 @@ class ApiService < Sinatra::Base
   def get_business_entity(pass_in_token)
 
     ## TODO: figure this encoding out
-    pass_in_token = URI::decode(pass_in_token)
+    pass_in_token = CGI::unescape(pass_in_token)
     LOG.debug("passed in token: " + pass_in_token)
 
     ## check cache for business entity by token
@@ -186,7 +186,7 @@ class ApiService < Sinatra::Base
       urlbusentitylist = ''
       urlbusentitylist << API_SVC_URL
       urlbusentitylist << 'business_entities/list_by_user.json?list_type=list&token='
-      urlbusentitylist << URI::encode(pass_in_token)
+      urlbusentitylist << CGI::escape(pass_in_token)
 
       LOG.debug("url for business entity list: " + urlbusentitylist)
 
@@ -227,7 +227,7 @@ class ApiService < Sinatra::Base
 
   def get_providers_by_business_entity(business_entity_id, pass_in_token)
 
-    pass_in_token = URI::decode(pass_in_token)
+    pass_in_token = CGI::unescape(pass_in_token)
     returned_provider_object = ""
 
     ## check cache for business entity by token
@@ -252,7 +252,7 @@ class ApiService < Sinatra::Base
       urlprovider << 'public/businesses/'
       urlprovider << business_entity_id
       urlprovider << '/providers.json?token='
-      urlprovider << URI::encode(pass_in_token)
+      urlprovider << CGI::escape(pass_in_token)
 
       LOG.debug("url for providers: " + urlprovider)
 
@@ -298,7 +298,7 @@ class ApiService < Sinatra::Base
 
   def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
 
-    pass_in_token = URI::decode(pass_in_token)
+    pass_in_token = CGI::unescape(pass_in_token)
 
     if !is_this_numeric(patientid)
 
@@ -309,7 +309,7 @@ class ApiService < Sinatra::Base
       urlpatient << '/patients/'
       urlpatient << patientid
       urlpatient << '/externalid.json?token='
-      urlpatient << URI::encode(pass_in_token)
+      urlpatient << CGI::escape(pass_in_token)
 
       LOG.debug("url for patient: " + urlpatient)
 

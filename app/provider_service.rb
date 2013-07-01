@@ -24,7 +24,7 @@ class ApiService < Sinatra::Base
   get '/v1/provider/npi/:npinumber?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     ##  get providers by business entity - check to make sure they are legit in pass in
     business_entity = get_business_entity(pass_in_token)
@@ -78,13 +78,13 @@ class ApiService < Sinatra::Base
 
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
     LOG.debug(business_entity)
 
     ## save the result of this to the cache
-    cache_key = "business-entity-" + business_entity + "-providers-" + URI::decode(pass_in_token)
+    cache_key = "business-entity-" + business_entity + "-providers-" + CGI::unescape(pass_in_token)
 
     LOG.debug("cache key: " + cache_key)
 
@@ -94,7 +94,7 @@ class ApiService < Sinatra::Base
     urlprovider << 'public/businesses/'
     urlprovider << business_entity
     urlprovider << '/providers.json?token='
-    urlprovider << URI::encode(pass_in_token)
+    urlprovider << CGI::escape(pass_in_token)
 
     LOG.debug("url for providers: " + urlprovider)
 

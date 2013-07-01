@@ -31,7 +31,7 @@ class ApiService < Sinatra::Base
     patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
     LOG.debug(business_entity)
@@ -46,7 +46,7 @@ class ApiService < Sinatra::Base
       urlpatient << '/patients/'
       urlpatient << patientid
       urlpatient << '.json?token='
-      urlpatient << URI::encode(pass_in_token)
+      urlpatient << CGI::escape(pass_in_token)
 
     else
 
@@ -57,7 +57,7 @@ class ApiService < Sinatra::Base
       urlpatient << '/patients/'
       urlpatient << patientid
       urlpatient << '/externalid.json?token='
-      urlpatient << URI::encode(pass_in_token)
+      urlpatient << CGI::escape(pass_in_token)
 
 
     end
@@ -105,7 +105,7 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -117,7 +117,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '/legacyid.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
 
 
     LOG.debug("url for patient: " + urlpatient)
@@ -224,7 +224,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -233,7 +233,7 @@ class ApiService < Sinatra::Base
     urlpatient << 'businesses/'
     urlpatient << business_entity
     urlpatient << '/patients.json?token='
-    urlpatient << URI::encode(params[:authentication])
+    urlpatient << CGI::escape(params[:authentication])
 
     LOG.debug("url for patient create: " + urlpatient)
 
@@ -282,7 +282,7 @@ class ApiService < Sinatra::Base
     patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
     LOG.debug(business_entity)
@@ -298,7 +298,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
 
     LOG.debug("url for patient delete: " + urlpatient)
 
@@ -403,7 +403,7 @@ class ApiService < Sinatra::Base
     patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
     LOG.debug(business_entity)
@@ -421,7 +421,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
 
     LOG.debug("url for patient update: " + urlpatient)
 
@@ -532,7 +532,7 @@ class ApiService < Sinatra::Base
     patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -546,7 +546,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '/legacyid.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
 
 
     LOG.debug("url for legacy find patient (update): " + urlpatient)
@@ -579,7 +579,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients/'
     urlpatient << internal_patient_id.to_s
     urlpatient << '.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
 
     LOG.debug("url for patient update: " + urlpatient)
 
@@ -628,7 +628,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -650,11 +650,11 @@ class ApiService < Sinatra::Base
     urlpatient << 'businesses/'
     urlpatient << business_entity
     urlpatient << '/patients/search.json?token='
-    urlpatient << URI::encode(pass_in_token)
+    urlpatient << CGI::escape(pass_in_token)
     urlpatient << '&limit='
     urlpatient << search_limit
     urlpatient << '&search='
-    urlpatient << URI::encode(search_data)
+    urlpatient << CGI::escape(search_data)
 
     LOG.debug("url for patient search: " + urlpatient)
 
@@ -697,13 +697,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/genders?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_genders.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for genders: " + urlreference)
 
@@ -733,13 +733,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/ethnicities?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_ethnicities.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for ethnicities: " + urlreference)
 
@@ -769,13 +769,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/languages?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_languages.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for languge: " + urlreference)
 
@@ -805,13 +805,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/races?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_races.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for races: " + urlreference)
 
@@ -841,13 +841,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/maritalstatuses?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_marital_statuses.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for maritalstatuses: " + urlreference)
 
@@ -878,13 +878,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/religions?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_religions.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for religions: " + urlreference)
 
@@ -914,13 +914,13 @@ class ApiService < Sinatra::Base
   get '/v1/person/states?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     #http://localservices.carecloud.local:3000/addresses/list_all_states.json?token=
     urlreference = ''
     urlreference << API_SVC_URL
     urlreference << 'addresses/list_all_states.json?token='
-    urlreference << URI::encode(pass_in_token)
+    urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for states: " + urlreference)
 
@@ -960,7 +960,7 @@ class ApiService < Sinatra::Base
   post '/v1/patient/register?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     # Validate the input parameters
     request_body = get_request_JSON
@@ -980,7 +980,7 @@ class ApiService < Sinatra::Base
     urlptreg = ''
     urlptreg << API_SVC_URL
     urlptreg << 'notification_callbacks.json?token='
-    urlptreg << URI::encode(pass_in_token)
+    urlptreg << CGI::escape(pass_in_token)
 
     LOG.debug("url for patient register: " + urlptreg)
     #LOG.debug(request_body.to_json)
@@ -1019,7 +1019,7 @@ class ApiService < Sinatra::Base
   put '/v1/patient/register?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     # Validate the input parameters
     request_body = get_request_JSON
@@ -1043,7 +1043,7 @@ class ApiService < Sinatra::Base
     urlptreg << 'notification_callbacks/'
     urlptreg << callbackid
     urlptreg << '.json?token='
-    urlptreg << URI::encode(pass_in_token)
+    urlptreg << CGI::escape(pass_in_token)
 
     LOG.debug("url for appointment register: " + urlptreg)
     #LOG.debug(request_body.to_json)
@@ -1082,7 +1082,7 @@ class ApiService < Sinatra::Base
   delete '/v1/patient/register?' do
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     # Validate the input parameters
     request_body = get_request_JSON
@@ -1106,7 +1106,7 @@ class ApiService < Sinatra::Base
     urlptreg << 'notification_callbacks/'
     urlptreg << callbackid
     urlptreg << '.json?token='
-    urlptreg << URI::encode(pass_in_token)
+    urlptreg << CGI::escape(pass_in_token)
 
     LOG.debug("url for appointment register: " + urlptreg)
     #LOG.debug(request_body.to_json)
@@ -1277,7 +1277,7 @@ class ApiService < Sinatra::Base
     patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
 
@@ -1290,7 +1290,7 @@ class ApiService < Sinatra::Base
     urlpatient << 'patients/'
     urlpatient << patientid
     urlpatient << '/createextended.json?token='
-    urlpatient << URI::encode(params[:authentication])
+    urlpatient << CGI::escape(params[:authentication])
 
     LOG.debug("url for patient-extended create: " + urlpatient)
 

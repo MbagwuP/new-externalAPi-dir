@@ -47,7 +47,7 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
 
     ## token management. Need unencoded tokens!
-    pass_in_token = URI::decode(params[:authentication])
+    pass_in_token = CGI::unescape(params[:authentication])
 
     ## muck with the request based on what internal needs
     business_entity = get_business_entity(pass_in_token)
@@ -114,7 +114,7 @@ class ApiService < Sinatra::Base
     urldochndlr << 'documents/'
     urldochndlr << internal_file_name
     urldochndlr << '/node-id?token='
-    urldochndlr << URI::encode(pass_in_token)
+    urldochndlr << CGI::escape(pass_in_token)
 
     LOG.debug("url for document node retrieve: " + urldochndlr)
 
@@ -150,7 +150,7 @@ class ApiService < Sinatra::Base
     urldoccrt << 'patients/'
     urldoccrt << patientid.to_s
     urldoccrt << '/documents/create.json?token='
-    urldoccrt << URI::encode(pass_in_token)
+    urldoccrt << CGI::escape(pass_in_token)
 
     LOG.debug("url for document create: " + urldoccrt)
 
@@ -188,7 +188,7 @@ class ApiService < Sinatra::Base
     urluplddoc = ''
     urluplddoc << DOC_SERVICE_URL
     urluplddoc << 'documents/upload?token='
-    urluplddoc << URI::encode(token)
+    urluplddoc << CGI::escape(token)
 
     LOG.debug("curl -F RemoteFile=@#{file} #{urluplddoc}")
     response = `curl -F RemoteFile=@#{file} #{urluplddoc}`
