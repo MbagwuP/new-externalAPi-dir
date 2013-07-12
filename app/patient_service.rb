@@ -102,7 +102,11 @@ class ApiService < Sinatra::Base
   get '/v1/patients/legacy/:patientid?' do
 
     # Validate the input parameters
+    validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]
+
+    #format to what the devservice needs
+    patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
