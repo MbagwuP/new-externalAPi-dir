@@ -388,6 +388,9 @@ class ApiService < Sinatra::Base
 
         }
 
+        ## TODO: can we make request body request map
+        ## TODO: log the mongo event in the case of something coming in with no response
+
         mongo_id = auditcollection.insert(insertdocument)
 
         LOG.debug("++mongo inserted: " + insertdocument.to_json)

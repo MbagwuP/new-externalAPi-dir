@@ -47,6 +47,7 @@ class ApiService < Sinatra::Base
       urlpatient << patientid
       urlpatient << '.json?token='
       urlpatient << CGI::escape(pass_in_token)
+      urlpatient << '&do_full_export=true'
 
     else
 
@@ -58,6 +59,7 @@ class ApiService < Sinatra::Base
       urlpatient << patientid
       urlpatient << '/externalid.json?token='
       urlpatient << CGI::escape(pass_in_token)
+      urlpatient << '&do_full_export=true'
 
 
     end
@@ -122,6 +124,7 @@ class ApiService < Sinatra::Base
     urlpatient << patientid
     urlpatient << '/legacyid.json?token='
     urlpatient << CGI::escape(pass_in_token)
+    urlpatient << '&do_full_export=true'
 
 
     LOG.debug("url for patient: " + urlpatient)

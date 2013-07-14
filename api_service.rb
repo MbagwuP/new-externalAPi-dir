@@ -206,6 +206,8 @@ class ApiService < Sinatra::Base
 
         audit_id = audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_FATAL, auditoptions)
 
+        ## TODO: return http error code status(500)
+
         "Application error. Please try again later. If the issue continues please contact customer support with: #{audit_id}"
 
     end
