@@ -24,21 +24,17 @@ class ApiService < Sinatra::Base
 
     ## TODO: authenticate with lab credentials
 
-    ## TODO: log to Mongo the transaction
-
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
 
     urllabinbound = ''
     urllabinbound << API_SVC_URL
-    urllabinbound << 'businesses/'
-    urllabinbound << business_entity
-    urllabinbound << '/patients.json?token='
+    urllabinbound << 'labs/inboundrequest?token='
     urllabinbound << CGI::escape(params[:authentication])
 
     LOG.debug("url for lab inbound request: " + urllabinbound)
 
-    resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST")
+    resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
 
     LOG.debug(resp.body)
     response_code = map_response(resp.code)

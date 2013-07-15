@@ -77,6 +77,9 @@ class ApiService < Sinatra::Base
         set :mongo_server, config["mongo_server"]
         set :mongo_port, config["mongo_port"]
 
+        set :labs_user, config["lab_user"]
+        set :labs_pass, config["lab_pass"]
+
         # initialize the cache
         set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
         set :public_folder, 'public'

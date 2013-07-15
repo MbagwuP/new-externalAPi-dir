@@ -340,6 +340,15 @@ class ApiService < Sinatra::Base
   before do
     content_type 'application/json', :charset => 'utf-8'
     @start_time = Time.now
+
+    auditoptions = {
+        :ip => "#{request.ip}",
+        :request_method => "#{request.request_method}",
+        :path => "#{request.fullpath}"
+    }
+
+    audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
+
   end
 
   after do
@@ -387,9 +396,6 @@ class ApiService < Sinatra::Base
             "timestamp" => "#{Time.now}"
 
         }
-
-        ## TODO: can we make request body request map
-        ## TODO: log the mongo event in the case of something coming in with no response
 
         mongo_id = auditcollection.insert(insertdocument)
 
