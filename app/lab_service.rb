@@ -7,11 +7,11 @@
 class ApiService < Sinatra::Base
 
 
-  #  lab inbound - add content
+  #  lab inbound - pass through to transmit JSON from Mirth to Rails app
   #
   # POST /v1/lab/inbound
   #
-  # server action: Return <..something..>
+  # server action: Return 200 if success, no content
   # server response:
   # --> if authenticated: 200
   # --> if not authorized: 401
@@ -22,15 +22,9 @@ class ApiService < Sinatra::Base
     # Validate the input parameters
     request_body = get_request_JSON
 
-    ## TODO: authenticate with lab credentials
-
-    ## token management. Need unencoded tokens!
-    pass_in_token = CGI::unescape(params[:authentication])
-
     urllabinbound = ''
     urllabinbound << API_SVC_URL
-    urllabinbound << 'labs/inboundrequest?token='
-    urllabinbound << CGI::escape(params[:authentication])
+    urllabinbound << 'labs/inboundrequest'
 
     LOG.debug("url for lab inbound request: " + urllabinbound)
 

@@ -72,6 +72,7 @@ class ApiService < Sinatra::Base
 
         API_SVC_URL = config["api_internal_svc_url"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
+        SOFTWARE_VERSION = "v0.4"
 
         set :memcached_server, config["memcache_servers"]
         set :mongo_server, config["mongo_server"]
@@ -167,6 +168,12 @@ class ApiService < Sinatra::Base
         auditcollection = settings.mongo.collection("audit_events")
 
         auditcollection.find.each { |row| LOG.debug row.inspect }
+
+    end
+
+    get '/version' do
+
+      "Running version: #{SOFTWARE_VERSION}"
 
     end
 
