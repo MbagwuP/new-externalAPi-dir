@@ -1288,9 +1288,6 @@ class ApiService < Sinatra::Base
 
     business_entity = get_business_entity(pass_in_token)
 
-    ## if external id, lookup internal
-    patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
-
     # http://localservices.carecloud.local:3000/patients/2/createextended.json?token=
     urlpatient = ''
     urlpatient << API_SVC_URL
