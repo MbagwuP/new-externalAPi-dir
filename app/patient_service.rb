@@ -941,6 +941,42 @@ class ApiService < Sinatra::Base
 
   end
 
+  #  get employmentstatuses information
+  #
+  # GET /v1/person/employmentstatuses?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :none  - will be based on authentication
+  #
+  # server action: Return employmentstatuses information for authenticated user
+  # server response:
+  # --> if data found: 200, with employmentstatuses data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/person/employmentstatuses?' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    #http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
+    urlreference = ''
+    urlreference << API_SVC_URL
+    urlreference << 'people/list_all_employment_statuses.json?token='
+    urlreference << CGI::escape(pass_in_token)
+
+    LOG.debug("url for employmentstatuses: " + urlreference)
+
+    resp = generate_http_request(urlreference, "", "", "GET")
+
+    LOG.debug(resp.body)
+
+    body(resp.body)
+
+    status map_response(resp.code)
+
+  end
+
   # http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
   #   get :list_all_phone_types
   #   get :list_all_employment_statuses
