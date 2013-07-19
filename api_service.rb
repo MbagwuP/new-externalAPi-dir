@@ -14,6 +14,7 @@ require 'color'
 require 'yaml'
 require 'dalli'
 require 'mongo'
+require 'digest'
 
 
 include Mongo
@@ -71,6 +72,8 @@ class ApiService < Sinatra::Base
         NewRelic::Agent.after_fork(:force_reconnect => true)
 
         API_SVC_URL = config["api_internal_svc_url"]
+        MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
+        MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         SOFTWARE_VERSION = "v0.4"
 
