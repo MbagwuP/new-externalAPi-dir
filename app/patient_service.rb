@@ -151,6 +151,61 @@ class ApiService < Sinatra::Base
 
   end
 
+  #  get patient by provider id
+  #
+  # GET /v1/patients/provider/<providerid#>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :providerid     - the primary provider id
+  #    (ex: patient-1234)
+  #
+  # server action: Return patient information
+  # server response:
+  # --> if patient found: 200, with patient data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/patients/provider/:providerid?' do
+
+    # Validate the input parameters
+    providerid = params[:providerid]
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    business_entity = get_business_entity(pass_in_token)
+
+    ## validate the provider
+    providerids = get_providers_by_business_entity(business_entity, pass_in_token)
+
+    ## validate the request based on token
+    check_for_valid_provider(providerids, providerid)
+
+    ## http://localservices.carecloud.local:3000/businesses/1/providers/2/sync_list.json?token=
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/providers/'
+    urlpatient << providerid
+    urlpatient << '/sync_list.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+
+    LOG.debug("url for patient sync: " + urlpatient)
+
+    resp = generate_http_request(urlpatient, "", "", "GET")
+
+    LOG.debug(resp.body)
+
+    response_code = map_response(resp.code)
+
+    body(resp.body)
+
+    status response_code
+
+  end
+
 
   #  create a patient
   #
