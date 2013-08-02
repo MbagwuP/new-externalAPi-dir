@@ -13,6 +13,8 @@ describe "ApiService" do
         last_response.status.should == 200
    end
 
+ 
+
 
    describe "Should authenticate correctly" do
 
@@ -60,6 +62,65 @@ describe "ApiService" do
         end
 
    end
+
+  describe "Should return appointment and patient data " do
+
+          it "should return 500 if appointment id is not present" do
+          get '/v2/appointment/listbyid/?'
+          last_response.status.should == 500
+      end
+
+
+      it "should return 500 if appointment id is not valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+          url = '/v2/appointment/listbyid/2ae8b08d-5dasdsa-40e5-b068-41803fc689c4?authentication='
+          url << var1
+          get url
+          last_response.status.should == 500
+      end
+
+
+      it "should return 200 if appointment id is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+          url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication='
+          url << var1
+          get url
+          last_response.status.should == 200
+      end
+
+      it "should return 403 error for invalid token" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication=2345'
+          get url
+          last_response.status.should == 403
+      end
+
+
+      it "should return error for no token" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v1/service/authenticate'
+          url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication='
+          get url
+          last_response.status.should == 403
+      end
+
+
+      it "should return 200 if request is valid" do
+          authorize 'dev@carecloud.com', 'welcome'
+          post '/v2/service/authenticate'
+          var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+          url = '/v1/appointment/listbyprovider/1234?'
+          url << var1
+          puts last_response.body
+          last_response.status.should == 200
+      end
+    
+    end
 
 	describe "Should get patient data correctly" do
 
@@ -537,5 +598,8 @@ describe "ApiService" do
         end
 
     end
+
+
+
 
 end

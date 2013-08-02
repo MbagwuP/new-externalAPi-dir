@@ -256,6 +256,7 @@ class ApiService < Sinatra::Base
   # --> if not authorized: 401
   # --> if provider not found: 404
   # --> if exception: 500
+  #http://localservices.carecloud.local:9292/v1/appointment/listbyid/4662bed6-ada6-419e-b5a0-7201b62c497b?authentication=AQIC5wM2LY4SfczXn0xHVNrI7IfTlq8lm1vjhpv%2FVmYVJ5k%3D%40AAJTSQACMDMAAlNLAAotOTQ3NDE4MjA2AAJTMQACMDE%3D%23
   get '/v1/appointment/listbydate/:date/:providerid?' do
 
     # Validate the input parameters
@@ -369,7 +370,7 @@ class ApiService < Sinatra::Base
       # iterate the array of appointments
       # iterate the array of appointments
       parsed.each { |x|
-        x['appointment']['id'] = x['appointment']['external_id']
+        x['id'] = x['external_id']
       }
 
       LOG.debug(parsed)
@@ -381,6 +382,87 @@ class ApiService < Sinatra::Base
     status response_code
 
 
+  end
+
+  ##  get appointments by id
+  #
+  # GET /v2/appointment/listbyid/<appointmentid#>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :appointmentid - the appointment identification number
+  #    (ex: abcd1234)
+  #
+  # server action: Return appointment information for id
+  # server response:
+  # --> if data found: 200, with array of appointment data in response body
+  # --> if not authorized: 401
+  # --> if appointment id not found: 404
+  # --> if exception: 500
+  get '/v2/appointment/listbyid/:appointmentid?' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    appointmentid = params[:appointmentid]
+
+    ##  get providers by business entity - check to make sure they are legit in pass in
+    business_entity = get_business_entity(pass_in_token)
+
+    #http://devservices.carecloud.local/appointments/1/abcd93832/listbyexternalid.json?token=
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << business_entity
+    urlappt << '/'
+    urlappt << appointmentid
+    urlappt << '/listbyexternalid.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("url for appointment: " + urlappt)
+
+    resp = generate_http_request(urlappt, "", "", "GET")
+
+    response_code = map_response(resp.code)
+
+    LOG.debug(resp.body)
+
+    # muck with the return to take away internal ids
+    if response_code == HTTP_OK
+
+      parsed = JSON.parse(resp.body)
+      pid = []
+      # iterate the array of appointments
+      # iterate the array of appointments
+      parsed.each{ |x|
+      x['id'] = x['external_id']
+      pid = x['p_ext_id']
+      LOG.debug( x['id'])
+      LOG.debug( x['external_id'])
+      }
+          LOG.debug(pid)
+
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'businesses/'
+      urlpatient << business_entity
+      urlpatient << '/patients/'
+      urlpatient << pid
+      urlpatient << '/externalid.json?token='
+      urlpatient << CGI::escape(pass_in_token)
+      urlpatient << '&do_full_export=true'
+
+      LOG.debug("url for patient: " + urlpatient)
+
+      resp2 = generate_http_request(urlpatient, "", "", "GET")
+      LOG.debug(resp2)
+      parsed << JSON.parse(resp2.body)
+
+      body(parsed.to_json)
+    else
+      body(resp.body)
+    end
+
+    status response_code
   end
 
   ##  get appointments by provider id
