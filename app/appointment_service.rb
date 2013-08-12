@@ -320,6 +320,8 @@ class ApiService < Sinatra::Base
 
   end
 
+
+
   ##  get appointments by id
   #
   # GET /v1/appointment/listbyid/<appointmentid#>?authentication=<authenticationToken>
@@ -334,6 +336,7 @@ class ApiService < Sinatra::Base
   # --> if not authorized: 401
   # --> if provider not found: 404
   # --> if exception: 500
+  
   get '/v1/appointment/listbyid/:appointmentid?' do
 
     ## token management. Need unencoded tokens!
