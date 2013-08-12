@@ -175,7 +175,7 @@ class ApiService < Sinatra::Base
       returned_business_entity_id = settings.cache.get(cache_key)
     rescue => e
       returned_business_entity_id = ""
-      LOG.error("cannot reach cache store")
+      LOG.error("cannot reach cache store #{e}")
     end
 
     if returned_business_entity_id.nil? || returned_business_entity_id == ""
@@ -211,7 +211,7 @@ class ApiService < Sinatra::Base
           settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
           LOG.debug("++++++++++cache set")
         rescue => e
-          LOG.error("cannot reach cache store")
+          LOG.error("cannot reach cache store #{e}")
         end
       elsif response_code == HTTP_FORBIDDEN
         api_svc_halt HTTP_FORBIDDEN, resp.body
@@ -239,7 +239,7 @@ class ApiService < Sinatra::Base
       returned_providers_by_business_entity = settings.cache.get(cache_key)
     rescue => e
       returned_providers_by_business_entity = ""
-      LOG.error("cannot reach cache store")
+      LOG.error("cannot reach cache store #{e}")
     end
 
     if returned_providers_by_business_entity.nil? || returned_providers_by_business_entity == ""
@@ -266,7 +266,7 @@ class ApiService < Sinatra::Base
         settings.cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
         LOG.debug("++++++++++cache set")
       rescue => e
-        LOG.error("cannot reach cache store")
+        LOG.error("cannot reach cache store #{e}")
       end
 
     end

@@ -248,7 +248,7 @@ class ApiService < Sinatra::Base
   #             "extension": "5566"
   #         }
   #     ]
-  # }
+  #}
   #
   # Input requirements
   #   - date_of_birth: must be a valid Date. Hint: YYYY-MM-DD, YYYY/MM/DD, YYYYMMDD
