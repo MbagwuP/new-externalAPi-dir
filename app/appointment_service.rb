@@ -336,7 +336,6 @@ class ApiService < Sinatra::Base
   # --> if not authorized: 401
   # --> if provider not found: 404
   # --> if exception: 500
-
   get '/v1/appointment/listbyid/:appointmentid?' do
 
     ## token management. Need unencoded tokens!
@@ -595,7 +594,7 @@ class ApiService < Sinatra::Base
 
       # iterate the array of appointments
       parsed.each { |x|
-        x['id'] = x[['external_id']
+        x['appointment']['id'] = x['appointment']['external_id']
       }
 
       LOG.debug(parsed)
