@@ -1,0 +1,93 @@
+batch:
+  adapter: postgresql
+  database: CareCloud_Dev
+  host: danneskjold.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+  
+# development:
+#   adapter: postgresql
+#   database: carecloud_prod
+#   host: cc-tm01-db03.carecloud.local
+#   username: postgres
+#   password:  
+#   schema_search_path: 'public,import_export,edi,analytics,forms,clinical'
+  
+# development:
+  # adapter: postgresql
+  # database: CareCloud_Dev
+  # # database: CareCloud_QA
+  # host: danneskjold.carecloud.local
+  # username: postgres
+  # password:
+  # schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+
+test:
+  adapter: postgresql
+  database: carecloud_test
+  host: danneskjold.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+    
+development:
+  adapter: postgresql
+  database: CareCloud_Dev
+  host: cc-bl-db00-dev
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+  
+profile:
+  adapter: postgresql
+  database: carecloud_test
+  host: danneskjold.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical,library'
+  
+qa:
+  adapter: postgresql
+  database: CareCloud_QA
+  host: danneskjold.carecloud.local
+  username: postgres
+  password:  
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+demo:
+  adapter: postgresql
+  database: CareCloud_Demo
+  host: cc-tm01-db02.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+staging:
+  adapter: postgresql
+  database: CareCloud_Staging
+  host: hadrianus.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+    
+production:
+  adapter: postgresql
+  database: carecloud_test
+  host: localhost
+  username: postgres
+  password:
+  schema_search_path: 'public,import_export,edi,analytics,forms,clinical, library'
+    
+# production:
+#   adapter: postgresql
+#   database: CareCloud_Prod
+#   host: haddrianus.carecloud.local
+#   username: postgres
+#   password:
+  
+replica_db:
+  adapter: postgresql
+  database: CareCloud_Dev
+  host: danneskjold.carecloud.local
+  username: postgres
+  password:
+  schema_search_path: 'import_export,public,analytics,forms,clinical, library'

@@ -338,6 +338,8 @@ class ApiService < Sinatra::Base
   # --> if exception: 500
   get '/v1/appointment/listbyid/:appointmentid?' do
 
+
+
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
 
