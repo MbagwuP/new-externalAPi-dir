@@ -112,7 +112,7 @@ describe "ApiService" do
 
       it "should return 200 if request is valid" do
           authorize 'dev@carecloud.com', 'welcome'
-          post '/v2/service/authenticate'
+          post '/v1/service/authenticate'
           var1 = CGI::escape(JSON.parse(last_response.body)["token"])
           url = '/v1/appointment/listbyprovider/1234?'
           url << var1
