@@ -370,14 +370,15 @@ class ApiService < Sinatra::Base
     if response_code == HTTP_OK
 
       parsed = JSON.parse(resp.body)
-
+      LOG.debug("Before Parsed: #{parsed}")
       # iterate the array of appointments
       # iterate the array of appointments
       parsed.each { |x|
+        LOG.debug(x)
         x['id'] = x['external_id']
       }
 
-      LOG.debug(parsed)
+      LOG.debug("After Parsed: #{parsed}")
       body(parsed.to_json)
     else
       body(resp.body)
@@ -428,7 +429,7 @@ class ApiService < Sinatra::Base
 
     response_code = map_response(resp.code)
 
-    LOG.debug(resp.body)
+    LOG.debug("This is the respBody: " + resp.body)
 
     # muck with the return to take away internal ids
     if response_code == HTTP_OK
@@ -437,14 +438,10 @@ class ApiService < Sinatra::Base
       pid = []
       # iterate the array of appointments
       # iterate the array of appointments
-      LOG.debug(parsed)
-      LOG.debug(parsed["Appointments"])
-      parsed["Appointments"].each{ |x|
-        LOG.debug(x)
-      x["appointment_id"] = x['appointment_external_id']
-      pid = x['patient_id']
+      parsed.each { |x| 
+        x[1]['appointment_id'] = x[1]['appointment_external_id']
+        pid = x[1]['patient_ext_id']
       }
-      LOG.debug(pid)
 
       urlpatient = ''
       urlpatient << API_SVC_URL
@@ -459,12 +456,17 @@ class ApiService < Sinatra::Base
       LOG.debug("url for patient: " + urlpatient)
 
       resp2 = generate_http_request(urlpatient, "", "", "GET")
-      LOG.debug(resp2)
-      parsed << JSON.parse(resp2.body)
 
-      body(parsed.to_json)
+      parsed2 = JSON.parse(resp2.body)
+
+      result = []
+      result << parsed
+      result << parsed2
+
+
+      body(result.to_json)
     else
-      body(resp.body)
+      body(result.body)
     end
 
     status response_code
