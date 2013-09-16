@@ -98,4 +98,40 @@ class ApiService < Sinatra::Base
 
   end
 
+  #  lab acknowledge
+  #
+  # POST /v1/lab/:trackingid/ack
+  #
+  # server action: Return 200 if success, no content
+  # server response:
+  # --> if authenticated: 200
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  post '/v1/lab/:trackingid/ack' do
+
+    # Validate the input parameters
+    request_body = get_request_JSON
+
+    trackingid = params[:trackingid]
+
+    LOG.debug(trackingid)
+
+    urllabinbound = ''
+    urllabinbound << API_SVC_URL
+    urllabinbound << 'labs/acknowledgerequest/'
+    urllabinbound << trackingid
+    urllabinbound << '.json'
+
+    LOG.debug("url for lab inbound request: " + urllabinbound)
+
+    resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
+
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    status HTTP_OK
+
+  end
+
 end
