@@ -83,8 +83,29 @@ class ApiService < Sinatra::Base
     # Validate the input parameters
     request_body = get_request_JSON
 
+    ## generate key for post
+    current_date = DateTime.now()
+    random_id = Random.rand(50).to_s
+
+    LOG.debug("random id: #{random_id}")
+
+    mirth_key = ''
+    mirth_key << MIRTH_PRIVATE_KEY
+    mirth_key << current_date.strftime("%Y%m%d")
+    mirth_key << random_id
+
+    ##http://ruby-doc.org/stdlib-1.9.3/libdoc/digest/rdoc/Digest.html
+    LOG.debug(mirth_key)
+
+    h = Digest::SHA2.new << mirth_key
+    LOG.debug(h.to_s)
+
     urllaboutbound = ''
     urllaboutbound << MIRTH_SVC_URL
+    urllaboutbound << '?id='
+    urllaboutbound << random_id
+    urllaboutbound << '&key='
+    urllaboutbound << h.to_s
 
     LOG.debug("url for lab outbound request: " + urllaboutbound)
 
