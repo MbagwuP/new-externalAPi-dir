@@ -97,44 +97,12 @@ class ApiService < Sinatra::Base
     ##
     ## Request test:
     ##   curl -F "metadata=<documenttest.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/patient-1819622/upload\?authentication\=
-    alfresco_upload(internal_file_name, pass_in_token)
+    response = dms_upload(internal_file_name, pass_in_token)
+
+    handler_id = response["nodeid"]
 
     ## use rest client to do multipart form upload
     FileUtils.remove(internal_file_name)
-
-
-    ## after upload completes, call to retrieve the node-id (handler)
-    # curl http://uploads-dev.carecloud.local/documents/example.pdf/node-id\?token\=AQIC5wM2LY4SfczPZwSF0MGE2uTaM5NHZwC5vuNytaH7Wsk\=@AAJTSQACMDMAAlNLAAk1NzE0OTMzNTEAAlMxAAIwMQ\=\=%23
-    #  {"nodeid":"3ec97127-da8b-4ba3-ad1c-5e479c48eba6","filename":"example.pdf","callback":nil}%
-
-    handler_id = ''
-
-    urldochndlr = ''
-    urldochndlr << DOC_SERVICE_URL
-    urldochndlr << 'documents/'
-    urldochndlr << internal_file_name
-    urldochndlr << '/node-id?token='
-    urldochndlr << CGI::escape(pass_in_token)
-
-    LOG.debug("url for document node retrieve: " + urldochndlr)
-
-    resp = generate_http_request(urldochndlr, "", "", "GET")
-
-    response_code = map_response(resp.code)
-    if response_code == HTTP_OK
-
-      #invalid JSON is returned from this request
-      resp.body.gsub!(':null', ':""')
-      resp.body.gsub!(':nil', ':""')
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      handler_id = parsed["nodeid"].to_s
-
-    else
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Could not locate uploaded document handler"}'
-    end
 
     ## add required entities to the request
     request_body['document']['patient_id'] = patientid
@@ -175,25 +143,13 @@ class ApiService < Sinatra::Base
 
   end
 
-
-  # post uploads-dev.carecloud.local/documents/upload
-  # required params:
-  #    token:  token
-  # optional params:
-  #    preview: true (this will tell alfresco to keep the image temporarily)
-  # curl -F "RemoteFile=@example.pdf" http://uploads-dev.carecloud.local/documents/upload\?token\=AQIC5wM2LY4SfczPZwSF0MGE2uTaM5NHZwC5vuNytaH7Wsk\=@AAJTSQACMDMAAlNLAAk1NzE0OTMzNTEAAlMxAAIwMQ\=\=%23
-  ## CURL document up. build GET request to get Handler. Set handler on request below. World works
-  def alfresco_upload (file, token)
-
-    urluplddoc = ''
-    urluplddoc << DOC_SERVICE_URL
-    urluplddoc << 'documents/upload?token='
-    urluplddoc << CGI::escape(token)
-
-    LOG.debug("curl -F RemoteFile=@#{file} #{urluplddoc}")
-    response = `curl -F RemoteFile=@#{file} #{urluplddoc}`
-    ## note: there is no response from this call. This i am told is due to the scanner software were response indicates failure
-
+  ## upload the document to the DMS server
+  def dms_upload (file_path, token, params = {})
+    file = File.new(file_path, 'rb')
+    options = params.merge(file: file, token: token)
+    res = JSON.parse(post(DOC_SERVICE_URL,options))
+    LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
+    return res
   end
 
   def determine_file_type(file)

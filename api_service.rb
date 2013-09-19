@@ -8,6 +8,7 @@ require 'json'
 require 'socket'
 require 'net/https'
 require 'net/http'
+require 'rest-client'
 require 'cgi'
 require 'logger'
 require 'color'
@@ -16,9 +17,7 @@ require 'dalli'
 require 'mongo'
 require 'digest'
 
-
 include Mongo
-
 
 # Sinatra's way of splitting up a large project
 # include other endpoints
