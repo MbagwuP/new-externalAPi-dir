@@ -734,9 +734,7 @@ class ApiService < Sinatra::Base
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
-
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
 
     #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
     urllocation = ''
@@ -746,15 +744,10 @@ class ApiService < Sinatra::Base
     urllocation << '/statuses.json?token='
     urllocation << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appt sts: " + urllocation)
 
-    resp = generate_http_request(urllocation, "", "", "GET")
-
-    LOG.debug(resp.body)
-
+    resp = get(urllocation)
     body(resp.body)
-
-    status map_response(resp.code)
+    status resp.code
 
   end
 
@@ -776,9 +769,8 @@ class ApiService < Sinatra::Base
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
-
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+
 
     #http://localservices.carecloud.local:3000/appointments/1/resources.json?token=
     urlresource = ''
@@ -788,15 +780,9 @@ class ApiService < Sinatra::Base
     urlresource << '/resources.json?token='
     urlresource << CGI::escape(pass_in_token)
 
-    LOG.debug("url for resources: " + urlresource)
-
-    resp = generate_http_request(urlresource, "", "", "GET")
-
-    LOG.debug(resp.body)
-
+    resp = get(urlresource)
     body(resp.body)
-
-    status map_response(resp.code)
+    status resp.code
 
   end
 
