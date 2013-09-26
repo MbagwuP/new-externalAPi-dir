@@ -1,6 +1,6 @@
 class ApiService < Sinatra::Base
 
-# {
+#   {
 #     "allergy": [
 #         {
 #             "rx_norm_code": null,
@@ -13,16 +13,14 @@ class ApiService < Sinatra::Base
 #             "reaction": [
 #                 {
 #                     "description": "not bad",
-#                     "severity": "1",
-#                     "reaction": "14",
-#                     "snomed_code": "267036007",
+#                     "severity_id": "1",
+#                     "reaction_id": "14",
 #                     "status": "A"
 #                 },
 #                 {
 #                     "description": "freakish!!!!",
-#                     "severity": "Major",
-#                     "reaction": "12",
-#                     "snomed_code": "278528006",
+#                     "severity_id": "2",
+#                     "reaction_id": "12",
 #                     "status": "A"
 #                 }
 #             ]
