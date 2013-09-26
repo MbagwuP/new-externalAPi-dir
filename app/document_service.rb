@@ -101,6 +101,28 @@ class ApiService < Sinatra::Base
 
 
   # --------------------------
+  # Params definition
+  # :id     - Can accept a legacy_patient_id or a Chart id 
+  #       (e.x.: a1133a)
+  # 
+  # JSON Body
+  # {
+  #     "document": {
+  #         "name": "test document",
+  #         "format": "PDF",
+  #         "description": "this is a test document"
+  #     }
+  # }
+
+    # content-type: multipart/form-data
+  # Example test command:
+  #  curl -F "metadata=<documenttest.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy/a133a/upload\?authentication\=
+  # server action: Return status of upload
+  # server response:
+  # --> if document successfully uploaded: 201, with document id in response data
+  # --> if not authorized: 401
+  # --> if patient not found: 404
+  # --> if bad request: 400
 
   #Upload Document by Patient MRN
 
