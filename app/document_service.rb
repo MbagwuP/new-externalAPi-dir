@@ -55,6 +55,139 @@ class ApiService < Sinatra::Base
     ## if external id, lookup internal
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
+    local_file = create_local_file(patientid, params)
+
+    # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
+    file_type = determine_file_type(local_file)
+
+    document_type_regex = File.extname(local_file)
+    if document_type_regex == '.jpg'
+        document_type_regex = '\Aimage/\jpeg'
+        file_type_name = "JPG"
+    else
+        document_type_regex = '\Aapplication/\pdf'
+        file_type_name = "PDF"
+    end
+
+    #application/pdf; charset=binary
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
+
+    ## helpful articles
+    ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
+    ##   http://leejava.wordpress.com/2009/07/30/upload-file-from-rest-in-ruy-on-rail-with-json-format/
+    ##
+    ## Request test:
+    ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
+    response = dms_upload(local_file, pass_in_token)
+
+    handler_id = response["nodeid"]
+
+    ## use rest client to do multipart form upload
+    FileUtils.remove(local_file)
+
+    ## add required entities to the request
+    request_body['document']['patient_id'] = patientid
+    request_body['document']['handler'] = handler_id
+    request_body['document']['source'] = 1
+    request_body['document']['format'] = file_type_name
+
+    LOG.debug "Request body "
+    LOG.debug(request_body.to_s)
+    
+    create_document(patientid, pass_in_token, request_body)
+  end
+
+
+
+
+  # --------------------------
+  # Params definition
+  # :id     - Can accept a legacy_patient_id or a Chart id 
+  #       (e.x.: a1133a)
+  # 
+  # JSON Body
+  # {
+  #     "document": {
+  #         "name": "test document",
+  #         "format": "PDF",
+  #         "description": "this is a test document"
+  #     }
+  # }
+
+    # content-type: multipart/form-data
+  # Example test command:
+  #  curl -F "metadata=<documenttest.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy/a133a/upload\?authentication\=
+  # server action: Return status of upload
+  # server response:
+  # --> if document successfully uploaded: 201, with document id in response data
+  # --> if not authorized: 401
+  # --> if patient not found: 404
+  # --> if bad request: 400
+
+  #Upload Document by Patient MRN
+
+  post '/v1/documents/patient/legacy/:id/upload?' do
+
+    ## parameters passed in
+    LOG.debug(params[:metadata])
+    LOG.debug(params[:payload])
+    # Validate the input parameters
+    request_body = JSON.parse(params[:metadata])
+    #change to validate legacy length
+    #validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+    id = params[:id].to_s
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    ## muck with the request based on what internal needs
+    business_entity = get_business_entity(pass_in_token)
+
+    ## if external id, lookup internal
+    patientid = get_patient_id_with_other_id(id, business_entity, pass_in_token)
+
+    local_file = create_local_file(patientid, params)
+
+    # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
+    file_type = determine_file_type(local_file)
+
+    document_type_regex = File.extname(local_file)
+    if document_type_regex == '.jpg'
+        document_type_regex = '\Aimage/\jpeg'
+        file_type_name = "JPG"
+    else
+        document_type_regex = '\Aapplication/\pdf'
+        file_type_name = "PDF"
+    end
+
+    #application/pdf; charset=binary
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
+
+    ## helpful articles
+    ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
+    ##   http://leejava.wordpress.com/2009/07/30/upload-file-from-rest-in-ruy-on-rail-with-json-format/
+    ##
+    ## Request test:
+    ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
+    response = dms_upload(local_file, pass_in_token)
+
+    handler_id = response["nodeid"]
+
+    ## use rest client to do multipart form upload
+    FileUtils.remove(local_file)
+
+    ## add required entities to the request
+    request_body['document']['patient_id'] = patientid
+    request_body['document']['handler'] = handler_id
+    request_body['document']['source'] = 1
+    request_body['document']['format'] = file_type_name
+
+    LOG.debug "Request body "
+    LOG.debug(request_body.to_s)
+
+    create_document(patientid, pass_in_token, request_body)
+  end
+
+  def create_local_file(patientid, params)
     # Now the picture is an IO object!
     document_binary = params[:payload][:tempfile]
     document_name = params[:payload][:filename]
@@ -80,46 +213,11 @@ class ApiService < Sinatra::Base
     File.open(internal_file_name, "wb") do |file|
       file.write(document_binary.read)
     end
+    return internal_file_name
+  end
 
-    # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
-    file_type = determine_file_type(internal_file_name)
-
-    document_type_regex = File.extname(internal_file_name)
-    if document_type_regex == '.jpg'
-        document_type_regex = '\Aimage/\jpeg'
-        file_type_name = "JPG"
-    else
-        document_type_regex = '\Aapplication/\pdf'
-        file_type_name = "PDF"
-    end
-
-    #application/pdf; charset=binary
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
-
-    ## helpful articles
-    ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
-    ##   http://leejava.wordpress.com/2009/07/30/upload-file-from-rest-in-ruy-on-rail-with-json-format/
-    ##
-    ## Request test:
-    ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/patient-1819622/upload\?authentication\=AQIC5wM2LY4SfcxmRf7LAteRndBUo5Qb0z93O%2F0c2CNSJd8%3D%40AAJTSQACMDMAAlNLAAk0MzgzNDA4ODQAAlMxAAIwMQ%3D%3D%23
-    response = dms_upload(internal_file_name, pass_in_token)
-
-    handler_id = response["nodeid"]
-
-    ## use rest client to do multipart form upload
-    FileUtils.remove(internal_file_name)
-
-    ## add required entities to the request
-    request_body['document']['patient_id'] = patientid
-    request_body['document']['handler'] = handler_id
-    request_body['document']['source'] = 1
-    request_body['document']['format'] = file_type_name
-
-    LOG.debug "Request body "
-    LOG.debug(request_body.to_s)
-
-    # http://localservices.carecloud.local:3000/patients/:patient_id/documents/create.json?token=
-    urldoccrt = ''
+  def create_document(patientid, pass_in_token, request_body)
+     urldoccrt = ''
     urldoccrt << API_SVC_URL
     urldoccrt << 'patients/'
     urldoccrt << patientid.to_s
@@ -147,7 +245,6 @@ class ApiService < Sinatra::Base
     end
 
     status response_code
-
   end
 
   ## upload the document to the DMS server
