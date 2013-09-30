@@ -62,10 +62,10 @@ class ApiService < Sinatra::Base
 
     document_type_regex = File.extname(local_file)
     if document_type_regex == '.jpg'
-        document_type_regex = '\Aimage/\jpeg'
+        document_type_regex = '\Aimage\/jpeg'
         file_type_name = "JPG"
     else
-        document_type_regex = '\Aapplication/\pdf'
+        document_type_regex = '\Aapplication\/pdf'
         file_type_name = "PDF"
     end
 
@@ -258,8 +258,8 @@ class ApiService < Sinatra::Base
 
   def determine_file_type(file)
 
-    LOG.debug("file -Ib #{file}")
-    mimetype = `file -Ib #{file}`.gsub(/\n/, "")
+    LOG.debug("file -ib #{file}")
+    mimetype = `file -ib #{file}`.gsub(/\n/, "")
     LOG.debug "The MIME TYPE"
     LOG.debug(mimetype)
 
