@@ -336,6 +336,42 @@ class ApiService < Sinatra::Base
 
   end
 
+    def get_patient_id_with_other_id (id, business_entity_id, pass_in_token)
+
+      pass_in_token = CGI::unescape(pass_in_token)
+
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'businesses/'
+      urlpatient << business_entity_id
+      urlpatient << '/patients/'
+      urlpatient << id
+      urlpatient << '/othermeans.json?token='
+      urlpatient << CGI::escape(pass_in_token)
+
+      LOG.debug("url for patient: " + urlpatient)
+
+      resp = generate_http_request(urlpatient, "", "", "GET")
+
+      LOG.debug(resp.body)
+
+      response_code = map_response(resp.code)
+      if response_code == HTTP_OK
+
+        parsed = JSON.parse(resp.body)
+
+        patientid = parsed["patient"]["id"].to_s
+
+        LOG.debug(patientid)
+
+      else
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}'
+      end
+
+    return patientid
+
+  end
+
   # Control the level of logging based on settings
   before do
     content_type 'application/json', :charset => 'utf-8'

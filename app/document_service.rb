@@ -58,14 +58,15 @@ class ApiService < Sinatra::Base
     local_file = create_local_file(patientid, params)
 
     # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
-    file_type = determine_file_type(local_file)
+    file_type = File.extname(local_file)
 
     document_type_regex = File.extname(local_file)
+
     if document_type_regex == '.jpg'
-        document_type_regex = '\Aimage\/jpeg'
+        document_type_regex = '.jpg'
         file_type_name = "JPG"
     else
-        document_type_regex = '\Aapplication\/pdf'
+        document_type_regex = '.pdf'
         file_type_name = "PDF"
     end
 
@@ -148,14 +149,15 @@ class ApiService < Sinatra::Base
     local_file = create_local_file(patientid, params)
 
     # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
-    file_type = determine_file_type(local_file)
+    file_type = File.extname(local_file)
 
     document_type_regex = File.extname(local_file)
+
     if document_type_regex == '.jpg'
-        document_type_regex = '\Aimage/\jpeg'
+        document_type_regex = '.jpg'
         file_type_name = "JPG"
     else
-        document_type_regex = '\Aapplication/\pdf'
+        document_type_regex = '.pdf'
         file_type_name = "PDF"
     end
 
@@ -256,15 +258,5 @@ class ApiService < Sinatra::Base
     return res
   end
 
-  def determine_file_type(file)
-
-    LOG.debug("file -ib #{file}")
-    mimetype = `file -ib #{file}`.gsub(/\n/, "")
-    LOG.debug "The MIME TYPE"
-    LOG.debug(mimetype)
-
-    return mimetype
-
-  end
 
 end
