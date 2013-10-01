@@ -26,7 +26,7 @@ class ApiService < Sinatra::Base
 #             ]
 #         }
 #     ],
-#     "immunizations": [
+#     "immunization": [
 #         {
 #             "immunization_name": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
 #             "immunization_description": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
@@ -70,7 +70,17 @@ class ApiService < Sinatra::Base
 #             "quantity": "30.0",
 #             "days_supply": null
 #         }
-#     ]
+#     ],
+#     "problem":[
+#        {
+#             "snomed_code": "21983002",
+#             "icd9": "245.2",
+#             "name": "Thyroiditis, hashimotos",
+#             "description": null,
+#             "onset_at": "2013-09-04T13:00:00-04:00",
+#             "resolved_at": null,
+#             "status": "A"
+#     }]
 # }
 
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
@@ -134,6 +144,34 @@ if request_body['immunization']
     status response_code
     end   
 end
+
+if request_body['problem']
+    request_body['problem'].each do |newProb|
+    Problems = Hash.new
+    Problems['problem'] = newProb
+
+    urlproblems = ''
+    urlproblems << API_SVC_URL
+    urlproblems << 'patient_assertions/'
+    urlproblems << business_entity
+    urlproblems << '/patients/'
+    urlproblems << patient_id
+    urlproblems << '/create/'
+    urlproblems << '/problems.json?token='
+    urlproblems << CGI::escape(params[:authentication])
+
+
+    LOG.debug ("URL put together is: #{urlproblems} ")
+    LOG.debug(request_body.to_json)
+
+    resp = generate_http_request(urlproblems, "", Problems.to_json, "POST")
+
+        response_code = map_response(resp.code)
+
+    status response_code
+    end   
+end
+
     request_body['medication'].each do |newMed|
     Medications = Hash.new
     Medications['medication'] = newMed
@@ -380,6 +418,62 @@ post '/v1/patients/:patient_id/medications/create?' do
     status response_code
 
 end
+
+
+post '/v1/patients/:patient_id/problems/create?' do
+
+    local_pid = []
+    resp = []
+    # Validate the input parameters
+    request_body = get_request_JSON
+    pass_in_token = CGI::unescape(params[:authentication]) 
+    business_entity = get_business_entity(pass_in_token)
+    local_pid = params[:patient_id]
+    patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
+
+    LOG.debug "Request Body >>>>>"
+    LOG.debug(request_body)
+
+    request_body['problems'].each do |problem|
+
+    LOG.debug "business_entity: "
+    LOG.debug (business_entity)
+    LOG.debug(local_pid)
+
+    LOG.debug "patient_id: "
+    LOG.debug(patient_id)
+    problem['patient_id'] = local_pid
+
+    LOG.debug "Problem Object"
+    LOG.debug(problem)
+    Problem = Hash.new
+    Problem["problem"] = problem
+    LOG.debug(Problem)
+
+    urlproblems = ''
+    urlproblems << API_SVC_URL
+    urlproblems << 'patient_assertions/'
+    urlproblems << business_entity
+    urlproblems << '/patients/'
+    urlproblems << patient_id
+    urlproblems << '/create/'
+    urlproblems << '/problems.json?token='
+    urlproblems << CGI::escape(params[:authentication])
+
+    resp = generate_http_request(urlproblems, "", Problem.to_json, "POST")
+    LOG.debug(">>>>>>>>>>>>>>>>>>>>")
+    LOG.debug(problem.to_json)
+    end
+
+
+    response_code = map_response(resp.code)
+
+    body(resp.body)
+
+    status response_code
+
+end
+
 
 
 end
