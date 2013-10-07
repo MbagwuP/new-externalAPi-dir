@@ -96,23 +96,20 @@ class ApiService < Sinatra::Base
     urlprovider << '/providers.json?token='
     urlprovider << CGI::escape(pass_in_token)
 
-    LOG.debug("url for providers: " + urlprovider)
-
-    resp = generate_http_request(urlprovider, "", "", "GET")
-
-    LOG.debug(resp.body)
-
-    ## cache the result
-    begin
-      settings.cache.set(cache_key, resp.body.to_s, 50000)
-      LOG.debug("++++++++++cache set")
-    rescue => e
-      LOG.error("cannot reach cache store")
+        begin
+      response = RestClient.get(urlprovider)
+    rescue => e 
+      begin
+        errmsg = "Provider Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    body(resp.body)
-
-    status map_response(resp.code)
+    body(response.body)
+    
+    status HTTP_CREATED
 
   end
 

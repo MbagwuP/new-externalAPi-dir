@@ -87,27 +87,25 @@ class ApiService < Sinatra::Base
     urlapptcrt << '/appointments.json?token='
     urlapptcrt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment create: " + urlapptcrt)
-    #LOG.debug(request_body.to_json)
-
-    resp = generate_http_request(urlapptcrt, "", request_body.to_json, "POST")
-
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    ## ruby app returns 200
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      response_code = HTTP_CREATED
-      the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
-      body(the_response_hash.to_json)
-
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urlappt, request_body)
+    rescue => e 
+      begin
+        errmsg = "Appointment Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    parsed = JSON.parse(response.body)
+
+    the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
+
+    body(the_response_hash.to_json)
+
+    status HTTP_CREATED
+
 
   end
 
@@ -223,19 +221,22 @@ class ApiService < Sinatra::Base
     urlapptdel << '.json?token='
     urlapptdel << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment delete: " + urlapptdel)
-
-    resp = generate_http_request(urlapptdel, "", "", "DELETE")
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-      body(resp.body)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.delete(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Deletion Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    parsed = response.body
+
+    body(parsed)
+
+    status HTTP_OK
 
   end
 
@@ -291,18 +292,20 @@ class ApiService < Sinatra::Base
     urlappt << '&date='
     urlappt << the_date
 
-    LOG.debug("url for appointment: " + urlappt)
 
-    resp = generate_http_request(urlappt, "", "", "GET")
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    response_code = map_response(resp.code)
 
-    LOG.debug(resp.body)
-
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
+    parsed = JSON.parse(resp.body)
 
       # iterate the array of appointments
       parsed["appointments"].each { |x|
@@ -312,14 +315,10 @@ class ApiService < Sinatra::Base
 
       LOG.debug(parsed)
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
+    status HTTP_OK
 
   end
-
 
 
   ##  get appointments by id
@@ -358,34 +357,30 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyexternalid.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment: " + urlappt)
 
-    resp = generate_http_request(urlappt, "", "", "GET")
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    response_code = map_response(resp.code)
 
-    LOG.debug(resp.body)
+    parsed = JSON.parse(resp.body)
 
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug("Before Parsed: #{parsed}")
-      # iterate the array of appointments
       # iterate the array of appointments
       parsed.each { |x|
         LOG.debug(x)
         x['id'] = x['external_id']
       }
 
-      LOG.debug("After Parsed: #{parsed}")
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
-
+    status HTTP_OK
 
   end
 
@@ -423,19 +418,21 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyexternalid2.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment: " + urlappt)
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlappt, "", "", "GET")
+    parsed = JSON.parse(response.body)
 
-    response_code = map_response(resp.code)
-
-    LOG.debug("This is the respBody: " + resp.body)
-
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
       pid = []
+      # iterate the array of appointments
       # iterate the array of appointments
       # iterate the array of appointments
       parsed.each { |x| 
@@ -453,23 +450,27 @@ class ApiService < Sinatra::Base
       urlpatient << CGI::escape(pass_in_token)
       urlpatient << '&do_full_export=true'
 
-      LOG.debug("url for patient: " + urlpatient)
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Patient Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-      resp2 = generate_http_request(urlpatient, "", "", "GET")
 
-      parsed2 = JSON.parse(resp2.body)
+    parsed2 = JSON.parse(response.body)
 
       result = []
       result << parsed
       result << parsed2
 
-
       body(result.to_json)
-    else
-      body(result.body)
-    end
 
-    status response_code
+      status HTTP_OK
   end
 
   ##  get appointments by provider id
@@ -516,31 +517,26 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyprovider.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment: " + urlappt)
+        begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlappt, "", "", "GET")
 
-    response_code = map_response(resp.code)
-
-    LOG.debug(resp.body)
-
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-
-      # iterate the array of appointments
+    parsed = JSON.parse(response.body)
       parsed.each { |x|
         x['appointment']['id'] = x['appointment']['external_id']
       }
 
-      LOG.debug(parsed)
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -584,31 +580,26 @@ class ApiService < Sinatra::Base
     urlappt << '/listbypatient.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment: " + urlappt)
+            begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlappt, "", "", "GET")
 
-    response_code = map_response(resp.code)
-
-    LOG.debug(resp.body)
-
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-
-      # iterate the array of appointments
+    parsed = JSON.parse(response.body)
       parsed.each { |x|
         x['appointment']['id'] = x['appointment']['external_id']
       }
 
-      LOG.debug(parsed)
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -647,31 +638,27 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyresource.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment: " + urlappt)
 
-    resp = generate_http_request(urlappt, "", "", "GET")
+     begin
+      response = RestClient.get(urlappt)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    response_code = map_response(resp.code)
 
-    LOG.debug(resp.body)
-
-    # muck with the return to take away internal ids
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-
-      # iterate the array of appointments
+    parsed = JSON.parse(response.body)
       parsed.each { |x|
         x['appointment']['id'] = x['appointment']['external_id']
       }
 
-      LOG.debug(parsed)
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -705,16 +692,23 @@ class ApiService < Sinatra::Base
     urllocation << '/locations.json?token='
     urllocation << CGI::escape(pass_in_token)
 
-    LOG.debug("url for providers: " + urllocation)
+     begin
+      response = RestClient.get(urllocation)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urllocation, "", "", "GET")
 
-    LOG.debug(resp.body)
+    parsed = JSON.parse(response.body)
 
-    body(resp.body)
+      body(parsed.to_json)
 
-    status map_response(resp.code)
-
+    status HTTP_OK
   end
 
   #  get status information
@@ -747,7 +741,7 @@ class ApiService < Sinatra::Base
 
     resp = get(urllocation)
     body(resp.body)
-    status resp.code
+    status HTTP_OK
 
   end
 
@@ -782,7 +776,7 @@ class ApiService < Sinatra::Base
 
     resp = get(urlresource)
     body(resp.body)
-    status resp.code
+    status HTTP_OK
 
   end
 
@@ -830,17 +824,23 @@ class ApiService < Sinatra::Base
     urlapptreg << 'notification_callbacks.json?token='
     urlapptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment register: " + urlapptreg)
-    #LOG.debug(request_body.to_json)
+         begin
+      response = RestClient.post(urlapptreg, request_body)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlapptreg, "", request_body.to_json, "POST")
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    parsed = JSON.parse(response.body)
 
-    body(resp.body)
+    body(parsed.to_json)
 
-    status response_code
+    status HTTP_CREATED
 
   end
 
@@ -893,17 +893,23 @@ class ApiService < Sinatra::Base
     urlapptreg << '.json?token='
     urlapptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment register: " + urlapptreg)
-    #LOG.debug(request_body.to_json)
+    begin
+      response = RestClient.post(urlapptreg, request_body)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlapptreg, "", request_body.to_json, "PUT")
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    parsed = JSON.parse(response.body)
 
-    body(resp.body)
+    body(parsed.to_json)
 
-    status response_code
+    status HTTP_CREATED
 
   end
 
@@ -956,18 +962,24 @@ class ApiService < Sinatra::Base
     urlapptreg << '.json?token='
     urlapptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment register: " + urlapptreg)
-    #LOG.debug(request_body.to_json)
+    begin
+      response = RestClient.delete(urlapptreg, request_body)
+    rescue => e 
+      begin
+        errmsg = "Appointment Deletion Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlapptreg, "", request_body.to_json, "DELETE")
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    parsed = JSON.parse(response.body)
 
-    body(resp.body)
+    body(parsed.to_json)
 
-    status response_code
+    status HTTP_OK
 
-  end
+end
 
 end

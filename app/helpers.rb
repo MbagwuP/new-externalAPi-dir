@@ -460,4 +460,68 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
   end
 
+
+  #<---------------   New Methods   ----------------->
+    #<---------------   New Methods   ----------------->
+      #<---------------   New Methods   ----------------->
+        #<---------------   New Methods   ----------------->
+          #<---------------   New Methods   ----------------->
+
+    def get_all_business_entities(pass_in_token)
+
+    pass_in_token = CGI::unescape(pass_in_token)
+
+    ## check cache for business entity by token
+    cache_key = "business-entity-" + pass_in_token
+
+    begin
+      returned_business_entity_ids = settings.cache.get(cache_key)
+    rescue => e
+      returned_business_entity_ids = nil
+      LOG.error("Cache error - #{e.message}")
+    end
+
+    if returned_business_entity_ids.nil? || returned_business_entity_ids == ""
+
+      ## make webservice call to get business entitites by user
+      begin
+        response = RestClient.get("#{settings.core_api_service_url}/business_entities/list_by_user.json?list_type=list&token=#{CGI::escape(pass_in_token)}")
+      rescue => e
+          LOG.warn("Retrieving Business Entities by token Failed - #{e.message}")
+          return nil
+      end
+
+      parsed = JSON.parse(response.body)["business_entities"]
+
+      ## Extract business entities
+      returned_business_entity_ids = ''
+      parsed.each do |entity|
+        returned_business_entity_ids << entity["id"].to_s
+        returned_business_entity_ids << ','
+      end
+
+      ## cache the result
+      begin
+        settings.cache.set(cache_key, returned_business_entity_ids.to_s, 500000)
+      rescue => e
+        LOG.error("Cache error - #{e.message}")
+      end
+
+    end
+
+    return returned_business_entity_ids.to_s
+
+  end
+
+  def check_for_valid_business_entity (entity_id, pass_in_token)
+    entity_list = get_all_business_entities(pass_in_token)
+    
+    return false if entity_list.nil?
+    
+    return entity_list.include? entity_id.to_s
+  end
+
+
+
+
 end
