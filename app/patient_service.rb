@@ -755,7 +755,7 @@ end
     LOG.debug("url for genders: " + urlreference)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Gender Failed - #{e.message}"
@@ -800,7 +800,7 @@ end
     LOG.debug("url for ethnicities: " + urlreference)
    
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Ethnicity Failed - #{e.message}"
@@ -843,7 +843,7 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Languages Failed - #{e.message}"
@@ -886,7 +886,7 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Races Failed - #{e.message}"
@@ -929,7 +929,7 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Maritalstatuses Failed - #{e.message}"
@@ -973,7 +973,7 @@ end
     urlreference << CGI::escape(pass_in_token)
     
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Religions Failed - #{e.message}"
@@ -1015,7 +1015,7 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient States Failed - #{e.message}"
@@ -1058,7 +1058,7 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlpatient)
+      response = RestClient.get(urlreference)
     rescue => e 
       begin
         errmsg = "Retrieving Patient Employmentstatuses Failed - #{e.message}"
@@ -1124,7 +1124,7 @@ end
     urlptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urlpatient , request_body)
+      response = RestClient.post(urlptreg , request_body)
     rescue => e 
       begin
         errmsg = "Registering Patient Failed - #{e.message}"
@@ -1192,7 +1192,7 @@ end
     urlptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.put(urlpatient , request_body)
+      response = RestClient.put(urlptreg , request_body)
     rescue => e 
       begin
         errmsg = "Updating Patient Data Failed - #{e.message}"
@@ -1260,7 +1260,7 @@ end
     urlptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.delete(urlpatient, request_body)
+      response = RestClient.delete(urlptreg, request_body)
     rescue => e 
       begin
         errmsg = "Deleting Patient Data Failed - #{e.message}"

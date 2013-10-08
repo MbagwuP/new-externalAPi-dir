@@ -88,7 +88,7 @@ class ApiService < Sinatra::Base
     urlapptcrt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urlappt, request_body)
+      response = RestClient.post(urlapptcrt, request_body)
     rescue => e 
       begin
         errmsg = "Appointment Creation Failed - #{e.message}"
@@ -222,7 +222,7 @@ class ApiService < Sinatra::Base
     urlapptdel << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.delete(urlappt)
+      response = RestClient.delete(urlapptdel)
     rescue => e 
       begin
         errmsg = "Appointment Deletion Failed - #{e.message}"
@@ -305,7 +305,7 @@ class ApiService < Sinatra::Base
     end
 
 
-    parsed = JSON.parse(resp.body)
+    parsed = JSON.parse(response.body)
 
       # iterate the array of appointments
       parsed["appointments"].each { |x|
@@ -370,7 +370,7 @@ class ApiService < Sinatra::Base
     end
 
 
-    parsed = JSON.parse(resp.body)
+    parsed = JSON.parse(response.body)
 
       # iterate the array of appointments
       parsed.each { |x|
@@ -467,7 +467,8 @@ class ApiService < Sinatra::Base
       result = []
       result << parsed
       result << parsed2
-
+      LOG.debug "BODY RETURNED "
+    LOG.debug(result.to_json)
       body(result.to_json)
 
       status HTTP_OK
@@ -569,6 +570,8 @@ class ApiService < Sinatra::Base
 
     ##  get providers by business entity - check to make sure they are legit in pass in
     business_entity = get_business_entity(pass_in_token)
+
+    patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
     #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
     urlappt = ''
@@ -894,7 +897,7 @@ class ApiService < Sinatra::Base
     urlapptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urlapptreg, request_body)
+      response = RestClient.put(urlapptreg, request_body)
     rescue => e 
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
