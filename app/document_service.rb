@@ -226,27 +226,18 @@ class ApiService < Sinatra::Base
     urldoccrt << '/documents/create.json?token='
     urldoccrt << CGI::escape(pass_in_token)
 
-    LOG.debug("url for document create: " + urldoccrt)
-
-    resp = generate_http_request(urldoccrt, "", request_body.to_json, "POST")
-    
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-
-      parsed = JSON.parse(resp.body)
-       LOG.debug "Parsed "
-      LOG.debug(parsed)
-
-      returned_value = parsed
-
-      body(returned_value.to_s)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urldoccrt, request_body)
+    rescue => e 
+      begin
+        errmsg = "Document Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    status HTTP_CREATED
   end
 
   ## upload the document to the DMS server

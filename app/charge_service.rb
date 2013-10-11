@@ -68,22 +68,23 @@ class ApiService < Sinatra::Base
     LOG.debug("url for charge create: " + urlcharge)
     LOG.debug(request_body.to_json)
 
-    resp = generate_http_request(urlcharge, "", request_body.to_json, "POST")
-
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      body(parsed.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urlcharge, request_body)
+    rescue => e 
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+
+    parsed = JSON.parse(response.body)
+
+    body(parsed.to_json)
+
+    status HTTP_OK
 
   end
 

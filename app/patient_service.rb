@@ -25,20 +25,14 @@ class ApiService < Sinatra::Base
 
     # Validate the input parameters
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
-    patientid = params[:patientid]
-
-    #format to what the devservice needs
-    patientid.slice!(/^patient-/)
-
-    ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
-
+    #format to what the devservice needs
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    patientid = params[:patientid]
+    patientid.slice!(/^patient-/)
 
     ## if the patient id is all numeric call getById
     if is_this_numeric(patientid)
-
       urlpatient = ''
       urlpatient << API_SVC_URL
       urlpatient << 'businesses/'
@@ -48,7 +42,6 @@ class ApiService < Sinatra::Base
       urlpatient << '.json?token='
       urlpatient << CGI::escape(pass_in_token)
       urlpatient << '&do_full_export=true'
-
     else
 
       urlpatient = ''
@@ -61,29 +54,24 @@ class ApiService < Sinatra::Base
       urlpatient << CGI::escape(pass_in_token)
       urlpatient << '&do_full_export=true'
 
-
     end
 
-    LOG.debug("url for patient: " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", "", "GET")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      parsed["patient"]["id"] = parsed["patient"]["external_id"]
-      body(parsed.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    returnedBody = response.body
+
+    body(returnedBody)
+
+    status HTTP_OK
 
   end
 
@@ -126,28 +114,23 @@ class ApiService < Sinatra::Base
     urlpatient << CGI::escape(pass_in_token)
     urlpatient << '&do_full_export=true'
 
-
-    LOG.debug("url for patient: " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", "", "GET")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      parsed["patient"]["id"] = parsed["patient"]["external_id"]
-
-      body(parsed.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    returnedBody = response.body
+
+    body(returnedBody)
+
+    status HTTP_OK
+
 
   end
 
@@ -191,18 +174,23 @@ class ApiService < Sinatra::Base
     urlpatient << '/sync_list.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    LOG.debug("url for patient sync: " + urlpatient)
+    returnedBody = response.body
 
-    resp = generate_http_request(urlpatient, "", "", "GET")
+    body(returnedBody)
 
-    LOG.debug(resp.body)
+    status HTTP_OK
 
-    response_code = map_response(resp.code)
-
-    body(resp.body)
-
-    status response_code
 
   end
 
@@ -248,7 +236,7 @@ class ApiService < Sinatra::Base
   #             "extension": "5566"
   #         }
   #     ]
-  #}
+  # }
   #
   # Input requirements
   #   - date_of_birth: must be a valid Date. Hint: YYYY-MM-DD, YYYY/MM/DD, YYYYMMDD
@@ -299,24 +287,27 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for patient create: " + urlpatient)
 
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
-
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      returned_value = parsed["patient"]["external_id"]
-      the_response_hash = {:patient => returned_value.to_s}
-      body(the_response_hash.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urlpatient, request_body)
+    rescue => e 
+      begin
+        errmsg = "Create A Patient Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    returnedBody = JSON.parse(response.body)
+
+    patient_id = returnedBody['patient']['external_id']
+
+    LOG.debug(patient_id)
+
+    body(patient_id)
+
+    status HTTP_CREATED
+
 
   end
 
@@ -362,22 +353,24 @@ class ApiService < Sinatra::Base
     urlpatient << '.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-    LOG.debug("url for patient delete: " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", "", "DELETE")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
-    if response_code == HTTP_OK
-      body('{"success":"Patient has been deleted"}')
-    else
-      body(resp.body)
+    begin
+      response = RestClient.delete(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Delete Patient Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status map_response(resp.code)
+    returnedBody = response.body
 
-  end
+    body(returnedBody)
+
+    status HTTP_OK
+
+end
 
   #  update a patient
   #
@@ -487,23 +480,22 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for patient update: " + urlpatient)
 
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      parsed["patient"]["id"] = parsed["patient"]["external_id"]
-
-      body(parsed.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.put(urlpatient, request_body)
+    rescue => e 
+      begin
+        errmsg = "Update to Patient Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    returnedBody = response.body
+
+    body(returnedBody)
+
+    status HTTP_OK
 
   end
 
@@ -610,25 +602,19 @@ class ApiService < Sinatra::Base
     urlpatient << '/legacyid.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-
-    LOG.debug("url for legacy find patient (update): " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", "", "GET")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      internal_patient_id = parsed["patient"]["id"]
-
-    else
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient by legacy id"}'
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Cannot locate patient by legacy id - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
+
+    parsed = JSON.parse(response.body)
+    internal_patient_id = parsed["patient"]["id"]
 
     LOG.debug(internal_patient_id)
 
@@ -643,26 +629,24 @@ class ApiService < Sinatra::Base
     urlpatient << '.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-    LOG.debug("url for patient update: " + urlpatient)
+    begin
+      response = RestClient.put(urlpatient, request_body)
+    rescue => e 
+      begin
+        errmsg = "Cannot update patient by legacy id - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
+      parsed = JSON.parse(response.body)
 
       parsed["patient"]["id"] = parsed["patient"]["external_id"]
 
       body(parsed.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
-
+      status HTTP_OK
   end
 
 
@@ -718,25 +702,26 @@ class ApiService < Sinatra::Base
     urlpatient << '&search='
     urlpatient << CGI::escape(search_data)
 
-    LOG.debug("url for patient search: " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", "", "GET")
-
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      #parsed["patient"]["id"] = parsed["patient"]["external_id"]
-
-      body(parsed.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e 
+      begin
+        errmsg = "Search Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
-    status response_code
+    returnedBody = JSON.parse(response.body)
+
+    patient_id = returnedBody['patient']['external_id']
+
+    LOG.debug(patient_id)
+
+    body(patient_id)
+
+    status HTTP_OK
 
 
   end
@@ -769,15 +754,24 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for genders: " + urlreference)
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Gender Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    LOG.debug(resp.body)
+    returnedBody = response.body
 
-    body(resp.body)
+    body(returnedBody)
 
-    status map_response(resp.code)
+    status HTTP_OK
 
-  end
+end
 
   #  get ethnicity information
   #
@@ -804,16 +798,25 @@ class ApiService < Sinatra::Base
     urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for ethnicities: " + urlreference)
+   
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Ethnicity Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
+    status HTTP_OK
 
-    status map_response(resp.code)
-
-  end
+end
 
   #  get languge information
   #
@@ -839,15 +842,22 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_languages.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for languge: " + urlreference)
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Languages Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status map_response(resp.code)
+    status HTTP_OK
 
   end
 
@@ -875,15 +885,22 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_races.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for races: " + urlreference)
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Races Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status map_response(resp.code)
+    status HTTP_OK
 
   end
 
@@ -911,15 +928,22 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_marital_statuses.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for maritalstatuses: " + urlreference)
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Maritalstatuses Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status map_response(resp.code)
+    status HTTP_OK
 
   end
 
@@ -947,17 +971,23 @@ class ApiService < Sinatra::Base
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_religions.json?token='
     urlreference << CGI::escape(pass_in_token)
+    
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Religions Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    LOG.debug("url for religions: " + urlreference)
+    returnedBody = response.body
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    body(returnedBody)
 
-    LOG.debug(resp.body)
-
-    body(resp.body)
-
-    status map_response(resp.code)
-
+    status HTTP_OK
   end
 
   #  get state information
@@ -984,15 +1014,22 @@ class ApiService < Sinatra::Base
     urlreference << 'addresses/list_all_states.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for states: " + urlreference)
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient States Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status map_response(resp.code)
+    status HTTP_OK
 
   end
 
@@ -1020,16 +1057,22 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_employment_statuses.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for employmentstatuses: " + urlreference)
+    begin
+      response = RestClient.get(urlreference)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Employmentstatuses Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlreference, "", "", "GET")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status map_response(resp.code)
-
+    status HTTP_OK
   end
 
   # http://localservices.carecloud.local:3000/people/list_all_religions.json?token=
@@ -1080,17 +1123,22 @@ class ApiService < Sinatra::Base
     urlptreg << 'notification_callbacks.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for patient register: " + urlptreg)
-    #LOG.debug(request_body.to_json)
+    begin
+      response = RestClient.post(urlptreg , request_body)
+    rescue => e 
+      begin
+        errmsg = "Registering Patient Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlptreg, "", request_body.to_json, "POST")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -1143,17 +1191,22 @@ class ApiService < Sinatra::Base
     urlptreg << '.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment register: " + urlptreg)
-    #LOG.debug(request_body.to_json)
+    begin
+      response = RestClient.put(urlptreg , request_body)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlptreg, "", request_body.to_json, "PUT")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -1206,17 +1259,22 @@ class ApiService < Sinatra::Base
     urlptreg << '.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    LOG.debug("url for appointment register: " + urlptreg)
-    #LOG.debug(request_body.to_json)
+    begin
+      response = RestClient.delete(urlptreg, request_body)
+    rescue => e 
+      begin
+        errmsg = "Deleting Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlptreg, "", request_body.to_json, "DELETE")
+    returnedBody = response.body
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    body(returnedBody)
 
-    body(resp.body)
-
-    status response_code
+    status HTTP_OK
 
   end
 
@@ -1387,26 +1445,23 @@ class ApiService < Sinatra::Base
     urlpatient << '/createextended.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    LOG.debug("url for patient-extended create: " + urlpatient)
+    begin
+      response = RestClient.post(urlpatient, request_body)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
-
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
+      parsed = JSON.parse(response.body)
       returned_value = parsed["patient"]["external_id"]
       the_response_hash = {:patient => returned_value.to_s}
       body(the_response_hash.to_json)
-    else
-      body(resp.body)
-    end
 
-    status response_code
+    status HTTP_OK
 
   end
 
