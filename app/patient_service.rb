@@ -1287,136 +1287,145 @@ end
   #
   # Params definition
   # JSON:
-  # {
-  #     "insurance_profile": {
-  #         "business_entity_id": 1,
-  #         "responsible_party_relationship": "FATHER", (OPTIONS: map_constants("SELF" => '18', "SPOUSE" => '01', "CHILD" => '19', "OTHER" => 'G8', "ATTORNEY" => '60'))
-  #         "is_default": true,
-  #         "responsible_party": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ],
-  #             "phones": [
-  #                 {
-  #                     "phone_number": "5552221212",
-  #                     "phone_type_id": "3",
-  #                     "extension": "3433"
-  #                 },
-  #                 {
-  #                     "phone_number": "3332221212",
-  #                     "phone_type_id": "2",
-  #                     "extension": "5566",
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     },
-  #     "primary_insurance": {
-  #         "interface_id": 1,
-  #         "business_entity_id": 1,
-  #         "insured_person_relationship_type": "SELF",
-  #         "member_number": "M4847575754",
-  #         "policy_id": 232455,
-  #         "effective_date": "2010-03-04",
-  #         "type": "SELF",
-  #         "payer": {
-  #             "id": 1,
-  #             "name": "BCBS Mass",
-  #             "name2": "Boston Branch",
-  #             "address": {
-  #                 "line1": "123 fake st",
-  #                 "line2": "apt3",
-  #                 "city": "newton",
-  #                 "state_id": 22,
-  #                 "zip_code": "07488",
-  #                 "country_id": 225
-  #             },
-  #             "group_number": "G393988444",
-  #             "group_name": "Special Group 001",
-  #             "phone": "3334445555"
-  #         },
-  #         "insured": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     },
-  #     "secondary_insurance": {
-  #         "interface_id": 1,
-  #         "business_entity_id": 1,
-  #         "insured_person_relationship_type": "OTHER",
-  #         "member_number": "M4335754",
-  #         "policy_id": 2455,
-  #         "effective_date": "2010-07-04",
-  #         "type": "OTHER",
-  #         "payer": {
-  #             "id": 1,
-  #             "name": "Aetna",
-  #             "name2": "Grove Dist",
-  #             "address": {
-  #                 "line1": "127 fake st",
-  #                 "line2": "apt3",
-  #                 "city": "newton",
-  #                 "state_id": 22,
-  #                 "zip_code": "07488",
-  #                 "country_id": 225
-  #             },
-  #             "group_number": "G3788444",
-  #             "group_name": "Special Group 004",
-  #             "phone": "3334488555"
-  #         },
-  #         "insured": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     }
-  # }
+# {
+#     "insurance_profile": {
+#         "responsible_party_relationship": "OTHER",
+#         "is_default": true,
+#         "responsible_party": {
+#             "first_name": "bob",
+#             "last_name": "lee",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "123 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ],
+#             "phones": [
+#                 {
+#                     "phone_number": "5552221212",
+#                     "phone_type_id": "3",
+#                     "extension": "3433"
+#                 },
+#                 {
+#                     "phone_number": "3332221212",
+#                     "phone_type_id": "2",
+#                     "extension": "5566",
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     },
+#     "primary_insurance": {
+#         "insured_person_relationship_type": "OTHER",
+#         "insurance_policy_type_id": "1",
+#         "member_number": "M4847575754",
+#         "policy_id": 232455,
+#         "effective_date": "2010-03-04",
+#         "type": "Other",
+#         "group_name": "Special Group",
+#         "payer": {
+#             "id": "1",
+#             "name": "BCBS Mass",
+#             "name2": "Boston Branch",
+#             "address": {
+#                 "line1": "123 fake st",
+#                 "line2": "apt3",
+#                 "city": "newton",
+#                 "state_id": 22,
+#                 "zip_code": "07488",
+#                 "country_id": 225
+#             },
+#             "phone": "3334445555"
+#         },
+#         "insured": {
+#             "first_name": "bob",
+#             "last_name": "smith",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "123 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ],
+#             "phones": [
+#                 {
+#                     "phone_number": "5552221212",
+#                     "phone_type_id": "3",
+#                     "extension": "3433"
+#                 },
+#                 {
+#                     "phone_number": "3332221212",
+#                     "phone_type_id": "2",
+#                     "extension": "5566",
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     },
+#     "secondary_insurance": {
+#         "insured_person_relationship_type": "SELF",
+#         "insurance_policy_type_id": "2",
+#         "member_number": "M4335754",
+#         "policy_id": 2455,
+#         "group_name": "Special Group 004",
+#         "effective_date": "2010-07-04",
+#         "type": "Self",
+#         "payer": {
+#             "id": "2",
+#             "name": "Aetna",
+#             "name2": "Grove Dist",
+#             "address": {
+#                 "line1": "127 fake st",
+#                 "line2": "apt3",
+#                 "city": "newton",
+#                 "state_id": 22,
+#                 "zip_code": "07488",
+#                 "country_id": 225
+#             },
+#             "phone": "3334488555"
+#         },
+#         "insured": {
+#             "first_name": "bob",
+#             "last_name": "smith",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "124 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     }
+# }
+
   # server action: Return patient id
   # server response:
   # --> if success: 200, with patient id
