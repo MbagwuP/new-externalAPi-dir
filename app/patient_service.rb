@@ -1123,22 +1123,24 @@ end
     urlptreg << 'notification_callbacks.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    begin
-      response = RestClient.post(urlptreg , request_body)
-    rescue => e 
-      begin
-        errmsg = "Registering Patient Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
+
+    resp = generate_http_request(urlptreg, "", request_body.to_json, "POST")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      returned_value = parsed["patient"]["external_id"]
+      the_response_hash = {:patient => returned_value.to_s}
+      body(the_response_hash.to_json)
+    else
+      body(resp.body)
     end
-
-    returnedBody = response.body
-
-    body(returnedBody)
-
-    status HTTP_OK
+    status response_code
 
   end
 
@@ -1425,43 +1427,61 @@ end
 
     ## Validate the input parameters
     request_body = get_request_JSON
-
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]
-
     #format to what the devservice needs
     patientid.slice!(/^patient-/)
-
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
 
-    business_entity = get_business_entity(pass_in_token)
+    business_entity_id = get_business_entity(pass_in_token)
 
-    # http://localservices.carecloud.local:3000/patients/2/createextended.json?token=
+    # http://localservices.carecloud.local:3000/business_entity/12/patients/2/createextended.json?token=
     urlpatient = ''
     urlpatient << API_SVC_URL
-    urlpatient << 'patients/'
+    urlpatient << 'business_entity/'
+    urlpatient << business_entity_id
+    urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '/createextended.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.post(urlpatient, request_body)
-    rescue => e 
-      begin
-        errmsg = "Retrieving Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
 
-      parsed = JSON.parse(response.body)
+    resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
       returned_value = parsed["patient"]["external_id"]
       the_response_hash = {:patient => returned_value.to_s}
       body(the_response_hash.to_json)
+    else
+      body(resp.body)
+    end
+    status response_code
 
-    status HTTP_OK
+    # begin
+    #   response = RestClient.put(urlpatient, request_body)
+    # rescue => e 
+    #   begin
+    #     errmsg = "Retrieving Patient Data Failed - #{e.message}"
+    #     api_svc_halt e.http_code, errmsg
+    #   rescue
+    #     api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+    #   end
+    # end
+
+    #   parsed = JSON.parse(response.body)
+    #   returned_value = parsed["patient"]["external_id"]
+    #   the_response_hash = {:patient => returned_value.to_s}
+    #   body(the_response_hash.to_json)
+
+    # status HTTP_OK
 
   end
 
