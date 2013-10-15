@@ -24,14 +24,17 @@ class ApiService < Sinatra::Base
     ## WebService
     begin
 
-      server = API_SVC_URL
+      #server = API_SVC_URL
       #server = "dev.carecloud.local"
-      server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
+      #server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
 
-      ping_count = 10
-      result = `ping -q -c #{ping_count} #{server}`
+      ## change to curl command:
+      ## https://services.carecloud.com/system/status_check
 
-      if ($?.exitstatus == 0)
+      uri = URI.parse(API_SVC_URL)
+      conn = Net::HTTP::get_response(uri)
+
+      if (conn.code.to_s == "200")
         webserviceUp = true
       end
 
