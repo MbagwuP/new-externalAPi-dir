@@ -6,7 +6,6 @@
 
 class ApiService < Sinatra::Base
 
-
   #  get patient by id
   #
   # GET /v1/patients/<patientid#>?authentication=<authenticationToken>
@@ -278,6 +277,28 @@ class ApiService < Sinatra::Base
 
     business_entity = get_business_entity(pass_in_token)
 
+    getpreferences = ''
+    getpreferences << API_SVC_URL
+    getpreferences << 'business_entity/'
+    getpreferences << business_entity
+    getpreferences << '/patientpreferences.json?token=' 
+    getpreferences << CGI::escape(params[:authentication])
+
+    resp = generate_http_request(getpreferences,'', '' ,"GET")
+
+    response_code = map_response(resp.code)
+
+    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY >>>>>>>>>>>>>>>>"
+    LOG.debug(request_body)
+
+    temp = JSON.parse(resp.body)
+    LOG.debug(temp)
+    if response_code == 200
+    request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
+    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY 2 >>>>>>>>>>>>>>>>"
+    LOG.debug(request_body)
+    end
+
     urlpatient = ''
     urlpatient << API_SVC_URL
     urlpatient << 'businesses/'
@@ -285,28 +306,25 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    LOG.debug("url for patient create: " + urlpatient)
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
 
-    begin
-      response = RestClient.post(urlpatient, request_body)
-    rescue => e 
-      begin
-        errmsg = "Create A Patient Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+    resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      returned_value = parsed["patient"]["external_id"]
+      the_response_hash = {:patient => returned_value.to_s}
+      body(the_response_hash.to_json)
+    else
+      body(resp.body)
     end
+    status response_code
 
-    returnedBody = JSON.parse(response.body)
-
-    patient_id = returnedBody['patient']['external_id']
-
-    LOG.debug(patient_id)
-
-    body(patient_id)
-
-    status HTTP_CREATED
 
 
   end
@@ -1493,5 +1511,13 @@ end
     # status HTTP_OK
 
   end
+
+  private
+        def get_patient_with_preference_settings(patient, patient_preference)
+        patient["signature_source_id"] = patient["signature_source_id"].nil? ? patient_preference["default_signature_source_id"] : patient["signature_source_id"]
+        patient["release_of_information_source_id"] = patient["release_of_information_source_id"].nil? ? patient_preference["default_release_of_information_source_id"] : patient["release_of_information_source_id"]
+        patient["provider_assignment_indicator_id"] = patient["provider_assignment_indicator_id"].nil? ? patient_preference["default_provider_assignment_indicator_id"] : patient["provider_assignment_indicator_id"]
+        return patient
+        end
 
 end
