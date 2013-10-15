@@ -8,6 +8,7 @@ require 'json'
 require 'socket'
 require 'net/https'
 require 'net/http'
+require 'log4r'
 require 'rest-client'
 require 'cgi'
 require 'logger'
@@ -54,10 +55,12 @@ class ApiService < Sinatra::Base
     configure do
 
         # Setup logger & format
-        LOG = Logger.new('log/external_api.log', 'weekly')
-        LOG.formatter = proc do |severity, datetime, progname, msg|
-            "#{datetime} #{severity}: #{msg}\n"
-        end
+
+        # Setup logger and default logging level
+        Log4r::StderrOutputter.new('console')
+        Log4r::FileOutputter.new('logfile', :filename => 'log/external_api.log', :trunc => false)
+        LOG = Log4r::Logger.new('logger')
+        LOG.add('console', 'logfile')
 
         config_path = Dir.pwd + "/config/settings.yml"
 
@@ -106,7 +109,7 @@ class ApiService < Sinatra::Base
     configure :development do
     
         # Set logging level
-        LOG.level = Logger::DEBUG
+        LOG.level = Log4r::DEBUG
 
         # configurations
         ENV_CLASS = "dev"
@@ -121,7 +124,7 @@ class ApiService < Sinatra::Base
     configure :qa do
 
         # Set logging level
-        LOG.level = Logger::WARN
+        LOG.level = Log4r::WARN
 
         ENV_CLASS = "qa"
         
@@ -132,7 +135,7 @@ class ApiService < Sinatra::Base
     configure :staging do
 
         # Set logging level
-        LOG.level = Logger::ERROR
+        LOG.level = Log4r::ERROR
 
         ENV_CLASS = "staging"
         
@@ -143,7 +146,7 @@ class ApiService < Sinatra::Base
     configure :production do
 
         # Set logging level
-        LOG.level = Logger::ERROR
+        LOG.level = Log4r::ERROR
 
         ENV_CLASS = "production"
         
