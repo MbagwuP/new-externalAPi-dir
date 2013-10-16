@@ -24,13 +24,6 @@ class ApiService < Sinatra::Base
     ## WebService
     begin
 
-      #server = API_SVC_URL
-      #server = "dev.carecloud.local"
-      #server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
-
-      ## change to curl command:
-      ## https://services.carecloud.com/system/status_check
-
       uri = URI.parse(API_SVC_URL)
       conn = Net::HTTP::get_response(uri)
 
@@ -66,14 +59,13 @@ class ApiService < Sinatra::Base
 
     ## Doc Store
     begin
-      server = DOC_SERVICE_URL
 
-      server = server.sub(/^https?\:\/\//, '').sub(/^www./, '').sub(/\/$/, '')
+      urlToUse = "#{DOC_SERVICE_URL}/ha.txt"
 
-      ping_count = 10
-      result = `ping -q -c #{ping_count} #{server}`
+      uri2 = URI.parse(urlToUse)
+      conn2 = Net::HTTP::get_response(uri2)
 
-      if ($?.exitstatus == 0)
+      if (conn2.code.to_s == "200")
         docStoreUp = true
       end
 
