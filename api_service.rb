@@ -86,6 +86,9 @@ class ApiService < Sinatra::Base
         set :labs_user, config["lab_user"]
         set :labs_pass, config["lab_pass"]
 
+        set :mirth_edi_token, config["mirth_edi_token"]
+        set :mirth_ip, config["mirth_ip_address"]
+
         # initialize the cache
         set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
         set :public_folder, 'public'

@@ -166,62 +166,68 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(pass_in_token)
     LOG.debug("passed in token: " + pass_in_token)
 
-    ## check cache for business entity by token
-    cache_key = "business-entity-" + pass_in_token
+    ## HACK: Special logic for mirth
+    if pass_in_token == settings.mirth_edi_token
+      return process_backdoor_business_entity(pass_in_token)
+    else
 
-    LOG.debug("cache key: " + cache_key)
+      ## check cache for business entity by token
+      cache_key = "business-entity-" + pass_in_token
 
-    begin
-      returned_business_entity_id = settings.cache.get(cache_key)
-    rescue => e
-      returned_business_entity_id = ""
-      LOG.error("cannot reach cache store")
-    end
+      LOG.debug("cache key: " + cache_key)
 
-    if returned_business_entity_id.nil? || returned_business_entity_id == ""
-
-      LOG.debug("business entity not found in cache, making the call")
-
-      ## make webservice call to get business entitites by user
-      urlbusentitylist = ''
-      urlbusentitylist << API_SVC_URL
-      urlbusentitylist << 'business_entities/list_by_user.json?list_type=list&token='
-      urlbusentitylist << CGI::escape(pass_in_token)
-
-      LOG.debug("url for business entity list: " + urlbusentitylist)
-
-      resp = generate_http_request(urlbusentitylist, "", "", "GET")
-
-      LOG.debug(resp.body)
-
-      response_code = map_response(resp.code.to_s)
-
-      if response_code == HTTP_OK
-
-        ## validate business entity passed in is in list
-        parsed = JSON.parse(resp.body)["business_entities"]
-
-        api_svc_halt HTTP_BAD_REQUEST, '{"error":"User is assigned to more then one business entity"}' if parsed.length > 1
-
-        returned_business_entity_id = parsed[0]["id"]
-        LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
-
-        ## cache the result
-        begin
-          settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
-          LOG.debug("++++++++++cache set")
-        rescue => e
-          LOG.error("cannot reach cache store")
-        end
-      elsif response_code == HTTP_FORBIDDEN
-        api_svc_halt HTTP_FORBIDDEN, resp.body
-      else
-        api_svc_halt HTTP_INTERNAL_ERROR, resp.body
+      begin
+        returned_business_entity_id = settings.cache.get(cache_key)
+      rescue => e
+        returned_business_entity_id = ""
+        LOG.error("cannot reach cache store")
       end
+
+      if returned_business_entity_id.nil? || returned_business_entity_id == ""
+
+        LOG.debug("business entity not found in cache, making the call")
+
+        ## make webservice call to get business entitites by user
+        urlbusentitylist = ''
+        urlbusentitylist << API_SVC_URL
+        urlbusentitylist << 'business_entities/list_by_user.json?list_type=list&token='
+        urlbusentitylist << CGI::escape(pass_in_token)
+
+        LOG.debug("url for business entity list: " + urlbusentitylist)
+
+        resp = generate_http_request(urlbusentitylist, "", "", "GET")
+
+        LOG.debug(resp.body)
+
+        response_code = map_response(resp.code.to_s)
+
+        if response_code == HTTP_OK
+
+          ## validate business entity passed in is in list
+          parsed = JSON.parse(resp.body)["business_entities"]
+
+          api_svc_halt HTTP_BAD_REQUEST, '{"error":"User is assigned to more then one business entity"}' if parsed.length > 1
+
+          returned_business_entity_id = parsed[0]["id"]
+          LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+
+          ## cache the result
+          begin
+            settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+            LOG.debug("++++++++++cache set")
+          rescue => e
+            LOG.error("cannot reach cache store")
+          end
+        elsif response_code == HTTP_FORBIDDEN
+          api_svc_halt HTTP_FORBIDDEN, resp.body
+        else
+          api_svc_halt HTTP_INTERNAL_ERROR, resp.body
+        end
+      end
+
+      return returned_business_entity_id.to_s
+
     end
-
-    return returned_business_entity_id.to_s
-
 
   end
 
@@ -461,12 +467,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  #<---------------   New Methods   ----------------->
-    #<---------------   New Methods   ----------------->
-      #<---------------   New Methods   ----------------->
-        #<---------------   New Methods   ----------------->
-          #<---------------   New Methods   ----------------->
-
     def get_all_business_entities(pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
@@ -521,6 +521,78 @@ class ApiService < Sinatra::Base
     return entity_list.include? entity_id.to_s
   end
 
+
+  def process_backdoor_business_entity (pass_in_token)
+
+    patientid = params[:patientid]
+    patientid.slice!(/^patient-/)
+
+    ## check IP addresses
+    ipaddress = request.ip
+    LOG.debug(ipaddress)
+    api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
+
+    ## call for BE by patient
+
+    ## check cache for business entity by token
+    cache_key = "business-entity-patient-" + patientid
+
+    LOG.debug("cache key: " + cache_key)
+
+    begin
+      returned_business_entity_id = settings.cache.get(cache_key)
+    rescue => e
+      returned_business_entity_id = ""
+      LOG.error("cannot reach cache store")
+    end
+
+    if returned_business_entity_id.nil? || returned_business_entity_id == ""
+
+      LOG.debug("business entity not found in cache, making the call")
+
+      ## make webservice call to get business entitites by user
+      urlbusentitylist = ''
+      urlbusentitylist << API_SVC_URL
+      urlbusentitylist << 'business_entities/list_by_patient/'
+      urlbusentitylist <<  patientid
+      urlbusentitylist << '.json?token='
+      urlbusentitylist << CGI::escape(pass_in_token)
+
+      LOG.debug("url for business entity list: " + urlbusentitylist)
+
+      resp = generate_http_request(urlbusentitylist, "", "", "GET")
+
+      LOG.debug(resp.body)
+
+      response_code = map_response(resp.code.to_s)
+
+      if response_code == HTTP_OK
+
+        ## validate business entity passed in is in list
+        parsed = JSON.parse(resp.body)
+
+        returned_business_entity_id = parsed[0]["patient"]["business_entity_id"]
+        LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+
+        ## cache the result
+        begin
+          settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+          LOG.debug("++++++++++cache set")
+        rescue => e
+          LOG.error("cannot reach cache store")
+        end
+      elsif response_code == HTTP_FORBIDDEN
+        api_svc_halt HTTP_FORBIDDEN, resp.body
+      else
+        api_svc_halt HTTP_INTERNAL_ERROR, resp.body
+      end
+    end
+
+
+    ## return BE
+    return returned_business_entity_id.to_s()
+
+  end
 
 
 
