@@ -244,7 +244,7 @@ class ApiService < Sinatra::Base
   def dms_upload (file_path, token, params = {})
     file = File.new(file_path, 'rb')
     options = params.merge(file: file, token: token)
-    res = JSON.parse(post(DOC_SERVICE_URL,options))
+    res = JSON.parse(post("#{DOC_SERVICE_URL}/documents",options))
     LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
     return res
   end

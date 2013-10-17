@@ -6,7 +6,6 @@
 
 class ApiService < Sinatra::Base
 
-
   #  get patient by id
   #
   # GET /v1/patients/<patientid#>?authentication=<authenticationToken>
@@ -278,6 +277,28 @@ class ApiService < Sinatra::Base
 
     business_entity = get_business_entity(pass_in_token)
 
+    getpreferences = ''
+    getpreferences << API_SVC_URL
+    getpreferences << 'business_entity/'
+    getpreferences << business_entity
+    getpreferences << '/patientpreferences.json?token=' 
+    getpreferences << CGI::escape(params[:authentication])
+
+    resp = generate_http_request(getpreferences,'', '' ,"GET")
+
+    response_code = map_response(resp.code)
+
+    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY >>>>>>>>>>>>>>>>"
+    LOG.debug(request_body)
+
+    temp = JSON.parse(resp.body)
+    LOG.debug(temp)
+    if response_code == 200
+    request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
+    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY 2 >>>>>>>>>>>>>>>>"
+    LOG.debug(request_body)
+    end
+
     urlpatient = ''
     urlpatient << API_SVC_URL
     urlpatient << 'businesses/'
@@ -285,28 +306,25 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    LOG.debug("url for patient create: " + urlpatient)
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
 
-    begin
-      response = RestClient.post(urlpatient, request_body)
-    rescue => e 
-      begin
-        errmsg = "Create A Patient Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+    resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      returned_value = parsed["patient"]["external_id"]
+      the_response_hash = {:patient => returned_value.to_s}
+      body(the_response_hash.to_json)
+    else
+      body(resp.body)
     end
+    status response_code
 
-    returnedBody = JSON.parse(response.body)
-
-    patient_id = returnedBody['patient']['external_id']
-
-    LOG.debug(patient_id)
-
-    body(patient_id)
-
-    status HTTP_CREATED
 
 
   end
@@ -1123,22 +1141,24 @@ end
     urlptreg << 'notification_callbacks.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    begin
-      response = RestClient.post(urlptreg , request_body)
-    rescue => e 
-      begin
-        errmsg = "Registering Patient Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
+
+    resp = generate_http_request(urlptreg, "", request_body.to_json, "POST")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      returned_value = parsed["patient"]["external_id"]
+      the_response_hash = {:patient => returned_value.to_s}
+      body(the_response_hash.to_json)
+    else
+      body(resp.body)
     end
-
-    returnedBody = response.body
-
-    body(returnedBody)
-
-    status HTTP_OK
+    status response_code
 
   end
 
@@ -1285,136 +1305,145 @@ end
   #
   # Params definition
   # JSON:
-  # {
-  #     "insurance_profile": {
-  #         "business_entity_id": 1,
-  #         "responsible_party_relationship": "FATHER", (OPTIONS: map_constants("SELF" => '18', "SPOUSE" => '01', "CHILD" => '19', "OTHER" => 'G8', "ATTORNEY" => '60'))
-  #         "is_default": true,
-  #         "responsible_party": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ],
-  #             "phones": [
-  #                 {
-  #                     "phone_number": "5552221212",
-  #                     "phone_type_id": "3",
-  #                     "extension": "3433"
-  #                 },
-  #                 {
-  #                     "phone_number": "3332221212",
-  #                     "phone_type_id": "2",
-  #                     "extension": "5566",
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     },
-  #     "primary_insurance": {
-  #         "interface_id": 1,
-  #         "business_entity_id": 1,
-  #         "insured_person_relationship_type": "SELF",
-  #         "member_number": "M4847575754",
-  #         "policy_id": 232455,
-  #         "effective_date": "2010-03-04",
-  #         "type": "SELF",
-  #         "payer": {
-  #             "id": 1,
-  #             "name": "BCBS Mass",
-  #             "name2": "Boston Branch",
-  #             "address": {
-  #                 "line1": "123 fake st",
-  #                 "line2": "apt3",
-  #                 "city": "newton",
-  #                 "state_id": 22,
-  #                 "zip_code": "07488",
-  #                 "country_id": 225
-  #             },
-  #             "group_number": "G393988444",
-  #             "group_name": "Special Group 001",
-  #             "phone": "3334445555"
-  #         },
-  #         "insured": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     },
-  #     "secondary_insurance": {
-  #         "interface_id": 1,
-  #         "business_entity_id": 1,
-  #         "insured_person_relationship_type": "OTHER",
-  #         "member_number": "M4335754",
-  #         "policy_id": 2455,
-  #         "effective_date": "2010-07-04",
-  #         "type": "OTHER",
-  #         "payer": {
-  #             "id": 1,
-  #             "name": "Aetna",
-  #             "name2": "Grove Dist",
-  #             "address": {
-  #                 "line1": "127 fake st",
-  #                 "line2": "apt3",
-  #                 "city": "newton",
-  #                 "state_id": 22,
-  #                 "zip_code": "07488",
-  #                 "country_id": 225
-  #             },
-  #             "group_number": "G3788444",
-  #             "group_name": "Special Group 004",
-  #             "phone": "3334488555"
-  #         },
-  #         "insured": {
-  #             "first_name": "bob",
-  #             "last_name": "smith",
-  #             "middle_initial": "A",
-  #             "date_of_birth": "2000-08-09",
-  #             "ssn": "333-55-6666",
-  #             "gender_id": 1,
-  #             "email": "no@email.com",
-  #             "addresses": [
-  #                 {
-  #                     "line1": "123 fake st",
-  #                     "line2": "apt3",
-  #                     "city": "newton",
-  #                     "state_id": 22,
-  #                     "zip_code": "07488",
-  #                     "country_id": 225,
-  #                     "is_primary": true
-  #                 }
-  #             ]
-  #         }
-  #     }
-  # }
+# {
+#     "insurance_profile": {
+#         "responsible_party_relationship": "OTHER",
+#         "is_default": true,
+#         "responsible_party": {
+#             "first_name": "bob",
+#             "last_name": "lee",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "123 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ],
+#             "phones": [
+#                 {
+#                     "phone_number": "5552221212",
+#                     "phone_type_id": "3",
+#                     "extension": "3433"
+#                 },
+#                 {
+#                     "phone_number": "3332221212",
+#                     "phone_type_id": "2",
+#                     "extension": "5566",
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     },
+#     "primary_insurance": {
+#         "insured_person_relationship_type": "OTHER",
+#         "insurance_policy_type_id": "1",
+#         "member_number": "M4847575754",
+#         "policy_id": 232455,
+#         "effective_date": "2010-03-04",
+#         "type": "Other",
+#         "group_name": "Special Group",
+#         "payer": {
+#             "id": "1",
+#             "name": "BCBS Mass",
+#             "name2": "Boston Branch",
+#             "address": {
+#                 "line1": "123 fake st",
+#                 "line2": "apt3",
+#                 "city": "newton",
+#                 "state_id": 22,
+#                 "zip_code": "07488",
+#                 "country_id": 225
+#             },
+#             "phone": "3334445555"
+#         },
+#         "insured": {
+#             "first_name": "bob",
+#             "last_name": "smith",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "123 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ],
+#             "phones": [
+#                 {
+#                     "phone_number": "5552221212",
+#                     "phone_type_id": "3",
+#                     "extension": "3433"
+#                 },
+#                 {
+#                     "phone_number": "3332221212",
+#                     "phone_type_id": "2",
+#                     "extension": "5566",
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     },
+#     "secondary_insurance": {
+#         "insured_person_relationship_type": "SELF",
+#         "insurance_policy_type_id": "2",
+#         "member_number": "M4335754",
+#         "policy_id": 2455,
+#         "group_name": "Special Group 004",
+#         "effective_date": "2010-07-04",
+#         "type": "Self",
+#         "payer": {
+#             "id": "2",
+#             "name": "Aetna",
+#             "name2": "Grove Dist",
+#             "address": {
+#                 "line1": "127 fake st",
+#                 "line2": "apt3",
+#                 "city": "newton",
+#                 "state_id": 22,
+#                 "zip_code": "07488",
+#                 "country_id": 225
+#             },
+#             "phone": "3334488555"
+#         },
+#         "insured": {
+#             "first_name": "bob",
+#             "last_name": "smith",
+#             "middle_initial": "A",
+#             "date_of_birth": "2000-08-09",
+#             "ssn": "333-55-6666",
+#             "gender_id": 1,
+#             "email": "no@email.com",
+#             "addresses": [
+#                 {
+#                     "line1": "124 fake st",
+#                     "line2": "apt3",
+#                     "city": "newton",
+#                     "state_id": 22,
+#                     "zip_code": "07488",
+#                     "country_id": 225,
+#                     "is_primary": true
+#                 }
+#             ]
+#         }
+#     }
+# }
+
   # server action: Return patient id
   # server response:
   # --> if success: 200, with patient id
@@ -1425,44 +1454,70 @@ end
 
     ## Validate the input parameters
     request_body = get_request_JSON
-
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]
-
     #format to what the devservice needs
     patientid.slice!(/^patient-/)
-
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
 
-    business_entity = get_business_entity(pass_in_token)
+    business_entity_id = get_business_entity(pass_in_token)
 
-    # http://localservices.carecloud.local:3000/patients/2/createextended.json?token=
+    # http://localservices.carecloud.local:3000/business_entity/12/patients/2/createextended.json?token=
     urlpatient = ''
     urlpatient << API_SVC_URL
-    urlpatient << 'patients/'
+    urlpatient << 'business_entity/'
+    urlpatient << business_entity_id
+    urlpatient << '/patients/'
     urlpatient << patientid
     urlpatient << '/createextended.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.post(urlpatient, request_body)
-    rescue => e 
-      begin
-        errmsg = "Retrieving Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
+    LOG.debug(request_body)
+    LOG.debug("url for patient-extended create: " + urlpatient)
 
-      parsed = JSON.parse(response.body)
+    resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    if response_code == HTTP_CREATED
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
       returned_value = parsed["patient"]["external_id"]
       the_response_hash = {:patient => returned_value.to_s}
       body(the_response_hash.to_json)
+    else
+      body(resp.body)
+    end
+    status response_code
 
-    status HTTP_OK
+    # begin
+    #   response = RestClient.put(urlpatient, request_body)
+    # rescue => e 
+    #   begin
+    #     errmsg = "Retrieving Patient Data Failed - #{e.message}"
+    #     api_svc_halt e.http_code, errmsg
+    #   rescue
+    #     api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+    #   end
+    # end
+
+    #   parsed = JSON.parse(response.body)
+    #   returned_value = parsed["patient"]["external_id"]
+    #   the_response_hash = {:patient => returned_value.to_s}
+    #   body(the_response_hash.to_json)
+
+    # status HTTP_OK
 
   end
+
+  private
+        def get_patient_with_preference_settings(patient, patient_preference)
+        patient["signature_source_id"] = patient["signature_source_id"].nil? ? patient_preference["default_signature_source_id"] : patient["signature_source_id"]
+        patient["release_of_information_source_id"] = patient["release_of_information_source_id"].nil? ? patient_preference["default_release_of_information_source_id"] : patient["release_of_information_source_id"]
+        patient["provider_assignment_indicator_id"] = patient["provider_assignment_indicator_id"].nil? ? patient_preference["default_provider_assignment_indicator_id"] : patient["provider_assignment_indicator_id"]
+        return patient
+        end
 
 end
