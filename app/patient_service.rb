@@ -306,25 +306,22 @@ class ApiService < Sinatra::Base
     urlpatient << '/patients.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    LOG.debug(request_body)
-    LOG.debug("url for patient-extended create: " + urlpatient)
-
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "POST")
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      returned_value = parsed["patient"]["external_id"]
-      the_response_hash = {:patient => returned_value.to_s}
-      body(the_response_hash.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urlpatient, request_body.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Appointment Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
-    status response_code
 
+    returnedBody = response.body
+
+    body(returnedBody)
+
+    status HTTP_OK
 
 
   end
@@ -499,7 +496,7 @@ end
     LOG.debug("url for patient update: " + urlpatient)
 
     begin
-      response = RestClient.put(urlpatient, request_body)
+      response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Update to Patient Failed - #{e.message}"
@@ -648,7 +645,7 @@ end
     urlpatient << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.put(urlpatient, request_body)
+      response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Cannot update patient by legacy id - #{e.message}"
@@ -1141,24 +1138,22 @@ end
     urlptreg << 'notification_callbacks.json?token='
     urlptreg << CGI::escape(pass_in_token)
 
-    LOG.debug(request_body)
-    LOG.debug("url for patient-extended create: " + urlpatient)
-
-    resp = generate_http_request(urlptreg, "", request_body.to_json, "POST")
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
-      returned_value = parsed["patient"]["external_id"]
-      the_response_hash = {:patient => returned_value.to_s}
-      body(the_response_hash.to_json)
-    else
-      body(resp.body)
+    begin
+      response = RestClient.post(urlptreg , request_body.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
-    status response_code
+
+    returnedBody = response.body
+
+    body(returnedBody)
+
+    status HTTP_OK
 
   end
 
@@ -1212,7 +1207,7 @@ end
     urlptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.put(urlptreg , request_body)
+      response = RestClient.put(urlptreg , request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Updating Patient Data Failed - #{e.message}"
@@ -1473,42 +1468,23 @@ end
     urlpatient << '/createextended.json?token='
     urlpatient << CGI::escape(params[:authentication])
 
-    LOG.debug(request_body)
-    LOG.debug("url for patient-extended create: " + urlpatient)
+    begin
+      response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    resp = generate_http_request(urlpatient, "", request_body.to_json, "PUT")
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
-
-    if response_code == HTTP_CREATED
-      parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
-
+      parsed = JSON.parse(response.body)
       returned_value = parsed["patient"]["external_id"]
       the_response_hash = {:patient => returned_value.to_s}
       body(the_response_hash.to_json)
-    else
-      body(resp.body)
-    end
-    status response_code
 
-    # begin
-    #   response = RestClient.put(urlpatient, request_body)
-    # rescue => e 
-    #   begin
-    #     errmsg = "Retrieving Patient Data Failed - #{e.message}"
-    #     api_svc_halt e.http_code, errmsg
-    #   rescue
-    #     api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-    #   end
-    # end
-
-    #   parsed = JSON.parse(response.body)
-    #   returned_value = parsed["patient"]["external_id"]
-    #   the_response_hash = {:patient => returned_value.to_s}
-    #   body(the_response_hash.to_json)
-
-    # status HTTP_OK
+    status HTTP_OK
 
   end
 

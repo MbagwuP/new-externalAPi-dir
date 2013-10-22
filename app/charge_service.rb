@@ -69,7 +69,7 @@ class ApiService < Sinatra::Base
     LOG.debug(request_body.to_json)
 
     begin
-      response = RestClient.post(urlcharge, request_body)
+      response = RestClient.post(urlcharge, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"

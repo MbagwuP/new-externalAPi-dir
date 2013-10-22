@@ -114,12 +114,18 @@ if request_body['allergy']
     urlallergies << CGI::escape(params[:authentication])
 
 
-    resp = generate_http_request(urlallergies, "", Allergy.to_json, "POST")
-    response_code = map_response(resp.code)
-
-    status response_code
+    begin
+      response = RestClient.post(urlallergies , Allergy.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
-
+    status HTTP_OK  
+    end
 end
 
 if request_body['immunization']
@@ -136,12 +142,19 @@ if request_body['immunization']
     urlimmunizations << CGI::escape(params[:authentication])
 
 
-    resp = generate_http_request(urlimmunizations, "", Immunizations.to_json, "POST")
+    begin
+      response = RestClient.post(urlimmunizations , Immunizations.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-        response_code = map_response(resp.code)
-
-    status response_code
-    end   
+    status HTTP_OK
+    end
 end
 
 if request_body['problem']
@@ -160,12 +173,18 @@ if request_body['problem']
     urlproblems << CGI::escape(params[:authentication])
 
 
-    resp = generate_http_request(urlproblems, "", Problems.to_json, "POST")
-    response_code = map_response(resp.code)
-
-    body(resp.body)
-    status response_code
-   end
+    begin
+      response = RestClient.post(urlproblems , Problems.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    status HTTP_OK
+    end
 end
 
     request_body['medication'].each do |newMed|
@@ -179,11 +198,18 @@ end
     urlmedications << '/medications.json?token='
     urlmedications << CGI::escape(params[:authentication])
 
-    resp = generate_http_request(urlmedications, "", Medications.to_json, "POST")
-    response_code = map_response(resp.code)
+    begin
+      response = RestClient.post(urlmedications , Medications.to_json, :content_type => :json)
+    rescue => e 
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
-    body(resp.body)
-    status response_code
+    status HTTP_OK
     end
 end
 
@@ -250,7 +276,7 @@ post '/v1/patients/:patient_id/allergies/create?' do
     urlallergies << CGI::escape(params[:authentication])
 
     begin
-      response = RestClient.post(urlallergies, Allergy)
+      response = RestClient.post(urlallergies, Allergy.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Allergy Creation Failed - #{e.message}"
@@ -318,7 +344,7 @@ post '/v1/patients/:patient_id/immunizations/create?' do
     urlimmunizations << CGI::escape(params[:authentication])
 
     begin
-      response = RestClient.post(urlimmunizations, Immunizations)
+      response = RestClient.post(urlimmunizations, Immunizations.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Immunizations Creation Failed - #{e.message}"
@@ -407,7 +433,7 @@ post '/v1/patients/:patient_id/medications/create?' do
     urlmedications << CGI::escape(params[:authentication])
 
     begin
-      response = RestClient.post(urlmedications, Medications)
+      response = RestClient.post(urlmedications, Medications.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Medications Creation Failed - #{e.message}"
@@ -465,7 +491,7 @@ post '/v1/patients/:patient_id/problems/create?' do
 
 
     begin
-      response = RestClient.post(urlproblems, Problems)
+      response = RestClient.post(urlproblems, Problems.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Immunizations Creation Failed - #{e.message}"
