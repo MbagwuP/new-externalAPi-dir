@@ -113,19 +113,11 @@ if request_body['allergy']
     urlallergies << '/patient_allergies.json?token='
     urlallergies << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.post(urlallergies, Allergy)
-    rescue => e 
-      begin
-        errmsg = "Allergy Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
 
-    status HTTP_CREATED
+    resp = generate_http_request(urlallergies, "", Allergy.to_json, "POST")
+    response_code = map_response(resp.code)
 
+    status response_code
     end
 
 end
@@ -136,29 +128,22 @@ if request_body['immunization']
     Immunizations['immunization'] = newImm
     urlimmunizations = ''
     urlimmunizations << API_SVC_URL
-    urlimmunizations << 'patient_immmunizations/'
+    urlimmunizations << 'patient_immunizations/'
     urlimmunizations << business_entity
     urlimmunizations << '/patients/'
     urlimmunizations << patient_id
-    urlimmunizations << '/patient_immmunizations.json?token='
+    urlimmunizations << '/patient_immunizations.json?token='
     urlimmunizations << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.post(urlimmunizations, Immunizations)
-    rescue => e 
-      begin
-        errmsg = "Immunizations Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
 
-    status HTTP_CREATED
+    resp = generate_http_request(urlimmunizations, "", Immunizations.to_json, "POST")
 
-    end
+        response_code = map_response(resp.code)
 
+    status response_code
+    end   
 end
+
 if request_body['problem']
     request_body['problem'].each do |newProb|
     Problems = Hash.new
@@ -175,20 +160,14 @@ if request_body['problem']
     urlproblems << CGI::escape(params[:authentication])
 
 
-    begin
-      response = RestClient.post(urlproblems, Problems)
-    rescue => e 
-      begin
-        errmsg = "Immunizations Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
+    resp = generate_http_request(urlproblems, "", Problems.to_json, "POST")
+    response_code = map_response(resp.code)
 
-    status HTTP_CREATED
+    body(resp.body)
+    status response_code
+   end
 end
-end
+
     request_body['medication'].each do |newMed|
     Medications = Hash.new
     Medications['medication'] = newMed
@@ -200,18 +179,11 @@ end
     urlmedications << '/medications.json?token='
     urlmedications << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.post(urlmedications, Medications)
-    rescue => e 
-      begin
-        errmsg = "Medications Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
+    resp = generate_http_request(urlmedications, "", Medications.to_json, "POST")
+    response_code = map_response(resp.code)
 
-    status HTTP_CREATED
+    body(resp.body)
+    status response_code
     end
 end
 

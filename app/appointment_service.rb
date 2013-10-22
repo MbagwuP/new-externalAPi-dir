@@ -87,25 +87,27 @@ class ApiService < Sinatra::Base
     urlapptcrt << '/appointments.json?token='
     urlapptcrt << CGI::escape(pass_in_token)
 
-    begin
-      response = RestClient.post(urlapptcrt, request_body)
-    rescue => e 
-      begin
-        errmsg = "Appointment Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+    LOG.debug("url for appointment create: " + urlapptcrt)
+    #LOG.debug(request_body.to_json)
+
+    resp = generate_http_request(urlapptcrt, "", request_body.to_json, "POST")
+
+    LOG.debug(resp.body)
+    response_code = map_response(resp.code)
+
+    ## ruby app returns 200
+    if response_code == HTTP_OK
+
+      parsed = JSON.parse(resp.body)
+      response_code = HTTP_CREATED
+      the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
+      body(the_response_hash.to_json)
+
+    else
+      body(resp.body)
     end
 
-    parsed = JSON.parse(response.body)
-
-    the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
-
-    body(the_response_hash.to_json)
-
-    status HTTP_CREATED
-
+    status response_code
 
   end
 
