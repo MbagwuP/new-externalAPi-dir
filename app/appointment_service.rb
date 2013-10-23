@@ -88,7 +88,7 @@ class ApiService < Sinatra::Base
     urlapptcrt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urlapptcrt, request_body)
+      response = RestClient.post(urlapptcrt, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Appointment Creation Failed - #{e.message}"
@@ -828,7 +828,7 @@ class ApiService < Sinatra::Base
     urlapptreg << CGI::escape(pass_in_token)
 
          begin
-      response = RestClient.post(urlapptreg, request_body)
+      response = RestClient.post(urlapptreg, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -897,7 +897,7 @@ class ApiService < Sinatra::Base
     urlapptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.put(urlapptreg, request_body)
+      response = RestClient.put(urlapptreg, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"

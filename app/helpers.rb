@@ -342,37 +342,37 @@ class ApiService < Sinatra::Base
 
   end
 
-    def get_patient_id_with_other_id (id, business_entity_id, pass_in_token)
+  def get_patient_id_with_other_id (id, business_entity_id, pass_in_token)
 
-      pass_in_token = CGI::unescape(pass_in_token)
+    pass_in_token = CGI::unescape(pass_in_token)
 
-      urlpatient = ''
-      urlpatient << API_SVC_URL
-      urlpatient << 'businesses/'
-      urlpatient << business_entity_id
-      urlpatient << '/patients/'
-      urlpatient << id
-      urlpatient << '/othermeans.json?token='
-      urlpatient << CGI::escape(pass_in_token)
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity_id
+    urlpatient << '/patients/'
+    urlpatient << id
+    urlpatient << '/othermeans.json?token='
+    urlpatient << CGI::escape(pass_in_token)
 
-      LOG.debug("url for patient: " + urlpatient)
+    LOG.debug("url for patient: " + urlpatient)
 
-      resp = generate_http_request(urlpatient, "", "", "GET")
+    resp = generate_http_request(urlpatient, "", "", "GET")
 
-      LOG.debug(resp.body)
+    LOG.debug(resp.body)
 
-      response_code = map_response(resp.code)
-      if response_code == HTTP_OK
+    response_code = map_response(resp.code)
+    if response_code == HTTP_OK
 
-        parsed = JSON.parse(resp.body)
+      parsed = JSON.parse(resp.body)
 
-        patientid = parsed["patient"]["id"].to_s
+      patientid = parsed["patient"]["id"].to_s
 
-        LOG.debug(patientid)
+      LOG.debug(patientid)
 
-      else
-        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}'
-      end
+    else
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}'
+    end
 
     return patientid
 
@@ -467,7 +467,7 @@ class ApiService < Sinatra::Base
   end
 
 
-    def get_all_business_entities(pass_in_token)
+  def get_all_business_entities(pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
 
@@ -487,8 +487,8 @@ class ApiService < Sinatra::Base
       begin
         response = RestClient.get("#{settings.core_api_service_url}/business_entities/list_by_user.json?list_type=list&token=#{CGI::escape(pass_in_token)}")
       rescue => e
-          LOG.warn("Retrieving Business Entities by token Failed - #{e.message}")
-          return nil
+        LOG.warn("Retrieving Business Entities by token Failed - #{e.message}")
+        return nil
       end
 
       parsed = JSON.parse(response.body)["business_entities"]
@@ -515,9 +515,9 @@ class ApiService < Sinatra::Base
 
   def check_for_valid_business_entity (entity_id, pass_in_token)
     entity_list = get_all_business_entities(pass_in_token)
-    
+
     return false if entity_list.nil?
-    
+
     return entity_list.include? entity_id.to_s
   end
 

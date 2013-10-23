@@ -227,7 +227,7 @@ class ApiService < Sinatra::Base
     urldoccrt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urldoccrt, request_body)
+      response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
         errmsg = "Document Creation Failed - #{e.message}"
