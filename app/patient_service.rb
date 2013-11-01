@@ -1300,7 +1300,7 @@ end
   #
   # Params definition
   # JSON:
-# {
+#{
 #     "insurance_profile": {
 #         "responsible_party_relationship": "OTHER",
 #         "is_default": true,
@@ -1437,8 +1437,8 @@ end
 #             ]
 #         }
 #     }
-# }
-
+#}
+    # EOR
   # server action: Return patient id
   # server response:
   # --> if success: 200, with patient id
