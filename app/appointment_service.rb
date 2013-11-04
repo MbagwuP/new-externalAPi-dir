@@ -99,11 +99,8 @@ class ApiService < Sinatra::Base
     end
 
     parsed = JSON.parse(response.body)
-
     the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
-
     body(the_response_hash.to_json)
-
     status HTTP_CREATED
 
 
@@ -233,7 +230,6 @@ class ApiService < Sinatra::Base
     end
 
     parsed = response.body
-
     body(parsed)
 
     status HTTP_OK
@@ -840,9 +836,7 @@ class ApiService < Sinatra::Base
 
 
     parsed = JSON.parse(response.body)
-
     body(parsed.to_json)
-
     status HTTP_CREATED
 
   end

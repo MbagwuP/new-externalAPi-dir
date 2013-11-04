@@ -297,7 +297,9 @@ describe "ApiService" do
             post url, var1
             puts last_response.body
             #the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
-            last_response.status.should == 201
+            valid_regex = /{"patient":"(.*)"}/
+            last_response.body.should =~ (valid_regex)
+            last_response.status.should == 200
         end
 
         it "should update the patient" do
