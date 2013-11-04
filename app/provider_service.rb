@@ -109,7 +109,7 @@ class ApiService < Sinatra::Base
 
     body(response.body)
     
-    status HTTP_CREATED
+    status HTTP_OK
 
   end
 
