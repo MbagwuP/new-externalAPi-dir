@@ -66,9 +66,9 @@ class ApiService < Sinatra::Base
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json)
 
     status HTTP_OK
 
@@ -124,9 +124,9 @@ class ApiService < Sinatra::Base
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json)
 
     status HTTP_OK
 
@@ -235,7 +235,7 @@ class ApiService < Sinatra::Base
   #             "extension": "5566"
   #         }
   #     ]
-  # }
+  #}
   #
   # Input requirements
   #   - date_of_birth: must be a valid Date. Hint: YYYY-MM-DD, YYYY/MM/DD, YYYYMMDD
@@ -295,8 +295,6 @@ class ApiService < Sinatra::Base
     LOG.debug(temp)
     if response_code == 200
     request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
-    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY 2 >>>>>>>>>>>>>>>>"
-    LOG.debug(request_body)
     end
 
     urlpatient = ''
@@ -310,19 +308,19 @@ class ApiService < Sinatra::Base
       response = RestClient.post(urlpatient, request_body.to_json, :content_type => :json)
     rescue => e 
       begin
-        errmsg = "Appointment Creation Failed - #{e.message}"
+        errmsg = "Patient Creation Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
-
+    returnedBody = JSON.parse(response.body)
+    value = returnedBody["patient"]["external_id"]
+    the_response_hash = {:patient => value.to_s}
+    #Client Related: Return just patient id
+    body(the_response_hash.to_json)
     status HTTP_OK
-
 
   end
 
@@ -379,9 +377,7 @@ class ApiService < Sinatra::Base
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
+    body('{"success":"Patient has been deleted"}')
 
     status HTTP_OK
 
@@ -506,9 +502,9 @@ end
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json)
 
     status HTTP_OK
 
@@ -729,13 +725,8 @@ end
     end
 
     returnedBody = JSON.parse(response.body)
-
-    patient_id = returnedBody['patient']['external_id']
-
-    LOG.debug(patient_id)
-
-    body(patient_id)
-
+    returnedBody["patient"]["id"] = returnedBody["patient"]["external_id"]
+    body(returnedBody.to_json)
     status HTTP_OK
 
 
@@ -1285,9 +1276,7 @@ end
       end
     end
 
-    returnedBody = response.body
-
-    body(returnedBody)
+    body('{"success":"Patient has been deleted"}')
 
     status HTTP_OK
 
