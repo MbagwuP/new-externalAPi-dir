@@ -21,7 +21,6 @@ class ApiService < Sinatra::Base
   # --> if not found: 404
   # --> if exception: 500
   get '/v1/patients/:patientid?' do
-
     # Validate the input parameters
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     pass_in_token = CGI::unescape(params[:authentication])
@@ -320,7 +319,7 @@ class ApiService < Sinatra::Base
     the_response_hash = {:patient => value.to_s}
     #Client Related: Return just patient id
     body(the_response_hash.to_json)
-    status HTTP_OK
+    status HTTP_CREATED
 
   end
 
@@ -1144,7 +1143,7 @@ end
 
     body(returnedBody)
 
-    status HTTP_OK
+    status HTTP_CREATED
 
   end
 
