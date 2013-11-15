@@ -38,7 +38,7 @@ class ApiService < Sinatra::Base
 
     body("ok")
 
-    status HTTP_OK
+    status HTTP_CREATED
 
   end
 

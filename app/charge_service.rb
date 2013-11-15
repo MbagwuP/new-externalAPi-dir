@@ -84,8 +84,46 @@ class ApiService < Sinatra::Base
 
     body(parsed.to_json)
 
+    status HTTP_CREATED
+
+  end
+  #returns charges
+
+  get '/v1/charges/:patient_id?' do
+
+    LOG.debug("0")
+    pass_in_token = CGI::unescape(params[:authentication])
+    #business_entity = get_business_entity(pass_in_token)
+    LOG.debug("0.5")
+    pid = params[:patient_id]
+    LOG.debug("1")
+    LOG.debug(pid)
+
+    url = ''
+    url << API_SVC_URL
+    url << 'patient_id/'
+    url <<  pid
+    url << '/charge/listbypatient.json?token='
+    url << CGI::escape(pass_in_token)
+
+    LOG.debug(url)
+    LOG.debug("2")
+    begin
+      response = RestClient.get(url)
+    rescue => e
+      begin
+        errmsg = "Patient charge Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    body(parsed.to_json)
     status HTTP_OK
 
   end
+
 
 end

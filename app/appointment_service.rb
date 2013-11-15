@@ -906,7 +906,7 @@ class ApiService < Sinatra::Base
 
     body(parsed.to_json)
 
-    status HTTP_CREATED
+    status HTTP_OK
 
   end
 

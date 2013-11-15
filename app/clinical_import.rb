@@ -82,6 +82,33 @@ class ApiService < Sinatra::Base
 #     }]
 # }
 
+  get '/v1/get/test' do
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = '123'
+
+    url = ''
+    url << API_SVC_URL
+    url << 'business_entity/'
+    url << business_entity
+    url << '/patients/'
+    url << patient_id
+    url << "/check.json?token="
+    url << CGI::escape(params[:authentication])
+
+    begin
+      response = RestClient.get(url)
+    rescue => e
+      begin
+        errmsg = "Updating Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    status HTTP_CREATED
+  end
 
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
 
@@ -124,7 +151,7 @@ if request_body['allergy']
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    status HTTP_OK  
+    status HTTP_CREATED
     end
 end
 
@@ -447,7 +474,112 @@ post '/v1/patients/:patient_id/medications/create?' do
     end
 
 end
+  #
+  #{
+  #    "vitals": [
+  #    {
+  #        "observations": [
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "4",
+  #    "value": "80",
+  #    "value_uom_id": "558"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "1",
+  #    "value": "88",
+  #    "value_uom_id": "74"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "3",
+  #    "value": "60",
+  #    "value_uom_id": "299"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "2",
+  #    "value": "30",
+  #    "value_uom_id": "299"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "5",
+  #    "value": "1",
+  #    "value_uom_id": "559"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "6",
+  #    "value": "65",
+  #    "value_uom_id": "160"
+  #},
+  #    {
+  #        "status": "A",
+  #    "observation_type_id": "7",
+  #    "value": "892",
+  #    "value_uom_id": "372"
+  #}
+  #]
+  #}
+  #]
+  #}
 
+  post '/v1/patients/:patient_id/vitals/create?' do
+
+    local_pid = []
+    resp = []
+    # Validate the input parameters
+    request_body = get_request_JSON
+    local_pid = params['patient_id']
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
+
+    request_body['vitals'].each do |newVitals|
+      Vitals = Hash.new
+      Vitals['vitals'] = newVitals
+
+      urlvitals = ''
+      urlvitals << API_SVC_URL
+      urlvitals << 'patient_vitals/'
+      urlvitals << business_entity
+      urlvitals << '/patients/'
+      urlvitals << patient_id
+      urlvitals << '/create/vitals.json?token='
+      urlvitals << CGI::escape(params[:authentication])
+
+      begin
+        response = RestClient.post(urlvitals, Vitals.to_json, :content_type => :json)
+      rescue => e
+        begin
+          errmsg = "Vitals Creation Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      status HTTP_CREATED
+
+    end
+
+  end
+
+
+
+#     "problem":[
+#        {
+#             "snomed_code": "21983002",
+#             "icd9": "245.2",
+#             "name": "Thyroiditis, hashimotos",
+#             "description": null,
+#             "onset_at": "2013-09-04T13:00:00-04:00",
+#             "resolved_at": null,
+#             "status": "A"
+#     }]
 
 post '/v1/patients/:patient_id/problems/create?' do
 
