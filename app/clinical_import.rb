@@ -474,57 +474,59 @@ post '/v1/patients/:patient_id/medications/create?' do
     end
 
 end
-  #
-  #{
-  #    "vitals": [
-  #    {
-  #        "observations": [
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "4",
-  #    "value": "80",
-  #    "value_uom_id": "558"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "1",
-  #    "value": "88",
-  #    "value_uom_id": "74"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "3",
-  #    "value": "60",
-  #    "value_uom_id": "299"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "2",
-  #    "value": "30",
-  #    "value_uom_id": "299"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "5",
-  #    "value": "1",
-  #    "value_uom_id": "559"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "6",
-  #    "value": "65",
-  #    "value_uom_id": "160"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "7",
-  #    "value": "892",
-  #    "value_uom_id": "372"
-  #}
-  #]
-  #}
-  #]
-  #}
+  
+# {
+#     "vitals": [
+#         {
+#             "name": "Vitals",
+#             "started_at": "Nov 16, 2013 11:12:00 AM",
+#             "observations": [
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "4",
+#                     "value": "80",
+#                     "value_uom_id": "558"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "1",
+#                     "value": "88",
+#                     "value_uom_id": "74"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "3",
+#                     "value": "60",
+#                     "value_uom_id": "299"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "2",
+#                     "value": "30",
+#                     "value_uom_id": "299"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "5",
+#                     "value": "1",
+#                     "value_uom_id": "559"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "6",
+#                     "value": "50",
+#                     "value_uom_id": "160"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "7",
+#                     "value": "1973",
+#                     "value_uom_id": "372"
+#                 }
+#             ]
+#         }
+#     ]
+# }
 
   post '/v1/patients/:patient_id/vitals/create?' do
 
@@ -563,7 +565,6 @@ end
       end
 
       status HTTP_CREATED
-
     end
 
   end
