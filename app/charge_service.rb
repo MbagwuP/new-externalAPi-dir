@@ -8,7 +8,7 @@
 class ApiService < Sinatra::Base
 
 
-  # {
+  #{
   #     "charges": {
   #         "charge": {
   #             "provider_id": 2,
@@ -31,7 +31,7 @@ class ApiService < Sinatra::Base
   #             "effective_date": "2013-05-08"
   #         }
   #     }
-  # }
+  #}
   # server response:
   # --> if appointment created: 201, with charge id returned
   # --> if not authorized: 401
@@ -118,12 +118,15 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
-    parsed = JSON.parse(response.body)
-    body(parsed.to_json)
+    LOG.debug("hit me")
+    LOG.debug(response)
+    if !response
+      body("There are no charges for this patient")
+    else
+      parsed = JSON.parse(response.body)
+      body(parsed.to_json)
+    end
     status HTTP_OK
-
   end
-
 
 end

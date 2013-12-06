@@ -82,34 +82,6 @@ class ApiService < Sinatra::Base
 #     }]
 # }
 
-  get '/v1/get/test' do
-    ## token management. Need unencoded tokens!
-    pass_in_token = CGI::unescape(params[:authentication])
-    business_entity = get_business_entity(pass_in_token)
-    patient_id = '123'
-
-    url = ''
-    url << API_SVC_URL
-    url << 'business_entity/'
-    url << business_entity
-    url << '/patients/'
-    url << patient_id
-    url << "/check.json?token="
-    url << CGI::escape(params[:authentication])
-
-    begin
-      response = RestClient.get(url)
-    rescue => e
-      begin
-        errmsg = "Updating Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-    status HTTP_CREATED
-  end
-
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
 
     local_pid = []
@@ -474,57 +446,59 @@ post '/v1/patients/:patient_id/medications/create?' do
     end
 
 end
-  #
-  #{
-  #    "vitals": [
-  #    {
-  #        "observations": [
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "4",
-  #    "value": "80",
-  #    "value_uom_id": "558"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "1",
-  #    "value": "88",
-  #    "value_uom_id": "74"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "3",
-  #    "value": "60",
-  #    "value_uom_id": "299"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "2",
-  #    "value": "30",
-  #    "value_uom_id": "299"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "5",
-  #    "value": "1",
-  #    "value_uom_id": "559"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "6",
-  #    "value": "65",
-  #    "value_uom_id": "160"
-  #},
-  #    {
-  #        "status": "A",
-  #    "observation_type_id": "7",
-  #    "value": "892",
-  #    "value_uom_id": "372"
-  #}
-  #]
-  #}
-  #]
-  #}
+  
+#{
+#     "vitals": [
+#         {
+#             "name": "Vitals",
+#             "started_at": "Nov 16, 2013 11:12:00 AM",
+#             "observations": [
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "4",
+#                     "value": "80",
+#                     "value_uom_id": "558"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "1",
+#                     "value": "88",
+#                     "value_uom_id": "74"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "3",
+#                     "value": "60",
+#                     "value_uom_id": "299"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "2",
+#                     "value": "30",
+#                     "value_uom_id": "299"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "5",
+#                     "value": "1",
+#                     "value_uom_id": "559"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "6",
+#                     "value": "50",
+#                     "value_uom_id": "160"
+#                 },
+#                 {
+#                     "status": "A",
+#                     "observation_type_id": "7",
+#                     "value": "1973",
+#                     "value_uom_id": "372"
+#                 }
+#             ]
+#         }
+#     ]
+#}
 
   post '/v1/patients/:patient_id/vitals/create?' do
 
@@ -561,11 +535,9 @@ end
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
-
-      status HTTP_CREATED
-
     end
 
+    status HTTP_CREATED
   end
 
 
@@ -634,7 +606,8 @@ post '/v1/patients/:patient_id/problems/create?' do
     end
 
     status HTTP_CREATED
-end
-end
+
+    end
+  end
 
 end
