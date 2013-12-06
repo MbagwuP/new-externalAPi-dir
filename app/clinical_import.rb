@@ -82,34 +82,6 @@ class ApiService < Sinatra::Base
 #     }]
 # }
 
-  get '/v1/get/test' do
-    ## token management. Need unencoded tokens!
-    pass_in_token = CGI::unescape(params[:authentication])
-    business_entity = get_business_entity(pass_in_token)
-    patient_id = '123'
-
-    url = ''
-    url << API_SVC_URL
-    url << 'business_entity/'
-    url << business_entity
-    url << '/patients/'
-    url << patient_id
-    url << "/check.json?token="
-    url << CGI::escape(params[:authentication])
-
-    begin
-      response = RestClient.get(url)
-    rescue => e
-      begin
-        errmsg = "Updating Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-    status HTTP_CREATED
-  end
-
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
 
     local_pid = []
@@ -475,7 +447,7 @@ post '/v1/patients/:patient_id/medications/create?' do
 
 end
   
-# {
+#{
 #     "vitals": [
 #         {
 #             "name": "Vitals",
@@ -526,7 +498,7 @@ end
 #             ]
 #         }
 #     ]
-# }
+#}
 
   post '/v1/patients/:patient_id/vitals/create?' do
 
@@ -563,10 +535,9 @@ end
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
-
-      status HTTP_CREATED
     end
 
+    status HTTP_CREATED
   end
 
 
@@ -635,7 +606,8 @@ post '/v1/patients/:patient_id/problems/create?' do
     end
 
     status HTTP_CREATED
-end
-end
+
+    end
+  end
 
 end

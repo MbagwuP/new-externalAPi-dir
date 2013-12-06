@@ -13,7 +13,7 @@ describe "ApiService" do
         last_response.status.should == 200
    end
 
- 
+
 
 
    describe "Should authenticate correctly" do
@@ -119,8 +119,8 @@ describe "ApiService" do
           puts last_response.body
           last_response.status.should == 200
       end
-    
-    end
+
+   end
 
 	describe "Should get patient data correctly" do
 
@@ -369,7 +369,7 @@ describe "ApiService" do
      end
 
 
-    describe "Should save appointment data" do
+   describe "Should save appointment data" do
 
       the_appt_id_to_use = ''
       the_appt_register_id_to_use = ''
@@ -461,7 +461,7 @@ describe "ApiService" do
                     "comments": "patienthasheadache"
                 }]
         }
-    }'
+   }'
 
 
             post url, var1
@@ -489,7 +489,7 @@ describe "ApiService" do
                     "comments": "patienthasheadache"
                 }]
         }
-    }'
+   }'
 
 
             post url, var1
@@ -502,7 +502,7 @@ describe "ApiService" do
           authorize 'interface@interface.com', 'welcome'
             post '/v1/service/authenticate'
             var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-            url = '/v1/appointment/22222222222222222/' 
+            url = '/v1/appointment/22222222222222222/'
             url << the_appt_id_to_use
             url << '?authentication='
             url << var1
@@ -516,7 +516,7 @@ describe "ApiService" do
           authorize 'interface@interface.com', 'welcome'
             post '/v1/service/authenticate'
             var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-            url = '/v1/appointment/4816/' 
+            url = '/v1/appointment/4816/'
             url << the_appt_id_to_use
             url << '?authentication='
             url << var1
@@ -538,7 +538,7 @@ describe "ApiService" do
         "notification_active": true,
         "notification_callback_url": "https://www.here.com",
         "notification_shared_key" : "testingssss"
-    }'
+   }'
 
             post url, var2
             puts last_response.body
@@ -582,12 +582,12 @@ describe "ApiService" do
             last_response.status.should == 200
         end
 
-        
-
-    end
 
 
-    describe "Should work with provider data" do
+   end
+
+
+   describe "Should work with provider data" do
 
       it "should return 200 if providers request is valid" do
             authorize 'interface@interface.com', 'welcome'
@@ -600,9 +600,82 @@ describe "ApiService" do
             last_response.status.should == 201
         end
 
-    end
+   end
+
+   describe "Should return Charges" do
+     patient_id_to_use = '7517691'
+
+     it "should return 200 if charges are returned" do
+
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/charges/'
+       url << patient_id_to_use
+       url << '?authentication='
+       url << var1
+
+       get url
+       puts last_response.body
+       last_response.status.should == 200
+
+     end
+
+     it "should return 500 if invalid patient" do
+
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/charges/'
+       url << '9817421389'
+       url << '?authentication='
+       url << var1
+
+       get url
+       puts last_response.body
+       last_response.status.should == 500
+
+     end
+
+     it "should return 200 if no charges exist" do
+
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/charges/'
+       url << '7517722'
+       url << '?authentication='
+       url << var1
+
+       get url
+       puts last_response.body
+       last_response.status.should == 200
+
+     end
 
 
+     it "should return 403 if patient is not in entity" do
+
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/charges/'
+       url << '12982748327432'
+       url << '?authentication='
+       url << var1
+
+       get url
+       puts last_response.body
+       last_response.status.should == 403
+
+     end
+
+
+   end
 
 
 end
