@@ -249,7 +249,7 @@ describe "ApiService" do
             last_response.status.should == 400
         end
 
-        it "should return 200 if request is in valid" do
+        it "should return 201 if request is in valid" do
           authorize 'interface@interface.com', 'welcome'
             post '/v1/service/authenticate'
             var1 = CGI::escape(JSON.parse(last_response.body)["token"])
@@ -299,7 +299,7 @@ describe "ApiService" do
             #the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
             valid_regex = /{"patient":"(.*)"}/
             last_response.body.should =~ (valid_regex)
-            last_response.status.should == 200
+            last_response.status.should == 201
         end
 
         it "should update the patient" do
@@ -512,7 +512,7 @@ describe "ApiService" do
             last_response.status.should == 400
         end
 
-                it "should return 200 to delete appointment " do
+        it "should return 200 to delete appointment " do
           authorize 'interface@interface.com', 'welcome'
             post '/v1/service/authenticate'
             var1 = CGI::escape(JSON.parse(last_response.body)["token"])
@@ -563,7 +563,7 @@ describe "ApiService" do
 
             put url, var2
             puts last_response.body
-            last_response.status.should == 201
+            last_response.status.should == 200
         end
 
         it "should return 200 to delete callback for appointment " do
@@ -597,7 +597,7 @@ describe "ApiService" do
             url << var1
             get url
             puts last_response.body
-            last_response.status.should == 201
+            last_response.status.should == 200
         end
 
    end
@@ -657,7 +657,7 @@ describe "ApiService" do
      end
 
 
-     it "should return 403 if patient is not in entity" do
+     it "should return 500 if patient is not in entity" do
 
        authorize 'interface@interface.com', 'welcome'
        post '/v1/service/authenticate'
@@ -670,7 +670,7 @@ describe "ApiService" do
 
        get url
        puts last_response.body
-       last_response.status.should == 403
+       last_response.status.should == 500
 
      end
 
