@@ -29,6 +29,9 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
     patientid.slice!(/^patient-/)
 
+    LOG.debug (pass_in_token)
+    LOG.debug(business_entity)
+
     ## if the patient id is all numeric call getById
     if is_this_numeric(patientid)
       urlpatient = ''
@@ -55,6 +58,7 @@ class ApiService < Sinatra::Base
     end
 
     begin
+      LOG.debug(urlpatient)
       response = RestClient.get(urlpatient)
     rescue => e 
       begin
