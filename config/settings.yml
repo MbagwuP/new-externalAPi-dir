@@ -6,7 +6,7 @@ development:
     #mirth_outbound_svc_url: http://10.0.1.108:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
-    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111
+    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1
     memcache_servers: cc-bl-mcache00-dev.carecloud.local:11211
     mongo_server: 54.242.195.20
     mongo_port: 27017
