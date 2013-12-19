@@ -59,10 +59,19 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for lab inbound request: " + urllabinbound)
 
-    resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
+    begin
+      resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
 
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+      LOG.debug(resp.body)
+
+      if resp.body && resp.body.strip!.length > 0 && resp.code
+        response_code = map_response(resp.code)
+      else
+        response_code = HTTP_INTERNAL_ERROR
+      end
+    rescue
+      response_code = HTTP_INTERNAL_ERROR
+    end
 
     status response_code
 
