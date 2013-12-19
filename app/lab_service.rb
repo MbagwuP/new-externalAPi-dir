@@ -64,7 +64,7 @@ class ApiService < Sinatra::Base
     LOG.debug(resp.body)
     response_code = map_response(resp.code)
 
-    status HTTP_OK
+    status response_code
 
   end
 
