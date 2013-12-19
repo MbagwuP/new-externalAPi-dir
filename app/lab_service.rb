@@ -70,17 +70,22 @@ class ApiService < Sinatra::Base
       end
     end
 
-    parsed = JSON.parse(resp.body)
-    pass_code = parsed["response"]["lab_status_code"]
+    begin
+      parsed = JSON.parse(resp.body)
+      pass_code = parsed["response"]["lab_status_code"]
 
-    LOG.debug(parsed)
-    LOG.debug(pass_code)
+      LOG.debug(parsed)
+      LOG.debug(pass_code)
 
-    if pass_code.to_s == "P"
-      response_code = HTTP_OK
-    else
+      if pass_code.to_s == "P"
+        response_code = HTTP_OK
+      else
+        response_code = HTTP_INTERNAL_ERROR
+      end
+    rescue
       response_code = HTTP_INTERNAL_ERROR
     end
+
 
     status response_code
 
