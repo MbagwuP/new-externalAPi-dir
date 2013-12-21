@@ -77,8 +77,12 @@ class ApiService < Sinatra::Base
       LOG.debug(parsed)
       LOG.debug(pass_code)
 
+      returnedBody = resp.body
+
       if pass_code.to_s == "P"
         response_code = HTTP_OK
+      elsif pass_code.to_s == "E"
+        response_code = HTTP_BAD_REQUEST
       else
         response_code = HTTP_INTERNAL_ERROR
       end
@@ -86,7 +90,7 @@ class ApiService < Sinatra::Base
       response_code = HTTP_INTERNAL_ERROR
     end
 
-
+    body(returnedBody)
     status response_code
 
   end
