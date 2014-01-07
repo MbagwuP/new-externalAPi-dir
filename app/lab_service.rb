@@ -82,7 +82,7 @@ class ApiService < Sinatra::Base
       if pass_code.to_s == "P"
         response_code = HTTP_OK
       elsif pass_code.to_s == "E"
-        response_code = HTTP_BAD_REQUEST
+        response_code = resp.code.to_i
       else
         response_code = HTTP_INTERNAL_ERROR
       end
