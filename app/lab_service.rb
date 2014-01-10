@@ -148,7 +148,7 @@ class ApiService < Sinatra::Base
 
   #  lab acknowledge
   #
-  # POST /v1/lab/:trackingid/ack
+  # POST /v1/lab/outbound/:tracer_number/ack
   #
   # server action: Return 200 if success, no content
   # server response:
@@ -156,30 +156,25 @@ class ApiService < Sinatra::Base
   # --> if not authorized: 401
   # --> if not found: 404
   # --> if exception: 500
-  post '/v1/lab/:trackingid/ack' do
+  post '/v1/lab/outbound/:tracer_number/ack' do
+    authenticate_mirth_request params[:id], params[:key]
 
-    # Validate the input parameters
-    request_body = get_request_JSON
+    tracer_number = params[:tracer_number]
+    LOG.debug("Tracer number is #{tracer_number}")
 
-    trackingid = params[:trackingid]
+    request_body = get_request_JSON || Hash.new
+    request_body['tracer_number'] = tracer_number
 
-    LOG.debug(trackingid)
-
-    urllabinbound = ''
-    urllabinbound << API_SVC_URL
-    urllabinbound << 'labs/acknowledgerequest/'
-    urllabinbound << trackingid
-    urllabinbound << '.json'
-
-    LOG.debug("url for lab inbound request: " + urllabinbound)
+    web_service_url = ''
+    web_service_url << API_SVC_URL
+    web_service_url << 'labs/ack_request_submitted/'
 
     resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
-
-    LOG.debug(resp.body)
+    LOG.debug("Response is #{resp.body}")
     response_code = map_response(resp.code)
 
-    status HTTP_OK
-
+    body(resp.body)
+    status response_code
   end
 
 end
