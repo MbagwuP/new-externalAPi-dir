@@ -710,6 +710,52 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  #get notification callbacks since a date
+  #URL: v1/notification_callbacks/2013-12-30/85152eb3-0140-4812-9428-8ceee06a25bc?authentication=
+   #params ex.
+    #date = 2013-12-30
+      #notification_callback id = 85152eb3-0140-4812-9428-8ceee06a25bc
+
+
+ get '/v1/notification_callbacks/:date/:notification_id?' do
+   ## token management. Need unencoded tokens!
+   pass_in_token = CGI::unescape(params[:authentication])
+
+   business_entity = get_business_entity(pass_in_token)
+   LOG.debug(business_entity)
+
+
+   #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
+   urllocation = ''
+   urllocation << API_SVC_URL
+   urllocation << 'notification_callbacks/'
+   urllocation << params[:date]
+   urllocation << '/id/'
+   urllocation << params[:notification_id]
+   urllocation << ".json?token="
+   urllocation << CGI::escape(pass_in_token)
+   LOG.debug(urllocation)
+
+   begin
+     response = RestClient.get(urllocation)
+   rescue => e
+     begin
+       errmsg = "Notification Callback look up Failed - #{e.message}"
+       api_svc_halt e.http_code, errmsg
+     rescue
+       api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+     end
+   end
+
+
+   parsed = JSON.parse(response.body)
+
+   body(parsed.to_json)
+
+   status HTTP_OK
+ end
+
+
   #  get status information
   #
   # GET /v1/appointment/statuses?authentication=<authenticationToken>
