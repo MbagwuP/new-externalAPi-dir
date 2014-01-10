@@ -29,6 +29,9 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
     patientid.slice!(/^patient-/)
 
+    LOG.debug (pass_in_token)
+    LOG.debug(business_entity)
+
     ## if the patient id is all numeric call getById
     if is_this_numeric(patientid)
       urlpatient = ''
@@ -55,6 +58,7 @@ class ApiService < Sinatra::Base
     end
 
     begin
+      LOG.debug(urlpatient)
       response = RestClient.get(urlpatient)
     rescue => e
       begin
@@ -67,40 +71,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
-
-    LOG.debug(parsed)
-
-    urlpatient = ''
-    urlpatient << API_SVC_URL
-    urlpatient << 'patients/'
-    urlpatient << patientid
-    urlpatient << '/pharmacies'
-    urlpatient << '.json?token='
-    urlpatient << CGI::escape(pass_in_token)
-
-    begin
-      response = RestClient.get(urlpatient)
-    rescue => e
-      begin
-        errmsg = "Retrieving Patient Pharmacy Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-
-    parsed2 = JSON.parse(response.body)
-
-    LOG.debug(parsed2)
-
-    results = []
-    results << parsed
-    results << parsed2
-
-    LOG.debug(results)
-
-    body(results.to_json)
+    body(parsed.to_json)
 
     status HTTP_OK
 
@@ -146,7 +117,7 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.get(urlpatient)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -157,42 +128,10 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
-
-    LOG.debug(parsed)
-
-    urlpatient = ''
-    urlpatient << API_SVC_URL
-    urlpatient << 'patients/'
-    urlpatient << patientid
-    urlpatient << '/pharmacies'
-    urlpatient << '.json?token='
-    urlpatient << CGI::escape(pass_in_token)
-
-    begin
-      response = RestClient.get(urlpatient)
-    rescue => e
-      begin
-        errmsg = "Retrieving Patient Pharmacy Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-
-    parsed2 = JSON.parse(response.body)
-
-    LOG.debug(parsed2)
-
-    results = []
-    results << parsed
-    results << parsed2
-
-    LOG.debug(results)
-
-    body(results.to_json)
+    body(parsed.to_json)
 
     status HTTP_OK
+
 
   end
 
