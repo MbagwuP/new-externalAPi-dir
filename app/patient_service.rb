@@ -29,9 +29,6 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
     patientid.slice!(/^patient-/)
 
-    LOG.debug (pass_in_token)
-    LOG.debug(business_entity)
-
     ## if the patient id is all numeric call getById
     if is_this_numeric(patientid)
       urlpatient = ''
@@ -58,7 +55,6 @@ class ApiService < Sinatra::Base
     end
 
     begin
-      LOG.debug(urlpatient)
       response = RestClient.get(urlpatient)
     rescue => e
       begin
@@ -71,7 +67,40 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
-    body(parsed.to_json)
+
+    LOG.debug(parsed)
+
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'patients/'
+    urlpatient << patientid
+    urlpatient << '/pharmacies'
+    urlpatient << '.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Pharmacy Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+
+    parsed2 = JSON.parse(response.body)
+
+    LOG.debug(parsed2)
+
+    results = []
+    results << parsed
+    results << parsed2
+
+    LOG.debug(results)
+
+    body(results.to_json)
 
     status HTTP_OK
 
@@ -128,10 +157,42 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
-    body(parsed.to_json)
+
+    LOG.debug(parsed)
+
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'patients/'
+    urlpatient << patientid
+    urlpatient << '/pharmacies'
+    urlpatient << '.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Pharmacy Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+
+    parsed2 = JSON.parse(response.body)
+
+    LOG.debug(parsed2)
+
+    results = []
+    results << parsed
+    results << parsed2
+
+    LOG.debug(results)
+
+    body(results.to_json)
 
     status HTTP_OK
-
 
   end
 
@@ -177,7 +238,7 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.get(urlpatient)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -316,7 +377,7 @@ class ApiService < Sinatra::Base
     getpreferences << API_SVC_URL
     getpreferences << 'business_entity/'
     getpreferences << business_entity
-    getpreferences << '/patientpreferences.json?token=' 
+    getpreferences << '/patientpreferences.json?token='
     getpreferences << CGI::escape(params[:authentication])
 
     resp = generate_http_request(getpreferences,'', '' ,"GET")
@@ -329,7 +390,7 @@ class ApiService < Sinatra::Base
     temp = JSON.parse(resp.body)
     LOG.debug(temp)
     if response_code == 200
-    request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
+      request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
     end
 
     urlpatient = ''
@@ -341,7 +402,7 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.post(urlpatient, request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Patient Creation Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -403,7 +464,7 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.delete(urlpatient)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Delete Patient Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -416,7 +477,7 @@ class ApiService < Sinatra::Base
 
     status HTTP_OK
 
-end
+  end
 
   #  update a patient
   #
@@ -528,7 +589,7 @@ end
 
     begin
       response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Update to Patient Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -650,7 +711,7 @@ end
 
     begin
       response = RestClient.get(urlpatient)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Cannot locate patient by legacy id - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -677,7 +738,7 @@ end
 
     begin
       response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Cannot update patient by legacy id - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -686,13 +747,13 @@ end
       end
     end
 
-      parsed = JSON.parse(response.body)
+    parsed = JSON.parse(response.body)
 
-      parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
 
-      body(parsed.to_json)
+    body(parsed.to_json)
 
-      status HTTP_OK
+    status HTTP_OK
   end
 
 
@@ -750,7 +811,7 @@ end
 
     begin
       response = RestClient.get(urlpatient)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Search Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -797,7 +858,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Gender Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -812,7 +873,7 @@ end
 
     status HTTP_OK
 
-end
+  end
 
   #  get ethnicity information
   #
@@ -839,10 +900,10 @@ end
     urlreference << CGI::escape(pass_in_token)
 
     LOG.debug("url for ethnicities: " + urlreference)
-   
+
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Ethnicity Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -857,7 +918,7 @@ end
 
     status HTTP_OK
 
-end
+  end
 
   #  get languge information
   #
@@ -885,7 +946,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Languages Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -928,7 +989,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Races Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -971,7 +1032,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Maritalstatuses Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1012,10 +1073,10 @@ end
     urlreference << API_SVC_URL
     urlreference << 'people/list_all_religions.json?token='
     urlreference << CGI::escape(pass_in_token)
-    
+
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Religions Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1057,7 +1118,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient States Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1100,7 +1161,7 @@ end
 
     begin
       response = RestClient.get(urlreference)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Employmentstatuses Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1166,7 +1227,7 @@ end
 
     begin
       response = RestClient.post(urlptreg , request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Updating Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1234,7 +1295,7 @@ end
 
     begin
       response = RestClient.put(urlptreg , request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Updating Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1302,7 +1363,7 @@ end
 
     begin
       response = RestClient.delete(urlptreg, request_body)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Deleting Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1324,145 +1385,145 @@ end
   #
   # Params definition
   # JSON:
-#{
-#     "insurance_profile": {
-#         "responsible_party_relationship": "OTHER",
-#         "is_default": true,
-#         "responsible_party": {
-#             "first_name": "bob",
-#             "last_name": "lee",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ],
-#             "phones": [
-#                 {
-#                     "phone_number": "5552221212",
-#                     "phone_type_id": "3",
-#                     "extension": "3433"
-#                 },
-#                 {
-#                     "phone_number": "3332221212",
-#                     "phone_type_id": "2",
-#                     "extension": "5566",
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     },
-#     "primary_insurance": {
-#         "insured_person_relationship_type": "OTHER",
-#         "insurance_policy_type_id": "1",
-#         "member_number": "M4847575754",
-#         "policy_id": 232455,
-#         "effective_date": "2010-03-04",
-#         "type": "Other",
-#         "group_name": "Special Group",
-#         "payer": {
-#             "id": "1",
-#             "name": "BCBS Mass",
-#             "name2": "Boston Branch",
-#             "address": {
-#                 "line1": "123 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "phone": "3334445555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "123 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ],
-#             "phones": [
-#                 {
-#                     "phone_number": "5552221212",
-#                     "phone_type_id": "3",
-#                     "extension": "3433"
-#                 },
-#                 {
-#                     "phone_number": "3332221212",
-#                     "phone_type_id": "2",
-#                     "extension": "5566",
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     },
-#     "secondary_insurance": {
-#         "insured_person_relationship_type": "SELF",
-#         "insurance_policy_type_id": "2",
-#         "member_number": "M4335754",
-#         "policy_id": 2455,
-#         "group_name": "Special Group 004",
-#         "effective_date": "2010-07-04",
-#         "type": "Self",
-#         "payer": {
-#             "id": "2",
-#             "name": "Aetna",
-#             "name2": "Grove Dist",
-#             "address": {
-#                 "line1": "127 fake st",
-#                 "line2": "apt3",
-#                 "city": "newton",
-#                 "state_id": 22,
-#                 "zip_code": "07488",
-#                 "country_id": 225
-#             },
-#             "phone": "3334488555"
-#         },
-#         "insured": {
-#             "first_name": "bob",
-#             "last_name": "smith",
-#             "middle_initial": "A",
-#             "date_of_birth": "2000-08-09",
-#             "ssn": "333-55-6666",
-#             "gender_id": 1,
-#             "email": "no@email.com",
-#             "addresses": [
-#                 {
-#                     "line1": "124 fake st",
-#                     "line2": "apt3",
-#                     "city": "newton",
-#                     "state_id": 22,
-#                     "zip_code": "07488",
-#                     "country_id": 225,
-#                     "is_primary": true
-#                 }
-#             ]
-#         }
-#     }
-#}
-    # EOR
+  #{
+  #     "insurance_profile": {
+  #         "responsible_party_relationship": "OTHER",
+  #         "is_default": true,
+  #         "responsible_party": {
+  #             "first_name": "bob",
+  #             "last_name": "lee",
+  #             "middle_initial": "A",
+  #             "date_of_birth": "2000-08-09",
+  #             "ssn": "333-55-6666",
+  #             "gender_id": 1,
+  #             "email": "no@email.com",
+  #             "addresses": [
+  #                 {
+  #                     "line1": "123 fake st",
+  #                     "line2": "apt3",
+  #                     "city": "newton",
+  #                     "state_id": 22,
+  #                     "zip_code": "07488",
+  #                     "country_id": 225,
+  #                     "is_primary": true
+  #                 }
+  #             ],
+  #             "phones": [
+  #                 {
+  #                     "phone_number": "5552221212",
+  #                     "phone_type_id": "3",
+  #                     "extension": "3433"
+  #                 },
+  #                 {
+  #                     "phone_number": "3332221212",
+  #                     "phone_type_id": "2",
+  #                     "extension": "5566",
+  #                     "is_primary": true
+  #                 }
+  #             ]
+  #         }
+  #     },
+  #     "primary_insurance": {
+  #         "insured_person_relationship_type": "OTHER",
+  #         "insurance_policy_type_id": "1",
+  #         "member_number": "M4847575754",
+  #         "policy_id": 232455,
+  #         "effective_date": "2010-03-04",
+  #         "type": "Other",
+  #         "group_name": "Special Group",
+  #         "payer": {
+  #             "id": "1",
+  #             "name": "BCBS Mass",
+  #             "name2": "Boston Branch",
+  #             "address": {
+  #                 "line1": "123 fake st",
+  #                 "line2": "apt3",
+  #                 "city": "newton",
+  #                 "state_id": 22,
+  #                 "zip_code": "07488",
+  #                 "country_id": 225
+  #             },
+  #             "phone": "3334445555"
+  #         },
+  #         "insured": {
+  #             "first_name": "bob",
+  #             "last_name": "smith",
+  #             "middle_initial": "A",
+  #             "date_of_birth": "2000-08-09",
+  #             "ssn": "333-55-6666",
+  #             "gender_id": 1,
+  #             "email": "no@email.com",
+  #             "addresses": [
+  #                 {
+  #                     "line1": "123 fake st",
+  #                     "line2": "apt3",
+  #                     "city": "newton",
+  #                     "state_id": 22,
+  #                     "zip_code": "07488",
+  #                     "country_id": 225,
+  #                     "is_primary": true
+  #                 }
+  #             ],
+  #             "phones": [
+  #                 {
+  #                     "phone_number": "5552221212",
+  #                     "phone_type_id": "3",
+  #                     "extension": "3433"
+  #                 },
+  #                 {
+  #                     "phone_number": "3332221212",
+  #                     "phone_type_id": "2",
+  #                     "extension": "5566",
+  #                     "is_primary": true
+  #                 }
+  #             ]
+  #         }
+  #     },
+  #     "secondary_insurance": {
+  #         "insured_person_relationship_type": "SELF",
+  #         "insurance_policy_type_id": "2",
+  #         "member_number": "M4335754",
+  #         "policy_id": 2455,
+  #         "group_name": "Special Group 004",
+  #         "effective_date": "2010-07-04",
+  #         "type": "Self",
+  #         "payer": {
+  #             "id": "2",
+  #             "name": "Aetna",
+  #             "name2": "Grove Dist",
+  #             "address": {
+  #                 "line1": "127 fake st",
+  #                 "line2": "apt3",
+  #                 "city": "newton",
+  #                 "state_id": 22,
+  #                 "zip_code": "07488",
+  #                 "country_id": 225
+  #             },
+  #             "phone": "3334488555"
+  #         },
+  #         "insured": {
+  #             "first_name": "bob",
+  #             "last_name": "smith",
+  #             "middle_initial": "A",
+  #             "date_of_birth": "2000-08-09",
+  #             "ssn": "333-55-6666",
+  #             "gender_id": 1,
+  #             "email": "no@email.com",
+  #             "addresses": [
+  #                 {
+  #                     "line1": "124 fake st",
+  #                     "line2": "apt3",
+  #                     "city": "newton",
+  #                     "state_id": 22,
+  #                     "zip_code": "07488",
+  #                     "country_id": 225,
+  #                     "is_primary": true
+  #                 }
+  #             ]
+  #         }
+  #     }
+  #}
+  # EOR
   # server action: Return patient id
   # server response:
   # --> if success: 200, with patient id
@@ -1494,7 +1555,7 @@ end
 
     begin
       response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
         errmsg = "Retrieving Patient Data Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
@@ -1503,21 +1564,21 @@ end
       end
     end
 
-      parsed = JSON.parse(response.body)
-      returned_value = parsed["patient"]["external_id"]
-      the_response_hash = {:patient => returned_value.to_s}
-      body(the_response_hash.to_json)
+    parsed = JSON.parse(response.body)
+    returned_value = parsed["patient"]["external_id"]
+    the_response_hash = {:patient => returned_value.to_s}
+    body(the_response_hash.to_json)
 
     status HTTP_OK
 
   end
 
   private
-        def get_patient_with_preference_settings(patient, patient_preference)
-        patient["signature_source_id"] = patient["signature_source_id"].nil? ? patient_preference["default_signature_source_id"] : patient["signature_source_id"]
-        patient["release_of_information_source_id"] = patient["release_of_information_source_id"].nil? ? patient_preference["default_release_of_information_source_id"] : patient["release_of_information_source_id"]
-        patient["provider_assignment_indicator_id"] = patient["provider_assignment_indicator_id"].nil? ? patient_preference["default_provider_assignment_indicator_id"] : patient["provider_assignment_indicator_id"]
-        return patient
-        end
+  def get_patient_with_preference_settings(patient, patient_preference)
+    patient["signature_source_id"] = patient["signature_source_id"].nil? ? patient_preference["default_signature_source_id"] : patient["signature_source_id"]
+    patient["release_of_information_source_id"] = patient["release_of_information_source_id"].nil? ? patient_preference["default_release_of_information_source_id"] : patient["release_of_information_source_id"]
+    patient["provider_assignment_indicator_id"] = patient["provider_assignment_indicator_id"].nil? ? patient_preference["default_provider_assignment_indicator_id"] : patient["provider_assignment_indicator_id"]
+    return patient
+  end
 
 end
