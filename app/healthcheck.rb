@@ -45,6 +45,7 @@ class ApiService < Sinatra::Base
         cacheUp = false
       end
     rescue Exception => e
+      LOG.fatal e
       cacheUp = false
     end
 
@@ -54,6 +55,7 @@ class ApiService < Sinatra::Base
         mongoUp = true
       end
     rescue Exception => e
+      LOG.fatal e
       mongoUp = false
     end
 
@@ -74,11 +76,41 @@ class ApiService < Sinatra::Base
       docStoreUp = false
     end
 
-    health = {"applicationName" => "ApiService",
-              "webserviceHealth" => (webserviceUp ? "UP" : "DOWN"),
-              "cacheHealth" => (cacheUp ? "UP" : "DOWN"),
-              "nosqlStorageHealth" => (mongoUp ? "UP" : "DOWN"),
-              "documentStorageHealth" => (docStoreUp ? "UP" : "DOWN")
+    ws_health = {       "name" => "Web Service",
+                        "description" => "Web Service",
+                        "status" => (webserviceUp ? "HEALTHY" : "BROKEN")
+    }
+
+    cache_health = {    "name" => "MemCache",
+                        "description" => "memcached",
+                        "status" => (cacheUp ? "HEALTHY" : "BROKEN")
+    }
+
+    mongo_health = {    "name" => "Mongo",
+                        "description" => "Mongo",
+                        "status" => (mongoUp ? "HEALTHY" : "BROKEN")
+    }
+
+    dms_health = {      "name" => "DMS",
+                        "description" => "DMS",
+                        "status" => (docStoreUp ? "HEALTHY" : "BROKEN")
+    }
+
+    overal_health = true
+    overal_health = webserviceUp | cacheUp | mongoUp | docStoreUp
+    
+    dependencychecks = []
+    dependencychecks << ws_health
+    dependencychecks << cache_health
+    dependencychecks << mongo_health
+    dependencychecks << dms_health
+
+    health = {          "service" => "External API Service",
+                        "description" => "Service 3rd party applications utilize to access CareCloud",
+                        "version" => "#{SOFTWARE_VERSION}",
+                        "serviceStatus" => (overal_health ? "HEALTHY" : "BROKEN"),
+                        "loadbalancerStatus" => (overal_health ? "UP" : "DOWN"),
+                        "dependencychecks" => dependencychecks
     }
 
     health.to_json
@@ -92,7 +124,13 @@ class ApiService < Sinatra::Base
 
   get '/healthcheck' do
 
-    perform_healthcheck
+    # Need to handle jQuery requests
+    if params[:callback]
+        health = perform_healthcheck
+        return "#{params[:callback]}(#{health})"
+    else
+        perform_healthcheck
+    end
 
   end
 
