@@ -594,6 +594,30 @@ class ApiService < Sinatra::Base
 
   end
 
+  def authenticate_mirth_request(id, key)
+    # key determination
+    current_date = DateTime.now()
+
+    mirth_key = ''
+    mirth_key << MIRTH_PRIVATE_KEY
+    mirth_key << current_date.strftime('%Y%m%d')
+    mirth_key << id
+
+    h = Digest::SHA2.new << mirth_key
+    if key != h.to_s
+
+      audit_options = {
+          :ip => "#{request.ip}",
+          :msg => 'Invalid request for inbound lab. Unauthorized user'
+      }
+
+      audit_log(AUDIT_TYPE_TRANS, AUDIT_TYPE_TRANS, audit_options)
+
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid request sent"}'
+    end
+
+  end
+
 
 
 end

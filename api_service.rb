@@ -77,7 +77,7 @@ class ApiService < Sinatra::Base
         MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
         MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
-        SOFTWARE_VERSION = "v0.4"
+        SOFTWARE_VERSION = "v0.8"
 
         set :memcached_server, config["memcache_servers"]
         set :mongo_server, config["mongo_server"]
