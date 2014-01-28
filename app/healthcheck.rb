@@ -27,7 +27,10 @@ class ApiService < Sinatra::Base
       uri = URI.parse(API_SVC_URL)
       conn = Net::HTTP::get_response(uri)
 
-      if (conn.code.to_s == "200")
+      LOG.debug conn.inspect
+      ## check basic endpoind devservices.carecloud.local/
+      ## replace when ruby app has healthcheck
+      if (conn.code.to_s == "403" || conn.code.to_s == "200")
         webserviceUp = true
       end
 
@@ -50,14 +53,15 @@ class ApiService < Sinatra::Base
     end
 
     ## Mongo
+
     begin
-      unless settings.mongo.nil?
-        mongoUp = true
-      end
-    rescue Exception => e
-      LOG.fatal e
+      mongoUp = true
+      auditcollection = settings.mongo.collection("audit_events").find_one
+    rescue => e
+      LOG.error ("Healthcheck failed #{e.message})")
       mongoUp = false
     end
+
 
     ## Doc Store
     begin
@@ -76,24 +80,24 @@ class ApiService < Sinatra::Base
       docStoreUp = false
     end
 
-    ws_health = {       "name" => "Web Service",
-                        "description" => "Web Service",
-                        "status" => (webserviceUp ? "HEALTHY" : "BROKEN")
+    ws_health = {"name" => "Web Service",
+                 "description" => "Web Service",
+                 "status" => (webserviceUp ? "HEALTHY" : "BROKEN")
     }
 
-    cache_health = {    "name" => "MemCache",
-                        "description" => "memcached",
-                        "status" => (cacheUp ? "HEALTHY" : "BROKEN")
+    cache_health = {"name" => "MemCache",
+                    "description" => "memcached",
+                    "status" => (cacheUp ? "HEALTHY" : "IMPAIRED")
     }
 
-    mongo_health = {    "name" => "Mongo",
-                        "description" => "Mongo",
-                        "status" => (mongoUp ? "HEALTHY" : "BROKEN")
+    mongo_health = {"name" => "Mongo",
+                    "description" => "Mongo",
+                    "status" => (mongoUp ? "HEALTHY" : "BROKEN")
     }
 
-    dms_health = {      "name" => "DMS",
-                        "description" => "DMS",
-                        "status" => (docStoreUp ? "HEALTHY" : "BROKEN")
+    dms_health = {"name" => "DMS",
+                  "description" => "DMS",
+                  "status" => (docStoreUp ? "HEALTHY" : "BROKEN")
     }
 
     overal_health = true
@@ -105,12 +109,12 @@ class ApiService < Sinatra::Base
     dependencychecks << mongo_health
     dependencychecks << dms_health
 
-    health = {          "service" => "External API Service",
-                        "description" => "Service 3rd party applications utilize to access CareCloud",
-                        "version" => "#{SOFTWARE_VERSION}",
-                        "serviceStatus" => (overal_health ? "HEALTHY" : "BROKEN"),
-                        "loadbalancerStatus" => (overal_health ? "UP" : "DOWN"),
-                        "dependencychecks" => dependencychecks
+    health = {"service" => "External API Service",
+              "description" => "Service 3rd party applications utilize to access CareCloud",
+              "version" => "#{SOFTWARE_VERSION}",
+              "serviceStatus" => (overal_health ? "HEALTHY" : "BROKEN"),
+              "loadbalancerStatus" => (overal_health ? "UP" : "DOWN"),
+              "dependencychecks" => dependencychecks
     }
 
     health.to_json
