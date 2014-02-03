@@ -478,24 +478,38 @@ describe "ApiService" do
 
             var1 = '{
         "appointment": {
-            "start_time": "2013-10-12 12:35",
-            "end_time": "2013-10-12 14:00",
-            "location_id": 2,
-            "nature_of_visit_id": 2,
-            "provider_id": 4816,
+            "start_time": "2012-04-24 10:00 -05:00",
+            "end_time": "2012-04-24 11:00 -05:00",
+            "location_id": 7662,
+            "provider_id": 4817,
+            "nature_of_visit_id": 15931,
+            "resource_id": 4486,
             "patients": [
                 {
-                    "id": "a53ec81f-1c69-44d4-8fcd-fa86f2ad1e8e",
-                    "comments": "patienthasheadache"
+                    "id": 7517913,
+                    "comments": "patient has headache"
                 }]
         }
-   }'
-
-
+    }'
             post url, var1
-            puts last_response.body
             the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
+            puts last_response.body
             last_response.status.should == 201
+
+          it "should return 200 to delete appointment " do
+            authorize 'interface@interface.com', 'welcome'
+            post '/v1/service/authenticate'
+            var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+            url = '/v1/appointment/4817/'
+            url << the_appt_id_to_use
+            url << '?authentication='
+            url << var1
+
+            delete url, var1
+            puts last_response.body
+            last_response.status.should == 200
+          end
+
         end
 
         it "should return 400 bad provider to delete appointment " do
@@ -508,22 +522,10 @@ describe "ApiService" do
             url << var1
 
             delete url, var1
+            the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
+            puts the_appt_id_to_use
             puts last_response.body
             last_response.status.should == 400
-        end
-
-        it "should return 200 to delete appointment " do
-          authorize 'interface@interface.com', 'welcome'
-            post '/v1/service/authenticate'
-            var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-            url = '/v1/appointment/4816/'
-            url << the_appt_id_to_use
-            url << '?authentication='
-            url << var1
-
-            delete url, var1
-            puts last_response.body
-            last_response.status.should == 200
         end
 
 
