@@ -14,20 +14,21 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON
-  #  {
-  #     "appointment": {
-  #         "start_time": "2013-04-24 10:00",
-  #         "end_time": "2013-04-24 11:00",
-  #         "location_id": 2,
-  #         "nature_of_visit_id": 2,
-  #         "provider_id": 2,
-  #         "patients": [
-  #             {
-  #                 "id": 1819622,
-  #                 "comments": "patienthasheadache"
-  #             }]
-  #     }
-  # }
+  #{
+  #    "appointment": {
+  #    "start_time": "2013-04-24 10:00 -05:00",
+  #    "end_time": "2013-04-24 11:00 -05:00",
+  #    "location_id": 7662,
+  #    "provider_id": 4817,
+  #    "nature_of_visit_id": 15931,
+  #    "resource_id": 4486,
+  #    "patients": [
+  #    {
+  #        "id": 7517912,
+  #    "comments": "patient has headache"
+  #}]
+  #}
+  #}
   #
   # server response:
   # --> if appointment created: 201, with appointment id returned
@@ -97,7 +98,6 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
     parsed = JSON.parse(response.body)
     the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
     body(the_response_hash.to_json)
