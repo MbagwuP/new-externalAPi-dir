@@ -60,7 +60,10 @@ class ApiService < Sinatra::Base
     LOG.debug("url for lab inbound request: " + urllabinbound)
 
     begin
-      resp = generate_http_request(urllabinbound, "", request_body.to_json, "POST", settings.labs_user, settings.labs_pass)
+
+      resource = RestClient::Resource.new( urllabinbound, { :user => settings.labs_user, :password => settings.labs_pass})
+      resp = resource.post(request_body.to_json)
+
     rescue => e
       begin
         errmsg = "Error posting inbound lab - #{e.message}"
@@ -197,7 +200,11 @@ class ApiService < Sinatra::Base
 
     LOG.debug('url for lab inbound request: ' + api_svc_url)
     begin
-      resp = generate_http_request(api_svc_url, '', request_body.to_json, 'POST', settings.labs_user, settings.labs_pass)
+
+      resource = RestClient::Resource.new( api_svc_url, { :user => settings.labs_user, :password => settings.labs_pass})
+      resp = resource.post(request_body.to_json)
+
+      #resp = generate_http_request(api_svc_url, '', request_body.to_json, 'POST', settings.labs_user, settings.labs_pass)
       LOG.debug(resp.body)
     rescue => e
       begin
