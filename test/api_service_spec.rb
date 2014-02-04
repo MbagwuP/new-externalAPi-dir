@@ -208,7 +208,7 @@ describe "ApiService" do
    it "should return 500 if request is not authorized" do
    		get '/v1/patients/patient-2222?authentication=3333333'
    		last_response.status.should == 403
-   		last_response.body.should == '{"error":{"error_code":"0037","message":"Authorization Failed","error_type":"Generic","details":null}}'
+   		last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
    end
 
         # setup accurate request of patient data
@@ -233,7 +233,7 @@ describe "ApiService" do
             var1 = '{"todo":"this"}'
             post '/v1/patients/create?authentication=3333333', var1
             last_response.status.should == 403
-            last_response.body.should == '{"error":{"error_code":"0037","message":"Authorization Failed","error_type":"Generic","details":null}}'
+            last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
         end
 
         it "should return 400 if request is in valid" do

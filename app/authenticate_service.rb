@@ -52,31 +52,32 @@ class ApiService < Sinatra::Base
 
       LOG.debug(urlauth)
 
-      # make client call
-      resp = generate_http_request(urlauth, "", "", "GET")
-
-      LOG.debug(resp.body)
-      response_code = map_response(resp.code)
-
-      if response_code == 200
-        parsed = JSON.parse(resp.body)
-        LOG.debug(parsed)
-
-        ## store the business entity in the cache for the user
-        ## TODO: Enhancement: Send in the default BusinessEntity here and store without the second call
-        get_business_entity(parsed["authtoken"])
-
-        ##TODO: this works, check in apps/model/login in main WS
-        ##John wants the token to not have any encoded content - darren investigating
-        LOG.debug(parsed["authtoken_nonencoded"])
-        the_token_hash = {:token => CGI::unescape(parsed["authtoken"])}
-        body(the_token_hash.to_json)
-
-      else
-        body(resp.body)
+      begin
+        resp = RestClient.get(urlauth)
+      rescue => e
+        begin
+          errmsg = "Authenticate Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
       end
 
-      status response_code
+
+      parsed = JSON.parse(resp.body)
+      LOG.debug(parsed)
+
+      ## store the business entity in the cache for the user
+      ## TODO: Enhancement: Send in the default BusinessEntity here and store without the second call
+      get_business_entity(parsed["authtoken"])
+
+      ##TODO: this works, check in apps/model/login in main WS
+      ##John wants the token to not have any encoded content - darren investigating
+      LOG.debug(parsed["authtoken_nonencoded"])
+      the_token_hash = {:token => CGI::unescape(parsed["authtoken"])}
+      body(the_token_hash.to_json)
+
+      status HTTP_OK
 
     rescue => e
       handle_exception(e)
@@ -184,14 +185,20 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for logout: " + urllogout)
 
-    resp = generate_http_request(urllogout, "", "", "POST")
-
-    LOG.debug(resp.body)
-    response_code = map_response(resp.code)
+    begin
+      resp = RestClient.post(urllogout, "", :content_type => :json)
+    rescue => e
+      begin
+        errmsg = "Appointment Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
     body(resp.body)
 
-    status response_code
+    status HTTP_OK
 
   end
 

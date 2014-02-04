@@ -136,11 +136,16 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for lab outbound request: " + urllaboutbound)
 
-    resp = generate_http_request(urllaboutbound, "", request_body.to_json, "POST")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
+    begin
+      resp = RestClient.post(urllaboutbound, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        errmsg = "Appointment Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
     status HTTP_OK
 
@@ -203,8 +208,7 @@ class ApiService < Sinatra::Base
       end
     end
 
-    response_code = map_response(resp.code)
-    status response_code
+    status HTTP_OK
 
   end
 

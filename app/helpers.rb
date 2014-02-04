@@ -195,34 +195,33 @@ class ApiService < Sinatra::Base
 
         LOG.debug("url for business entity list: " + urlbusentitylist)
 
-        resp = generate_http_request(urlbusentitylist, "", "", "GET")
-
-        LOG.debug(resp.body)
-
-        response_code = map_response(resp.code.to_s)
-
-        if response_code == HTTP_OK
-
-          ## validate business entity passed in is in list
-          parsed = JSON.parse(resp.body)["business_entities"]
-
-          api_svc_halt HTTP_BAD_REQUEST, '{"error":"User is assigned to more then one business entity"}' if parsed.length > 1
-
-          returned_business_entity_id = parsed[0]["id"]
-          LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
-
-          ## cache the result
+        begin
+          resp = RestClient.get(urlbusentitylist)
+        rescue => e
           begin
-            settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
-            LOG.debug("++++++++++cache set")
-          rescue => e
-            LOG.error("cannot reach cache store")
+            errmsg = "Get Business Entity Failed - #{e.message}"
+            api_svc_halt e.http_code, errmsg
+          rescue
+            api_svc_halt HTTP_INTERNAL_ERROR, errmsg
           end
-        elsif response_code == HTTP_FORBIDDEN
-          api_svc_halt HTTP_FORBIDDEN, resp.body
-        else
-          api_svc_halt HTTP_INTERNAL_ERROR, resp.body
         end
+
+        ## validate business entity passed in is in list
+        parsed = JSON.parse(resp.body)["business_entities"]
+
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"User is assigned to more then one business entity"}' if parsed.length > 1
+
+        returned_business_entity_id = parsed[0]["id"]
+        LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+
+        ## cache the result
+        begin
+          settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+          LOG.debug("++++++++++cache set")
+        rescue => e
+          LOG.error("cannot reach cache store")
+        end
+
       end
 
       return returned_business_entity_id.to_s
@@ -262,7 +261,18 @@ class ApiService < Sinatra::Base
 
       LOG.debug("url for providers: " + urlprovider)
 
-      resp = generate_http_request(urlprovider, "", "", "GET")
+
+      begin
+        resp = RestClient.get(urlprovider)
+      rescue => e
+        begin
+          errmsg = "Get Provider List Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
 
       returned_providers_by_business_entity = resp.body
       LOG.debug(returned_provider_object)
@@ -319,22 +329,22 @@ class ApiService < Sinatra::Base
 
       LOG.debug("url for patient: " + urlpatient)
 
-      resp = generate_http_request(urlpatient, "", "", "GET")
-
-      LOG.debug(resp.body)
-
-      response_code = map_response(resp.code)
-      if response_code == HTTP_OK
-
-        parsed = JSON.parse(resp.body)
-
-        patientid = parsed["patient"]["id"].to_s
-
-        LOG.debug(patientid)
-
-      else
-        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}'
+      begin
+        resp = RestClient.get(urlpatient)
+      rescue => e
+        begin
+          errmsg = "Get Provider List Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
       end
+
+      parsed = JSON.parse(resp.body)
+
+      patientid = parsed["patient"]["id"].to_s
+
+      LOG.debug(patientid)
 
     end
 
@@ -357,22 +367,23 @@ class ApiService < Sinatra::Base
 
     LOG.debug("url for patient: " + urlpatient)
 
-    resp = generate_http_request(urlpatient, "", "", "GET")
-
-    LOG.debug(resp.body)
-
-    response_code = map_response(resp.code)
-    if response_code == HTTP_OK
-
-      parsed = JSON.parse(resp.body)
-
-      patientid = parsed["patient"]["id"].to_s
-
-      LOG.debug(patientid)
-
-    else
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Cannot locate patient record"}'
+    begin
+      resp = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Get patient id with other id Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
+
+    parsed = JSON.parse(resp.body)
+
+    patientid = parsed["patient"]["id"].to_s
+
+    LOG.debug(patientid)
+
 
     return patientid
 
@@ -560,32 +571,32 @@ class ApiService < Sinatra::Base
 
       LOG.debug("url for business entity list: " + urlbusentitylist)
 
-      resp = generate_http_request(urlbusentitylist, "", "", "GET")
-
-      LOG.debug(resp.body)
-
-      response_code = map_response(resp.code.to_s)
-
-      if response_code == HTTP_OK
-
-        ## validate business entity passed in is in list
-        parsed = JSON.parse(resp.body)
-
-        returned_business_entity_id = parsed[0]["patient"]["business_entity_id"]
-        LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
-
-        ## cache the result
+      begin
+        resp = RestClient.get(urlbusentitylist)
+      rescue => e
         begin
-          settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
-          LOG.debug("++++++++++cache set")
-        rescue => e
-          LOG.error("cannot reach cache store")
+          errmsg = "Get backdoor BE Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
-      elsif response_code == HTTP_FORBIDDEN
-        api_svc_halt HTTP_FORBIDDEN, resp.body
-      else
-        api_svc_halt HTTP_INTERNAL_ERROR, resp.body
       end
+
+
+      ## validate business entity passed in is in list
+      parsed = JSON.parse(resp.body)
+
+      returned_business_entity_id = parsed[0]["patient"]["business_entity_id"]
+      LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+
+      ## cache the result
+      begin
+        settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+        LOG.debug("++++++++++cache set")
+      rescue => e
+        LOG.error("cannot reach cache store")
+      end
+
     end
 
 
