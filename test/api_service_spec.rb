@@ -57,7 +57,6 @@ describe "ApiService" do
       url = '/v1/service/logout?authentication='
       url << var1
       post url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -66,7 +65,7 @@ describe "ApiService" do
   describe "Should return appointment and patient data " do
 
     it "should return 500 if appointment id is not present" do
-      get '/v2/appointment/listbyid/?'
+      get '/v2/appointment/listbyid/?authentication='
       last_response.status.should == 500
     end
 
@@ -116,7 +115,6 @@ describe "ApiService" do
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbyprovider/1234?'
       url << var1
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -136,7 +134,6 @@ describe "ApiService" do
       url = '/v1/person/genders?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -147,7 +144,6 @@ describe "ApiService" do
       url = '/v1/person/ethnicities?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -158,7 +154,6 @@ describe "ApiService" do
       url = '/v1/person/languages?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -169,7 +164,6 @@ describe "ApiService" do
       url = '/v1/person/races?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -180,7 +174,6 @@ describe "ApiService" do
       url = '/v1/person/maritalstatuses?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -191,7 +184,6 @@ describe "ApiService" do
       url = '/v1/person/religions?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -219,7 +211,6 @@ describe "ApiService" do
       url = '/v1/patients/patient-1234?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 500
     end
 
@@ -245,7 +236,6 @@ describe "ApiService" do
 
       var1 = '{"todo":"this"}'
       put url, var1
-      puts last_response.body
       last_response.status.should == 400
     end
 
@@ -295,7 +285,6 @@ describe "ApiService" do
 
 
       post url, var1
-      puts last_response.body
       #the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
       valid_regex = /{"patient":"(.*)"}/
       last_response.body.should =~ (valid_regex)
@@ -348,7 +337,6 @@ describe "ApiService" do
         ]
    }'
       put url, var1
-      puts last_response.body
       ## todo check response for ROGER
       last_response.status.should == 200
     end
@@ -363,7 +351,6 @@ describe "ApiService" do
       url << var1
 
       delete url, var1
-      puts last_response.body
       last_response.status.should == 200
     end
   end
@@ -381,7 +368,6 @@ describe "ApiService" do
       url = '/v1/appointment/locations?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -393,7 +379,6 @@ describe "ApiService" do
       url = '/v1/appointment/resources?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -404,7 +389,6 @@ describe "ApiService" do
       url = '/v1/appointment/listbydate/20130724/provider-4816?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -415,7 +399,6 @@ describe "ApiService" do
       url = '/v1/appointment/listbyprovider/provider-4816?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -426,7 +409,6 @@ describe "ApiService" do
       url = '/v1/appointment/listbypatient/patient-a53ec81f-1c69-44d4-8fcd-fa86f2ad1e8e?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -437,7 +419,6 @@ describe "ApiService" do
       url = '/v1/appointment/listbyresource/1?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -465,7 +446,6 @@ describe "ApiService" do
 
 
       post url, var1
-      puts last_response.body
       last_response.status.should == 400
     end
 
@@ -492,7 +472,6 @@ describe "ApiService" do
         }
     }'
       post url, var1
-      puts last_response.body
       last_response.status.should == 201
 
     end
@@ -508,7 +487,6 @@ describe "ApiService" do
       url << var1
 
       delete url, var1
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -524,8 +502,7 @@ describe "ApiService" do
 
       delete url, var1
       the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
-      puts the_appt_id_to_use
-      puts last_response.body
+
       last_response.status.should == 400
     end
 
@@ -544,9 +521,9 @@ describe "ApiService" do
    }'
 
       post url, var2
-      puts last_response.body
+
       the_appt_register_id_to_use = JSON.parse(last_response.body)["notification_callback"]["id"]
-      puts the_appt_register_id_to_use
+
       last_response.status.should == 201
     end
 
@@ -565,7 +542,6 @@ describe "ApiService" do
 
 
       put url, var2
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -581,7 +557,6 @@ describe "ApiService" do
       var2 << '", "notification_active": true, "notification_callback_url": "https://www.here.com" }'
 
       delete url, var2
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -599,7 +574,6 @@ describe "ApiService" do
       url = '/v1/provider/list?authentication='
       url << var1
       get url
-      puts last_response.body
       last_response.status.should == 200
     end
 
@@ -620,7 +594,6 @@ describe "ApiService" do
       url << var1
 
       get url
-      puts last_response.body
       last_response.status.should == 200
 
     end
@@ -637,7 +610,6 @@ describe "ApiService" do
       url << var1
 
       get url
-      puts last_response.body
       last_response.status.should == 500
 
     end
@@ -654,7 +626,6 @@ describe "ApiService" do
       url << var1
 
       get url
-      puts last_response.body
       last_response.status.should == 200
 
     end
@@ -672,7 +643,6 @@ describe "ApiService" do
       url << var1
 
       get url
-      puts last_response.body
       last_response.status.should == 500
 
     end
