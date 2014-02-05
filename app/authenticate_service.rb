@@ -27,11 +27,11 @@ class ApiService < Sinatra::Base
       auth ||= Rack::Auth::Basic::Request.new(request.env)
       # Debug code to help resolve login issues.  Do not deploy this code.
       # begin
-      LOG.debug ("Provided ok") if auth.provided?
-      LOG.debug ("Basic ok") if auth.basic?
-      LOG.debug ("Creds provided") if auth.credentials
+      #LOG.debug ("Provided ok") if auth.provided?
+      #LOG.debug ("Basic ok") if auth.basic?
+      #LOG.debug ("Creds provided") if auth.credentials
 
-      LOG.debug ("Received creds: Username: #{auth.credentials.fetch(0)} Password: #{auth.credentials.fetch(1)}")
+      #LOG.debug ("Received creds: Username: #{auth.credentials.fetch(0)} Password: #{auth.credentials.fetch(1)}")
       # end
 
       #assign
@@ -50,7 +50,7 @@ class ApiService < Sinatra::Base
       urlauth << '&password='
       urlauth << password
 
-      LOG.debug(urlauth)
+      #LOG.debug(urlauth)
 
       begin
         resp = RestClient.get(urlauth)
@@ -65,7 +65,7 @@ class ApiService < Sinatra::Base
 
 
       parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
+      #LOG.debug(parsed)
 
       ## store the business entity in the cache for the user
       ## TODO: Enhancement: Send in the default BusinessEntity here and store without the second call
@@ -73,7 +73,7 @@ class ApiService < Sinatra::Base
 
       ##TODO: this works, check in apps/model/login in main WS
       ##John wants the token to not have any encoded content - darren investigating
-      LOG.debug(parsed["authtoken_nonencoded"])
+      #LOG.debug(parsed["authtoken_nonencoded"])
       the_token_hash = {:token => CGI::unescape(parsed["authtoken"])}
       body(the_token_hash.to_json)
 
@@ -105,11 +105,11 @@ class ApiService < Sinatra::Base
       auth ||= Rack::Auth::Basic::Request.new(request.env)
       # Debug code to help resolve login issues.  Do not deploy this code.
       # begin
-      LOG.debug ("Provided ok") if auth.provided?
-      LOG.debug ("Basic ok") if auth.basic?
-      LOG.debug ("Creds provided") if auth.credentials
+      #LOG.debug ("Provided ok") if auth.provided?
+      #LOG.debug ("Basic ok") if auth.basic?
+      #LOG.debug ("Creds provided") if auth.credentials
 
-      LOG.debug ("Received creds: Username: #{auth.credentials.fetch(0)} Password: #{auth.credentials.fetch(1)}")
+      #LOG.debug ("Received creds: Username: #{auth.credentials.fetch(0)} Password: #{auth.credentials.fetch(1)}")
       # end
 
       #assign
@@ -125,7 +125,7 @@ class ApiService < Sinatra::Base
       urlauth << API_SVC_URL
       urlauth << 'login.json'
 
-      LOG.debug(urlauth)
+      #LOG.debug(urlauth)
 
       # make client call
       begin
@@ -142,7 +142,7 @@ class ApiService < Sinatra::Base
 
       #resp = generate_http_request(urlauth, "", "", "POST", user_name, password)
       parsed = JSON.parse(resp.body)
-      LOG.debug(parsed)
+      #LOG.debug(parsed)
 
       ## store the business entity in the cache for the user
       ## TODO: Enhancement: Send in the default BusinessEntity here and store without the second call
@@ -150,7 +150,7 @@ class ApiService < Sinatra::Base
 
       ##TODO: this works, check in apps/model/login in main WS
       ##John wants the token to not have any encoded content - darren investigating
-      LOG.debug(parsed["authtoken_nonencoded"])
+      #LOG.debug(parsed["authtoken_nonencoded"])
       the_token_hash = {:token => CGI::unescape(parsed["authtoken"])}
       body(the_token_hash.to_json)
 
@@ -187,7 +187,7 @@ class ApiService < Sinatra::Base
     urllogout << 'logout.json?token='
     urllogout << CGI::escape(token)
 
-    LOG.debug("url for logout: " + urllogout)
+    #LOG.debug("url for logout: " + urllogout)
 
     begin
       resp = RestClient.post(urllogout, "", :content_type => :json)

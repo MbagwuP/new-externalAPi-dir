@@ -33,7 +33,7 @@ class ApiService < Sinatra::Base
         severity_logged = SEVERITY_TYPE_LOG
     end
 
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     msg = request_body["message"]
 

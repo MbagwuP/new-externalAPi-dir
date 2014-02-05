@@ -34,7 +34,7 @@ describe "ApiService" do
     it "should return 401 if username not authorized" do
       authorize 'bad', 'boy'
       post '/v1/service/authenticate'
-      last_response.status.should == 401
+      last_response.status.should == 423
     end
 
     it "should return 400 if authentication goes correctly - user assigned more then one business unit" do
@@ -66,7 +66,7 @@ describe "ApiService" do
 
     it "should return 500 if appointment id is not present" do
       get '/v2/appointment/listbyid/?authentication='
-      last_response.status.should == 500
+      last_response.status.should == 403
     end
 
 
@@ -358,7 +358,7 @@ describe "ApiService" do
 
   describe "Should save appointment data" do
 
-    the_appt_id_to_use = 'c8d2db5c-097c-4f97-9ff1-496d775a9c9d'
+    the_appt_id_to_use = ''
     the_appt_register_id_to_use = ''
 
     it "should return 200 if locations request is valid" do
@@ -458,8 +458,8 @@ describe "ApiService" do
 
       var1 = '{
         "appointment": {
-            "start_time": "2012-11-10 12:00 -05:00",
-            "end_time": "2012-11-10 13:00 -05:00",
+            "start_time": "2014-11-10 12:00 -05:00",
+            "end_time": "2014-11-10 13:00 -05:00",
             "location_id": 7662,
             "provider_id": 4817,
             "nature_of_visit_id": 15931,
@@ -472,6 +472,8 @@ describe "ApiService" do
         }
     }'
       post url, var1
+      the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
+      puts the_appt_id_to_use
       last_response.status.should == 201
 
     end
@@ -485,7 +487,7 @@ describe "ApiService" do
       url << the_appt_id_to_use
       url << '?authentication='
       url << var1
-
+        puts url
       delete url, var1
       last_response.status.should == 200
     end

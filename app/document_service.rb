@@ -34,8 +34,8 @@ class ApiService < Sinatra::Base
   post '/v1/documents/patient/:patientid/upload?' do
 
     ## parameters passed in
-    LOG.debug(params[:metadata])
-    LOG.debug(params[:payload])
+    #LOG.debug(params[:metadata])
+    #LOG.debug(params[:payload])
 
     # Validate the input parameters
     request_body = JSON.parse(params[:metadata])
@@ -92,8 +92,8 @@ class ApiService < Sinatra::Base
     request_body['document']['source'] = 1
     request_body['document']['format'] = file_type_name
 
-    LOG.debug "Request body "
-    LOG.debug(request_body.to_s)
+    #LOG.debug "Request body "
+    #LOG.debug(request_body.to_s)
     
     create_document(patientid, pass_in_token, request_body)
   end
@@ -130,8 +130,8 @@ class ApiService < Sinatra::Base
   post '/v1/documents/patient/legacy/:id/upload?' do
 
     ## parameters passed in
-    LOG.debug(params[:metadata])
-    LOG.debug(params[:payload])
+    #LOG.debug(params[:metadata])
+    #LOG.debug(params[:payload])
     # Validate the input parameters
     request_body = JSON.parse(params[:metadata])
     #change to validate legacy length
@@ -183,8 +183,8 @@ class ApiService < Sinatra::Base
     request_body['document']['source'] = 1
     request_body['document']['format'] = file_type_name
 
-    LOG.debug "Request body "
-    LOG.debug(request_body.to_s)
+    #LOG.debug "Request body "
+    #LOG.debug(request_body.to_s)
 
     create_document(patientid, pass_in_token, request_body)
   end
@@ -210,8 +210,8 @@ class ApiService < Sinatra::Base
     internal_file_name << '-'
     internal_file_name << document_name
 
-    LOG.debug "internal file name"
-    LOG.debug(internal_file_name)
+    #LOG.debug "internal file name"
+    #LOG.debug(internal_file_name)
     File.open(internal_file_name, "wb") do |file|
       file.write(document_binary.read)
     end
@@ -245,7 +245,7 @@ class ApiService < Sinatra::Base
     file = File.new(file_path, 'rb')
     options = params.merge(file: file, token: token)
     res = JSON.parse(post("#{DOC_SERVICE_URL}/documents",options))
-    LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
+    #LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
     return res
   end
 

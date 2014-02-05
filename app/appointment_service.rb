@@ -69,16 +69,16 @@ class ApiService < Sinatra::Base
 
       patientid = x['id'].to_s
 
-      LOG.debug(patientid)
+      #LOG.debug(patientid)
 
       patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
       x['id'] = patientid
 
-      LOG.debug(patientid)
+      #LOG.debug(patientid)
     }
 
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
     urlapptcrt = ''
@@ -309,7 +309,7 @@ class ApiService < Sinatra::Base
         x['patient']['id'] = x['patient']['external_id']
       }
 
-      LOG.debug(parsed)
+      #LOG.debug(parsed)
       body(parsed.to_json)
 
     status HTTP_OK
@@ -370,7 +370,7 @@ class ApiService < Sinatra::Base
 
       # iterate the array of appointments
       parsed.each { |x|
-        LOG.debug(x)
+        #LOG.debug(x)
         x['id'] = x['external_id']
       }
 
@@ -463,8 +463,8 @@ class ApiService < Sinatra::Base
       result = []
       result << parsed
       result << parsed2
-      LOG.debug "BODY RETURNED "
-    LOG.debug(result.to_json)
+      #LOG.debug "BODY RETURNED "
+    #LOG.debug(result.to_json)
       body(result.to_json)
 
       status HTTP_OK
@@ -681,7 +681,7 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    #LOG.debug(business_entity)
 
     #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urllocation = ''
@@ -722,7 +722,7 @@ class ApiService < Sinatra::Base
    pass_in_token = CGI::unescape(params[:authentication])
 
    business_entity = get_business_entity(pass_in_token)
-   LOG.debug(business_entity)
+   #LOG.debug(business_entity)
 
 
    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
@@ -734,7 +734,7 @@ class ApiService < Sinatra::Base
    urllocation << params[:notification_id]
    urllocation << ".json?token="
    urllocation << CGI::escape(pass_in_token)
-   LOG.debug(urllocation)
+   #LOG.debug(urllocation)
 
    begin
      response = RestClient.get(urllocation)
@@ -861,7 +861,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''
@@ -926,7 +926,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''
@@ -995,7 +995,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''

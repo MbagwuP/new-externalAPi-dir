@@ -34,11 +34,11 @@ class ApiService < Sinatra::Base
     mirth_key << passed_in_id
 
     ##http://ruby-doc.org/stdlib-1.9.3/libdoc/digest/rdoc/Digest.html
-    LOG.debug(passed_in_key)
-    LOG.debug(mirth_key)
+    #LOG.debug(passed_in_key)
+    #LOG.debug(mirth_key)
 
     h = Digest::SHA2.new << mirth_key
-    LOG.debug(h.to_s)
+    #LOG.debug(h.to_s)
 
     if passed_in_key != h.to_s
 
@@ -57,7 +57,7 @@ class ApiService < Sinatra::Base
     urllabinbound << API_SVC_URL
     urllabinbound << 'labs/inboundrequest'
 
-    LOG.debug("url for lab inbound request: " + urllabinbound)
+    #LOG.debug("url for lab inbound request: " + urllabinbound)
 
     begin
 
@@ -77,8 +77,8 @@ class ApiService < Sinatra::Base
       parsed = JSON.parse(resp.body)
       pass_code = parsed["response"]["lab_status_code"]
 
-      LOG.debug(parsed)
-      LOG.debug(pass_code)
+      #LOG.debug(parsed)
+      #LOG.debug(pass_code)
 
       returnedBody = resp.body
 
@@ -117,7 +117,7 @@ class ApiService < Sinatra::Base
     current_date = DateTime.now()
     random_id = Random.rand(50).to_s
 
-    LOG.debug("random id: #{random_id}")
+    #LOG.debug("random id: #{random_id}")
 
     mirth_key = ''
     mirth_key << MIRTH_PRIVATE_KEY
@@ -125,10 +125,10 @@ class ApiService < Sinatra::Base
     mirth_key << random_id
 
     ##http://ruby-doc.org/stdlib-1.9.3/libdoc/digest/rdoc/Digest.html
-    LOG.debug(mirth_key)
+    #LOG.debug(mirth_key)
 
     h = Digest::SHA2.new << mirth_key
-    LOG.debug(h.to_s)
+    #LOG.debug(h.to_s)
 
     urllaboutbound = ''
     urllaboutbound << MIRTH_SVC_URL
@@ -137,7 +137,7 @@ class ApiService < Sinatra::Base
     urllaboutbound << '&key='
     urllaboutbound << h.to_s
 
-    LOG.debug("url for lab outbound request: " + urllaboutbound)
+    #LOG.debug("url for lab outbound request: " + urllaboutbound)
 
     begin
       resp = RestClient.post(urllaboutbound, request_body.to_json, :content_type => :json)
@@ -176,11 +176,11 @@ class ApiService < Sinatra::Base
     mirth_key << current_date.strftime('%Y%m%d')
     mirth_key << passed_in_id
 
-    LOG.debug(passed_in_key)
-    LOG.debug(mirth_key)
+    #LOG.debug(passed_in_key)
+    #LOG.debug(mirth_key)
 
     h = Digest::SHA2.new << mirth_key
-    LOG.debug(h.to_s)
+    #LOG.debug(h.to_s)
 
     if passed_in_key != h.to_s
 
@@ -198,14 +198,14 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
     api_svc_url = "#{API_SVC_URL}labs/ack_request_submitted"
 
-    LOG.debug('url for lab inbound request: ' + api_svc_url)
+    #LOG.debug('url for lab inbound request: ' + api_svc_url)
     begin
 
       resource = RestClient::Resource.new( api_svc_url, { :user => settings.labs_user, :password => settings.labs_pass})
       resp = resource.post(request_body.to_json)
 
       #resp = generate_http_request(api_svc_url, '', request_body.to_json, 'POST', settings.labs_user, settings.labs_pass)
-      LOG.debug(resp.body)
+      #LOG.debug(resp.body)
     rescue => e
       begin
         error_message = "Error posting inbound lab - #{e.message}"

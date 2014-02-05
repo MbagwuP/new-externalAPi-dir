@@ -400,8 +400,8 @@ post '/v1/patients/:patient_id/medications/create?' do
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
 
-    LOG.debug "Request Body >>>>>"
-    LOG.debug(request_body)
+    #LOG.debug "Request Body >>>>>"
+    #LOG.debug(request_body)
 
     request_body['medication'].each do |newMed|
 
@@ -410,19 +410,19 @@ post '/v1/patients/:patient_id/medications/create?' do
     newMed.delete('prescribed_quantity')
     end
 
-    LOG.debug "business_entity: "
-    LOG.debug (business_entity)
-    LOG.debug(local_pid)
+    #LOG.debug "business_entity: "
+    #LOG.debug (business_entity)
+    #LOG.debug(local_pid)
 
-    LOG.debug "patient_id: "
-    LOG.debug(patient_id)
+    #LOG.debug "patient_id: "
+    #LOG.debug(patient_id)
     newMed['patient_id'] = local_pid
 
-    LOG.debug "Medication Object"
-    LOG.debug(newMed)
+    #LOG.debug "Medication Object"
+    #LOG.debug(newMed)
     Medication = Hash.new
     Medication["medication"] = newMed
-    LOG.debug(Medication)
+    #LOG.debug(Medication)
 
     urlmedications = ''
     urlmedications << API_SVC_URL
@@ -564,24 +564,24 @@ post '/v1/patients/:patient_id/problems/create?' do
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
 
-    LOG.debug "Request Body >>>>>"
-    LOG.debug(request_body)
+    #LOG.debug "Request Body >>>>>"
+    #LOG.debug(request_body)
 
     request_body['problems'].each do |problem|
 
-    LOG.debug "business_entity: "
-    LOG.debug (business_entity)
-    LOG.debug(local_pid)
+    #LOG.debug "business_entity: "
+    #LOG.debug (business_entity)
+    #LOG.debug(local_pid)
 
-    LOG.debug "patient_id: "
-    LOG.debug(patient_id)
+    #LOG.debug "patient_id: "
+    #LOG.debug(patient_id)
     problem['patient_id'] = local_pid
 
-    LOG.debug "Problem Object"
-    LOG.debug(problem)
+    #LOG.debug "Problem Object"
+    #LOG.debug(problem)
     Problem = Hash.new
     Problem["problem"] = problem
-    LOG.debug(Problem)
+    #LOG.debug(Problem)
 
     urlproblems = ''
     urlproblems << API_SVC_URL

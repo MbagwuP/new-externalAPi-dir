@@ -68,7 +68,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
 
-    LOG.debug(parsed)
+    #LOG.debug(parsed)
 
     urlpatient = ''
     urlpatient << API_SVC_URL
@@ -92,13 +92,13 @@ class ApiService < Sinatra::Base
 
     parsed2 = JSON.parse(response.body)
 
-    LOG.debug(parsed2)
+    #LOG.debug(parsed2)
 
     results = []
     results << parsed
     results << parsed2
 
-    LOG.debug(results)
+    #LOG.debug(results)
 
     body(results.to_json)
 
@@ -158,7 +158,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
 
-    LOG.debug(parsed)
+    #LOG.debug(parsed)
 
     urlpatient = ''
     urlpatient << API_SVC_URL
@@ -182,13 +182,13 @@ class ApiService < Sinatra::Base
 
     parsed2 = JSON.parse(response.body)
 
-    LOG.debug(parsed2)
+    #LOG.debug(parsed2)
 
     results = []
     results << parsed
     results << parsed2
 
-    LOG.debug(results)
+    #LOG.debug(results)
 
     body(results.to_json)
 
@@ -236,7 +236,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/sync_list.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-    LOG.debug("Before Providers cal")
+    #LOG.debug("Before Providers cal")
 
     begin
       response = RestClient.get(urlpatient)
@@ -251,10 +251,10 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
 
-    LOG.debug(parsed)
+    #LOG.debug(parsed)
     body(parsed.to_json)
 
-    LOG.debug("good")
+    #LOG.debug("good")
     status HTTP_OK
 
 
@@ -362,11 +362,11 @@ class ApiService < Sinatra::Base
       end
     end
 
-    LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY >>>>>>>>>>>>>>>>"
-    LOG.debug(request_body)
+    #LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY >>>>>>>>>>>>>>>>"
+    #LOG.debug(request_body)
 
     temp = JSON.parse(resp.body)
-    LOG.debug(temp)
+    #LOG.debug(temp)
     request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
 
     urlpatient = ''
@@ -423,7 +423,7 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    #LOG.debug(business_entity)
 
     ## if external id, lookup internal
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
@@ -544,7 +544,7 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    #LOG.debug(business_entity)
 
     ## if external id, lookup internal
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
@@ -561,7 +561,7 @@ class ApiService < Sinatra::Base
     urlpatient << '.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-    LOG.debug("url for patient update: " + urlpatient)
+    #LOG.debug("url for patient update: " + urlpatient)
 
     begin
       response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
@@ -699,7 +699,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     internal_patient_id = parsed["patient"]["id"]
 
-    LOG.debug(internal_patient_id)
+    #LOG.debug(internal_patient_id)
 
     # PUT    /businesses/:business_entity_id/patients/:id(.:format) {:action=>"update", :controller=>"patients"}
     ## PUT http://localservices.carecloud.local:3000/businesses/1/patients/4751459.json?token=
@@ -765,7 +765,7 @@ class ApiService < Sinatra::Base
     search_data = ""
     request_body['search'].each { |x|
       search_data = search_data + x["term"] + " "
-      LOG.debug(search_data)
+      #LOG.debug(search_data)
     }
 
     search_limit = request_body['limit'].to_s
@@ -830,7 +830,7 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_genders.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for genders: " + urlreference)
+    #LOG.debug("url for genders: " + urlreference)
 
     begin
       response = RestClient.get(urlreference)
@@ -875,7 +875,7 @@ class ApiService < Sinatra::Base
     urlreference << 'people/list_all_ethnicities.json?token='
     urlreference << CGI::escape(pass_in_token)
 
-    LOG.debug("url for ethnicities: " + urlreference)
+    #LOG.debug("url for ethnicities: " + urlreference)
 
     begin
       response = RestClient.get(urlreference)
@@ -1193,7 +1193,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 1
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlptreg = ''
@@ -1259,7 +1259,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 1
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlptreg = ''
@@ -1327,7 +1327,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 1
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlptreg = ''

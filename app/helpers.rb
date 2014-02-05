@@ -164,7 +164,7 @@ class ApiService < Sinatra::Base
 
     ## TODO: figure this encoding out
     pass_in_token = CGI::unescape(pass_in_token)
-    LOG.debug("passed in token: " + pass_in_token)
+    #LOG.debug("passed in token: " + pass_in_token)
 
     ## HACK: Special logic for mirth
     if pass_in_token == settings.mirth_edi_token
@@ -174,7 +174,7 @@ class ApiService < Sinatra::Base
       ## check cache for business entity by token
       cache_key = "business-entity-" + pass_in_token
 
-      LOG.debug("cache key: " + cache_key)
+      #LOG.debug("cache key: " + cache_key)
 
       begin
         returned_business_entity_id = settings.cache.get(cache_key)
@@ -185,7 +185,7 @@ class ApiService < Sinatra::Base
 
       if returned_business_entity_id.nil? || returned_business_entity_id == ""
 
-        LOG.debug("business entity not found in cache, making the call")
+        #LOG.debug("business entity not found in cache, making the call")
 
         ## make webservice call to get business entitites by user
         urlbusentitylist = ''
@@ -193,7 +193,7 @@ class ApiService < Sinatra::Base
         urlbusentitylist << 'business_entities/list_by_user.json?list_type=list&token='
         urlbusentitylist << CGI::escape(pass_in_token)
 
-        LOG.debug("url for business entity list: " + urlbusentitylist)
+        #LOG.debug("url for business entity list: " + urlbusentitylist)
 
         begin
           resp = RestClient.get(urlbusentitylist)
@@ -212,12 +212,12 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_BAD_REQUEST, '{"error":"User is assigned to more then one business entity"}' if parsed.length > 1
 
         returned_business_entity_id = parsed[0]["id"]
-        LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+        #LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
 
         ## cache the result
         begin
           settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
-          LOG.debug("++++++++++cache set")
+          #LOG.debug("++++++++++cache set")
         rescue => e
           LOG.error("cannot reach cache store")
         end
@@ -238,7 +238,7 @@ class ApiService < Sinatra::Base
     ## check cache for business entity by token
     cache_key = "business-entity-" + business_entity_id + "-providers-" + pass_in_token
 
-    LOG.debug("cache key: " + cache_key)
+    #LOG.debug("cache key: " + cache_key)
 
     begin
       returned_providers_by_business_entity = settings.cache.get(cache_key)
@@ -249,7 +249,7 @@ class ApiService < Sinatra::Base
 
     if returned_providers_by_business_entity.nil? || returned_providers_by_business_entity == ""
 
-      LOG.debug("providers for business entity not found in cache, making the call")
+      #LOG.debug("providers for business entity not found in cache, making the call")
 
       #http://localservices.carecloud.local:3000/public/businesses/1/providers.json?token=
       urlprovider = ''
@@ -259,7 +259,7 @@ class ApiService < Sinatra::Base
       urlprovider << '/providers.json?token='
       urlprovider << CGI::escape(pass_in_token)
 
-      LOG.debug("url for providers: " + urlprovider)
+      #LOG.debug("url for providers: " + urlprovider)
 
 
       begin
@@ -275,12 +275,12 @@ class ApiService < Sinatra::Base
 
 
       returned_providers_by_business_entity = resp.body
-      LOG.debug(returned_provider_object)
+      #LOG.debug(returned_provider_object)
 
       ## cache the result
       begin
         settings.cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
-        LOG.debug("++++++++++cache set")
+        #LOG.debug("++++++++++cache set")
       rescue => e
         LOG.error("cannot reach cache store")
       end
@@ -327,7 +327,7 @@ class ApiService < Sinatra::Base
       urlpatient << '/externalid.json?token='
       urlpatient << CGI::escape(pass_in_token)
 
-      LOG.debug("url for patient: " + urlpatient)
+      #LOG.debug("url for patient: " + urlpatient)
 
       begin
         resp = RestClient.get(urlpatient)
@@ -344,7 +344,7 @@ class ApiService < Sinatra::Base
 
       patientid = parsed["patient"]["id"].to_s
 
-      LOG.debug(patientid)
+      #LOG.debug(patientid)
 
     end
 
@@ -365,7 +365,7 @@ class ApiService < Sinatra::Base
     urlpatient << '/othermeans.json?token='
     urlpatient << CGI::escape(pass_in_token)
 
-    LOG.debug("url for patient: " + urlpatient)
+    #LOG.debug("url for patient: " + urlpatient)
 
     begin
       resp = RestClient.get(urlpatient)
@@ -382,7 +382,7 @@ class ApiService < Sinatra::Base
 
     patientid = parsed["patient"]["id"].to_s
 
-    LOG.debug(patientid)
+    #LOG.debug(patientid)
 
 
     return patientid
@@ -452,7 +452,7 @@ class ApiService < Sinatra::Base
 
         mongo_id = auditcollection.insert(insertdocument)
 
-        LOG.debug("++mongo inserted: " + insertdocument.to_json)
+        #LOG.debug("++mongo inserted: " + insertdocument.to_json)
 
         return mongo_id
       end
@@ -540,7 +540,7 @@ class ApiService < Sinatra::Base
 
     ## check IP addresses
     ipaddress = request.ip
-    LOG.debug(ipaddress)
+    #LOG.debug(ipaddress)
     api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
 
     ## call for BE by patient
@@ -548,7 +548,7 @@ class ApiService < Sinatra::Base
     ## check cache for business entity by token
     cache_key = "business-entity-patient-" + patientid
 
-    LOG.debug("cache key: " + cache_key)
+    #LOG.debug("cache key: " + cache_key)
 
     begin
       returned_business_entity_id = settings.cache.get(cache_key)
@@ -559,7 +559,7 @@ class ApiService < Sinatra::Base
 
     if returned_business_entity_id.nil? || returned_business_entity_id == ""
 
-      LOG.debug("business entity not found in cache, making the call")
+      #LOG.debug("business entity not found in cache, making the call")
 
       ## make webservice call to get business entitites by user
       urlbusentitylist = ''
@@ -569,7 +569,7 @@ class ApiService < Sinatra::Base
       urlbusentitylist << '.json?token='
       urlbusentitylist << CGI::escape(pass_in_token)
 
-      LOG.debug("url for business entity list: " + urlbusentitylist)
+      #LOG.debug("url for business entity list: " + urlbusentitylist)
 
       begin
         resp = RestClient.get(urlbusentitylist)
@@ -587,12 +587,12 @@ class ApiService < Sinatra::Base
       parsed = JSON.parse(resp.body)
 
       returned_business_entity_id = parsed[0]["patient"]["business_entity_id"]
-      LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
+      #LOG.debug("returned business entity id: " + returned_business_entity_id.to_s)
 
       ## cache the result
       begin
         settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
-        LOG.debug("++++++++++cache set")
+        #LOG.debug("++++++++++cache set")
       rescue => e
         LOG.error("cannot reach cache store")
       end

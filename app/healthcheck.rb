@@ -27,7 +27,7 @@ class ApiService < Sinatra::Base
       uri = URI.parse(API_SVC_URL)
       conn = Net::HTTP::get_response(uri)
 
-      LOG.debug conn.inspect
+      #LOG.debug conn.inspect
       ## check basic endpoind devservices.carecloud.local/
       ## replace when ruby app has healthcheck
       if (conn.code.to_s == "403" || conn.code.to_s == "200")
