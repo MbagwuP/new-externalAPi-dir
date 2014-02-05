@@ -360,6 +360,8 @@ describe "ApiService" do
 
     the_appt_id_to_use = ''
     the_appt_register_id_to_use = ''
+    start_date = Time.now
+    end_date = start_date + 10*60
 
     it "should return 200 if locations request is valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -431,8 +433,8 @@ describe "ApiService" do
 
       var1 = '{
         "appointment": {
-            "start_time": "2014-01-1 10:20",
-            "end_time": "2014-01-1 11:00",
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
             "location_id": 2,
             "nature_of_visit_id": 2,
             "provider_id": 222222222222222,
@@ -458,8 +460,8 @@ describe "ApiService" do
 
       var1 = '{
         "appointment": {
-            "start_time": "2014-11-10 12:00 -05:00",
-            "end_time": "2014-11-10 13:00 -05:00",
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
             "location_id": 7662,
             "provider_id": 4817,
             "nature_of_visit_id": 15931,
