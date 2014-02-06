@@ -1,13 +1,10 @@
 #
-# File:       pass_server.rb
+# File:       api_server.rb
 #
 # Version:    1.0
 
 require 'sinatra/base'
 require 'json'
-require 'socket'
-require 'net/https'
-require 'net/http'
 require 'log4r'
 require 'rest-client'
 require 'cgi'
@@ -15,10 +12,8 @@ require 'logger'
 require 'color'
 require 'yaml'
 require 'dalli'
-require 'mongo'
-require 'digest'
-
-include Mongo
+require 'rest-client'
+require 'mongo_mapper'
 
 # Sinatra's way of splitting up a large project
 # include other endpoints
@@ -78,6 +73,7 @@ class ApiService < Sinatra::Base
         MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         SOFTWARE_VERSION = "v0.8"
+        set :enable_auditing, true
 
         set :memcached_server, config["memcache_servers"]
         set :mongo_server, config["mongo_server"]
@@ -94,69 +90,54 @@ class ApiService < Sinatra::Base
         set :public_folder, 'public'
 
         begin
-            LOG.debug ("Connecting to Mongo at: ")
-            LOG.debug (settings.mongo_server)
-            LOG.debug (settings.mongo_port)
-            set :mongo, MongoClient.new(settings.mongo_server, settings.mongo_port).db("auditlog")
-        rescue
-            LOG.error("Cannot connect to Mongo") 
-            set :mongo, nil
+            set :mongo, { options: { pool_size: 25, pool_timeout: 10, slave_ok: true },
+                config: YAML.load(File.open(File.expand_path('../config/mongodb.yml', __FILE__))) }
+        rescue => e
+            set :mongo, { options: { pool_size: 25, pool_timeout: 10, slave_ok: true },
+                config: { } }
         end
 
-        LOG.debug("++++++++++++++++++++++++++")
+        LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
         LOG.debug(config_path)
         LOG.debug(API_SVC_URL)
         LOG.debug(config)
     end
 
     configure :development do
-    
-        # Set logging level
-        LOG.level = Log4r::DEBUG
-
-        # configurations
-        ENV_CLASS = "dev"
-
-         # set :raise_errors, false
-         # #  enable :raise_errors
-         # set :show_exceptions, false
-        
         LOG.info ("API-Service (Development) launched")
+        LOG.level = Log4r::DEBUG
     end
 
     configure :qa do
-
-        # Set logging level
-        LOG.level = Log4r::WARN
-
-        ENV_CLASS = "qa"
-        
         LOG.info ("API-Service (QA) launched")
-
+        LOG.level = Log4r::WARN
     end
 
     configure :staging do
-
-        # Set logging level
-        LOG.level = Log4r::ERROR
-
-        ENV_CLASS = "staging"
-        
         LOG.info ("API-Service (Staging) launched")
-
+        LOG.level = Log4r::ERROR
     end
 
     configure :production do
-
-        # Set logging level
-        LOG.level = Log4r::ERROR
-
-        ENV_CLASS = "production"
-        
         LOG.info ("API-Service (Production) launched")
-
+        LOG.level = Log4r::ERROR
     end
 
+    configure :test do
+        LOG.info ("API-Service (Test) launched")
+        LOG.level = Log4r::ERROR
+        set :enable_auditing, false
+    end
+
+
+    # Establish connection to mongoDB; database as defined in model
+    begin
+        LOG.debug ("Connecting to MongoMapper at: #{settings.mongo[:config].inspect}")
+        MongoMapper.setup(settings.mongo[:config], settings.environment, settings.mongo[:options])
+    rescue => e
+        LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
+        #    exit if settings.enable_auditing        # Using as a proxy for test environment
+    end
 
     # Test route
     get '/' do

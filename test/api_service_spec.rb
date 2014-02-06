@@ -34,7 +34,7 @@ describe "ApiService" do
     it "should return 401 if username not authorized" do
       authorize 'bad', 'boy'
       post '/v1/service/authenticate'
-      last_response.status.should == 423
+      last_response.status.should == 401
     end
 
     it "should return 400 if authentication goes correctly - user assigned more then one business unit" do
@@ -64,7 +64,7 @@ describe "ApiService" do
 
   describe "Should return appointment and patient data " do
 
-    it "should return 500 if appointment id is not present" do
+    it "should return 403 if appointment id is not present" do
       get '/v2/appointment/listbyid/?authentication='
       last_response.status.should == 403
     end
@@ -192,12 +192,12 @@ describe "ApiService" do
       last_response.status.should == 400
     end
 
-    it "should return 500 if request is no auth token" do
+    it "should return 403 if request is no auth token" do
       get '/v1/patients/patient-2222'
-      last_response.status.should == 500
+      last_response.status.should == 403
     end
 
-    it "should return 500 if request is not authorized" do
+    it "should return 403 if request is not authorized" do
       get '/v1/patients/patient-2222?authentication=3333333'
       last_response.status.should == 403
       last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
@@ -475,7 +475,6 @@ describe "ApiService" do
     }'
       post url, var1
       the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
-      puts the_appt_id_to_use
       last_response.status.should == 201
 
     end
@@ -489,7 +488,6 @@ describe "ApiService" do
       url << the_appt_id_to_use
       url << '?authentication='
       url << var1
-        puts url
       delete url, var1
       last_response.status.should == 200
     end

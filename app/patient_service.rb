@@ -23,6 +23,9 @@ class ApiService < Sinatra::Base
   get '/v1/patients/:patientid?' do
     # Validate the input parameters
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+    
+    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+    
     pass_in_token = CGI::unescape(params[:authentication])
     #format to what the devservice needs
     business_entity = get_business_entity(pass_in_token)
