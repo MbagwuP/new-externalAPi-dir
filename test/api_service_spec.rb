@@ -18,11 +18,11 @@ describe "ApiService" do
 
   describe "Should authenticate correctly" do
 
-    it "should return 500 if request is bogus" do
+    it "should return 400 if request is bogus" do
       request_header = {}
       request_header['HTTP_AUTHORIZATION'] = "PassAuthToken"
       post '/v1/service/authenticate', {}, request_header
-      last_response.status.should == 500
+      last_response.status.should == 400
     end
 
     it "should return 400 if username missing" do

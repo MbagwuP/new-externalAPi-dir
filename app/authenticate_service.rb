@@ -27,16 +27,20 @@ class ApiService < Sinatra::Base
       auth ||= Rack::Auth::Basic::Request.new(request.env)
       # Debug code to help resolve login issues.  Do not deploy this code.
       # begin
-      #LOG.debug ("Provided ok") if auth.provided?
-      #LOG.debug ("Basic ok") if auth.basic?
-      #LOG.debug ("Creds provided") if auth.credentials
+      # LOG.debug ("Provided ok") if auth.provided?
+      # LOG.debug ("Basic ok") if auth.basic?
+      # LOG.debug ("Creds provided") if auth.credentials
 
       #LOG.debug ("Received creds: Username: #{auth.credentials.fetch(0)} Password: #{auth.credentials.fetch(1)}")
       # end
 
       #assign
-      user_name = auth.credentials.fetch(0)
-      password = auth.credentials.fetch(1)
+      begin
+        user_name = auth.credentials.fetch(0)
+        password = auth.credentials.fetch(1)
+      rescue
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
+      end
 
       #validation of request
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Username Not Found"}' if user_name.empty?
