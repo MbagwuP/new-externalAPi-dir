@@ -16,6 +16,7 @@ gem 'json'
 
 # mongo
 gem 'mongo'
+gem 'mongo_mapper'
 gem 'bson_ext'
 
 group :test, :development do
