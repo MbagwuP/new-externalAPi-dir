@@ -18,7 +18,7 @@ gem 'json'
 gem 'mongo'
 gem 'bson_ext'
 
-group :test, :development do
+group :test, :development, :localhost do
   gem 'rspec'
   gem 'rack-test'
 end

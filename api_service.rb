@@ -124,6 +124,22 @@ class ApiService < Sinatra::Base
         LOG.info ("API-Service (Development) launched")
     end
 
+    configure :localhost do
+
+      # Set logging level
+      LOG.level = Log4r::DEBUG
+
+      # configurations
+      ENV_CLASS = "dev"
+
+      # set :raise_errors, false
+      # #  enable :raise_errors
+      # set :show_exceptions, false
+
+      LOG.info ("API-Service (Localhost) launched")
+    end
+
+
     configure :qa do
 
         # Set logging level
