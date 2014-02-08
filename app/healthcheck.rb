@@ -49,16 +49,15 @@ class ApiService < Sinatra::Base
         ## Audit Log (Mongo)
         begin
             mongoUp = true
-            auudtevents = CareCloud::AuditEvents.where(:uuid => 0).first
+            auudtevents = CareCloud::AuditRecord.where(:uuid => 0).first
         rescue => e
             mongoUp = false
         end
-        
-        
+
         ## DMS
         begin
             
-            urlToUse = "#{DOC_SERVICE_URL}/ha.txt"
+            urlToUse = "#{DOC_SERVICE_URL}/api/explorer"
             
             uri2 = URI.parse(urlToUse)
             conn2 = Net::HTTP::get_response(uri2)
@@ -90,7 +89,7 @@ class ApiService < Sinatra::Base
         }
         
         overal_health = true
-        overal_health = webserviceUp && cacheUp && mongoUp && docStoreUp
+        overal_health = webserviceUp && mongoUp && docStoreUp
         
         dependencychecks = []
         dependencychecks << ws_health
