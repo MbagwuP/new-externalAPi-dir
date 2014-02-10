@@ -82,34 +82,6 @@ class ApiService < Sinatra::Base
 #     }]
 # }
 
-  get '/v1/get/test' do
-    ## token management. Need unencoded tokens!
-    pass_in_token = CGI::unescape(params[:authentication])
-    business_entity = get_business_entity(pass_in_token)
-    patient_id = '123'
-
-    url = ''
-    url << API_SVC_URL
-    url << 'business_entity/'
-    url << business_entity
-    url << '/patients/'
-    url << patient_id
-    url << "/check.json?token="
-    url << CGI::escape(params[:authentication])
-
-    begin
-      response = RestClient.get(url)
-    rescue => e
-      begin
-        errmsg = "Updating Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-    status HTTP_CREATED
-  end
-
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
 
     local_pid = []
@@ -428,8 +400,8 @@ post '/v1/patients/:patient_id/medications/create?' do
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
 
-    LOG.debug "Request Body >>>>>"
-    LOG.debug(request_body)
+    #LOG.debug "Request Body >>>>>"
+    #LOG.debug(request_body)
 
     request_body['medication'].each do |newMed|
 
@@ -438,19 +410,19 @@ post '/v1/patients/:patient_id/medications/create?' do
     newMed.delete('prescribed_quantity')
     end
 
-    LOG.debug "business_entity: "
-    LOG.debug (business_entity)
-    LOG.debug(local_pid)
+    #LOG.debug "business_entity: "
+    #LOG.debug (business_entity)
+    #LOG.debug(local_pid)
 
-    LOG.debug "patient_id: "
-    LOG.debug(patient_id)
+    #LOG.debug "patient_id: "
+    #LOG.debug(patient_id)
     newMed['patient_id'] = local_pid
 
-    LOG.debug "Medication Object"
-    LOG.debug(newMed)
+    #LOG.debug "Medication Object"
+    #LOG.debug(newMed)
     Medication = Hash.new
     Medication["medication"] = newMed
-    LOG.debug(Medication)
+    #LOG.debug(Medication)
 
     urlmedications = ''
     urlmedications << API_SVC_URL
@@ -475,7 +447,7 @@ post '/v1/patients/:patient_id/medications/create?' do
 
 end
   
-# {
+#{
 #     "vitals": [
 #         {
 #             "name": "Vitals",
@@ -526,7 +498,7 @@ end
 #             ]
 #         }
 #     ]
-# }
+#}
 
   post '/v1/patients/:patient_id/vitals/create?' do
 
@@ -563,10 +535,9 @@ end
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
-
-      status HTTP_CREATED
     end
 
+    status HTTP_CREATED
   end
 
 
@@ -593,24 +564,24 @@ post '/v1/patients/:patient_id/problems/create?' do
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
 
-    LOG.debug "Request Body >>>>>"
-    LOG.debug(request_body)
+    #LOG.debug "Request Body >>>>>"
+    #LOG.debug(request_body)
 
     request_body['problems'].each do |problem|
 
-    LOG.debug "business_entity: "
-    LOG.debug (business_entity)
-    LOG.debug(local_pid)
+    #LOG.debug "business_entity: "
+    #LOG.debug (business_entity)
+    #LOG.debug(local_pid)
 
-    LOG.debug "patient_id: "
-    LOG.debug(patient_id)
+    #LOG.debug "patient_id: "
+    #LOG.debug(patient_id)
     problem['patient_id'] = local_pid
 
-    LOG.debug "Problem Object"
-    LOG.debug(problem)
+    #LOG.debug "Problem Object"
+    #LOG.debug(problem)
     Problem = Hash.new
     Problem["problem"] = problem
-    LOG.debug(Problem)
+    #LOG.debug(Problem)
 
     urlproblems = ''
     urlproblems << API_SVC_URL
@@ -635,7 +606,8 @@ post '/v1/patients/:patient_id/problems/create?' do
     end
 
     status HTTP_CREATED
-end
-end
+
+    end
+  end
 
 end

@@ -14,20 +14,21 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON
-  #  {
-  #     "appointment": {
-  #         "start_time": "2013-04-24 10:00",
-  #         "end_time": "2013-04-24 11:00",
-  #         "location_id": 2,
-  #         "nature_of_visit_id": 2,
-  #         "provider_id": 2,
-  #         "patients": [
-  #             {
-  #                 "id": 1819622,
-  #                 "comments": "patienthasheadache"
-  #             }]
-  #     }
-  # }
+  #{
+  #    "appointment": {
+  #    "start_time": "2013-04-24 10:00 -05:00",
+  #    "end_time": "2013-04-24 11:00 -05:00",
+  #    "location_id": 7662,
+  #    "provider_id": 4817,
+  #    "nature_of_visit_id": 15931,
+  #    "resource_id": 4486,
+  #    "patients": [
+  #    {
+  #        "id": 7517912,
+  #    "comments": "patient has headache"
+  #}]
+  #}
+  #}
   #
   # server response:
   # --> if appointment created: 201, with appointment id returned
@@ -68,16 +69,16 @@ class ApiService < Sinatra::Base
 
       patientid = x['id'].to_s
 
-      LOG.debug(patientid)
+      #LOG.debug(patientid)
 
       patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
       x['id'] = patientid
 
-      LOG.debug(patientid)
+      #LOG.debug(patientid)
     }
 
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
     urlapptcrt = ''
@@ -97,7 +98,6 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
     parsed = JSON.parse(response.body)
     the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
     body(the_response_hash.to_json)
@@ -309,7 +309,7 @@ class ApiService < Sinatra::Base
         x['patient']['id'] = x['patient']['external_id']
       }
 
-      LOG.debug(parsed)
+      #LOG.debug(parsed)
       body(parsed.to_json)
 
     status HTTP_OK
@@ -370,7 +370,7 @@ class ApiService < Sinatra::Base
 
       # iterate the array of appointments
       parsed.each { |x|
-        LOG.debug(x)
+        #LOG.debug(x)
         x['id'] = x['external_id']
       }
 
@@ -463,8 +463,8 @@ class ApiService < Sinatra::Base
       result = []
       result << parsed
       result << parsed2
-      LOG.debug "BODY RETURNED "
-    LOG.debug(result.to_json)
+      #LOG.debug "BODY RETURNED "
+    #LOG.debug(result.to_json)
       body(result.to_json)
 
       status HTTP_OK
@@ -681,7 +681,7 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    #LOG.debug(business_entity)
 
     #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urllocation = ''
@@ -709,6 +709,52 @@ class ApiService < Sinatra::Base
 
     status HTTP_OK
   end
+
+  #get notification callbacks since a date
+  #URL: v1/notification_callbacks/2013-12-30/85152eb3-0140-4812-9428-8ceee06a25bc?authentication=
+   #params ex.
+    #date = 2013-12-30
+      #notification_callback id = 85152eb3-0140-4812-9428-8ceee06a25bc
+
+
+ get '/v1/notification_callbacks/:date/:notification_id?' do
+   ## token management. Need unencoded tokens!
+   pass_in_token = CGI::unescape(params[:authentication])
+
+   business_entity = get_business_entity(pass_in_token)
+   #LOG.debug(business_entity)
+
+
+   #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
+   urllocation = ''
+   urllocation << API_SVC_URL
+   urllocation << 'notification_callbacks/'
+   urllocation << params[:date]
+   urllocation << '/id/'
+   urllocation << params[:notification_id]
+   urllocation << ".json?token="
+   urllocation << CGI::escape(pass_in_token)
+   #LOG.debug(urllocation)
+
+   begin
+     response = RestClient.get(urllocation)
+   rescue => e
+     begin
+       errmsg = "Notification Callback look up Failed - #{e.message}"
+       api_svc_halt e.http_code, errmsg
+     rescue
+       api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+     end
+   end
+
+
+   parsed = JSON.parse(response.body)
+
+   body(parsed.to_json)
+
+   status HTTP_OK
+ end
+
 
   #  get status information
   #
@@ -815,7 +861,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''
@@ -880,7 +926,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''
@@ -949,7 +995,7 @@ class ApiService < Sinatra::Base
     request_body['notification_type'] = 2
 
     ## register callback url
-    LOG.debug(request_body)
+    #LOG.debug(request_body)
 
     ##http://localservices.carecloud.local:3000/notification_callbacks.json?token=
     urlapptreg = ''

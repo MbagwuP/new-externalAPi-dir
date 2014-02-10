@@ -36,7 +36,7 @@ class ApiService < Sinatra::Base
     provider_list = get_providers_by_business_entity(business_entity, pass_in_token)
 
 
-    LOG.debug(provider_list)
+    #LOG.debug(provider_list)
 
     begin
 
@@ -81,12 +81,12 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
-    LOG.debug(business_entity)
+    #LOG.debug(business_entity)
 
     ## save the result of this to the cache
     cache_key = "business-entity-" + business_entity + "-providers-" + CGI::unescape(pass_in_token)
 
-    LOG.debug("cache key: " + cache_key)
+    #LOG.debug("cache key: " + cache_key)
 
     #http://localservices.carecloud.local:3000/public/businesses/1/providers.json?token=
     urlprovider = ''

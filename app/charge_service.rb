@@ -8,7 +8,7 @@
 class ApiService < Sinatra::Base
 
 
-  # {
+  #{
   #     "charges": {
   #         "charge": {
   #             "provider_id": 2,
@@ -31,7 +31,7 @@ class ApiService < Sinatra::Base
   #             "effective_date": "2013-05-08"
   #         }
   #     }
-  # }
+  #}
   # server response:
   # --> if appointment created: 201, with charge id returned
   # --> if not authorized: 401
@@ -65,8 +65,8 @@ class ApiService < Sinatra::Base
     urlcharge << 'charges/create.json?token='
     urlcharge << CGI::escape(pass_in_token)
 
-    LOG.debug("url for charge create: " + urlcharge)
-    LOG.debug(request_body.to_json)
+    #LOG.debug("url for charge create: " + urlcharge)
+    #LOG.debug(request_body.to_json)
 
     begin
       response = RestClient.post(urlcharge, request_body.to_json, :content_type => :json)
@@ -91,13 +91,13 @@ class ApiService < Sinatra::Base
 
   get '/v1/charges/:patient_id?' do
 
-    LOG.debug("0")
+    #LOG.debug("0")
     pass_in_token = CGI::unescape(params[:authentication])
     #business_entity = get_business_entity(pass_in_token)
-    LOG.debug("0.5")
+    #LOG.debug("0.5")
     pid = params[:patient_id]
-    LOG.debug("1")
-    LOG.debug(pid)
+    #LOG.debug("1")
+    #LOG.debug(pid)
 
     url = ''
     url << API_SVC_URL
@@ -106,8 +106,8 @@ class ApiService < Sinatra::Base
     url << '/charge/listbypatient.json?token='
     url << CGI::escape(pass_in_token)
 
-    LOG.debug(url)
-    LOG.debug("2")
+    #LOG.debug(url)
+    #LOG.debug("2")
     begin
       response = RestClient.get(url)
     rescue => e
@@ -118,12 +118,15 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
-    parsed = JSON.parse(response.body)
-    body(parsed.to_json)
+    #LOG.debug("hit me")
+    #LOG.debug(response)
+    if !response
+      body("There are no charges for this patient")
+    else
+      parsed = JSON.parse(response.body)
+      body(parsed.to_json)
+    end
     status HTTP_OK
-
   end
-
 
 end
