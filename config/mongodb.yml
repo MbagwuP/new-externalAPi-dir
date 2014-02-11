@@ -1,6 +1,6 @@
 development:
   adapter: mongodb
-  host: 54.242.195.20
+  host: 10.64.22.131
   port: 27017
 
 production:
@@ -20,6 +20,6 @@ staging:
 
 test:
   adapter: mongodb
-  host: 54.242.195.20
+  host: 10.64.22.131
   port: 27017
 
