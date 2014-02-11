@@ -24,11 +24,6 @@ development:
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
 
-localhost:
-    <<: *development
-    api_internal_svc_url: http://localhost:3000/
-    mongo_server: localhost
-
 production:
     api_internal_svc_url: https://services.carecloud.com/
     api_internal_doc_srv_upld_url: https://dms.carecloud.com
