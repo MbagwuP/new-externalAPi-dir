@@ -1279,7 +1279,7 @@ class ApiService < Sinatra::Base
     urlptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.delete(urlptreg, request_body)
+      response = RestClient.delete(urlptreg)
     rescue => e
       begin
         errmsg = "Deleting Patient Data Failed - #{e.message}"

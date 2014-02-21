@@ -1006,7 +1006,7 @@ class ApiService < Sinatra::Base
     urlapptreg << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.delete(urlapptreg, request_body)
+      response = RestClient.delete(urlapptreg)
     rescue => e 
       begin
         errmsg = "Appointment Deletion Failed - #{e.message}"
