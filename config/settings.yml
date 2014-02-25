@@ -1,4 +1,4 @@
-development:
+development: &development
     api_internal_svc_url: http://devservices.carecloud.local/
     #api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
@@ -12,6 +12,12 @@ development:
     mongo_port: 27017
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
+
+localhost:
+    <<: *development
+    api_internal_svc_url: http://localhost:3000/
+    mongo_server: localhost
+    mongo_port: 27017
 
 production:
     api_internal_svc_url: https://services.carecloud.com/
