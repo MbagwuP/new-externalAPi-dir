@@ -6,38 +6,70 @@
 
 
 class ApiService < Sinatra::Base
-
-
-  #{
-  #     "charges": {
-  #         "charge": {
-  #             "provider_id": 2,
-  #             "insurance_profile_id": 1,
-  #             "attending_provider_id": 2,
-  #             "supervising_provider_id": 2,
-  #             "referring_physician_id" : 2,
-  #             "clinical_case_id" : 1234,
-  #             "authorization_id" : "1222AAS"
-  #             "units": "each",
-  #             "diagnosis1_code": "010.16",
-  #             "diagnosis1_pointer": 1,
-  #             "procedure_code": "51798",
-  #             "location_id": 2,
-  #             "start_time": "2013-05-08" (date_of_service)
-  #         },
-  #         "debit": {
-  #             "amount": 355.75,
-  #             "patient_id": 36910,
-  #             "effective_date": "2013-05-08"
-  #         }
-  #     }
-  #}
-  # server response:
-  # --> if appointment created: 201, with charge id returned
-  # --> if not authorized: 401
-  # --> if patient not found: 404
-  # --> if bad request: 400
-  post '/v1/charge/create?' do
+#{
+#     "charge": {
+#         "provider_id": "4817",
+#         "insurance_profile_id": "",
+#         "attending_provider_id": "",
+#         "referring_physician_id": "",
+#         "supervising_provider_id": "",
+#         "authorization_id": "",
+#         "clinical_case_id": "",
+#         "location_id": "",
+#         "encounter_id": "",
+#         "debit_transaction_id": "",
+#         "start_time": "2014-01-03",
+#         "end_time": "2014-01-03",
+#         "units": 1,
+#         "procedure_code": "99253",
+#         "procedure_short_description": "",
+#         "diagnosis1_code": "285.9",
+#         "diagnosis1_pointer": 1,
+#         "diagnosis2_code": "",
+#         "diagnosis2_pointer": "",
+#         "diagnosis3_code": "",
+#         "diagnosis3_pointer": "",
+#         "diagnosis4_code": "",
+#         "diagnosis4_pointer": "",
+#         "diagnosis5_code": "",
+#         "diagnosis5_pointer": "",
+#         "diagnosis6_pointer":"",
+#         "diagnosis7_code": "",
+#         "diagnosis7_pointer": "",
+#         "diagnosis8_code": "",
+#         "diagnosis8_pointer": "",
+#         "modifier1_code": "",
+#         "modifier2_code": "",
+#         "modifier3_code": "",
+#         "modifier4_code": ""
+#     },
+#     "clinical_case": {
+#         "clinical_case_type_id": "1",
+#         "effective_from": "1",
+#         "effective_to": "1",
+#         "onset_date": "1",
+#         "hospitalization_date_from": "1",
+#         "hospitalization_date_to": "1",
+#         "auto_accident_state_id": "1",
+#         "newborn_weight": "1",
+#         "pregnancy_indicator": "1",
+#         "location_id": "1",
+#         "accident_type_id": "1",
+#         "claim_number": "1",
+#         "adjuster_contact_id": "1",
+#         "order_date": "1",
+#         "initial_treatment_date": "1",
+#         "referral_date": "1",
+#         "last_seen_date": "1",
+#         "acute_manifestation_date": "1"
+#     }
+#}
+# server response:
+# --> if appointment created: 201, with charge id returned
+# --> if not authorized: 401
+# --> if patient not found: 404
+# --> if bad request: 400
+  post '/v1/charge/:patient_id/create?' do
 
     # Validate the input parameters
     request_body = get_request_JSON
@@ -47,22 +79,33 @@ class ApiService < Sinatra::Base
 
     business_entity = get_business_entity(pass_in_token)
 
-    ## add business entity to debit controller
-    request_body['charges']['debit']['business_entity_id'] = business_entity
+    patient_id = params[:patient_id]
+
+    patient_id.slice!(/^patient-/)
+
+    patient_id = get_internal_patient_id(patient_id , business_entity, pass_in_token)
+
+    provider_ids = get_providers_by_business_entity(business_entity, pass_in_token)
+
+    check_for_valid_provider(provider_ids, request_body['charge']['provider_id']) if request_body['charge']['provider_id']
 
     ## validate provider id
-    providerid = request_body['charges']['charge']['provider_id']
+    #providerid = request_body['charge']['provider_id']
 
     ## validate the provider
-    providerids = get_providers_by_business_entity(business_entity, pass_in_token)
+    #providerids = get_providers_by_business_entity(business_entity, pass_in_token)
 
     ## validate the request based on token
-    check_for_valid_provider(providerids, providerid)
+    #check_for_valid_provider(providerids, providerid)
 
     #http://localservices.carecloud.local:3000/charges/create.json?token=
     urlcharge = ''
     urlcharge << API_SVC_URL
-    urlcharge << 'charges/create.json?token='
+    urlcharge << 'charges/'
+    urlcharge << patient_id
+    urlcharge << '/business_entity/'
+    urlcharge << business_entity
+    urlcharge << '/create.json?token='
     urlcharge << CGI::escape(pass_in_token)
 
     #LOG.debug("url for charge create: " + urlcharge)
@@ -70,19 +113,19 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.post(urlcharge, request_body.to_json, :content_type => :json)
-    rescue => e 
+    rescue => e
       begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
+        LOG.debug(e.inspect)
+        errmsg = "Charge Creation Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
 
-
-    parsed = JSON.parse(response.body)
-
-    body(parsed.to_json)
+    #return_value = parsed["id"]
+    #body("Charge has been created, Confirmation Code: #{return_value}")
+    body("A Charge has successfully posted for patient: #{params[:patient_id]}")
 
     status HTTP_CREATED
 
