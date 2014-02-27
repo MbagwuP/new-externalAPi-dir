@@ -652,5 +652,32 @@ describe "ApiService" do
 
   end
 
+  describe "Should return list of locations" do
+
+    it "should return 403 if bad authentication token" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/get/locations?authentication=12'
+
+      get url
+      last_response.status.should == 403
+    end
+
+    it "should return 200 location list is found" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/get/locations?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+    end
+
+  end
+
 
 end
