@@ -69,27 +69,30 @@ class ApiService < Sinatra::Base
         end
         
         ws_health = {"name" => "Web Service",
-            "description" => "Web Service",
-            "status" => (webserviceUp ? "HEALTHY" : "BROKEN")
+            "comment" => "Web Service is active",
+            "status" => (webserviceUp ? true : false),
+            "level" => "critical"
         }
         
         cache_health = {"name" => "MemCache",
-            "description" => "memcached",
-            "status" => (cacheUp ? "HEALTHY" : "IMPAIRED")
+            "comment" => "memcached is active",
+            "status" => (cacheUp ? true : false),
+            "level" => "warn"
         }
         
         mongo_health = {"name" => "Audit",
-            "description" => "MongoDB for auditing",
-            "status" => (mongoUp ? "HEALTHY" : "IMPAIRED")
+            "comment" => "MongoDB is active",
+            "status" => (mongoUp ? true : false),
+            "level" => "critical"
         }
         
         dms_health = {"name" => "DMS",
-            "description" => "DMS",
-            "status" => (docStoreUp ? "HEALTHY" : "BROKEN")
+            "comment" => "DMS is active",
+            "status" => (docStoreUp ? true : false),
+            "level" => "critical"
         }
         
-        overal_health = true
-        overal_health = webserviceUp && mongoUp && docStoreUp
+        overall_health = webserviceUp && mongoUp && docStoreUp
         
         dependencychecks = []
         dependencychecks << ws_health
@@ -100,9 +103,9 @@ class ApiService < Sinatra::Base
         health = {"service" => "External API Service",
             "description" => "Service 3rd party applications utilize to access CareCloud",
             "version" => "#{SOFTWARE_VERSION}",
-            "serviceStatus" => (overal_health ? "HEALTHY" : "BROKEN"),
-            "loadbalancerStatus" => (overal_health ? "UP" : "DOWN"),
-            "dependencychecks" => dependencychecks
+            "service_status" => (overall_health ? "up" : "down"),
+            "loadbalancerStatus" => (overall_health ? "up" : "down"),
+            "dependencies" => dependencychecks
         }
         
         health.to_json
