@@ -104,7 +104,6 @@ class ApiService < Sinatra::Base
             "description" => "Service 3rd party applications utilize to access CareCloud",
             "version" => "#{SOFTWARE_VERSION}",
             "service_status" => (overall_health ? "up" : "down"),
-            "loadbalancerStatus" => (overall_health ? "up" : "down"),
             "dependencies" => dependencychecks
         }
         
@@ -122,7 +121,7 @@ class ApiService < Sinatra::Base
     # Need to handle jQuery requests
     if params[:callback]
         health = perform_healthcheck
-        return "#{params[:callback]}(#{health})"
+        return "#{params[:callback]}(#{health});"
     else
         perform_healthcheck
     end
@@ -138,7 +137,11 @@ class ApiService < Sinatra::Base
         
         health = JSON.parse(perform_healthcheck)
         
-        health["loadbalancerStatus"].downcase
+        if health["service_status"] == "up" || health["service_status"] == "sick"
+            "up"
+        else
+            "down"
+        end
         
     end
 
