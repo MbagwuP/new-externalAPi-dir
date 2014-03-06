@@ -121,8 +121,11 @@ class ApiService < Sinatra::Base
         # Need to handle jQuery requests
         if params[:callback]
             health = perform_healthcheck
-            return "/**/ #{params[:callback]}(#{health});"
+            
+            content_type :js
+            return "#{params[:callback]}(#{health});"
         else
+            content_type :json
             perform_healthcheck
         end
 

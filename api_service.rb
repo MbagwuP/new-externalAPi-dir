@@ -48,8 +48,8 @@ class ApiService < Sinatra::Base
 
 
     configure do
-
-        # Setup logger & format
+        set :protection, :except => [:remote_referrer, :json_csrf]
+        set :public_folder, 'public'
 
         # Setup logger and default logging level
         Log4r::StderrOutputter.new('console')
@@ -58,7 +58,6 @@ class ApiService < Sinatra::Base
         LOG.add('console', 'logfile')
 
         config_path = Dir.pwd + "/config/settings.yml"
-
         config = YAML.load(File.open(config_path))[settings.environment.to_s]
         
         if config  == nil
