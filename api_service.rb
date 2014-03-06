@@ -156,12 +156,6 @@ class ApiService < Sinatra::Base
     end
 
     # Test route
-    get '/' do
-        LOG.debug("in base")
-
-        "Welcome to the API service"
-    end
-
     get '/testmongo' do
 
         auditoptions = {
@@ -173,12 +167,6 @@ class ApiService < Sinatra::Base
         auditcollection = settings.mongo.collection("audit_events")
 
         auditcollection.find.each { |row| LOG.debug row.inspect }
-
-    end
-
-    get '/version' do
-
-      "Running version: #{SOFTWARE_VERSION}"
 
     end
 
