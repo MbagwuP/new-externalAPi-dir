@@ -62,7 +62,7 @@ class ApiService < Sinatra::Base
     begin
 
       resource = RestClient::Resource.new( urllabinbound, { :user => settings.labs_user, :password => settings.labs_pass})
-      resp = resource.post(request_body.to_json)
+      resp = resource.post(request_body.to_json, :content_type => :json)
 
     rescue => e
       begin
@@ -202,7 +202,7 @@ class ApiService < Sinatra::Base
     begin
 
       resource = RestClient::Resource.new( api_svc_url, { :user => settings.labs_user, :password => settings.labs_pass})
-      resp = resource.post(request_body.to_json)
+      resp = resource.post(request_body.to_json, :content_type => :json)
 
       #resp = generate_http_request(api_svc_url, '', request_body.to_json, 'POST', settings.labs_user, settings.labs_pass)
       #LOG.debug(resp.body)
