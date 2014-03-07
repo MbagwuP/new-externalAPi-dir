@@ -113,10 +113,10 @@ class ApiService < Sinatra::Base
     
     # HealthCheck
     #
-    # GET /healthcheck
+    # GET /health_check
     #
     
-    get '/healthcheck' do
+    get '/health_check' do
     
         # Need to handle jQuery requests
         if params[:callback]
