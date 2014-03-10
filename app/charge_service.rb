@@ -115,8 +115,7 @@ class ApiService < Sinatra::Base
       response = RestClient.post(urlcharge, request_body.to_json, :content_type => :json)
     rescue => e
       begin
-        LOG.debug(e.inspect)
-        errmsg = "Charge Creation Failed - #{e.message}"
+        errmsg = "Charge Creation Failed - #{error_json["error"]["error_code"]} #{error_json["error"]["message"]}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
