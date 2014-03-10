@@ -2,7 +2,7 @@ test:
     api_internal_svc_url: http://devservices.carecloud.local/
     #api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
-    mirth_outbound_svc_url: http://192.168.123.111:8088
+    mirth_outbound_svc_url: http://192.168.123.227:8088
     #mirth_outbound_svc_url: http://10.0.1.108:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
@@ -15,7 +15,7 @@ development:
     api_internal_svc_url: http://devservices.carecloud.local/
     #api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
-    mirth_outbound_svc_url: http://192.168.123.111:8088
+    mirth_outbound_svc_url: http://192.168.123.227:8088
     #mirth_outbound_svc_url: http://10.0.1.108:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
@@ -38,7 +38,7 @@ production:
 qa:
     api_internal_svc_url: http://qaservices.carecloud.local/
     api_internal_doc_srv_upld_url: https://dms-qa.carecloud.com
-    mirth_outbound_svc_url: http://192.168.123.111:8088
+    mirth_outbound_svc_url: http://192.168.123.227:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196
@@ -49,7 +49,7 @@ qa:
 staging:
     api_internal_svc_url: http://devservices.carecloud.local/
     api_internal_doc_srv_upld_url: https://dms-staging.carecloud.com
-    mirth_outbound_svc_url: http://192.168.123.111:8088
+    mirth_outbound_svc_url: http://192.168.123.227:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196
