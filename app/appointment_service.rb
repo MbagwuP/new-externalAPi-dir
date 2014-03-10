@@ -1023,6 +1023,51 @@ class ApiService < Sinatra::Base
 
     status HTTP_OK
 
-end
+  end
+
+
+  ##  sets patient_contacted to true or false
+  #
+  # POST v1/appointment/patientcontacted/:appointmentid?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :appointmentid - the appointment external identifier number
+  #    (ex: abc-121435)
+  #
+  # server action: Return appointment information for selected provider
+  # server response:
+  # --> if data found: 200, with array of appointment data in response body
+  # --> if not authorized: 401
+  # --> if provider not found: 404
+  # --> if exception: 500
+  post '/v1/appointment/patientcontacted/:appointmentid?' do
+    request_body = get_request_JSON
+    appt_id = params[:appointmentid]
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << business_entity
+    urlappt << '/'
+    urlappt << appt_id
+    urlappt << '/patient_contacted.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("URL:" + urlappt)
+
+    begin
+      response = RestClient.post(urlappt, request_body.to_json, :content_type => :json )
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+  end
 
 end
