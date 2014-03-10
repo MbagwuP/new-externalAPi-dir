@@ -1031,8 +1031,10 @@ class ApiService < Sinatra::Base
   # POST v1/appointment/patientcontacted/:appointmentid?authentication=<authenticationToken>
   #
   # Params definition
-  # :appointmentid - the appointment external identifier number
-  #    (ex: abc-121435)
+  # :status - true or false
+  #    {
+  #    "status":"t"
+  #    }
   #
   # server action: Return appointment information for selected provider
   # server response:
