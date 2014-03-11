@@ -116,7 +116,7 @@ class ApiService < Sinatra::Base
     # GET /health_check
     #
     
-    get '/health_check' do
+    get '/old_health_check' do
     
         # Need to handle jQuery requests
         if params[:callback]
@@ -135,7 +135,7 @@ class ApiService < Sinatra::Base
     # GET /lb_status
     #
 
-    get '/lb_status' do
+    get '/old_lb_status' do
         
         health = JSON.parse(perform_healthcheck)
         
@@ -152,7 +152,7 @@ class ApiService < Sinatra::Base
     # GET /healthcheck_ping
     #
 
-    get '/healthcheck_ping' do
+    get '/old_healthcheck_ping' do
         
         "pong"
         
