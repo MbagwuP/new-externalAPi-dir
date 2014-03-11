@@ -78,6 +78,100 @@ class ApiService < Sinatra::Base
     status HTTP_OK
 
   end
+
+  #Use to test for production
+  #have to make sure master token likes the pharmacy additions
+
+  get '/productiontest/patients/:patientid?' do
+    # Validate the input parameters
+    validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+
+    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+
+    pass_in_token = CGI::unescape(params[:authentication])
+    #format to what the devservice needs
+    business_entity = get_business_entity(pass_in_token)
+    patientid = params[:patientid]
+    patientid.slice!(/^patient-/)
+
+    ## if the patient id is all numeric call getById
+    if is_this_numeric(patientid)
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'businesses/'
+      urlpatient << business_entity
+      urlpatient << '/patients/'
+      urlpatient << patientid
+      urlpatient << '.json?token='
+      urlpatient << CGI::escape(pass_in_token)
+      urlpatient << '&do_full_export=true'
+    else
+
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'businesses/'
+      urlpatient << business_entity
+      urlpatient << '/patients/'
+      urlpatient << patientid
+      urlpatient << '/externalid.json?token='
+      urlpatient << CGI::escape(pass_in_token)
+      urlpatient << '&do_full_export=true'
+
+    end
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+
+    #LOG.debug(parsed)
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'patients/'
+    urlpatient << patientid
+    urlpatient << '/pharmacies'
+    urlpatient << '.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Pharmacy Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed2 = JSON.parse(response.body)
+
+    #LOG.debug(parsed2)
+
+    results = []
+    results << parsed
+    results << parsed2
+
+    LOG.debug(results)
+
+    body(results.to_json)
+
+    status HTTP_OK
+
+  end
+
+
+
+
   #  get patient by legacy id
   #
   # GET /v1/patients/legacy/<patientid#>?authentication=<authenticationToken>
@@ -208,41 +302,55 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON:
-  #     {
-  #     "patient": {
-  #         "first_name": "bob",
-  #         "last_name": "smith",
-  #         "middle_initial": "E",
-  #         "email": "no@email.com",
-  #         "prefix": "mr",
-  #         "suffix": "jr",
-  #         "ssn": "123-45-6789",
-  #         "gender_id": "1",
-  #         "date_of_birth": "2000-03-12"
-  #     },
-  #     "addresses": [{
-  #         "line1": "123 fake st",
-  #         "line2": "apt3",
-  #         "city": "newton",
-  #         "state_id": "22",
-  #         "zip_code": "07488",
-  #         "county_name": "suffolk",
-  #         "latitude": "",
-  #         "longitude": "",
-  #         "country_id": "225"
-  #     }],
-  #     "phones": [
-  #         {
-  #             "phone_number": "5552221212",
-  #             "phone_type_id": "3",
-  #             "extension": "3433"
-  #         },
-  #         {
-  #             "phone_number": "3332221212",
-  #             "phone_type_id": "2",
-  #             "extension": "5566"
-  #         }
-  #     ]
+  #{
+  #    "patient": {
+  #    "first_name": "bob",
+  #    "last_name": "smith",
+  #    "middle_initial": "E",
+  #    "email": "no@email.com",
+  #    "prefix": "mr",
+  #    "suffix": "jr",
+  #    "ssn": "123-45-6789",
+  #    "gender_id": "1",
+  #    "date_of_birth": "2000-03-12",
+  #    "race_id" : 3,
+  #    "marital_status_id": 5,
+  #    "language_id" : 478,
+  #    "chart_number": "2299238332",
+  #    "drivers_license_number": "M9283732323",
+  #    "drivers_license_state_id": "22",
+  #    "employment_status_id":1,
+  #    "school_name": "Regional High School",
+  #    "employer_name" : "Employer Name",
+  #    "account_number": "282372389948724",
+  #    "legacy_patient_id":"923883",
+  #    "employer_phone_number":"8887776565",
+  #    "ethnicity_id": 1,
+  #    "student_status_id": 1
+  #
+  #},
+  #    "addresses": [ {
+  #                       "line1": "123 fake st",
+  #    "line2": "apt3",
+  #    "city": "newton",
+  #    "state_id": 22,
+  #    "zip_code": "07488",
+  #    "country_id": 225,
+  #    "is_primary":"t"
+  #}],
+  #    "phones": [
+  #    {
+  #        "phone_number": "5552221212",
+  #    "phone_type_id": "3",
+  #    "extension": "3433",
+  #    "is_primary": "t"
+  #},
+  #    {
+  #        "phone_number": "3332221212",
+  #    "phone_type_id": "2",
+  #    "extension": "5566"
+  #}
+  #]
   #}
   #
   # Input requirements
