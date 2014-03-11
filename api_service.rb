@@ -71,7 +71,7 @@ class ApiService < Sinatra::Base
         MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
         MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
-        SOFTWARE_VERSION = "v0.8"
+        SOFTWARE_VERSION = config["version"]
         set :enable_auditing, true
 
         set :memcached_server, config["memcache_servers"]
