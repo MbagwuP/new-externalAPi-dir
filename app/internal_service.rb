@@ -21,7 +21,7 @@ class ApiService < Sinatra::Base
     urlappt << params[:business_entity]
     urlappt << '/'
     urlappt << appointmentid
-    urlappt << '/listbyexternalid.json?token='
+    urlappt << '/listbyexternalid2.json?token='
     urlappt << CGI::escape(pass_in_token)
 
 
