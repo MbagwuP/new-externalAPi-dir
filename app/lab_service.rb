@@ -137,7 +137,7 @@ class ApiService < Sinatra::Base
     urllaboutbound << '&key='
     urllaboutbound << h.to_s
 
-    #LOG.debug("url for lab outbound request: " + urllaboutbound)
+    LOG.debug("Outbound request body: #{request_body}")
 
     begin
       resp = RestClient.post(urllaboutbound, request_body.to_json, :content_type => :json)
@@ -198,7 +198,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
     api_svc_url = "#{API_SVC_URL}labs/ack_request_submitted"
 
-    #LOG.debug('url for lab inbound request: ' + api_svc_url)
+    LOG.debug("ACK response body: #{request_body}")
     begin
 
       resource = RestClient::Resource.new( api_svc_url, { :user => settings.labs_user, :password => settings.labs_pass})
