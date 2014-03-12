@@ -1,0 +1,15 @@
+development:
+  probes:
+    - "postgres:critical"
+localhost:
+  probes:
+    - "postgres:critical"
+qa:
+  probes:
+    - "postgres:critical"
+staging:
+  probes:
+    - "postgres:critical"
+production:
+  probes:
+    - "postgres:critical"

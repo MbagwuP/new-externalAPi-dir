@@ -3,17 +3,7 @@
 #
 # Version:    1.0
 
-require 'sinatra/base'
-require 'json'
-require 'log4r'
-require 'rest-client'
-require 'cgi'
-require 'logger'
-require 'color'
-require 'yaml'
-require 'dalli'
-require 'rest-client'
-require 'mongo_mapper'
+require_all 'app', 'lib'
 
 # Sinatra's way of splitting up a large project
 # include other endpoints
@@ -45,7 +35,7 @@ SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
-
+    use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
 
     configure do
         set :protection, :except => [:remote_referrer, :json_csrf]
@@ -57,13 +47,20 @@ class ApiService < Sinatra::Base
         LOG = Log4r::Logger.new('logger')
         LOG.add('console', 'logfile')
 
-        config_path = Dir.pwd + "/config/settings.yml"
-        config = YAML.load(File.open(config_path))[settings.environment.to_s]
-        
-        if config  == nil
-            LOG.error("Missing settings file!")
+        begin
+            config_path = Dir.pwd + "/config/settings.yml"
+            config = YAML.load(File.open(config_path))[settings.environment.to_s]
+
+            hc_path = Dir.pwd + "/config/vitals.yml"
+            hc_config = YAML.load(File.open(hc_path))[settings.environment.to_s]
+        rescue
+            LOG.error("Missing settings file!") if config  == nil
+            LOG.error("Missing vitals file!") if hc_config  == nil
             exit
         end
+
+        HealthCheck.config = hc_config[ENV['RACK_ENV']]
+        HealthCheck.start_health_monitor
 
         NewRelic::Agent.after_fork(:force_reconnect => true)
 
@@ -71,7 +68,7 @@ class ApiService < Sinatra::Base
         MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
         MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
-        SOFTWARE_VERSION = "v0.8"
+        SOFTWARE_VERSION = config["version"]
         set :enable_auditing, true
 
         set :memcached_server, config["memcache_servers"]
