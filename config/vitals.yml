@@ -1,6 +1,9 @@
 development:
   probes:
     - "postgres:critical"
+localhost:
+  probes:
+    - "postgres:critical"
 qa:
   probes:
     - "postgres:critical"
