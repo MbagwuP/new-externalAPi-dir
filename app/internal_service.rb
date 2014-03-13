@@ -37,12 +37,8 @@ class ApiService < Sinatra::Base
     end
 
     apt = JSON.parse(response.body)
-    # iterate the array of appointments
-    apt.each { |x|
-      #LOG.debug(x)
-      x['id'] = x['external_id']
-    }
-    patientid = apt.first['appointment']['p_ext_id']
+    LOG.debug(apt)
+    patientid = apt['appointment']['patient_ext_id']
 
     urlpatient = ''
     urlpatient << API_SVC_URL
