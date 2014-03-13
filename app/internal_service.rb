@@ -64,7 +64,7 @@ class ApiService < Sinatra::Base
     patient = JSON.parse(resp.body)
     patient['id'] = patient['external_id']
 
-    patient["appointment"] = apt.first
+    patient["appointment"] = apt
 
     LOG.debug(patient)
     body(patient.to_json)
