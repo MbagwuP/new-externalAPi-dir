@@ -1,9 +1,10 @@
 development:
   probes:
-    - "postgres:critical"
+    - "dms:critical"
+    - "mongo:critical"
 localhost:
   probes:
-    - "postgres:critical"
+    - "dms:critical"
 qa:
   probes:
     - "postgres:critical"
