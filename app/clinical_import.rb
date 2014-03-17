@@ -1,86 +1,87 @@
 class ApiService < Sinatra::Base
 
-#   {
-#     "allergy": [
-#         {
-#             "rx_norm_code": null,
-#             "onset_at": "2013-08-01T12:00:00-04:00",
-#             "resolved_at": null,
-#             "snomed_code": null,
-#             "name": "Peanuts",
-#             "status": "A",
-#             "comments": "test test test test test test test test test test test test test test !!!@@@###",
-#             "reaction": [
-#                 {
-#                     "description": "not bad",
-#                     "severity_id": "1",
-#                     "reaction_id": "14",
-#                     "status": "A"
-#                 },
-#                 {
-#                     "description": "freakish!!!!",
-#                     "severity_id": "2",
-#                     "reaction_id": "12",
-#                     "status": "A"
-#                 }
-#             ]
-#         }
-#     ],
-#     "immunization": [
-#         {
-#             "immunization_name": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
-#             "immunization_description": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
-#             "immunization_code": "146",
-#             "rx_norm_code": null,
-#             "vaccine_administration_quantity": null,
-#             "vaccine_administration_quantity_uom": null,
-#             "vaccine_administration_quantity_uom_code": null,
-#             "vaccine_manufacturer_name": null,
-#             "vaccine_manufacturer_code": null,
-#             "vaccine_lot_number": null,
-#             "vaccine_expiration_date": null,
-#             "administered_at": null,
-#             "route_description": null,
-#             "status": "A",
-#             "comments": null,
-#             "ndc_number": null
-#         }
-#     ],
-#     "medication": [
-#         {
-#             "drug_name": "Lipitor10mgoraltablet",
-#             "rx_norm_code": "617312",
-#             "rx_norm_code_qualifier": "CD",
-#             "effective_from": "2013-08-30T12: 00: 00-04: 00",
-#             "effective_to": null,
-#             "drug_description": null,
-#             "route_description": "oral",
-#             "status": "A",
-#             "strength_description": "10mg",
-#             "frequency_abbreviation": null,
-#             "frequency_admins_per_day": null,
-#             "frequency_description": "daily",
-#             "dose": "1.0",
-#             "is_substitution_permitted": true,
-#             "other_instructions": "Pleaseremindpatienttotakeaftermeals.",
-#             "prescription_instructions": "1tabletdailyfor30daysaftermeals",
-#             "refill_count": 0,
-#             "ndc_code": "00071015523",
-#             "quantity": "30.0",
-#             "days_supply": null
-#         }
-#     ],
-#     "problem":[
-#        {
-#             "snomed_code": "21983002",
-#             "icd9": "245.2",
-#             "name": "Thyroiditis, hashimotos",
-#             "description": null,
-#             "onset_at": "2013-09-04T13:00:00-04:00",
-#             "resolved_at": null,
-#             "status": "A"
-#     }]
-# }
+  #{
+  #    "allergy": [
+  #    {
+  #        "rx_norm_code": null,
+  #"onset_at": "2013-08-01T12:00:00-04:00",
+  #    "resolved_at": null,
+  #"snomed_code": null,
+  #"name": "Peanuts",
+  #    "status": "A",
+  #    "comments": "test test test test test test test test test test test test test test !!!@@@###",
+  #    "reaction": [
+  #    {
+  #        "description": "not bad",
+  #    "severity_id": "1",
+  #    "reaction_id": "14",
+  #    "status": "A"
+  #},
+  #    {
+  #        "description": "freakish!!!!",
+  #    "severity_id": "2",
+  #    "reaction_id": "12",
+  #    "status": "A"
+  #}
+  #]
+  #}
+  #],
+  #    "immunization": [
+  #    {
+  #        "immunization_name": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
+  #    "immunization_description": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
+  #    "immunization_code": "146",
+  #    "rx_norm_code": null,
+  #"vaccine_administration_quantity": null,
+  #"vaccine_administration_quantity_uom": null,
+  #"vaccine_administration_quantity_uom_code": null,
+  #"vaccine_manufacturer_name": null,
+  #"vaccine_manufacturer_code": null,
+  #"vaccine_lot_number": null,
+  #"vaccine_expiration_date": null,
+  #"administered_at": null,
+  #"route_description": null,
+  #"status": "A",
+  #    "comments": null,
+  #"ndc_number": null
+  #}
+  #],
+  #    "medication": [
+  #    {
+  #        "drug_name": "Lipitor10mgoraltablet",
+  #    "rx_norm_code": "617312",
+  #    "rx_norm_code_qualifier": "CD",
+  #    "effective_from": "2013-08-30T12: 00: 00-04: 00",
+  #    "effective_to": null,
+  #"drug_description": null,
+  #"route_description": "oral",
+  #    "status": "A",
+  #    "strength_description": "10mg",
+  #    "frequency_abbreviation": null,
+  #"frequency_admins_per_day": null,
+  #"frequency_description": "daily",
+  #    "dose": "1.0",
+  #    "is_substitution_permitted": true,
+  #"other_instructions": "Pleaseremindpatienttotakeaftermeals.",
+  #    "prescription_instructions": "1tabletdailyfor30daysaftermeals",
+  #    "refill_count": 0,
+  #    "ndc_code": "00071015523",
+  #    "quantity": "30.0",
+  #    "days_supply": null
+  #}
+  #],
+  #    "problem": [
+  #    {
+  #        "snomed_code": "21983002",
+  #    "icd9": "245.2",
+  #    "name": "Thyroiditis, hashimotos",
+  #    "description": null,
+  #"onset_at": "2013-09-04T13:00:00-04:00",
+  #    "resolved_at": null,
+  #"status": "A"
+  #}
+  #]
+  #}
 
 post '/v1/patients/clinical/fullimport/:patient_id/create?' do
 
@@ -207,42 +208,39 @@ end
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
-    status HTTP_OK
     end
+    body('"Success":"Clinical Import has been created"')
+    status HTTP_CREATED
 end
 
 
-# {
-#     "allergy": [
-#         {
-#             "rx_norm_code": null,
-#             "onset_at": "2013-08-01T12:00:00-04:00",
-#             "resolved_at": null,
-#             "snomed_code": null,
-#             "name": "Peanuts",
-#             "status": "A",
-#             "comments": "test test test test test test test test test test test test test test !!!@@@###",
-#             "reaction": [
-#                 {
-#                     "description": "not bad",
-#                     "severity": "1",
-#                     "reaction": "14",
-#                     "snomed_code": "267036007",
-#                     "status": "A"
-#                 },
-#                 {
-#                     "description": "freakish!!!!",
-#                     "severity": "Major",
-#                     "reaction": "12",
-#                     "snomed_code": "278528006",
-#                     "status": "A"
-#                 }
-#             ]
-#         }
-#     ]
-# }
-
+#{
+#    "allergy": [
+#    {
+#        "rx_norm_code": null,
+#"onset_at": "2013-08-01T12:00:00-04:00",
+#    "resolved_at": null,
+#"snomed_code": null,
+#"name": "Peanuts",
+#    "status": "A",
+#    "comments": "test test test test test test test test test test test test test test !!!@@@###",
+#    "reaction": [
+#    {
+#        "description": "not bad",
+#    "severity_id": "1",
+#    "reaction_id": "14",
+#    "status": "A"
+#},
+#    {
+#        "description": "freakish!!!!",
+#    "severity_id": "2",
+#    "reaction_id": "12",
+#    "status": "A"
+#}
+#]
+#}
+#]
+#}
 
 # #PatientAllergiesController#create
 
@@ -284,15 +282,14 @@ post '/v1/patients/:patient_id/allergies/create?' do
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
-    status HTTP_CREATED
-
     end
+    body('"Success":"Allergy has been created"')
+    status HTTP_CREATED
 
 end
 
-
-# {
+#
+#{
 #     "immunization": [
 #         {
 #     "immunization_name": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
@@ -313,7 +310,7 @@ end
 #     "ndc_number": null
 #         }
 #     ]
-# }
+#}
 
 #PatientAllergiesController#create
 
@@ -352,14 +349,12 @@ post '/v1/patients/:patient_id/immunizations/create?' do
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
+  end
+    body('"Success":" Immunization has been created"')
     status HTTP_CREATED
-
-    end
-
 end
 
-# {
+#{
 #     "medication": [
 #         {
 #             "patient_id": "b0b3a1b9-533e-47cb-83c5-585b12d84676",
@@ -385,7 +380,7 @@ end
 #             "days_supply": null
 #         }
 #     ]
-# }
+#}
 
 #MedicationsController#create
 
@@ -441,9 +436,9 @@ post '/v1/patients/:patient_id/medications/create?' do
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
-    status HTTP_CREATED
     end
+    body('"Success":"Medication has been created"')
+    status HTTP_CREATED
 
 end
   
@@ -537,6 +532,7 @@ end
       end
     end
 
+    body('"Success":" Vital has been created"')
     status HTTP_CREATED
   end
 
@@ -604,7 +600,7 @@ post '/v1/patients/:patient_id/problems/create?' do
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
+    body('"Success":" Problem set has been created"')
     status HTTP_CREATED
 
     end
