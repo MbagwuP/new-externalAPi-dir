@@ -210,4 +210,56 @@ class ApiService < Sinatra::Base
 
   end
 
+  #please do not delete!
+  #authenticate vi auth_service
+  # post '/v3/service/authenticate' do
+  #   begin
+  #     auth = Rack::Auth::Basic::Request.new(request.env)
+  #     begin
+  #       user_name, password = auth.credentials.fetch(0), auth.credentials.fetch(1)
+  #     rescue
+  #       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
+  #     end
+
+  #     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Username Not Found"}' if user_name.empty?
+  #     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Password Not Found"}' if password.empty?
+
+  #     begin
+  #       resp = CCAuth::AuthApi.new.authenticate user_name, password
+  #     rescue => e
+  #       begin
+  #         errmsg = e.message
+  #         api_svc_halt e.code, errmsg
+  #       rescue
+  #         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+  #       end
+  #     end
+
+  #     parsed = JSON.parse resp.body
+  #     get_business_entity parsed["access_token"]
+  #     the_token_hash = { token: parsed["access_token"] }
+  #     body the_token_hash.to_json
+  #     status HTTP_OK
+
+  #   rescue => e
+  #     handle_exception(e)
+  #   end
+  # end  
+
+  # # Logout through auth_service 
+  # post '/v3/service/logout' do
+  #   begin
+  #     resp = CCAuth::AuthApi.new.logout params[:authentication]
+  #   rescue => e
+  #     begin
+  #       errmsg = e.message
+  #       api_svc_halt e.status, errmsg
+  #     rescue
+  #       api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+  #     end
+  #   end
+  #   body resp.body
+  #   status HTTP_OK
+  # end
+
 end
