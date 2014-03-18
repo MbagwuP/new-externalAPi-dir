@@ -1,6 +1,5 @@
-GIT
-  remote: git@github.com:CareCloud/health_check.git
-  revision: 823710d8e989cd4c41b56236497d985de5df6a99
+PATH
+  remote: ./vendor/bundle
   specs:
     health_check (0.2.0)
 
