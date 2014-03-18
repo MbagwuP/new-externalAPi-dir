@@ -35,7 +35,7 @@ SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
-    use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
+    #use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
 
     configure do
         set :protection, :except => [:remote_referrer, :json_csrf]
@@ -59,8 +59,8 @@ class ApiService < Sinatra::Base
             exit
         end
 
-        HealthCheck.config = hc_config[ENV['RACK_ENV']]
-        HealthCheck.start_health_monitor
+        #HealthCheck.config = hc_config[ENV['RACK_ENV']]
+        #HealthCheck.start_health_monitor
 
         NewRelic::Agent.after_fork(:force_reconnect => true)
 
