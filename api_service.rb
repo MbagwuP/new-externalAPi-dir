@@ -35,7 +35,7 @@ SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
-    use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
+    use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.11"}
 
     # CCAuth.configure do |config|
     #   config.endpoint = 'http://507abe40.ngrok.com'
@@ -64,7 +64,7 @@ class ApiService < Sinatra::Base
             exit
         end
 
-        HealthCheck.config = hc_config[ENV['RACK_ENV']]
+        HealthCheck.config = hc_config
         HealthCheck.start_health_monitor
 
         NewRelic::Agent.after_fork(:force_reconnect => true)
