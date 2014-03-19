@@ -37,6 +37,11 @@ SEVERITY_TYPE_WARN = "WARN"
 class ApiService < Sinatra::Base
     use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.11"}
 
+    # CCAuth.configure do |config|
+    #   config.endpoint = 'http://507abe40.ngrok.com'
+    #   config.api_key  = 'EXAPI'
+    # end
+
     configure do
         set :protection, :except => [:remote_referrer, :json_csrf]
         set :public_folder, 'public'
@@ -61,6 +66,7 @@ class ApiService < Sinatra::Base
 
         HealthCheck.config = hc_config
         HealthCheck.start_health_monitor
+
         NewRelic::Agent.after_fork(:force_reconnect => true)
 
         API_SVC_URL = config["api_internal_svc_url"]

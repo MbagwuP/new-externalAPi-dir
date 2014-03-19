@@ -20,7 +20,11 @@ gem 'mongo_mapper'
 gem 'bson_ext'
 
 # health check
-gem 'health_check', git: 'git@github.com:CareCloud/health_check.git'
+#gem 'health_check', git: 'git@github.com:CareCloud/health_check.git'
+gem 'health_check', path: './vendor/bundle'
+
+#authentication
+# gem 'cc_auth', git: 'git@github.com:CareCloud/auth_gem.git'
 
 group :test, :development, :localhost do
   gem 'rspec'
