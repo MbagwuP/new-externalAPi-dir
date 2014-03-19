@@ -538,16 +538,16 @@ end
 
 
 
-#     "problem":[
-#        {
-#             "snomed_code": "21983002",
-#             "icd9": "245.2",
-#             "name": "Thyroiditis, hashimotos",
-#             "description": null,
-#             "onset_at": "2013-09-04T13:00:00-04:00",
-#             "resolved_at": null,
-#             "status": "A"
-#     }]
+     #"problem":[
+     #   {
+     #        "snomed_code": "21983002",
+     #        "icd9": "245.2",
+     #        "name": "Thyroiditis, hashimotos",
+     #        "description": null,
+     #        "onset_at": "2013-09-04T13:00:00-04:00",
+     #        "resolved_at": null,
+     #        "status": "A"
+     #}]
 
 post '/v1/patients/:patient_id/problems/create?' do
 
@@ -560,10 +560,10 @@ post '/v1/patients/:patient_id/problems/create?' do
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
 
-    #LOG.debug "Request Body >>>>>"
-    #LOG.debug(request_body)
+    LOG.debug "Request Body >>>>>"
+    LOG.debug(request_body)
 
-    request_body['problems'].each do |problem|
+    request_body['problem'].each do |problem|
 
     #LOG.debug "business_entity: "
     #LOG.debug (business_entity)
@@ -575,8 +575,8 @@ post '/v1/patients/:patient_id/problems/create?' do
 
     #LOG.debug "Problem Object"
     #LOG.debug(problem)
-    Problem = Hash.new
-    Problem["problem"] = problem
+    Problems = Hash.new
+    Problems["problem"] = problem
     #LOG.debug(Problem)
 
     urlproblems = ''
@@ -594,16 +594,16 @@ post '/v1/patients/:patient_id/problems/create?' do
       response = RestClient.post(urlproblems, Problems.to_json, :content_type => :json)
     rescue => e 
       begin
-        errmsg = "Immunizations Creation Failed - #{e.message}"
+        errmsg = "Problem Set Creation Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
+    end
     body('"Success":" Problem set has been created"')
     status HTTP_CREATED
 
-    end
-  end
+end
 
 end
