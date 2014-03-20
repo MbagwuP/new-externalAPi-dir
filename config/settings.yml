@@ -51,7 +51,7 @@ qa:
     version: 1.0
 
 staging:
-    api_internal_svc_url: http://devservices.carecloud.local/
+    api_internal_svc_url: https://services-staging.carecloud.com/
     api_internal_doc_srv_upld_url: https://dms-staging.carecloud.com
     mirth_outbound_svc_url: http://192.168.123.227:8088
     mirth_private_key: thisstringshouldbeprivate
