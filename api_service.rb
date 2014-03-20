@@ -43,6 +43,7 @@ class ApiService < Sinatra::Base
     # end
 
     configure do
+
         set :protection, :except => [:remote_referrer, :json_csrf]
         set :public_folder, 'public'
 
@@ -69,13 +70,15 @@ class ApiService < Sinatra::Base
 
         NewRelic::Agent.after_fork(:force_reconnect => true)
 
+        ## config values
         API_SVC_URL = config["api_internal_svc_url"]
         MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
         MIRTH_PRIVATE_KEY = config["mirth_private_key"]
         DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
         SOFTWARE_VERSION = config["version"]
-        set :enable_auditing, true
 
+
+        set :enable_auditing, true
         set :memcached_server, config["memcache_servers"]
         set :mongo_server, config["mongo_server"]
         set :mongo_port, config["mongo_port"]
@@ -88,14 +91,30 @@ class ApiService < Sinatra::Base
 
         # initialize the cache
         set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
-        set :public_folder, 'public'
 
+        ## setup log level based on yml
+        begin
+          LOG.level = config["logging_level"]
+        rescue => e
+          LOG.level = Log4r::ERROR
+        end
+
+        ## connect to Mongo
         begin
             set :mongo, { options: { pool_size: 25, pool_timeout: 10, slave_ok: true },
                 config: YAML.load(File.open(File.expand_path('../config/mongodb.yml', __FILE__))) }
         rescue => e
             set :mongo, { options: { pool_size: 25, pool_timeout: 10, slave_ok: true },
                 config: { } }
+        end
+
+        # Establish connection to mongoDB; database as defined in model
+        begin
+          LOG.debug ("Connecting to MongoMapper at: #{settings.mongo[:config].inspect}")
+          MongoMapper.setup(settings.mongo[:config], settings.environment, settings.mongo[:options])
+        rescue => e
+          LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
+          #    exit if settings.enable_auditing        # Using as a proxy for test environment
         end
 
         LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
@@ -106,16 +125,9 @@ class ApiService < Sinatra::Base
 
     configure :development do
         LOG.info ("API-Service (Development) launched")
-        LOG.level = Log4r::DEBUG
     end
 
     configure :localhost do
-
-      # Set logging level
-      LOG.level = Log4r::DEBUG
-
-      # configurations
-      ENV_CLASS = "dev"
 
       # set :raise_errors, false
       # #  enable :raise_errors
@@ -127,34 +139,21 @@ class ApiService < Sinatra::Base
 
     configure :qa do
         LOG.info ("API-Service (QA) launched")
-        LOG.level = Log4r::WARN
     end
 
     configure :staging do
         LOG.info ("API-Service (Staging) launched")
-        LOG.level = Log4r::ERROR
     end
 
     configure :production do
         LOG.info ("API-Service (Production) launched")
-        LOG.level = Log4r::ERROR
     end
 
     configure :test do
         LOG.info ("API-Service (Test) launched")
-        LOG.level = Log4r::ERROR
         set :enable_auditing, false
     end
 
-
-    # Establish connection to mongoDB; database as defined in model
-    begin
-        LOG.debug ("Connecting to MongoMapper at: #{settings.mongo[:config].inspect}")
-        MongoMapper.setup(settings.mongo[:config], settings.environment, settings.mongo[:options])
-    rescue => e
-        LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
-        #    exit if settings.enable_auditing        # Using as a proxy for test environment
-    end
 
     # Test route
     get '/testmongo' do

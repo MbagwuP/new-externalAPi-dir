@@ -24,7 +24,7 @@ class ApiService < Sinatra::Base
         ## WebService
         begin
             
-            uri = URI.parse(API_SVC_URL)
+            uri = URI.parse("#{API_SVC_URL}/system/status_check.html" )
             conn = Net::HTTP::get_response(uri)
             
             ## check basic endpoind devservices.carecloud.local/

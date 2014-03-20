@@ -1,9 +1,7 @@
 test:
     api_internal_svc_url: http://devservices.carecloud.local/
-    #api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
     mirth_outbound_svc_url: http://192.168.123.227:8088
-    #mirth_outbound_svc_url: http://10.0.1.108:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196
@@ -11,13 +9,12 @@ test:
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
     version: 1.0
+    logging_level: 4
 
 development:
     api_internal_svc_url: http://devservices.carecloud.local/
-    #api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
     mirth_outbound_svc_url: http://192.168.123.227:8088
-    #mirth_outbound_svc_url: http://10.0.1.108:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196
@@ -25,6 +22,8 @@ development:
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
     version: 1.0
+    ## log level 0 - 7
+    logging_level: 0
 
 production:
     api_internal_svc_url: https://services.carecloud.com/
@@ -37,6 +36,7 @@ production:
     lab_user: spectra_prod
     lab_pass: mDYPQx1ompwLZN2TxWzOf8FOevkOlcdu
     version: 1.0
+    logging_level: 5
 
 qa:
     api_internal_svc_url: http://qaservices.carecloud.local/
@@ -49,6 +49,7 @@ qa:
     lab_user: spectra_qa
     lab_pass: GUvBOevdOApyMDaryFsfKLPnGVeahtno
     version: 1.0
+    logging_level: 0
 
 staging:
     api_internal_svc_url: https://services-staging.carecloud.com/
@@ -61,3 +62,4 @@ staging:
     lab_user: spectra_staging
     lab_pass: chgDkJDfm1CGJjlrh9lHKHqGExOSfTAe
     version: 1.0
+    logging_level: 4
