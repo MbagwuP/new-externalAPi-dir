@@ -21,7 +21,7 @@ class ApiService < Sinatra::Base
     urlappt << params[:business_entity]
     urlappt << '/'
     urlappt << appointmentid
-    urlappt << '/listbyexternalid.json?token='
+    urlappt << '/listbyexternalid2.json?token='
     urlappt << CGI::escape(pass_in_token)
 
 
@@ -37,12 +37,8 @@ class ApiService < Sinatra::Base
     end
 
     apt = JSON.parse(response.body)
-    # iterate the array of appointments
-    apt.each { |x|
-      #LOG.debug(x)
-      x['id'] = x['external_id']
-    }
-    patientid = apt.first['appointment']['p_ext_id']
+    LOG.debug(apt)
+    patientid = apt['appointment']['patient_ext_id']
 
     urlpatient = ''
     urlpatient << API_SVC_URL
@@ -68,7 +64,7 @@ class ApiService < Sinatra::Base
     patient = JSON.parse(resp.body)
     patient['id'] = patient['external_id']
 
-    patient["appointment"] = apt.first
+    patient["appointment"] = apt
 
     LOG.debug(patient)
     body(patient.to_json)
