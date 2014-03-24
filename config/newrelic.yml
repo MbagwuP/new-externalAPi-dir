@@ -170,7 +170,7 @@ common: &default_settings
     # which are how 404's get triggered.
     ignore_errors: "ActionController::RoutingError,Sinatra::NotFound"
 
-  # If you're interested in capturing memcache keys as though they
+  # If you're interested in capturing memcache.rb keys as though they
   # were SQL uncomment this flag. Note that this does increase
   # overhead slightly on every memcached call, and can have security
   # implications if your memcached keys are sensitive
