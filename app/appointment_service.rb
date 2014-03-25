@@ -1080,33 +1080,39 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # :status - true or false
-  #    {
-  #    "status":"t"
-  #    }
-  #
   # server action: Return appointment/blockout information for selected provider
   # server response:
   # --> if data found: 200, with array of appointment data in response body
   # --> if not authorized: 401
   # --> if provider not found: 404
   # --> if exception: 500
-  post '/v1/schedulebybusiness?' do
-    request_body = get_request_JSON
-    appt_id = params[:appointmentid]
-    pass_in_token = CGI::unescape(params[:authentication])
-    business_entity = get_business_entity(pass_in_token)
 
+  get '/v1/schedule/:date/:appointment_status_id/:location_id/:resource_id?' do
+  
+    #request_body = get_request_JSON
+    #appt_id = params[:appointmentid]
+    #pass_in_token = CGI::unescape(params[:authentication])
+    #business_entity = get_business_entity(pass_in_token)
+    
     urlappt = ''
     urlappt << API_SVC_URL
     urlappt << 'appointments/'
     urlappt << business_entity
+    urlappt << '/'
+    urlappt <<  params[:date]
+    urlappt << '/'
+    urlappt <<  params[:appointment_status_id]
+    urlappt << '/'
+    urlappt <<  params[:location_id]
+    urlappt << '/'
+    urlappt <<  params[:resource_id]
     urlappt << '/getByDay.json?token='
     urlappt << CGI::escape(pass_in_token)
 
     LOG.debug("URL:" + urlappt)
 
     begin
-      response = RestClient.post(urlappt, request_body.to_json, :content_type => :json )
+      response = RestClient.get(urlappt)
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -1115,6 +1121,11 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
+
+    parsed = JSON.parse(response.body)
+    blockouts = parsed["theBlockouts"]
+    body(blockouts.to_json)
+    status HTTP_OK
 
   end
 
