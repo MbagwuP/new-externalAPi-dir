@@ -1,6 +1,9 @@
 PATH
   remote: ./vendor/bundle
   specs:
+    c_cloud_dms_client (0.1.1)
+      c_cloud_http_client
+    c_cloud_http_client (0.1.0)
     health_check (0.2.0)
 
 GEM
@@ -60,6 +63,8 @@ PLATFORMS
 
 DEPENDENCIES
   bson_ext
+  c_cloud_dms_client!
+  c_cloud_http_client!
   color
   dalli (~> 2.6)
   health_check!
