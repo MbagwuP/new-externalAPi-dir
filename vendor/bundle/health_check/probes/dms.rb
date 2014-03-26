@@ -3,21 +3,25 @@ module Probes
     def probe
       if defined?(CCloudDmsClient::DocumentApi)
         value = {up: nil}
-        begin
-          health = CCloudDmsClient::DocumentApi.health_check 
-          value[:up] = health["service_status"]
-        rescue => e
-          err_msg = case e.class.to_s
-                    when "Errno::ECONNREFUSED"
-                      "Connection Refused"
-                    when "RestClient::ResourceNotFound"
-                      "Health check not configured."
-                    else
-                      e.message
-                    end
-        end
-        is_up = value[:up] == "up"
-        record(*["Document Management Service", is_up, is_up ? "DMS is active." : err_msg])
+
+          health = CCloudDmsClient::DocumentApi.health_check
+          if health == "200"
+             is_up = true
+          else
+             is_up = false
+          end
+        #begin
+        #rescue => e
+        #  err_msg = case e.class.to_s
+        #            when "Errno::ECONNREFUSED"
+        #              "Connection Refused"
+        #            when "RestClient::ResourceNotFound"
+        #              "Health check not configured."
+        #            else
+        #              e.message
+        #            end
+        #end
+        record(*["Document Management Service", is_up, is_up ? "DMS is active." : "DMS is down"])
       end
       self
     end

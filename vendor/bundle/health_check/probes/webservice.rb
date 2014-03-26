@@ -7,7 +7,7 @@ module Probes
         is_up = false
         is_up = true if conn == "200"
         err_msg = "Service is down"
-        record(*["Service", is_up, is_up ? "Service is active." : err_msg])
+        record(*["Web Service", is_up, is_up ? "Web Service is active." : err_msg])
         self
       end
     end

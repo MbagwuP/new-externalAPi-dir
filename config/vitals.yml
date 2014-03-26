@@ -1,10 +1,9 @@
 development:
   probes:
     - "dms:critical"
-    - "mongo:critical"
     - "webservice:critical"
     - "mem_cache:critical"
-    - "audit:critical"
+    - "audit:warn"
 localhost:
   probes:
     - "dms:critical"

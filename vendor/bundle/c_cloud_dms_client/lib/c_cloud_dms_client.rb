@@ -16,8 +16,15 @@ module CCloudDmsClient
       res
     end
 
+    #def self.health_check
+    #  JSON.parse(RestClient.get("#{self.endpoint}/health_check.json"))
+    #end
+
     def self.health_check
-      JSON.parse(RestClient.get("#{self.endpoint}/health_check.json"))
+      conn = RestClient.get("#{self.endpoint}/api/explorer")
+      response = conn.code ? "200" : nil if conn.code
+      response
     end
+
   end
 end
