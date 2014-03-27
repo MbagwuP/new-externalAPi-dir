@@ -3,6 +3,20 @@
 #
 # Version:    1.0
 
+
+require 'sinatra/base'
+require 'json'
+require 'log4r'
+require 'rest-client'
+require 'cgi'
+require 'logger'
+require 'color'
+require 'yaml'
+require 'dalli'
+require 'rest-client'
+require 'mongo_mapper'
+require 'require_all'
+
 require_all 'app', 'lib'
 
 # Sinatra's way of splitting up a large project
@@ -35,7 +49,6 @@ SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
-  use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
 
   configure do
     set :protection, :except => [:remote_referrer, :json_csrf]
@@ -64,9 +77,6 @@ class ApiService < Sinatra::Base
       LOG.error("Missing vitals file!") if hc_config == nil
       exit
     end
-
-    HealthCheck.config = hc_config[ENV['RACK_ENV']]
-    HealthCheck.start_health_monitor
 
     NewRelic::Agent.after_fork(:force_reconnect => true)
 
@@ -109,11 +119,15 @@ class ApiService < Sinatra::Base
                    config: {}}
     end
 
-    HealthCheck.config = hc_config
-    HealthCheck.start_health_monitor
+    #temp fix for rspec test
+    if settings.environment.to_s != 'test'
+      use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
+      HealthCheck.config = hc_config
+      Dir.glob("config/initializers/**/*.rb").each { |init| load init }
+      HealthCheck.start_health_monitor
+    end
 
     LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
-    Dir.glob("config/initializers/**/*.rb").each { |init| load init }
     LOG.debug(config_path)
     LOG.debug(API_SVC_URL)
     LOG.debug(config)
@@ -157,6 +171,8 @@ class ApiService < Sinatra::Base
     LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
     #    exit if settings.enable_auditing        # Using as a proxy for test environment
   end
+
+
 
   # Test route
   get '/testmongo' do
