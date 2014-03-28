@@ -7,12 +7,24 @@ development:
 localhost:
   probes:
     - "dms:critical"
+    - "webservice:critical"
+    - "mem_cache:critical"
+    - "audit:warn"
 qa:
   probes:
-    - "postgres:critical"
+    - "dms:critical"
+    - "webservice:critical"
+    - "mem_cache:critical"
+    - "audit:warn"
 staging:
   probes:
-    - "postgres:critical"
+    - "dms:critical"
+    - "webservice:critical"
+    - "mem_cache:critical"
+    - "audit:warn"
 production:
   probes:
-    - "postgres:critical"
+    - "dms:critical"
+    - "webservice:critical"
+    - "mem_cache:critical"
+    - "audit:warn"
