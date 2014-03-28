@@ -1087,12 +1087,16 @@ class ApiService < Sinatra::Base
   # --> if provider not found: 404
   # --> if exception: 500
 
+  #date - 2014-03-29
+  #appointment_status - 1
+  #location_id - location of appointment
+  #resource_id - resource
+
   get '/v1/schedule/:date/:appointment_status_id/:location_id/:resource_id?' do
-  
-    #request_body = get_request_JSON
-    #appt_id = params[:appointmentid]
-    #pass_in_token = CGI::unescape(params[:authentication])
-    #business_entity = get_business_entity(pass_in_token)
+
+    appt_id = params[:appointmentid]
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
     
     urlappt = ''
     urlappt << API_SVC_URL
