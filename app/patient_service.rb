@@ -393,31 +393,6 @@ class ApiService < Sinatra::Base
 
     business_entity = get_business_entity(pass_in_token)
 
-    getpreferences = ''
-    getpreferences << API_SVC_URL
-    getpreferences << 'business_entity/'
-    getpreferences << business_entity
-    getpreferences << '/patientpreferences.json?token='
-    getpreferences << CGI::escape(params[:authentication])
-
-    begin
-      resp = RestClient.get(getpreferences)
-    rescue => e
-      begin
-        errmsg = "Get Patient Preferences - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    #LOG.debug "<<<<<<<<<<<<<<<<<<< REQUESTBODY >>>>>>>>>>>>>>>>"
-    #LOG.debug(request_body)
-
-    temp = JSON.parse(resp.body)
-    #LOG.debug(temp)
-    request_body = get_patient_with_preference_settings(request_body, temp['patient_preference'])
-
     urlpatient = ''
     urlpatient << API_SVC_URL
     urlpatient << 'businesses/'
