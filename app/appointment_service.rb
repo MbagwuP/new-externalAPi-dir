@@ -1128,6 +1128,12 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     blockouts = parsed["theBlockouts"]
+    blockouts.each do |bo|
+        bo["appointment_blockout"].delete("end_hour_bak")
+        bo["appointment_blockout"].delete("end_minutes")
+        bo["appointment_blockout"].delete("start_minutes")
+        bo["appointment_blockout"].delete("start_hour_bak")
+    end
     body(blockouts.to_json)
     status HTTP_OK
 
