@@ -49,6 +49,7 @@ SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
+    #use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
 
   configure do
     set :protection, :except => [:remote_referrer, :json_csrf]
