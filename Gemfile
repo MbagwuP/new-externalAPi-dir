@@ -24,10 +24,6 @@ gem 'bson_ext'
 gem 'health_check', path: './vendor/bundle'
 gem 'c_cloud_dms_client', path: './vendor/bundle'
 gem 'c_cloud_http_client', path: './vendor/bundle'
-gem 'c_cloud_web_services', path: './vendor/bundle'
-
-
-
 
 #authentication
 # gem 'cc_auth', git: 'git@github.com:CareCloud/auth_gem.git'

@@ -1,4 +1,0 @@
-source 'https://rubygems.org'
-
-# Specify your gem's dependencies in c_cloud_web_services.gemspec
-gemspec
