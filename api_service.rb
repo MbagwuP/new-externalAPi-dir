@@ -173,7 +173,9 @@ class ApiService < Sinatra::Base
     #    exit if settings.enable_auditing        # Using as a proxy for test environment
   end
 
-
+  get '/' do
+    "hello"
+  end
 
   # Test route
   get '/testmongo' do
