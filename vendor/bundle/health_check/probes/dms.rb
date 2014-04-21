@@ -1,11 +1,12 @@
 module Probes
   class Dms < Probes::Probe
     def probe
-      if defined?(CCloudDmsClient::DocumentApi)
+      a = 1
+      if defined?(HealthCheck.probes_config['probes']['dms'])
         value = {up: nil}
 
-          health = CCloudDmsClient::DocumentApi.health_check
-          if health == "200"
+          health = RestClient.get("#{HealthCheck.probes_config['probes']['dms']}/api/explorer")
+          if health.code == 200
              is_up = true
           else
              is_up = false
