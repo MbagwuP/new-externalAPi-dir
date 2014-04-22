@@ -1030,7 +1030,7 @@ class ApiService < Sinatra::Base
 
   ##  gets the blockouts and appointments by business entity
   #
-  # get v1/schedulebybusiness?authentication=<authenticationToken>
+  # get /v1/schedule/:date/:appointment_status_id/:location_id/:resource_id?s?authentication=<authenticationToken>
   #
   # Params definition
   # :status - true or false
@@ -1058,9 +1058,7 @@ class ApiService < Sinatra::Base
     urlappt << business_entity
     urlappt << '/'
     urlappt <<  params[:date]
-    urlappt << '/'
-    urlappt <<  params[:appointment_status_id]
-    urlappt << '/'
+    urlappt << '/1/'
     urlappt <<  params[:location_id]
     urlappt << '/'
     urlappt <<  params[:resource_id]
