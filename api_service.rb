@@ -48,6 +48,8 @@ SEVERITY_TYPE_ERROR = "ERROR"
 SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN"
 
+APP_API_KEY = 'api_key' 
+
 class ApiService < Sinatra::Base
     #use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
 
@@ -80,6 +82,10 @@ class ApiService < Sinatra::Base
     end
 
     NewRelic::Agent.after_fork(:force_reconnect => true)
+
+    # CCAuth.configure do |config|
+    #   config.endpoint = 'http://2dec181a.ngrok.com' 
+    # end
 
     ## config values
     API_SVC_URL = config["api_internal_svc_url"]
