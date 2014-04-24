@@ -1769,3 +1769,19 @@ ERROR logger: Hash: {"error"=>"Audit log failed! - Failed to connect to a master
  WARN logger: attempted route that does not exist
 ERROR logger: Hash: {"error"=>"Audit log failed! - Failed to connect to a master node at localhost:27017"}
  WARN logger: ----127.0.0.1 "GET /v1/reprocess/notifications/130a5a7b-6464-4535-aece-bed39ab9898e/2013-04-12/2013-04-12/1161?authentication=AQIC5wM2LY4Sfcw_g04P8wL_zY9cc_Vf4qcs5ynwzQAkqb4.*AAJTSQACMDE.*" - 404  - 9 ms
+DEBUG logger: Hash: {"api_internal_svc_url"=>"http://devservices.carecloud.local/", "api_internal_doc_srv_upld_url"=>"https://dms-dev.carecloud.com", "mirth_outbound_svc_url"=>"http://192.168.123.227:8088", "mirth_private_key"=>"thisstringshouldbeprivate", "mirth_edi_token"=>"C4r3Cl0ud3D1", "mirth_ip_address"=>"10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196", "memcache_servers"=>"cc-bl-mcache00-dev.carecloud.local:11211", "lab_user"=>"spectra_test", "lab_pass"=>"MLhYSFoptX58EsSrdAX1iyb3cuPiJMud", "version"=>1.0, "logging_level"=>0}
+DEBUG logger: +++++++++++ Loaded External API environment +++++++++++++++
+DEBUG logger: /Users/maxmolchan/CCProjects/external_api/config/settings.yml
+DEBUG logger: http://devservices.carecloud.local/
+DEBUG logger: Hash: {"api_internal_svc_url"=>"http://devservices.carecloud.local/", "api_internal_doc_srv_upld_url"=>"https://dms-dev.carecloud.com", "mirth_outbound_svc_url"=>"http://192.168.123.227:8088", "mirth_private_key"=>"thisstringshouldbeprivate", "mirth_edi_token"=>"C4r3Cl0ud3D1", "mirth_ip_address"=>"10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196", "memcache_servers"=>"cc-bl-mcache00-dev.carecloud.local:11211", "lab_user"=>"spectra_test", "lab_pass"=>"MLhYSFoptX58EsSrdAX1iyb3cuPiJMud", "version"=>1.0, "logging_level"=>0}
+ INFO logger: API-Service (Development) launched
+DEBUG logger: Connecting to MongoMapper at: {}
+ERROR logger: Connecting to MongoMapper Failed! - Set config before connecting. MongoMapper.config = {...}
+DEBUG logger: Hash: {"api_internal_svc_url"=>"http://devservices.carecloud.local/", "api_internal_doc_srv_upld_url"=>"https://dms-dev.carecloud.com", "mirth_outbound_svc_url"=>"http://192.168.123.227:8088", "mirth_private_key"=>"thisstringshouldbeprivate", "mirth_edi_token"=>"C4r3Cl0ud3D1", "mirth_ip_address"=>"10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196", "memcache_servers"=>"cc-bl-mcache00-dev.carecloud.local:11211", "lab_user"=>"spectra_test", "lab_pass"=>"MLhYSFoptX58EsSrdAX1iyb3cuPiJMud", "version"=>1.0, "logging_level"=>0}
+DEBUG logger: +++++++++++ Loaded External API environment +++++++++++++++
+DEBUG logger: /Users/maxmolchan/CCProjects/external_api/config/settings.yml
+DEBUG logger: http://devservices.carecloud.local/
+DEBUG logger: Hash: {"api_internal_svc_url"=>"http://devservices.carecloud.local/", "api_internal_doc_srv_upld_url"=>"https://dms-dev.carecloud.com", "mirth_outbound_svc_url"=>"http://192.168.123.227:8088", "mirth_private_key"=>"thisstringshouldbeprivate", "mirth_edi_token"=>"C4r3Cl0ud3D1", "mirth_ip_address"=>"10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196", "memcache_servers"=>"cc-bl-mcache00-dev.carecloud.local:11211", "lab_user"=>"spectra_test", "lab_pass"=>"MLhYSFoptX58EsSrdAX1iyb3cuPiJMud", "version"=>1.0, "logging_level"=>0}
+ INFO logger: API-Service (Development) launched
+DEBUG logger: Connecting to MongoMapper at: {}
+ERROR logger: Connecting to MongoMapper Failed! - Set config before connecting. MongoMapper.config = {...}

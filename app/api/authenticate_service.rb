@@ -214,54 +214,54 @@ class ApiService < Sinatra::Base
 
   # OAUTH2 endpoints
 
-  # post '/oauth2/access_token' do
-  #   begin
-  #     auth = Rack::Auth::Basic::Request.new(request.env)
-  #     begin
-  #       user_name, password = auth.credentials.fetch(0), auth.credentials.fetch(1)
-  #     rescue
-  #       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
-  #     end
+  post '/oauth2/access_token' do
+    begin
+      auth = Rack::Auth::Basic::Request.new(request.env)
+      begin
+        user_name, password = auth.credentials.fetch(0), auth.credentials.fetch(1)
+      rescue
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
+      end
 
-  #     begin
-  #       resp = CCAuth::AuthApi.new.access_token user_name, password, params
-  #     rescue => e
-  #       begin
-  #         errmsg = e.message
-  #         api_svc_halt e.code, errmsg
-  #       rescue
-  #         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-  #       end
-  #     end
+      begin
+        resp = CCAuth::AuthApi.new.access_token user_name, password, params
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
 
-  #     body resp.body
-  #     status HTTP_OK
+      body resp.body
+      status HTTP_OK
 
-  #   rescue => e
-  #     handle_exception(e)
-  #   end
-  # end
+    rescue => e
+      handle_exception(e)
+    end
+  end
 
-  # get '/oauth2/token_info' do
-  #   begin
-  #     begin
-  #       resp = CCAuth::AuthApi.new.token_info params[:access_token]
-  #     rescue => e
-  #       begin
-  #         errmsg = e.message
-  #         api_svc_halt e.code, errmsg
-  #       rescue
-  #         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-  #       end
-  #     end
+  get '/oauth2/token_info' do
+    begin
+      begin
+        resp = CCAuth::AuthApi.new.token_info params[:access_token]
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
 
-  #     body resp.body
-  #     status HTTP_OK
+      body resp.body
+      status HTTP_OK
 
-  #   rescue => e
-  #     handle_exception(e)
-  #   end
-  # end
+    rescue => e
+      handle_exception(e)
+    end
+  end
 
   #authenticate vi auth_service
   # post '/v3/service/authenticate' do
