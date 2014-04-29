@@ -1,4 +1,5 @@
 source 'http://rubygems.org'
+source "http://gem.carecloud.com"
 
 gem 'sinatra', :require => 'sinatra/base'
 gem 'require_all'
@@ -25,8 +26,7 @@ gem 'health_check', path: './vendor/bundle'
 gem 'c_cloud_dms_client', path: './vendor/bundle'
 gem 'c_cloud_http_client', path: './vendor/bundle'
 
-#authentication
-# gem 'cc_auth', git: 'git@github.com:CareCloud/auth_gem.git'
+gem 'cc_auth'
 
 group :test, :development, :localhost do
   gem 'rspec'
