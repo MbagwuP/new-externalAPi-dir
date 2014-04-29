@@ -67,9 +67,6 @@ class ApiService < Sinatra::Base
       hc_path = Dir.pwd + "/config/vitals.yml"
       hc_config = YAML.load(File.open(hc_path))[settings.environment.to_s]
 
-      probes_path = Dir.pwd + "/config/probes.yml"
-      probes_config = YAML.load(File.open(probes_path))[settings.environment.to_s]
-
       LOG.debug(config)
 
         #LOG.debug("1")
@@ -94,6 +91,7 @@ class ApiService < Sinatra::Base
     set :api_url, config["api_internal_svc_url"]
     set :memcached_server, config["memcache_servers"]
     set :mongo_server, config["mongo_server"]
+    set :dms_server , config["api_internal_doc_srv_upld_url"]
     set :mongo_port, config["mongo_port"]
 
     set :labs_user, config["lab_user"]
@@ -125,8 +123,8 @@ class ApiService < Sinatra::Base
     #temp fix for rspec test
     if settings.environment.to_s != 'test'
       use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
+      HealthCheck.app_setting = ApiService
       HealthCheck.config = hc_config
-      HealthCheck.probes_config = probes_config
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
       HealthCheck.start_health_monitor
     end

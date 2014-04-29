@@ -1,9 +1,9 @@
 module Probes
   class Webservice < Probes::Probe
     def probe
-      if HealthCheck.probes_config['probes']['webservices']
+      if HealthCheck.app_setting.api_url
         begin
-        conn = RestClient.get("#{HealthCheck.probes_config['probes']['webservices']}/system/status_check")
+        conn = RestClient.get("#{HealthCheck.app_setting.api_url}system/status_check")
           is_up = true if conn.code== 200
         rescue
           is_up = false

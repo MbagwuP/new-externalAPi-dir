@@ -2,10 +2,10 @@ module Probes
   class Dms < Probes::Probe
     def probe
       a = 1
-      if defined?(HealthCheck.probes_config['probes']['dms'])
+      if defined?(HealthCheck.app_setting.dms_server)
         value = {up: nil}
 
-          health = RestClient.get("#{HealthCheck.probes_config['probes']['dms']}/api/explorer")
+          health = RestClient.get("#{HealthCheck.app_setting.dms_server}/api/explorer")
           if health.code == 200
              is_up = true
           else

@@ -2,8 +2,8 @@ module Probes
   class MemCache < Probes::Probe
 
     def probe
-      if(HealthCheck.probes_config['probes']['memcache'])
-        url = HealthCheck.probes_config['probes']['memcache']
+      if(HealthCheck.app_setting.memcached_server)
+        url = HealthCheck.app_setting.memcached_server
         begin
           cache = Dalli::Client.new(url, :expires_in => 3600)
           cache.set("testvalue", "12346", 20)
