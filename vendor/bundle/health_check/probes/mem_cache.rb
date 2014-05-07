@@ -2,13 +2,10 @@ module Probes
   class MemCache < Probes::Probe
 
     def probe
-      config_path = Dir.pwd + "/config/settings.yml"
-      config = YAML.load(File.open(config_path))[ENV['RACK_ENV']]
-      cache_url = config['memcache_servers']
-
-      if(cache_url)
+      if(HealthCheck.app_setting.memcached_server)
+        url = HealthCheck.app_setting.memcached_server
         begin
-          cache = Dalli::Client.new(cache_url, :expires_in => 3600)
+          cache = Dalli::Client.new(url, :expires_in => 3600)
           cache.set("testvalue", "12346", 20)
           newvalue = cache.get("testvalue")
           cacheUp = true if (newvalue == "12346")

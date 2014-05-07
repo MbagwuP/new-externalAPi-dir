@@ -1,6 +1,6 @@
 ENV['RACK_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__), '..', 'api_service.rb')
+require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
 
 require 'test/unit'
 require 'rack/test'
