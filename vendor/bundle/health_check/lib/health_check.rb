@@ -43,7 +43,7 @@ module HealthCheck
   end
 
   class << self
-    attr_accessor :key, :probes, :config
+    attr_accessor :key, :probes, :config, :app_setting , :probes_config
 
     def start_health_monitor
       load_from_config if config
