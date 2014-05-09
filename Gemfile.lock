@@ -20,7 +20,7 @@ GEM
     bson_ext (1.10.0)
       bson (~> 1.10.0)
     builder (3.0.4)
-    cc_auth (0.0.1)
+    cc_auth (0.0.2)
       faraday
     color (1.5.1)
     dalli (2.7.0)
