@@ -213,6 +213,52 @@ class ApiService < Sinatra::Base
   #please do not delete!
 
   # OAUTH2 endpoints
+  get '/oauth2/authorize' do
+    content_type :html
+    begin
+      begin
+        resp = CCAuth::AuthApi.new.oauth_dialog params
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      body resp.body
+      status HTTP_OK
+
+    rescue => e
+      handle_exception(e)
+    end
+  end
+
+  post '/oauth2/authorize' do
+    begin
+      begin
+        resp = CCAuth::AuthApi.new.oauth_authorize params
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      error = "error=#{resp.headers['cc_oauth2_status_error']}"
+
+      if resp.status == 303
+        redirect to request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
+        redirect to resp.headers['location']
+      end
+
+    rescue => e
+      handle_exception(e)
+    end
+  end
 
   post '/oauth2/access_token' do
     begin
