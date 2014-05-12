@@ -83,7 +83,7 @@ class ApiService < Sinatra::Base
     NewRelic::Agent.after_fork(:force_reconnect => true)
 
     CCAuth.configure do |config|
-      config.endpoint = 'http://2dec181a.ngrok.com' 
+      config.endpoint = 'http://authdev.carecloud.local' 
     end
 
     ## config values

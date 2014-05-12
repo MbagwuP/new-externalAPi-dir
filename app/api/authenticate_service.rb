@@ -250,7 +250,7 @@ class ApiService < Sinatra::Base
 
       error = "error=#{resp.headers['cc_oauth2_status_error']}"
 
-      if resp.status == 303
+      if [ 302, 303 ].include?(resp.status)
         redirect to request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
         redirect to resp.headers['location']
       end
