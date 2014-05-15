@@ -46,9 +46,7 @@ AUDIT_TYPE_OUTSIDE = "outside-call"
 SEVERITY_TYPE_LOG = "LOG"
 SEVERITY_TYPE_ERROR = "ERROR"
 SEVERITY_TYPE_FATAL = "FATAL"
-SEVERITY_TYPE_WARN = "WARN"
-
-APP_API_KEY = 'GtPUILp5Yuz00-r0XSJuh5kuEQ1fT0BM' 
+SEVERITY_TYPE_WARN = "WARN" 
 
 class ApiService < Sinatra::Base
 
@@ -247,4 +245,7 @@ class ApiService < Sinatra::Base
     "Application error. Please try again later. If the issue continues please contact customer support with: #{audit_id}"
 
   end
+  
+  APP_API_KEY = 'GtPUILp5Yuz00-r0XSJuh5kuEQ1fT0BM'
+
 end
