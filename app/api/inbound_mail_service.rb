@@ -10,8 +10,6 @@ class ApiService < Sinatra::Base
     
     post '/inbound_mail' do
 
-        LOG.debug "Got send mail message"
-        
         begin
             headers = params['headers']
             to = params['to']
@@ -22,11 +20,11 @@ class ApiService < Sinatra::Base
             body_html = params['html']
             num_attachments = params['attachments']
             
-            LOG.debug "Headers: #{headers}"
+            #LOG.debug "Headers: #{headers}"
             LOG.debug "To: #{to} CC: #{cc} From: #{from} Subject: #{subject}"
             LOG.debug "Body: #{body}"
             LOG.debug "Body(html): #{body_html}"
-           
+            LOG.debug "# attachments: #{num_attachments}"
             # Should be a param attachmentX for each attachment
             # Need to scan these into the system
        
@@ -34,6 +32,7 @@ class ApiService < Sinatra::Base
             LOG.error "Inbound_mail Error: #{e.message}"
         end
 
+        # Failure to return 200 will cause Sendgrid to retry until 200 is received.
         status HTTP_OK
     end
 
