@@ -10,8 +10,9 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
     pass_in_token = CGI::unescape(params[:authentication])
     business_entity = get_business_entity(pass_in_token)
-    patientid = params[:patient_id]
-    patientid.slice!(/^patient-/)
+    patient_id = params[:patient_id]
+    patient_id.slice!(/^patient-/)
+    patientid = get_internal_patient_id(patient_id, business_entity, pass_in_token)
 
       urlencounter = ''
       urlencounter << API_SVC_URL
