@@ -31,7 +31,7 @@ class ApiService < Sinatra::Base
             
             i = 1
             while i <=  num_attachments
-                attachment_name = 'attachment#{i}'
+                attachment_name = 'attachment' + i.to_s
                 LOG.debug "Processing #{attachment_name}"
                 document_binary = params[attachment_name][:tempfile]
                 document_name = params[attachment_name][:filename]
