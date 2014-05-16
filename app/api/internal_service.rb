@@ -44,7 +44,6 @@ class ApiService < Sinatra::Base
     url = callback_info['notification_callback']['notification_callback_url']
     LOG.debug(url)
 
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urlcallbacks = ''
     urlcallbacks << API_SVC_URL
     urlcallbacks << 'notification_callbacks/'
@@ -111,7 +110,6 @@ class ApiService < Sinatra::Base
     url = callback_info['notification_callback']['notification_callback_url']
     LOG.debug(url)
 
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urlcallbacks = ''
     urlcallbacks << API_SVC_URL
     urlcallbacks << 'notification_callbacks/'
@@ -167,8 +165,6 @@ class ApiService < Sinatra::Base
     business_entity = get_business_entity(pass_in_token)
     #LOG.debug(business_entity)
 
-
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urllocation = ''
     urllocation << API_SVC_URL
     urllocation << 'notification_callbacks/'
