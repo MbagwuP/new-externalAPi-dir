@@ -1178,6 +1178,67 @@ class ApiService < Sinatra::Base
 
   end
 
+
+  #  Get Insurance Profiles
+  #
+  # GET /v1/person/insuranceprofiles/:patient_id?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :patient_id  - will be based on patient
+  #
+  # server action: Return insurance profile information for patient
+  # server response:
+  # --> if data found: 200, with insurance data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/insuranceprofiles/:patient_id?' do
+    validate_param(params[:patient_id], PATIENT_REGEX, PATIENT_MAX_LEN)
+    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = params[:patient_id]
+    patient_id.slice!(/^patient-/)
+    patientid = get_internal_patient_id(patient_id, business_entity, pass_in_token)
+
+
+    #http://localservices.carecloud.local:3000/businesses/1234/insurance_profiles/list_by_patient.json?token=
+    urlinsurance = ''
+    urlinsurance << API_SVC_URL
+    urlinsurance << 'businesses/'
+    urlinsurance << business_entity
+    urlinsurance << '/insuranceprofiles/'
+    urlinsurance << patientid
+    urlinsurance << '.json?token='
+    urlinsurance << CGI::escape(pass_in_token)
+
+    #LOG.debug("url for genders: " + urlreference)
+
+    begin
+      response = RestClient.get(urlinsurance)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Insurance Profiles Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    insurances = JSON.parse(response.body)
+    filtered_data = []
+    insurances.each do |insurance|
+      temp = {}
+      temp['id'] = insurance['insurance_profile']['id']
+      temp['is_self_pay'] = insurance['insurance_profile']['is_self_pay']
+      temp['name'] = insurance['insurance_profile']['name']
+      filtered_data << temp
+    end
+    body(filtered_data.to_json)
+    status HTTP_OK
+  end
+
+
   #  get ethnicity information
   #
   # GET /v1/person/ethnicities?authentication=<authenticationToken>
