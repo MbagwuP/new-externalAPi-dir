@@ -31,24 +31,10 @@ class ApiService < Sinatra::Base
     case response.code
       when 200..207
         response
-      when 400
-        LOG.error "response Error: #{response}"
-        if auth_failed?(response)
-          api_svc_halt HTTP_NOT_AUTHORIZED, '{"error":"Not authorized"}'
-        else # do the default...
-          response.return!(request, result, &block)
-        end
-      when 403
-        LOG.error "response Error: #{response}"
-        api_svc_halt HTTP_NOT_AUTHORIZED, '{"error":"Not authorized"}'
       else
-        Rails.logger.error "response Error: #{response}"
+        LOG.debug "HTTP response code:#{response.code}"
         response.return!(request, result, &block)
     end
-  end
-
-  def auth_failed?(response)
-    response =~ /Failed Authentication/
   end
 
 end
