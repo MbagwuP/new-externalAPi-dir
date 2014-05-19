@@ -26,12 +26,14 @@ class ApiService < Sinatra::Base
             LOG.debug "Body(html): #{body_html}"
             LOG.debug "# attachments: #{num_attachments}"
             
-            # Should be a param attachmentX for each attachment
-            # Need to scan these into the system
-            
+            # Find provider and BE based on To: / CC: fields
+            # May need to be another loop
+            #halt 200 if provider NOT FOUND
+
+            # Loop through the attachments; upload to DMS and Create a Task in the respective Inbox
             i = 1
             while i <=  num_attachments
-                attachment_name = 'attachment' + i.to_s
+                attachment_name = 'attachment#{i}'
                 LOG.debug "Processing #{attachment_name}"
                 document_binary = params[attachment_name][:tempfile]
                 document_name = params[attachment_name][:filename]
@@ -50,7 +52,7 @@ class ApiService < Sinatra::Base
                 end
 
                 # Now upload to DMS
-                response = dms_upload(temp_file, pass_in_token)
+                response = mydms_upload(temp_file, '0123456789')
                 handler_id = response["nodeid"]
                 LOG.debug "Got DMS handler  id: #{handler_id}"
 
@@ -70,7 +72,7 @@ class ApiService < Sinatra::Base
     end
 
     ## upload the document to the DMS server
-    def dms_upload (file_path, token, params = {})
+    def mydms_upload (file_path, token, params = {})
         file = File.new(file_path, 'rb')
         options = params.merge(file: file, token: token)
         res = JSON.parse(post("#{DOC_SERVICE_URL}/documents", options))
