@@ -7,7 +7,6 @@
 
 class ApiService < Sinatra::Base
     
-    
     post '/inbound_mail' do
 
         begin
@@ -18,7 +17,7 @@ class ApiService < Sinatra::Base
             subject = params['subject']
             body = params['text']
             body_html = params['html']
-            num_attachments = params['attachments']
+            num_attachments = params['attachments'].to_i
             
             #LOG.debug "Headers: #{headers}"
             LOG.debug "To: #{to} CC: #{cc} From: #{from} Subject: #{subject}"
@@ -26,51 +25,67 @@ class ApiService < Sinatra::Base
             LOG.debug "Body(html): #{body_html}"
             LOG.debug "# attachments: #{num_attachments}"
             
-            # Should be a param attachmentX for each attachment
-            # Need to scan these into the system
+            providers = []
+            to.split(',').collect {|c| providers << c.strip} if !to.nil?
+            cc.split(',').collect {|c| providers << c.strip} if !cc.nil?
+            LOG.debug "providers: #{providers}"
             
-            i = 1
-            while i <=  num_attachments
-                attachment_name = 'attachment' + i.to_s
-                LOG.debug "Processing #{attachment_name}"
-                document_binary = params[attachment_name][:tempfile]
-                document_name = params[attachment_name][:filename]
-                extname = File.extname(document_name)
-                LOG.debug "# document_name: #{document_name}"
-                
-                if extname != '.jpg' && extname != '.pdf'
-                    LOG.error 'Document must be of type PDF or JPG' if file_type.match(document_type_regex) == nil
+            providers.each do |provider|
+            
+                LOG.debug "Processing #{provider}"
+                # Find provider and BE based on To: / CC: fields
+                # next if provider NOT FOUND
+
+                # Loop through the attachments; upload to DMS and Create a Task in the respective Inbox
+                i = 1
+                while i <=  num_attachments
+                    begin
+                        attachment_name = "attachment#{i}"
+                        LOG.debug "Processing #{attachment_name}"
+                        document_binary = params[attachment_name][:tempfile]
+                        document_name = params[attachment_name][:filename]
+                        extname = File.extname(document_name)
+                        LOG.debug "# document_name: #{document_name}"
+                        
+                        if extname != '.jpg' && extname != '.pdf'
+                            LOG.error 'Document must be of type PDF or JPG' if file_type.match(document_type_regex) == nil
+                        end
+
+                        # save file locally
+                        temp_file = Tempfile.new('inbound')
+                        document_binary.rewind
+                        File.open(temp_file, "wb") do |file|
+                            file.write(document_binary.read)
+                        end
+
+                        # Now upload to DMS
+                        response = mydms_upload(temp_file, '0123456789')
+                        handler_id = response["nodeid"]
+                        LOG.debug "Got DMS handler  id: #{handler_id}"
+
+                        File.delete(temp_file) if File.exists?(temp_file)
+
+                        # Now create a task in the respective inbox
+
+                    rescue Exception => e
+                        LOG.error "Error processing #{attachment_name}: #{e.message}"
+                    end
+
+                    i += 1
                 end
-
-                # save file locally
-                temp_file = Tempfile.new('inbound')
-                document_binary.rewind
-                File.open(temp_file, "wb") do |file|
-                    file.write(document_binary.read)
-                end
-
-                # Now upload to DMS
-                response = dms_upload(temp_file, pass_in_token)
-                handler_id = response["nodeid"]
-                LOG.debug "Got DMS handler  id: #{handler_id}"
-
-                File.delete(temp_file) if File.exists?(temp_file)
-
-                # Now create a task in the respective inbox
-
-                i += 1
             end
-       
+
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
         end
 
+        LOG.debug "Success"
         # Failure to return 200 will cause Sendgrid to retry until 200 is received.
         status HTTP_OK
     end
 
     ## upload the document to the DMS server
-    def dms_upload (file_path, token, params = {})
+    def mydms_upload (file_path, token, params = {})
         file = File.new(file_path, 'rb')
         options = params.merge(file: file, token: token)
         res = JSON.parse(post("#{DOC_SERVICE_URL}/documents", options))
