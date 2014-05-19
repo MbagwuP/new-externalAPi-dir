@@ -7,7 +7,6 @@
 
 class ApiService < Sinatra::Base
     
-    
     post '/inbound_mail' do
 
         begin
@@ -26,47 +25,61 @@ class ApiService < Sinatra::Base
             LOG.debug "Body(html): #{body_html}"
             LOG.debug "# attachments: #{num_attachments}"
             
-            # Find provider and BE based on To: / CC: fields
-            # May need to be another loop
-            #halt 200 if provider NOT FOUND
+            providers = []
+            to.split(',').collect {|c| providers << c.strip} if !to.nil?
+            cc.split(',').collect {|c| providers << c.strip} if !cc.nil?
+            LOG.debug "providers: #{providers}"
+            
+            providers.each do |provider|
+            
+                LOG.debug "Processing #{provider}"
+                # Find provider and BE based on To: / CC: fields
+                # next if provider NOT FOUND
 
-            # Loop through the attachments; upload to DMS and Create a Task in the respective Inbox
-            i = 1
-            while i <=  num_attachments
-                attachment_name = "attachment#{i}"
-                LOG.debug "Processing #{attachment_name}"
-                document_binary = params[attachment_name][:tempfile]
-                document_name = params[attachment_name][:filename]
-                extname = File.extname(document_name)
-                LOG.debug "# document_name: #{document_name}"
-                
-                if extname != '.jpg' && extname != '.pdf'
-                    LOG.error 'Document must be of type PDF or JPG' if file_type.match(document_type_regex) == nil
+                # Loop through the attachments; upload to DMS and Create a Task in the respective Inbox
+                i = 1
+                while i <=  num_attachments
+                    begin
+                        attachment_name = "attachment#{i}"
+                        LOG.debug "Processing #{attachment_name}"
+                        document_binary = params[attachment_name][:tempfile]
+                        document_name = params[attachment_name][:filename]
+                        extname = File.extname(document_name)
+                        LOG.debug "# document_name: #{document_name}"
+                        
+                        if extname != '.jpg' && extname != '.pdf'
+                            LOG.error 'Document must be of type PDF or JPG' if file_type.match(document_type_regex) == nil
+                        end
+
+                        # save file locally
+                        temp_file = Tempfile.new('inbound')
+                        document_binary.rewind
+                        File.open(temp_file, "wb") do |file|
+                            file.write(document_binary.read)
+                        end
+
+                        # Now upload to DMS
+                        response = mydms_upload(temp_file, '0123456789')
+                        handler_id = response["nodeid"]
+                        LOG.debug "Got DMS handler  id: #{handler_id}"
+
+                        File.delete(temp_file) if File.exists?(temp_file)
+
+                        # Now create a task in the respective inbox
+
+                    rescue Exception => e
+                        LOG.error "Error processing #{attachment_name}: #{e.message}"
+                    end
+
+                    i += 1
                 end
-
-                # save file locally
-                temp_file = Tempfile.new('inbound')
-                document_binary.rewind
-                File.open(temp_file, "wb") do |file|
-                    file.write(document_binary.read)
-                end
-
-                # Now upload to DMS
-                response = mydms_upload(temp_file, '0123456789')
-                handler_id = response["nodeid"]
-                LOG.debug "Got DMS handler  id: #{handler_id}"
-
-                File.delete(temp_file) if File.exists?(temp_file)
-
-                # Now create a task in the respective inbox
-
-                i += 1
             end
-       
+
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
         end
 
+        LOG.debug "Success"
         # Failure to return 200 will cause Sendgrid to retry until 200 is received.
         status HTTP_OK
     end
