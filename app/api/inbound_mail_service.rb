@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
             subject = params['subject']
             body = params['text']
             body_html = params['html']
-            num_attachments = params['attachments']
+            num_attachments = params['attachments'].to_i
             
             #LOG.debug "Headers: #{headers}"
             LOG.debug "To: #{to} CC: #{cc} From: #{from} Subject: #{subject}"
