@@ -26,6 +26,7 @@ class ApiService < Sinatra::Base
             LOG.debug "Body(html): #{params['html']}"
             LOG.debug "# attachments: #{params['attachments']}"
             LOG.debug "EMAIL Headers:#{params['headers']}"
+            LOG.debug "envelope:#{params['envelope']}"
             
             recipients = []
             params['to'].split(',').collect {|c| recipients << c.strip} if !params['to'].nil?
