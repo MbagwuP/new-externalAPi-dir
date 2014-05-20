@@ -16,7 +16,7 @@ class ApiService < Sinatra::Base
         urlauth  = API_SVC_URL + 'login.json?login=interface@interface.com&password=welcome'
         resp = RestClient.get(urlauth)
         parsed = JSON.parse(resp.body)
-        token = CGI::unescape(parsed["authtoken"])
+        token = CGI::unescape(parsed['authtoken'])
         LOG.debug "Auth token:#{token}"
 
         begin
@@ -33,7 +33,7 @@ class ApiService < Sinatra::Base
             params['cc'].split(',').collect {|c| recipients << c.strip} if !params['cc'].nil?
             LOG.debug "recipient(to/cc):#{recipients}"
 
-            recipients = params['envelope']['to']
+            recipients = JSON.parse(params['envelope'])['to']
             LOG.debug "recipient(envelope):#{recipients}"
 
             num_attachments = params['attachments'].to_i
