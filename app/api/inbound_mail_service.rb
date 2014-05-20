@@ -5,91 +5,108 @@
 # Version:    1.0
 #
 
+# Use the following to test locally
+# curl --form to=johnw --form subject=test --form from=bryan --form attachments=2 --form text="This is the body of the email" --form attachment1=@test.jpg --form attachment2=@test2.jpg --form envelope="{\"to\":[\"johnw\"],\"from\":[\"bryan\"]}"  localhost:1234/inbound_mail
+
 class ApiService < Sinatra::Base
     
     post '/inbound_mail' do
 
-        begin
-            headers = params['headers']
-            to = params['to']
-            cc = params['cc']
-            from = params['from']
-            subject = params['subject']
-            body = params['text']
-            body_html = params['html']
-            num_attachments = params['attachments'].to_i
-            
-            #LOG.debug "Headers: #{headers}"
-            LOG.debug "To: #{to} CC: #{cc} From: #{from} Subject: #{subject}"
-            LOG.debug "Body: #{body}"
-            LOG.debug "Body(html): #{body_html}"
-            LOG.debug "# attachments: #{num_attachments}"
-            
-            providers = []
-            to.split(',').collect {|c| providers << c.strip} if !to.nil?
-            cc.split(',').collect {|c| providers << c.strip} if !cc.nil?
-            LOG.debug "providers: #{providers}"
-            
-            providers.each do |provider|
-            
-                LOG.debug "Processing #{provider}"
-                # Find provider and BE based on To: / CC: fields
-                # next if provider NOT FOUND
+        # hack to get Token
+        urlauth  = API_SVC_URL + 'login.json?login=interface@interface.com&password=welcome'
+        resp = RestClient.get(urlauth)
+        parsed = JSON.parse(resp.body)
+        token = CGI::unescape(parsed['authtoken'])
+        LOG.debug "Auth token:#{token}"
 
-                # Loop through the attachments; upload to DMS and Create a Task in the respective Inbox
+        begin
+        
+            LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
+            LOG.debug "Envelope:#{params['envelope']}"
+        
+            # Sendgrid documentation states that the envelope[:to] JSON will be an array of recipients.
+            # However, in practice it appears that Sendgrid is calling this service for every recipient
+            # The To: CC: and From: fields are from the email header and should not be used to parse
+            
+            recipients = JSON.parse(params['envelope'])['to']
+            LOG.debug "recipient(envelope):#{recipients}"
+
+            num_attachments = params['attachments'].to_i
+            halt HTTP_OK if num_attachments < 1             # Ignore if nothing attached
+
+            recipients.each do |recipient|
+            
+                LOG.debug "Processing recipient:#{recipient}"
+                # Find provider and BE based on recipients
+                providerID = find_provider_by_email(recipient, token)
+                next if providerID.nil?
+                
+                # Loop through the attachments; upload to DMS and Create a Task in the providers Inbox
                 i = 1
                 while i <=  num_attachments
                     begin
+                        temp_file = Tempfile.new('inbound')         # Do now so exception handler doesn't error
+                    
                         attachment_name = "attachment#{i}"
-                        LOG.debug "Processing #{attachment_name}"
                         document_binary = params[attachment_name][:tempfile]
                         document_name = params[attachment_name][:filename]
                         extname = File.extname(document_name)
-                        LOG.debug "# document_name: #{document_name}"
                         
                         if extname != '.jpg' && extname != '.pdf'
-                            LOG.error 'Document must be of type PDF or JPG' if file_type.match(document_type_regex) == nil
+                            LOG.error "Skipping attachment(#{i}): #{document_name}, attachments must be of type PDF or JPG"
+                        else
+                            LOG.debug "Processing attachment(#{i}): #{document_name}"
+
+                            # Save file locally
+                            document_binary.rewind
+                            File.open(temp_file, "wb") do |file|
+                                file.write(document_binary.read)
+                            end
+
+                            # Upload to DMS
+                            response = dms_upload(temp_file, token)
+                            docID = response['nodeid']
+                            LOG.debug "DMS handler id: #{docID}"
+
+                            # Create a task in the respective inbox
+                            # Use "from" field to differeniate Inbound Fax vs other documents ??
+
+                            response = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token)
+                            taskID = response['taskid']
+                            LOG.debug "Task id: #{taskID}"
                         end
-
-                        # save file locally
-                        temp_file = Tempfile.new('inbound')
-                        document_binary.rewind
-                        File.open(temp_file, "wb") do |file|
-                            file.write(document_binary.read)
-                        end
-
-                        # Now upload to DMS
-                        response = mydms_upload(temp_file, '0123456789')
-                        handler_id = response["nodeid"]
-                        LOG.debug "Got DMS handler  id: #{handler_id}"
-
-                        File.delete(temp_file) if File.exists?(temp_file)
-
-                        # Now create a task in the respective inbox
 
                     rescue Exception => e
-                        LOG.error "Error processing #{attachment_name}: #{e.message}"
+                        LOG.error "Error processing attachment(#{i}): #{e.message}"
+
+                        # Swallow all exceptions and move onto next attachment
                     end
 
+                    # Little Housekeeping
+                    File.delete(temp_file) if File.exists?(temp_file)
+
                     i += 1
-                end
             end
+        end
 
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
         end
 
-        LOG.debug "Success"
         # Failure to return 200 will cause Sendgrid to retry until 200 is received.
         status HTTP_OK
     end
 
-    ## upload the document to the DMS server
-    def mydms_upload (file_path, token, params = {})
-        file = File.new(file_path, 'rb')
-        options = params.merge(file: file, token: token)
-        res = JSON.parse(post("#{DOC_SERVICE_URL}/documents", options))
-        LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
+    ## Using the recipient email address find the provider ID
+    def find_provider_by_email (recipient, token)
+        return 12345
+    end
+
+    ## Create an Inbox task
+    def add_to_provider_inbox(providerID, docID, subject, body, token)
+        options = params.merge(provider: providerID, handler: docID, subject: subject, body: body, token: token)
+        res = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
+        LOG.debug "Create Task response: #{res.inspect}"
         return res
     end
 
