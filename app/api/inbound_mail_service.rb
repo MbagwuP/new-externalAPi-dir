@@ -25,13 +25,17 @@ class ApiService < Sinatra::Base
             LOG.debug "Body: #{params['text']}"
             LOG.debug "Body(html): #{params['html']}"
             LOG.debug "# attachments: #{params['attachments']}"
-            LOG.debug "EMAIL Headers:#{params['headers']}"
+            #            LOG.debug "EMAIL Headers:#{params['headers']}"
             LOG.debug "envelope:#{params['envelope']}"
             
             recipients = []
             params['to'].split(',').collect {|c| recipients << c.strip} if !params['to'].nil?
             params['cc'].split(',').collect {|c| recipients << c.strip} if !params['cc'].nil?
-            
+            LOG.debug "recipient(to/cc):#{recipients}"
+
+            recipients = params['envelope']['to']
+            LOG.debug "recipient(envelope):#{recipients}"
+
             num_attachments = params['attachments'].to_i
             halt HTTP_OK if num_attachments < 1
 
