@@ -6,7 +6,7 @@
 #
 
 # Use the following to test locally
-# curl --form to=johnw --form subject=test --form cc=rmorales,emiller --form attachments=2 --form text="This is the body of the email" --form attachment1=@test.jpg --form attachment2=@test2.jpg localhost:1234/inbound_mail
+# curl --form to=johnw --form subject=test --form from=bryan --form attachments=2 --form text="This is the body of the email" --form attachment1=@test.jpg --form attachment2=@test2.jpg --form envelope="{\"to\":[\"johnw\"],\"from\":[\"bryan\"]}"  localhost:1234/inbound_mail
 
 class ApiService < Sinatra::Base
     
@@ -22,24 +22,18 @@ class ApiService < Sinatra::Base
         begin
         
             LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
-            LOG.debug "Body: #{params['text']}"
-            LOG.debug "Body(html): #{params['html']}"
-            LOG.debug "# attachments: #{params['attachments']}"
-            #            LOG.debug "EMAIL Headers:#{params['headers']}"
-            LOG.debug "envelope:#{params['envelope']}"
+            LOG.debug "Envelope:#{params['envelope']}"
+        
+            # Sendgrid will call this service for every intended recipient.
+            # The envelop JSON is for the current recipient and the To: CC: and From: fields are from the email header
             
-            recipients = []
-            params['to'].split(',').collect {|c| recipients << c.strip} if !params['to'].nil?
-            params['cc'].split(',').collect {|c| recipients << c.strip} if !params['cc'].nil?
-            LOG.debug "recipient(to/cc):#{recipients}"
-
             recipients = JSON.parse(params['envelope'])['to']
             LOG.debug "recipient(envelope):#{recipients}"
 
             num_attachments = params['attachments'].to_i
             halt HTTP_OK if num_attachments < 1
 
-            # Can use "from" to differeniate Inbound Fax vs other documents
+            # Can use "from" field to differeniate Inbound Fax vs other documents
             
             recipients.each do |recipient|
             
