@@ -24,17 +24,16 @@ class ApiService < Sinatra::Base
             LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
             LOG.debug "Envelope:#{params['envelope']}"
         
-            # Sendgrid will call this service for every intended recipient.
-            # The envelop JSON is for the current recipient and the To: CC: and From: fields are from the email header
+            # Sendgrid documentation states that the envelope[:to] JSON will be an array of recipients.
+            # However, in practice it appears that Sendgrid is calling this service for every recipient
+            # The To: CC: and From: fields are from the email header and should not be used to parse
             
             recipients = JSON.parse(params['envelope'])['to']
             LOG.debug "recipient(envelope):#{recipients}"
 
             num_attachments = params['attachments'].to_i
-            halt HTTP_OK if num_attachments < 1
+            halt HTTP_OK if num_attachments < 1             # Ignore if nothing attached
 
-            # Can use "from" field to differeniate Inbound Fax vs other documents
-            
             recipients.each do |recipient|
             
                 LOG.debug "Processing recipient:#{recipient}"
@@ -70,6 +69,8 @@ class ApiService < Sinatra::Base
                             LOG.debug "DMS handler id: #{docID}"
 
                             # Create a task in the respective inbox
+                            # Use "from" field to differeniate Inbound Fax vs other documents ??
+
                             response = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token)
                             taskID = response['taskid']
                             LOG.debug "Task id: #{taskID}"
@@ -78,15 +79,15 @@ class ApiService < Sinatra::Base
                     rescue Exception => e
                         LOG.error "Error processing attachment(#{i}): #{e.message}"
 
-                        # Swallow all exceptions and move onto next recipient
+                        # Swallow all exceptions and move onto next attachment
                     end
 
                     # Little Housekeeping
                     File.delete(temp_file) if File.exists?(temp_file)
 
                     i += 1
-            end   # attachments loop
-        end   #recipients loop
+            end
+        end
 
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
