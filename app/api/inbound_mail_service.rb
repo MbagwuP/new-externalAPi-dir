@@ -28,12 +28,9 @@ class ApiService < Sinatra::Base
             # However, in practice it appears that Sendgrid is calling this service for every recipient
             # The To: CC: and From: fields are from the email header and should not be used to parse
             
-            recipients = JSON.parse(params['envelope'])['to']
-            LOG.debug "recipient(envelope):#{recipients}"
-
             num_attachments = params['attachments'].to_i
-            halt HTTP_OK if num_attachments < 1             # Ignore if nothing attached
 
+            recipients = JSON.parse(params['envelope'])['to']
             recipients.each do |recipient|
             
                 LOG.debug "Processing recipient:#{recipient}"
@@ -69,10 +66,13 @@ class ApiService < Sinatra::Base
                             LOG.debug "DMS handler id: #{docID}"
 
                             # Create a task in the respective inbox
-                            # Use "from" field to differeniate Inbound Fax vs other documents ??
-
-                            response = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token)
-                            taskID = response['taskid']
+                            # Use "from" field to differeniate Inbound Fax vs other documents
+                            if JSON.parse(params['envelope'])['from'][0] == 'faxserver@carecloud.com'
+                                docType = 'Fax'
+                            else
+                                docType = 'Document'
+                            end
+                            taskID = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token, docType)
                             LOG.debug "Task id: #{taskID}"
                         end
 
@@ -86,9 +86,14 @@ class ApiService < Sinatra::Base
                     File.delete(temp_file) if File.exists?(temp_file)
 
                     i += 1
-            end
-        end
+                end
 
+                if num_attachments == 0
+                    # Create a task in the respective inbox
+                    taskID = add_to_provider_inbox(providerID, nil, params['subject'], params['text'], token, 'Tickler')
+                    LOG.debug "Task id: #{taskID}"
+                end
+            end
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
         end
@@ -103,11 +108,17 @@ class ApiService < Sinatra::Base
     end
 
     ## Create an Inbox task
-    def add_to_provider_inbox(providerID, docID, subject, body, token)
-        options = params.merge(provider: providerID, handler: docID, subject: subject, body: body, token: token)
-        res = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
-        LOG.debug "Create Task response: #{res.inspect}"
-        return res
+    def add_to_provider_inbox(providerID, docID, subject, body, token, docType)
+        begin
+            LOG.debug "docType: #{docType}"
+            options = params.merge(provider: providerID, handler: docID, subject: subject, body: body, token: token, docType: docType)
+            response = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
+            LOG.debug "Create Task response: #{res.inspect}"
+            return response['taskid']
+        rescue Exception => e
+            LOG.error "Error Creating Inbox task: #{e.message}"
+            return nil
+        end
     end
 
 end
