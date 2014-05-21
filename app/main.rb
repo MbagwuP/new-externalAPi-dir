@@ -80,9 +80,6 @@ class ApiService < Sinatra::Base
 
     NewRelic::Agent.after_fork(:force_reconnect => true)
 
-    CCAuth.configure do |config|
-      config.endpoint = 'http://authdev.carecloud.local' 
-    end
 
     ## config values
     API_SVC_URL = config["api_internal_svc_url"]
@@ -131,6 +128,10 @@ class ApiService < Sinatra::Base
       HealthCheck.config = hc_config
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
       HealthCheck.start_health_monitor
+      CCAuth.configure do |config|
+        config.endpoint = 'http://authdev.carecloud.local'
+      end
+
     end
 
     LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
