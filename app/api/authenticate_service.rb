@@ -291,7 +291,7 @@ class ApiService < Sinatra::Base
   get '/oauth2/token_info' do
     begin
       begin
-        resp = CCAuth::AuthApi.new.token_info params[:access_token]
+        resp = CCAuth::AuthApi.new.token_info(get_oauth_token || params[:access_token])
       rescue => e
         begin
           errmsg = e.message
