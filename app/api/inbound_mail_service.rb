@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
         parsed = JSON.parse(resp.body)
         token = CGI::unescape(parsed['authtoken'])
         LOG.debug "Auth token:#{token}"
-
+        
         begin
         
             LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
@@ -35,8 +35,10 @@ class ApiService < Sinatra::Base
             
                 LOG.debug "Processing recipient:#{recipient}"
                 # Find provider and BE based on recipients
-                providerID = find_provider_by_email(recipient, token)
-                next if providerID.nil?
+                provider = find_provider_by_email(recipient)
+                LOG.debug("provider:#{provider}")
+                
+                next if provider['providerID'].nil?
                 
                 # Loop through the attachments; upload to DMS and Create a Task in the providers Inbox
                 i = 1
@@ -72,7 +74,7 @@ class ApiService < Sinatra::Base
                             else
                                 docType = 'Document'
                             end
-                            taskID = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token, docType)
+                            taskID = add_to_provider_inbox(provider['providerID'], provider['business_entity'], docID, params['subject'], params['text'], token, docType)
                             LOG.debug "Task id: #{taskID}"
                         end
 
@@ -90,7 +92,7 @@ class ApiService < Sinatra::Base
 
                 if num_attachments == 0
                     # Create a task in the respective inbox
-                    taskID = add_to_provider_inbox(providerID, nil, params['subject'], params['text'], token, 'Tickler')
+                    taskID = add_to_provider_inbox(provider['providerID'], provider['business_entity'], nil, params['subject'], params['text'], token, 'Tickler')
                     LOG.debug "Task id: #{taskID}"
                 end
             end
@@ -103,15 +105,17 @@ class ApiService < Sinatra::Base
     end
 
     ## Using the recipient email address find the provider ID
-    def find_provider_by_email (recipient, token)
-        return 12345
+    def find_provider_by_email (recipient)
+
+        response = {"providerID" => "123456", "business_Entity" => "1234"}
+        return response.to_json
     end
 
     ## Create an Inbox task
-    def add_to_provider_inbox(providerID, docID, subject, body, token, docType)
+    def add_to_provider_inbox(providerID, businessID, docID, subject, body, token, docType)
         begin
             LOG.debug "docType: #{docType}"
-            options = params.merge(provider: providerID, handler: docID, subject: subject, body: body, token: token, docType: docType)
+            options = params.merge(provider: providerID, business_entity: businessID, handler: docID, subject: subject, body: body, token: token, docType: docType)
             response = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
             LOG.debug "Create Task response: #{res.inspect}"
             return response['taskid']
