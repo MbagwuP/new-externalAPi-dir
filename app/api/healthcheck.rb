@@ -130,32 +130,4 @@ class ApiService < Sinatra::Base
 
   end
 
-  # Load Balancer Status
-  #
-  # GET /lb_status
-  #
-
-  get '/old_lb_status' do
-
-    health = JSON.parse(perform_healthcheck)
-
-    if health["service_status"] == "up" || health["service_status"] == "sick"
-      "up"
-    else
-      "down"
-    end
-
-  end
-
-  # Healthcheck ping
-  #
-  # GET /healthcheck_ping
-  #
-
-  get '/old_healthcheck_ping' do
-
-    "pong"
-
-  end
-
 end
