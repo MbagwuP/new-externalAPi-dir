@@ -104,7 +104,9 @@ class ApiService < Sinatra::Base
     # initialize the cache
     set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
 
-
+    # CCAuth
+    set :cc_auth_config, File.open(File.dirname(__FILE__) + "/../config/cc_auth_service.yml") { |f| YAML.load(f) }[environment.to_s]
+   
     ## setup log level based on yml
     begin
       LOG.level = config["logging_level"]
@@ -128,11 +130,7 @@ class ApiService < Sinatra::Base
       HealthCheck.config = hc_config
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
       HealthCheck.start_health_monitor
-      
-      CCAuth.configure do |config|
-        config.endpoint = 'http://authdev.carecloud.local'
-      end
-
+      CCAuth.configure { |config| config.endpoint = settings.cc_auth_config['url'] }
     end
 
     LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
