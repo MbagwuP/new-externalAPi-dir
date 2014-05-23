@@ -128,6 +128,7 @@ class ApiService < Sinatra::Base
       HealthCheck.config = hc_config
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
       HealthCheck.start_health_monitor
+      
       CCAuth.configure do |config|
         config.endpoint = 'http://authdev.carecloud.local'
       end
