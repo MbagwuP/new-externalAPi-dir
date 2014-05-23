@@ -1938,8 +1938,8 @@ class ApiService < Sinatra::Base
 
   put '/v2/patientsextended/:patient_id' do
     begin
-      request_body, patient_id = get_request_JSON,
       access_token, patient_id = get_oauth_token, params[:patient_id]
+      request_body = get_request_JSON
       data  = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
       url = "#{API_SVC_URL}business_entity/#{data['scope']['business_entity_id']}/patients/#{patient_id}/createextended.json?token=#{access_token}"
       response = RestClient.put url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
