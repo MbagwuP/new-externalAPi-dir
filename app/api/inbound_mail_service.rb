@@ -34,13 +34,11 @@ class ApiService < Sinatra::Base
             recipients.each do |recipient|
             
                 LOG.debug "Processing recipient:#{recipient}"
-                # Find provider and BE based on recipients
-                provider = find_provider_by_email(recipient)
-                LOG.debug("provider:#{provider}")
+                # Find User and BE based on recipients
+                user = JSON.parse(find_user_by_email(recipient, token))
+                next if user.nil?
                 
-                next if provider['providerID'].nil?
-                
-                # Loop through the attachments; upload to DMS and Create a Task in the providers Inbox
+                # Loop through the attachments; upload to DMS and Create a Task in the Users' Inbox
                 i = 1
                 while i <=  num_attachments
                     begin
@@ -74,7 +72,7 @@ class ApiService < Sinatra::Base
                             else
                                 docType = 'Document'
                             end
-                            taskID = add_to_provider_inbox(provider['providerID'], provider['business_entity'], docID, params['subject'], params['text'], token, docType)
+                            taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], docID, params['subject'], params['text'], token, docType)
                             LOG.debug "Task id: #{taskID}"
                         end
 
@@ -92,7 +90,7 @@ class ApiService < Sinatra::Base
 
                 if num_attachments == 0
                     # Create a task in the respective inbox
-                    taskID = add_to_provider_inbox(provider['providerID'], provider['business_entity'], nil, params['subject'], params['text'], token, 'Tickler')
+                    taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], nil, params['subject'], params['text'], token, 'Tickler')
                     LOG.debug "Task id: #{taskID}"
                 end
             end
@@ -104,21 +102,32 @@ class ApiService < Sinatra::Base
         status HTTP_OK
     end
 
-    ## Using the recipient email address find the provider ID
-    def find_provider_by_email (recipient)
-
-        response = {"providerID" => "123456", "business_Entity" => "1234"}
-        return response.to_json
+    ## Using the recipient email address find the userID & business entity
+    def find_user_by_email (recipient, token)
+        begin
+            response = RestClient.get("#{API_SVC_URL}/business_entities/list_by_user.json?list_type=list&token=#{token}")
+            LOG.debug response.body
+            parsed = JSON.parse(response.body)['business_entities']
+            userID = parsed[0]['user_profile_id']
+            userID = 31495
+            business_entity_id = parsed[0]['id']
+            response = {:userID => userID, :business_entity_id => business_entity_id}
+            return response.to_json
+        rescue Exception => e
+            LOG.error "Error find_user_by_email: #{e.message}"
+            return nil
+        end
     end
 
     ## Create an Inbox task
-    def add_to_provider_inbox(providerID, businessID, docID, subject, body, token, docType)
+    def add_to_user_inbox(userID, business_entity_id, docID, subject, body, token, docType)
         begin
-            LOG.debug "docType: #{docType}"
-            options = params.merge(provider: providerID, business_entity: businessID, handler: docID, subject: subject, body: body, token: token, docType: docType)
-            response = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
-            LOG.debug "Create Task response: #{res.inspect}"
-            return response['taskid']
+            task =  {:name => subject, :description => body, :due_at => '2011-04-08 02:46:32', :business_entity_id => business_entity_id, :task_request_type_id => 98}
+            request_body = {:task => task}
+            LOG.debug "POST #{API_SVC_URL}/businesses/#{business_entity_id}/users/#{userID}/tasks.json?token=#{token}"
+            response = RestClient.post("#{API_SVC_URL}/businesses/#{business_entity_id}/users/#{userID}/tasks.json?token=#{token}", request_body.to_json, :content_type => :json)
+            parsed = JSON.parse(response.body)
+            return parsed['task']['id']
         rescue Exception => e
             LOG.error "Error Creating Inbox task: #{e.message}"
             return nil
