@@ -31,4 +31,5 @@ gem 'cc_auth'
 group :test, :development, :localhost do
   gem 'rspec'
   gem 'rack-test'
+  gem 'tux'
 end
