@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
         parsed = JSON.parse(resp.body)
         token = CGI::unescape(parsed['authtoken'])
         LOG.debug "Auth token:#{token}"
-
+        
         begin
         
             LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
@@ -28,20 +28,17 @@ class ApiService < Sinatra::Base
             # However, in practice it appears that Sendgrid is calling this service for every recipient
             # The To: CC: and From: fields are from the email header and should not be used to parse
             
-            recipients = JSON.parse(params['envelope'])['to']
-            LOG.debug "recipient(envelope):#{recipients}"
-
             num_attachments = params['attachments'].to_i
-            halt HTTP_OK if num_attachments < 1             # Ignore if nothing attached
 
+            recipients = JSON.parse(params['envelope'])['to']
             recipients.each do |recipient|
             
                 LOG.debug "Processing recipient:#{recipient}"
-                # Find provider and BE based on recipients
-                providerID = find_provider_by_email(recipient, token)
-                next if providerID.nil?
+                # Find User and BE based on recipients
+                user = JSON.parse(find_user_by_email(recipient, token))
+                next if user.nil?
                 
-                # Loop through the attachments; upload to DMS and Create a Task in the providers Inbox
+                # Loop through the attachments; upload to DMS and Create a Task in the Users' Inbox
                 i = 1
                 while i <=  num_attachments
                     begin
@@ -69,10 +66,13 @@ class ApiService < Sinatra::Base
                             LOG.debug "DMS handler id: #{docID}"
 
                             # Create a task in the respective inbox
-                            # Use "from" field to differeniate Inbound Fax vs other documents ??
-
-                            response = add_to_provider_inbox(providerID, docID, params['subject'], params['text'], token)
-                            taskID = response['taskid']
+                            # Use "from" field to differeniate Inbound Fax vs other documents
+                            if JSON.parse(params['envelope'])['from'][0] == 'faxserver@carecloud.com'
+                                docType = 'Fax'
+                            else
+                                docType = 'Document'
+                            end
+                            taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], docID, params['subject'], params['text'], token, docType)
                             LOG.debug "Task id: #{taskID}"
                         end
 
@@ -86,9 +86,14 @@ class ApiService < Sinatra::Base
                     File.delete(temp_file) if File.exists?(temp_file)
 
                     i += 1
-            end
-        end
+                end
 
+                if num_attachments == 0
+                    # Create a task in the respective inbox
+                    taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], nil, params['subject'], params['text'], token, 'Tickler')
+                    LOG.debug "Task id: #{taskID}"
+                end
+            end
         rescue Exception => e
             LOG.error "Inbound_mail Error: #{e.message}"
         end
@@ -97,17 +102,36 @@ class ApiService < Sinatra::Base
         status HTTP_OK
     end
 
-    ## Using the recipient email address find the provider ID
-    def find_provider_by_email (recipient, token)
-        return 12345
+    ## Using the recipient email address find the userID & business entity
+    def find_user_by_email (recipient, token)
+        begin
+            response = RestClient.get("#{API_SVC_URL}/business_entities/list_by_user.json?list_type=list&token=#{token}")
+            LOG.debug response.body
+            parsed = JSON.parse(response.body)['business_entities']
+            userID = parsed[0]['user_profile_id']
+            userID = 31495
+            business_entity_id = parsed[0]['id']
+            response = {:userID => userID, :business_entity_id => business_entity_id}
+            return response.to_json
+        rescue Exception => e
+            LOG.error "Error find_user_by_email: #{e.message}"
+            return nil
+        end
     end
 
     ## Create an Inbox task
-    def add_to_provider_inbox(providerID, docID, subject, body, token)
-        options = params.merge(provider: providerID, handler: docID, subject: subject, body: body, token: token)
-        res = JSON.parse(post("#{TASK_SERVICE_URL}/tasks", options))
-        LOG.debug "Create Task response: #{res.inspect}"
-        return res
+    def add_to_user_inbox(userID, business_entity_id, docID, subject, body, token, docType)
+        begin
+            task =  {:name => subject, :description => body, :due_at => '2011-04-08 02:46:32', :business_entity_id => business_entity_id, :task_request_type_id => 98}
+            request_body = {:task => task}
+            LOG.debug "POST #{API_SVC_URL}/businesses/#{business_entity_id}/users/#{userID}/tasks.json?token=#{token}"
+            response = RestClient.post("#{API_SVC_URL}/businesses/#{business_entity_id}/users/#{userID}/tasks.json?token=#{token}", request_body.to_json, :content_type => :json)
+            parsed = JSON.parse(response.body)
+            return parsed['task']['id']
+        rescue Exception => e
+            LOG.error "Error Creating Inbox task: #{e.message}"
+            return nil
+        end
     end
 
 end

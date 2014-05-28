@@ -210,7 +210,7 @@ class ApiService < Sinatra::Base
 
   end
 
-  #please do not delete!
+  #CC Authentication/Authorization
 
   # OAUTH2 endpoints
   get '/oauth2/authorize' do
@@ -251,7 +251,7 @@ class ApiService < Sinatra::Base
       error = "error=#{resp.headers['cc_oauth2_status_error']}"
 
       if [ 302, 303 ].include?(resp.status)
-        redirect to request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
+        redirect to base_url + request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
         redirect to resp.headers['location']
       end
 
@@ -291,7 +291,7 @@ class ApiService < Sinatra::Base
   get '/oauth2/token_info' do
     begin
       begin
-        resp = CCAuth::AuthApi.new.token_info params[:access_token]
+        resp = CCAuth::AuthApi.new.token_info(get_oauth_token || params[:access_token])
       rescue => e
         begin
           errmsg = e.message
@@ -310,54 +310,54 @@ class ApiService < Sinatra::Base
   end
 
   #authenticate vi auth_service
-  # post '/v3/service/authenticate' do
-  #   begin
-  #     auth = Rack::Auth::Basic::Request.new(request.env)
-  #     begin
-  #       user_name, password = auth.credentials.fetch(0), auth.credentials.fetch(1)
-  #     rescue
-  #       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
-  #     end
+  post '/v3/service/authenticate' do
+    begin
+      auth = Rack::Auth::Basic::Request.new(request.env)
+      begin
+        user_name, password = auth.credentials.fetch(0), auth.credentials.fetch(1)
+      rescue
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
+      end
 
-  #     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Username Not Found"}' if user_name.empty?
-  #     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Password Not Found"}' if password.empty?
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Username Not Found"}' if user_name.empty?
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Password Not Found"}' if password.empty?
 
-  #     begin
-  #       resp = CCAuth::AuthApi.new.authenticate user_name, password
-  #     rescue => e
-  #       begin
-  #         errmsg = e.message
-  #         api_svc_halt e.code, errmsg
-  #       rescue
-  #         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-  #       end
-  #     end
+      begin
+        resp = CCAuth::AuthApi.new.authenticate user_name, password
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
 
-  #     parsed = JSON.parse resp.body
-  #     get_business_entity parsed["access_token"]
-  #     the_token_hash = { token: parsed["access_token"] }
-  #     body the_token_hash.to_json
-  #     status HTTP_OK
+      parsed = JSON.parse resp.body
+      get_business_entity parsed["access_token"]
+      the_token_hash = { token: parsed["access_token"] }
+      body the_token_hash.to_json
+      status HTTP_OK
 
-  #   rescue => e
-  #     handle_exception(e)
-  #   end
-  # end  
+    rescue => e
+      handle_exception(e)
+    end
+  end  
 
   # # Logout through auth_service 
-  # post '/v3/service/logout' do
-  #   begin
-  #     resp = CCAuth::AuthApi.new.logout params[:authentication]
-  #   rescue => e
-  #     begin
-  #       errmsg = e.message
-  #       api_svc_halt e.status, errmsg
-  #     rescue
-  #       api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-  #     end
-  #   end
-  #   body resp.body
-  #   status HTTP_OK
-  # end
+  post '/v3/service/logout' do
+    begin
+      resp = CCAuth::AuthApi.new.logout params[:authentication]
+    rescue => e
+      begin
+        errmsg = e.message
+        api_svc_halt e.status, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    body resp.body
+    status HTTP_OK
+  end
 
 end
