@@ -36,7 +36,8 @@ class ApiService < Sinatra::Base
   end
 
   def base_url
-    @base_url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    # @base_url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+    @base_url ||= "https://#{request.env['HTTP_HOST']}"
   end
 
   # http://mentalized.net/journal/2011/04/14/ruby_how_to_check_if_a_string_is_numeric/
