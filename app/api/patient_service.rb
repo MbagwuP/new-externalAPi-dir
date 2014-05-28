@@ -79,6 +79,27 @@ class ApiService < Sinatra::Base
 
   end
 
+  get '/v2/patients/:patient_id' do
+    begin
+      access_token, patient_id = get_oauth_token, params[:patient_id]
+      data  = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
+      url   = "#{API_SVC_URL}businesses/#{data['scope']['business_entity_id']}/patients/#{patient_id}"
+      url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
+      url  += "?token=#{access_token}&do_full_export=true"
+      response = RestClient.get url, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json); status HTTP_OK
+  end
+
   #Use to test for production
   #have to make sure master token likes the pharmacy additions
 
@@ -418,6 +439,26 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
     status HTTP_CREATED
 
+  end
+
+  post '/v2/patients/create' do
+    begin
+      request_body, access_token = get_request_JSON, get_oauth_token 
+      data     = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
+      url      = "#{API_SVC_URL}businesses/#{data['scope']['business_entity_id']}/patients.json?token=#{access_token}"
+      response = RestClient.post url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Patient Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    returnedBody  = JSON.parse response.body
+    value         = returnedBody["patient"]["external_id"]
+    response_hash = { :patient => value.to_s }
+    body(response_hash.to_json); status HTTP_CREATED
   end
 
   #{
@@ -1137,6 +1178,67 @@ class ApiService < Sinatra::Base
 
   end
 
+
+  #  Get Insurance Profiles
+  #
+  # GET /v1/person/insuranceprofiles/:patient_id?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :patient_id  - will be based on patient
+  #
+  # server action: Return insurance profile information for patient
+  # server response:
+  # --> if data found: 200, with insurance data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/insuranceprofiles/:patient_id?' do
+    validate_param(params[:patient_id], PATIENT_REGEX, PATIENT_MAX_LEN)
+    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = params[:patient_id]
+    patient_id.slice!(/^patient-/)
+    patientid = get_internal_patient_id(patient_id, business_entity, pass_in_token)
+
+
+    #http://localservices.carecloud.local:3000/businesses/1234/insurance_profiles/list_by_patient.json?token=
+    urlinsurance = ''
+    urlinsurance << API_SVC_URL
+    urlinsurance << 'businesses/'
+    urlinsurance << business_entity
+    urlinsurance << '/insuranceprofiles/'
+    urlinsurance << patientid
+    urlinsurance << '.json?token='
+    urlinsurance << CGI::escape(pass_in_token)
+
+    #LOG.debug("url for genders: " + urlreference)
+
+    begin
+      response = RestClient.get(urlinsurance)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Insurance Profiles Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    insurances = JSON.parse(response.body)
+    filtered_data = []
+    insurances.each do |insurance|
+      temp = {}
+      temp['id'] = insurance['insurance_profile']['id']
+      temp['is_self_pay'] = insurance['insurance_profile']['is_self_pay']
+      temp['name'] = insurance['insurance_profile']['name']
+      filtered_data << temp
+    end
+    body(filtered_data.to_json)
+    status HTTP_OK
+  end
+
+
   #  get ethnicity information
   #
   # GET /v1/person/ethnicities?authentication=<authenticationToken>
@@ -1832,7 +1934,27 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
 
     status HTTP_OK
+  end
 
+  put '/v2/patientsextended/:patient_id' do
+    begin
+      access_token, patient_id = get_oauth_token, params[:patient_id]
+      request_body = get_request_JSON
+      data  = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
+      url = "#{API_SVC_URL}business_entity/#{data['scope']['business_entity_id']}/patients/#{patient_id}/createextended.json?token=#{access_token}"
+      response = RestClient.put url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse response.body
+    returned_value = parsed["patient"]["external_id"]
+    response_hash = { :patient => returned_value.to_s }
+    body(response_hash.to_json); status HTTP_OK
   end
 
   private

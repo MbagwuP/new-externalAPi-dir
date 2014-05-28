@@ -367,15 +367,8 @@ class ApiService < Sinatra::Base
 
 
     parsed = JSON.parse(response.body)
-
-    # iterate the array of appointments
-    parsed.each { |x|
-      #LOG.debug(x)
-      x['id'] = x['external_id']
-    }
-
+    parsed['id'] = parsed['external_id']
     body(parsed.to_json)
-
     status HTTP_OK
 
   end

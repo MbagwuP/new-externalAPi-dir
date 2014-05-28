@@ -1,0 +1,14 @@
+development: 
+  url: http://authdev.carecloud.local
+
+qa: 
+  url: http://authdev.carecloud.local
+
+staging: 
+  url: http://authdev.carecloud.local
+
+production: 
+  url: http://authdev.carecloud.local
+
+test:
+  url: http://authdev.carecloud.local
