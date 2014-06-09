@@ -83,7 +83,6 @@ class ApiService < Sinatra::Base
     begin
       access_token, patient_id = get_oauth_token, params[:patient_id]
       data  = CCAuth::OAuth2.new.token_scope access_token
-      puts "DDDDDD::::::#{data}"
       url   = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients/#{patient_id}"
       url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
       url  += "?token=#{access_token}&do_full_export=true"
@@ -446,7 +445,7 @@ class ApiService < Sinatra::Base
     begin
       request_body, access_token = get_request_JSON, get_oauth_token
       data     = CCAuth::OAuth2.new.token_scope access_token
-      url      = "#{ApiService::API_SVC_URL}businesses/#{data['scope']['business_entity_id']}/patients.json?token=#{access_token}"
+      url      = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients.json?token=#{access_token}"
       response = RestClient.post url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
     rescue => e
       begin
