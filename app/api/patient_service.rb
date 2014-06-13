@@ -82,8 +82,8 @@ class ApiService < Sinatra::Base
   get '/v2/patients/:patient_id' do
     begin
       access_token, patient_id = get_oauth_token, params[:patient_id]
-      data  = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
-      url   = "#{API_SVC_URL}businesses/#{data['scope']['business_entity_id']}/patients/#{patient_id}"
+      data  = CCAuth::OAuth2.new.token_scope access_token
+      url   = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients/#{patient_id}"
       url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
       url  += "?token=#{access_token}&do_full_export=true"
       response = RestClient.get url, api_key: ApiService::APP_API_KEY
@@ -443,9 +443,9 @@ class ApiService < Sinatra::Base
 
   post '/v2/patients/create' do
     begin
-      request_body, access_token = get_request_JSON, get_oauth_token 
-      data     = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
-      url      = "#{API_SVC_URL}businesses/#{data['scope']['business_entity_id']}/patients.json?token=#{access_token}"
+      request_body, access_token = get_request_JSON, get_oauth_token
+      data     = CCAuth::OAuth2.new.token_scope access_token
+      url      = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients.json?token=#{access_token}"
       response = RestClient.post url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
     rescue => e
       begin
@@ -1940,8 +1940,8 @@ class ApiService < Sinatra::Base
     begin
       access_token, patient_id = get_oauth_token, params[:patient_id]
       request_body = get_request_JSON
-      data  = JSON.parse CCAuth::AuthApi.new.token_scope(access_token).body
-      url = "#{API_SVC_URL}business_entity/#{data['scope']['business_entity_id']}/patients/#{patient_id}/createextended.json?token=#{access_token}"
+      data  = CCAuth::OAuth2.new.token_scope access_token
+      url = "#{ApiService::API_SVC_URL}business_entity/#{data[:scope][:business_entity_id]}/patients/#{patient_id}/createextended.json?token=#{access_token}"
       response = RestClient.put url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
     rescue => e
       begin

@@ -5,8 +5,10 @@ module Probes
       if defined?(HealthCheck.app_setting.dms_server)
         value = {up: nil}
 
-          health = RestClient.get("#{HealthCheck.app_setting.dms_server}/api/explorer")
-          if health.code == 200
+          resp = RestClient.get("#{HealthCheck.app_setting.dms_server}/health_check")
+          parsed = JSON.parse(resp.body)
+          
+          if parsed['service_status'] == 'up'
              is_up = true
           else
              is_up = false
