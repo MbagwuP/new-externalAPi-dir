@@ -25,8 +25,6 @@ class ApiService < Sinatra::Base
     getcallbacks << ".json?token="
     getcallbacks << CGI::escape(pass_in_token)
 
-    LOG.debug("URL 1")
-
     begin
       callback = RestClient.get(getcallbacks)
     rescue => e
@@ -37,8 +35,8 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    LOG.debug("URL 2")
-    LOG.debug(callback)
+
+    Exception.raise("Notification Callback Error") if callback.blank?
 
     callback_info = JSON.parse(callback.body)
     url = callback_info['notification_callback']['notification_callback_url']
@@ -52,6 +50,8 @@ class ApiService < Sinatra::Base
     urlcallbacks << params[:end_date]
     urlcallbacks << '/id/'
     urlcallbacks << params[:notification_id]
+    urlcallbacks << '/'
+    urlcallbacks << business_entity
     urlcallbacks << ".json?token="
     urlcallbacks << CGI::escape(pass_in_token)
     LOG.debug(urlcallbacks)
