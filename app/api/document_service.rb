@@ -7,7 +7,8 @@
 
 class ApiService < Sinatra::Base
 
-  # Upload document to patient
+
+    # Upload document to patient
   #
   # POST /v1/documents/<patientid>/upload?authentication=<authenticationToken>
   #
@@ -188,6 +189,109 @@ class ApiService < Sinatra::Base
 
     create_document(patientid, pass_in_token, request_body)
   end
+
+  # --------------------------
+  # Params definition
+  # Patient_ID
+
+  # server action: Return List of uploaded Document Ids
+  # server response:
+  # --> if document successfully found
+  # --> if not authorized: 401
+  # --> if patient not found: 404
+  # --> if bad request: 400
+
+  #list of document_ids for patient
+
+  get '/v1/document/listbypatient/:patient_id' do
+    validate_param(params[:patient_id], PATIENT_REGEX, PATIENT_MAX_LEN)
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patientid = params[:patient_id]
+    patientid.slice!(/^patient-/)
+    patient_id = get_internal_patient_id(patientid, business_entity, pass_in_token)
+
+    urldocument = ''
+    urldocument << API_SVC_URL
+    urldocument << '/patients/'
+    urldocument << patient_id
+    urldocument << '/documents/getdocuments'
+    urldocument << '.json?token='
+    urldocument << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urldocument)
+    rescue => e
+      begin
+        errmsg = "Retrieving Document Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    documents = []
+    parsed.each do |array|
+      p = array['document']
+      scrub = {}
+      scrub['doc_id'] = p['document_handler']
+      scrub['format_type'] = p['document_format']
+      scrub['name'] = p['name']
+      scrub['description'] = p['description']
+      scrub['created_at'] = p['created_at']
+      documents << scrub
+    end
+    body(documents.to_json)
+    status HTTP_OK
+
+  end
+
+
+  # --------------------------
+  # Params definition
+  # Doc_id
+  # Patient_id
+
+  # server action: Return List of uploaded Document Ids
+  # server response:
+  # --> if document successfully found
+  # --> if not authorized: 401
+  # --> if patient not found: 404
+  # --> if bad request: 400
+
+  #Get a document
+
+  get '/v1/getdocument/:patient_id/:doc_id' do
+    validate_param(params[:patient_id], PATIENT_REGEX, PATIENT_MAX_LEN)
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patientid = params[:patient_id]
+    patientid.slice!(/^patient-/)
+
+    pdf = ''
+    pdf << DOC_SERVICE_URL
+    pdf << '/documents/'
+    pdf << params[:doc_id]
+    pdf << '/pdf?token='
+    pdf << CGI::escape(pass_in_token)
+
+    puts pdf
+
+    begin
+      pdf = RestClient.get(pdf)
+    rescue => e
+      begin
+        errmsg = "Document Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    content_type 'application/pdf'
+    pdf.to_str
+   end
 
   def create_local_file(patientid, params)
     # Now the picture is an IO object!

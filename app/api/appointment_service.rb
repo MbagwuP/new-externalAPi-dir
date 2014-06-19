@@ -14,7 +14,7 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON
-  #{
+  # {
   #    "appointment": {
   #    "start_time": "2013-04-24 10:00 -05:00",
   #    "end_time": "2013-04-24 11:00 -05:00",
@@ -26,9 +26,9 @@ class ApiService < Sinatra::Base
   #    {
   #        "id": 7517912,
   #    "comments": "patient has headache"
-  #}]
-  #}
-  #}
+  # }]
+  # }
+  # }
   #
   # server response:
   # --> if appointment created: 201, with appointment id returned
@@ -367,7 +367,7 @@ class ApiService < Sinatra::Base
 
 
     parsed = JSON.parse(response.body)
-    parsed['id'] = parsed['external_id']
+    parsed[0]['id'] = parsed[0]['external_id']
     body(parsed.to_json)
     status HTTP_OK
 
