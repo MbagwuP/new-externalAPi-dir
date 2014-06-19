@@ -217,7 +217,7 @@ class ApiService < Sinatra::Base
     content_type :html
     begin
       begin
-        resp = CCAuth::AuthApi.new.oauth_dialog params
+        resp = CCAuth::OAuth2.new.oauth_dialog params
       rescue => e
         begin
           errmsg = e.message
@@ -238,7 +238,7 @@ class ApiService < Sinatra::Base
   post '/oauth2/authorize' do
     begin
       begin
-        resp = CCAuth::AuthApi.new.oauth_authorize params
+        resp = CCAuth::OAuth2.new.oauth_authorize params
       rescue => e
         begin
           errmsg = e.message
@@ -270,7 +270,7 @@ class ApiService < Sinatra::Base
       end
 
       begin
-        resp = CCAuth::AuthApi.new.access_token user_name, password, params
+        resp = CCAuth::OAuth2.new.access_token user_name, password, params
       rescue => e
         begin
           errmsg = e.message
@@ -291,7 +291,7 @@ class ApiService < Sinatra::Base
   get '/oauth2/token_info' do
     begin
       begin
-        resp = CCAuth::AuthApi.new.token_info(get_oauth_token || params[:access_token])
+        resp = CCAuth::OAuth2.new.token_info(get_oauth_token || params[:access_token])
       rescue => e
         begin
           errmsg = e.message
@@ -323,7 +323,7 @@ class ApiService < Sinatra::Base
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Password Not Found"}' if password.empty?
 
       begin
-        resp = CCAuth::AuthApi.new.authenticate user_name, password
+        resp = CCAuth::Session.create user_name, password
       rescue => e
         begin
           errmsg = e.message
@@ -333,7 +333,7 @@ class ApiService < Sinatra::Base
         end
       end
 
-      parsed = JSON.parse resp.body
+      parsed = resp.attributes
       get_business_entity parsed["access_token"]
       the_token_hash = { token: parsed["access_token"] }
       body the_token_hash.to_json
@@ -347,7 +347,7 @@ class ApiService < Sinatra::Base
   # # Logout through auth_service 
   post '/v3/service/logout' do
     begin
-      resp = CCAuth::AuthApi.new.logout params[:authentication]
+      resp = CCAuth::Session.logout params[:authentication]
     rescue => e
       begin
         errmsg = e.message
