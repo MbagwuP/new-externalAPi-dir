@@ -31,7 +31,7 @@ production:
     mirth_outbound_svc_url: http://mirth-prod.carecloud.local:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1F0RPR0DUCT10N3NV
-    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,172.20.0.10
+    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,172.20.0.10,10.0.1.42
     memcache_servers: cc-tm01-mcache00.carecloud.local:11211
     lab_user: spectra_prod
     lab_pass: mDYPQx1ompwLZN2TxWzOf8FOevkOlcdu
@@ -57,7 +57,7 @@ staging:
     mirth_outbound_svc_url: http://192.168.123.227:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
-    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196
+    mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,10.0.1.42
     memcache_servers: 192.168.123.61:11211
     lab_user: spectra_staging
     lab_pass: chgDkJDfm1CGJjlrh9lHKHqGExOSfTAe
