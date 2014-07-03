@@ -1016,7 +1016,10 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-
+    parsed = JSON.parse(response.body)
+    results = ("Patient Contacted has been set to #{parsed['appointment']['patient_contacted']} for Appointment: #{parsed['appointment']['external_id']}  ")
+    body(parsed.to_json)
+    status HTTP_OK
   end
 
 
@@ -1082,6 +1085,37 @@ class ApiService < Sinatra::Base
     body(blockouts.to_json)
     status HTTP_OK
 
+  end
+
+  #params none, just need to pass in a valid token
+  # GET /v1/notificationcallbacks?authentication=<TOKEN>
+  #get notification callback ids
+  get '/v1/notificationcallbacks?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'notification_callbacks/'
+    urlappt << business_entity
+    urlappt << '/list_by_business_entity.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("URL:" + urlappt)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Notification Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
   end
 
 end
