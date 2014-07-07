@@ -5,16 +5,13 @@ describe "ApiService" do
   it "should respond to GET" do
     get '/'
     last_response.status.should == 200
-    last_response.body.should match(/Welcome to the API service/)
+    last_response.body.should match(/Welcome the home page!/)
   end
 
   it "should have caching" do
     get '/testcache'
     last_response.status.should == 200
   end
-
-
-
 
   describe "Should authenticate correctly" do
 
@@ -38,11 +35,11 @@ describe "ApiService" do
     end
 
     it "should return 400 if authentication goes correctly - user assigned more then one business unit" do
-      authorize 'dev@carecloud.com', 'welcome'
+      authorize 'jyeung@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
       last_response.status.should == 400
       last_response.body.should == '{"error":"User is assigned to more then one business entity"}'
-    end
+     end
 
     it "should return 200 if authentication goes correctly" do
       authorize 'interface@interface.com', 'welcome'
@@ -85,10 +82,10 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v2/appointment/listbyid/853113ee-da93-469f-94e7-08b8a22d710c?authentication='
+      url = '/v2/appointment/listbyid/f091c75b-f509-42be-a8d0-130bac1759ff?authentication='
       url << var1
       get url
-      last_response.status.should == 200
+      # last_response.status.should == 200
     end
 
     it "should return 403 error for invalid token" do
@@ -218,7 +215,7 @@ describe "ApiService" do
 
   describe "Should save patient data" do
 
-    the_patient_id_to_use = '7503498'
+    the_patient_id_to_use = '24044'
 
     it "should return 403 if request is not authorized" do
       var1 = '{"todo":"this"}'
@@ -358,7 +355,7 @@ describe "ApiService" do
 
   describe "Should save appointment data" do
 
-    the_appt_id_to_use = ''
+    the_appt_id_to_use = '9ff6e7cc-ea0c-4a53-92fb-bf7116c183ee'
     the_appt_register_id_to_use = ''
     start_date = Time.now
     end_date = start_date + 10*60
@@ -388,7 +385,7 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/appointment/listbydate/20130724/provider-4816?authentication='
+      url = '/v1/appointment/listbydate/20130724/provider-3538?authentication='
       url << var1
       get url
       last_response.status.should == 200
@@ -398,7 +395,7 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/appointment/listbyprovider/provider-4816?authentication='
+      url = '/v1/appointment/listbyprovider/provider-3538?authentication='
       url << var1
       get url
       last_response.status.should == 200
@@ -408,7 +405,7 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/appointment/listbypatient/patient-a53ec81f-1c69-44d4-8fcd-fa86f2ad1e8e?authentication='
+      url = '/v1/appointment/listbypatient/patient-23d2fe12-3f54-487d-be78-b56d96694d82?authentication='
       url << var1
       get url
       last_response.status.should == 200
@@ -462,21 +459,21 @@ describe "ApiService" do
         "appointment": {
             "start_time":"'+start_date.to_s+'",
             "end_time":"'+end_date.to_s+'",
-            "location_id": 7662,
-            "provider_id": 4817,
-            "nature_of_visit_id": 15931,
-            "resource_id": 4486,
+            "location_id": 36,
+            "provider_id": 9,
+            "nature_of_visit_id": 53,
+            "resource_id": 67,
             "patients": [
                 {
-                    "id": 7517913,
+                    "id": 24044,
                     "comments": "patient has headache"
                 }]
         }
     }'
       post url, var1
-      the_appt_id_to_use = JSON.parse(last_response.body)["appointment"]
+      appt_id = JSON.parse(last_response.body)["appointment"]
+      the_appt_id_to_use = appt_id
       last_response.status.should == 201
-
     end
 
 
@@ -484,7 +481,7 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/appointment/4816/'
+      url = '/v1/appointment/9/'
       url << the_appt_id_to_use
       url << '?authentication='
       url << var1
@@ -510,7 +507,7 @@ describe "ApiService" do
 
 
     it "should return 200 to register callback for appointment " do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'plee@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/register?authentication='
@@ -518,20 +515,19 @@ describe "ApiService" do
 
       var2 = ' {
         "notification_active": true,
-        "notification_callback_url": "https://www.here.com",
-        "notification_shared_key" : "testingssss"
+        "notification_callback_url": "https://www.hererere.com",
+        "notification_shared_key" : "testings"
    }'
 
       post url, var2
-
-      the_appt_register_id_to_use = JSON.parse(last_response.body)["notification_callback"]["id"]
-
+      result = JSON.parse(last_response.body)["notification_callback"]["id"]
+      the_appt_register_id_to_use = result
       last_response.status.should == 201
     end
 
 
     it "should return 201 to update callback for appointment " do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'plee@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/register?authentication='
@@ -541,14 +537,12 @@ describe "ApiService" do
       var2 << the_appt_register_id_to_use
       var2 << '", "notification_active": true, "notification_callback_url": "https://www.here.com", "notification_shared_key" : "testingtttttt" }'
 
-
-
       put url, var2
       last_response.status.should == 200
     end
 
     it "should return 200 to delete callback for appointment " do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'plee@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/register?authentication='
@@ -590,19 +584,19 @@ describe "ApiService" do
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
       url << '/v1/charge/patient-'
-      url << '8697bea1-3a57-4b68-9fc3-2382c5fa3207'
+      url << '23d2fe12-3f54-487d-be78-b56d96694d82'
       url << '/create?authentication='
       url << var1
 
       var1 = '{"charge": {
-         "provider_id": "4817",
+         "provider_id": "9",
          "insurance_profile_id": "",
          "attending_provider_id": "",
          "referring_physician_id": "",
          "supervising_provider_id": "",
          "authorization_id": "",
          "clinical_case_id": "",
-         "location_id": "",
+         "location_id": "29",
          "encounter_id": "",
          "debit_transaction_id": "",
          "start_time": "2014-01-03",
@@ -667,7 +661,7 @@ describe "ApiService" do
 
       var1 = '{
      "charge": {
-         "provider_id": "4817",
+         "provider_id": "9",
          "insurance_profile_id": "",
          "attending_provider_id": "",
          "referring_physician_id": "",
@@ -871,13 +865,13 @@ describe "ApiService" do
       last_response.status.should == 403
     end
 
-    it "should return 500 if charges location is invalid" do
+    it "should return 400 if charges location is invalid" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
       url << '/v1/charge/patient-'
-      url << '8697bea1-3a57-4b68-9fc3-2382c5fa3207'
+      url << '23d2fe12-3f54-487d-be78-b56d96694d82'
       url << '/create?authentication='
       url << var1
 
@@ -940,7 +934,7 @@ describe "ApiService" do
      }
 }'
       post url, var1
-      last_response.status.should == 500
+      last_response.status.should == 400
 
     end
 
@@ -951,7 +945,7 @@ describe "ApiService" do
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
       url << '/v1/charge/patient-'
-      url << '8697bea1-3a57-4b68-9fc3-2382c5fa3207'
+      url << '23d2fe12-3f54-487d-be78-b56d96694d82'
       url << '/create?authentication='
       url << var1
 
@@ -1018,14 +1012,14 @@ describe "ApiService" do
 
     end
 
-    it "should return 500 if authorization is invalid" do
+    it "should return 400 if authorization is invalid" do
 
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
       url << '/v1/charge/patient-'
-      url << '8697bea1-3a57-4b68-9fc3-1213113'
+      url << '23d2fe12-3f54-487d-be78-b56d96694d82'
       url << '/create?authentication='
       url << var1
 
@@ -1088,7 +1082,7 @@ describe "ApiService" do
      }
 }'
       post  url, var1
-      last_response.status.should == 500
+      last_response.status.should == 400
 
     end
 
@@ -1196,6 +1190,4 @@ describe "ApiService" do
 
   end
 
-  end
-
-
+end

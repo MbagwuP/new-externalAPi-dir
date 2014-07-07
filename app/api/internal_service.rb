@@ -25,8 +25,6 @@ class ApiService < Sinatra::Base
     getcallbacks << ".json?token="
     getcallbacks << CGI::escape(pass_in_token)
 
-    LOG.debug("URL 1")
-
     begin
       callback = RestClient.get(getcallbacks)
     rescue => e
@@ -37,14 +35,13 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    LOG.debug("URL 2")
-    LOG.debug(callback)
+
+    Exception.raise("Notification Callback Error") if callback.blank?
 
     callback_info = JSON.parse(callback.body)
     url = callback_info['notification_callback']['notification_callback_url']
     LOG.debug(url)
 
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urlcallbacks = ''
     urlcallbacks << API_SVC_URL
     urlcallbacks << 'notification_callbacks/'
@@ -53,6 +50,8 @@ class ApiService < Sinatra::Base
     urlcallbacks << params[:end_date]
     urlcallbacks << '/id/'
     urlcallbacks << params[:notification_id]
+    urlcallbacks << '/'
+    urlcallbacks << business_entity
     urlcallbacks << ".json?token="
     urlcallbacks << CGI::escape(pass_in_token)
     LOG.debug(urlcallbacks)
@@ -111,7 +110,6 @@ class ApiService < Sinatra::Base
     url = callback_info['notification_callback']['notification_callback_url']
     LOG.debug(url)
 
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urlcallbacks = ''
     urlcallbacks << API_SVC_URL
     urlcallbacks << 'notification_callbacks/'
@@ -167,8 +165,6 @@ class ApiService < Sinatra::Base
     business_entity = get_business_entity(pass_in_token)
     #LOG.debug(business_entity)
 
-
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
     urllocation = ''
     urllocation << API_SVC_URL
     urllocation << 'notification_callbacks/'

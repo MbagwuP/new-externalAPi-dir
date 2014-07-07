@@ -79,6 +79,27 @@ class ApiService < Sinatra::Base
 
   end
 
+  get '/v2/patients/:patient_id' do
+    begin
+      access_token, patient_id = get_oauth_token, params[:patient_id]
+      data  = CCAuth::OAuth2.new.token_scope access_token
+      url   = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients/#{patient_id}"
+      url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
+      url  += "?token=#{access_token}&do_full_export=true"
+      response = RestClient.get url, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json); status HTTP_OK
+  end
+
   #Use to test for production
   #have to make sure master token likes the pharmacy additions
 
@@ -302,7 +323,7 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON:
-  #{
+  # {
   #    "patient": {
   #    "first_name": "bob",
   #    "last_name": "smith",
@@ -328,7 +349,7 @@ class ApiService < Sinatra::Base
   #    "ethnicity_id": 1,
   #    "student_status_id": 1
   #
-  #},
+  # },
   #    "addresses": [ {
   #                       "line1": "123 fake st",
   #    "line2": "apt3",
@@ -337,21 +358,21 @@ class ApiService < Sinatra::Base
   #    "zip_code": "07488",
   #    "country_id": 225,
   #    "is_primary":"t"
-  #}],
+  # }],
   #    "phones": [
   #    {
   #        "phone_number": "5552221212",
   #    "phone_type_id": "3",
   #    "extension": "3433",
   #    "is_primary": "t"
-  #},
+  # },
   #    {
   #        "phone_number": "3332221212",
   #    "phone_type_id": "2",
   #    "extension": "5566"
-  #}
-  #]
-  #}
+  # }
+  # ]
+  # }
   #
   # Input requirements
   #   - date_of_birth: must be a valid Date. Hint: YYYY-MM-DD, YYYY/MM/DD, YYYYMMDD
@@ -420,7 +441,27 @@ class ApiService < Sinatra::Base
 
   end
 
-  #{
+  post '/v2/patients/create' do
+    begin
+      request_body, access_token = get_request_JSON, get_oauth_token
+      data     = CCAuth::OAuth2.new.token_scope access_token
+      url      = "#{ApiService::API_SVC_URL}businesses/#{data[:scope][:business_entity_id]}/patients.json?token=#{access_token}"
+      response = RestClient.post url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Patient Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    returnedBody  = JSON.parse response.body
+    value         = returnedBody["patient"]["external_id"]
+    response_hash = { :patient => value.to_s }
+    body(response_hash.to_json); status HTTP_CREATED
+  end
+
+  # {
   #    "patient_data": {
   #    "patient": {
   #    "first_name": "bob",
@@ -446,7 +487,7 @@ class ApiService < Sinatra::Base
   #    "employer_phone_number": "8887776565",
   #    "ethnicity_id": 1,
   #    "student_status_id": 1
-  #},
+  # },
   #    "addresses": [
   #    {
   #        "line1": "123 fake st",
@@ -456,27 +497,27 @@ class ApiService < Sinatra::Base
   #    "zip_code": "07488",
   #    "country_id": 225,
   #    "is_primary": "t"
-  #}
-  #],
+  # }
+  # ],
   #    "phones": [
   #    {
   #        "phone_number": "5552221212",
   #    "phone_type_id": "3",
   #    "extension": "3433",
   #    "is_primary": "t"
-  #},
+  # },
   #    {
   #        "phone_number": "3332221212",
   #    "phone_type_id": "2",
   #    "extension": "5566"
-  #}
-  #]
-  #},
+  # }
+  # ]
+  # },
   #    "insurance_information": {
   #    "insurance_profile": {
   #    "responsible_party_relationship": "OTHER",
   #    "is_default": true,
-  #"responsible_party": {
+  # "responsible_party": {
   #    "first_name": "bob",
   #    "last_name": "lee",
   #    "middle_initial": "A",
@@ -493,23 +534,23 @@ class ApiService < Sinatra::Base
   #    "zip_code": "07488",
   #    "country_id": 225,
   #    "is_primary": true
-  #}
-  #],
+  # }
+  # ],
   #    "phones": [
   #    {
   #        "phone_number": "5552221212",
   #    "phone_type_id": "3",
   #    "extension": "3433"
-  #},
+  # },
   #    {
   #        "phone_number": "3332221212",
   #    "phone_type_id": "2",
   #    "extension": "5566",
   #    "is_primary": true
-  #}
-  #]
-  #}
-  #},
+  # }
+  # ]
+  # }
+  # },
   #    "primary_insurance": {
   #    "insured_person_relationship_type": "OTHER",
   #    "insurance_policy_type_id": "1",
@@ -529,9 +570,9 @@ class ApiService < Sinatra::Base
   #    "state_id": 22,
   #    "zip_code": "07488",
   #    "country_id": 225
-  #},
+  # },
   #    "phone": "3334445555"
-  #},
+  # },
   #    "insured": {
   #    "first_name": "bob",
   #    "last_name": "smith",
@@ -549,23 +590,23 @@ class ApiService < Sinatra::Base
   #    "zip_code": "07488",
   #    "country_id": 225,
   #    "is_primary": true
-  #}
-  #],
+  # }
+  # ],
   #    "phones": [
   #    {
   #        "phone_number": "5552221212",
   #    "phone_type_id": "3",
   #    "extension": "3433"
-  #},
+  # },
   #    {
   #        "phone_number": "3332221212",
   #    "phone_type_id": "2",
   #    "extension": "5566",
   #    "is_primary": true
-  #}
-  #]
-  #}
-  #},
+  # }
+  # ]
+  # }
+  # },
   #    "secondary_insurance": {
   #    "insured_person_relationship_type": "SELF",
   #    "insurance_policy_type_id": "2",
@@ -585,9 +626,9 @@ class ApiService < Sinatra::Base
   #    "state_id": 22,
   #    "zip_code": "07488",
   #    "country_id": 225
-  #},
+  # },
   #    "phone": "3334488555"
-  #},
+  # },
   #    "insured": {
   #    "first_name": "bob",
   #    "last_name": "smith",
@@ -605,12 +646,12 @@ class ApiService < Sinatra::Base
   #    "zip_code": "07488",
   #    "country_id": 225,
   #    "is_primary": true
-  #}
-  #]
-  #}
-  #}
-  #}
-  #}
+  # }
+  # ]
+  # }
+  # }
+  # }
+  # }
 
   # server action: Return patient id
   # server response:
@@ -623,7 +664,7 @@ class ApiService < Sinatra::Base
     # Validate the input parameters
     request_body = get_request_JSON
     patient_json = request_body["patient_data"]
-    insurance_json = request_body["insurance_information"]
+    insurance_json = request_body["insurance_information"] if request_body["insurance_information"]
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
@@ -638,7 +679,7 @@ class ApiService < Sinatra::Base
     urlpatient << CGI::escape(params[:authentication])
 
     begin
-      response = RestClient.post(urlpatient, patient_json.to_json, :content_type => :json)
+      response = RestClient.post(urlpatient, patient_json, :content_type => :json)
     rescue => e
       begin
         errmsg = "Patient Creation Failed - #{e.message}"
@@ -648,36 +689,44 @@ class ApiService < Sinatra::Base
       end
     end
 
-    returnedBody = JSON.parse(response.body)
-    patient_id = returnedBody["patient"]["external_id"]
+    if request_body["insurance_information"]
+      returnedBody = JSON.parse(response.body)
+      patient_id = returnedBody["patient"]["external_id"]
 
-    # http://localservices.carecloud.local:3000/business_entity/12/patients/2/createextended.json?token=
-    urlpatient = ''
-    urlpatient << API_SVC_URL
-    urlpatient << 'business_entity/'
-    urlpatient << business_entity
-    urlpatient << '/patients/'
-    urlpatient << patient_id
-    urlpatient << '/createextended.json?token='
-    urlpatient << CGI::escape(params[:authentication])
+      # http://localservices.carecloud.local:3000/business_entity/12/patients/2/createextended.json?token=
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'business_entity/'
+      urlpatient << business_entity
+      urlpatient << '/patients/'
+      urlpatient << patient_id
+      urlpatient << '/createextended.json?token='
+      urlpatient << CGI::escape(params[:authentication])
 
-    begin
-      response = RestClient.put(urlpatient, insurance_json.to_json, :content_type => :json)
-    rescue => e
       begin
-        errmsg = "Retrieving Patient Data Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        response = RestClient.put(urlpatient, insurance_json, :content_type => :json)
+      rescue => e
+        begin
+          errmsg = "Retrieving Patient Data Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
       end
+
+      external_patient = returnedBody["patient"]["external_id"]
+      the_response_hash = {:patient => external_patient.to_s}
+      #Client Related: Return just patient id
+      body(the_response_hash.to_json)
+      status HTTP_CREATED
+    else
+      returnedBody = JSON.parse(response.body)
+      value = returnedBody["patient"]["external_id"]
+      the_response_hash = {:patient => value.to_s}
+      #Client Related: Return just patient id
+      body(the_response_hash.to_json)
+      status HTTP_CREATED
     end
-
-    external_patient = returnedBody["patient"]["external_id"]
-    the_response_hash = {:patient => external_patient.to_s}
-    #Client Related: Return just patient id
-    body(the_response_hash.to_json)
-    status HTTP_CREATED
-
   end
 
 
@@ -1136,6 +1185,67 @@ class ApiService < Sinatra::Base
     status HTTP_OK
 
   end
+
+
+  #  Get Insurance Profiles
+  #
+  # GET /v1/person/insuranceprofiles/:patient_id?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :patient_id  - will be based on patient
+  #
+  # server action: Return insurance profile information for patient
+  # server response:
+  # --> if data found: 200, with insurance data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/insuranceprofiles/:patient_id?' do
+    validate_param(params[:patient_id], PATIENT_REGEX, PATIENT_MAX_LEN)
+    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = params[:patient_id]
+    patient_id.slice!(/^patient-/)
+    patientid = get_internal_patient_id(patient_id, business_entity, pass_in_token)
+
+
+    #http://localservices.carecloud.local:3000/businesses/1234/insurance_profiles/list_by_patient.json?token=
+    urlinsurance = ''
+    urlinsurance << API_SVC_URL
+    urlinsurance << 'businesses/'
+    urlinsurance << business_entity
+    urlinsurance << '/insuranceprofiles/'
+    urlinsurance << patientid
+    urlinsurance << '.json?token='
+    urlinsurance << CGI::escape(pass_in_token)
+
+    #LOG.debug("url for genders: " + urlreference)
+
+    begin
+      response = RestClient.get(urlinsurance)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Insurance Profiles Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    insurances = JSON.parse(response.body)
+    filtered_data = []
+    insurances.each do |insurance|
+      temp = {}
+      temp['id'] = insurance['insurance_profile']['id']
+      temp['is_self_pay'] = insurance['insurance_profile']['is_self_pay']
+      temp['name'] = insurance['insurance_profile']['name']
+      filtered_data << temp
+    end
+    body(filtered_data.to_json)
+    status HTTP_OK
+  end
+
 
   #  get ethnicity information
   #
@@ -1832,7 +1942,27 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
 
     status HTTP_OK
+  end
 
+  put '/v2/patientsextended/:patient_id' do
+    begin
+      access_token, patient_id = get_oauth_token, params[:patient_id]
+      request_body = get_request_JSON
+      data  = CCAuth::OAuth2.new.token_scope access_token
+      url = "#{ApiService::API_SVC_URL}business_entity/#{data[:scope][:business_entity_id]}/patients/#{patient_id}/createextended.json?token=#{access_token}"
+      response = RestClient.put url, request_body.to_json, :content_type => :json, api_key: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse response.body
+    returned_value = parsed["patient"]["external_id"]
+    response_hash = { :patient => returned_value.to_s }
+    body(response_hash.to_json); status HTTP_OK
   end
 
   private

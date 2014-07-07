@@ -70,23 +70,15 @@ class ApiService < Sinatra::Base
 # --> if patient not found: 404
 # --> if bad request: 400
   post '/v1/charge/:patient_id/create?' do
-
     # Validate the input parameters
     request_body = get_request_JSON
-
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
-
     business_entity = get_business_entity(pass_in_token)
-
     patient_id = params[:patient_id]
-
     patient_id.slice!(/^patient-/)
-
     patient_id = get_internal_patient_id(patient_id , business_entity, pass_in_token)
-
     provider_ids = get_providers_by_business_entity(business_entity, pass_in_token)
-
     check_for_valid_provider(provider_ids, request_body['charge']['provider_id']) if request_body['charge']['provider_id']
 
     ## validate provider id
@@ -128,8 +120,8 @@ class ApiService < Sinatra::Base
 
     #return_value = parsed["id"]
     #body("Charge has been created, Confirmation Code: #{return_value}")
-    body("A Charge has successfully posted for patient: #{params[:patient_id]}")
-
+    parsed = JSON.parse(response.body)
+    body("A Charge has successfully posted for patient: #{params[:patient_id]}" + ", To Encounter : #{parsed[0]['encounter_id']}")
     status HTTP_CREATED
 
   end
