@@ -99,7 +99,107 @@ class ApiService < Sinatra::Base
     create_document(patientid, pass_in_token, request_body)
   end
 
+  # Upload document to patient
+  #
+  # POST /v1/documents/<patientid>/upload?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :patientid     - the CareCloud patient identifier number
+  #       (e.x.: patient-1234)
+  # JSON Body
+  # {
+  #     "document": {
+  #         "name": "test document",
+  #         "format": "PDF",
+  #         "description": "this is a test document"
+  #     }
+  # }
+  # content-type: multipart/form-data
+  # Example test command:
+  #  curl -F "metadata=<documenttest.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/patient-1819622/upload\?authentication\=
+  # server action: Return status of upload
+  # server response:
+  # --> if document successfully uploaded: 201, with document id in response data
+  # --> if not authorized: 401
+  # --> if patient not found: 404
+  # --> if bad request: 400
 
+  post '/v1/documents/patient/:patientid/batch_upload?' do
+
+    ## parameters passed in
+    #LOG.debug(params[:metadata])
+    #LOG.debug(params[:payload])
+    validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+    patientid = params[:patientid]
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    ## muck with the request based on what internal needs
+    business_entity = get_business_entity(pass_in_token)
+    #format to what the devservice needs
+    patientid.slice!(/^patient-/)
+    ## if external id, lookup internal
+    patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
+    # Validate the input parameters
+    pdf_array_of_data = Array.new
+    errors = []
+    success = []
+
+    if params[:metadata].length == params[:payload].length
+
+      payload_queue = params[:payload].map{|pq| pq}
+      meta_data_queue = params[:metadata].map{|mq| JSON.parse(mq)}
+
+      (0..payload_queue.length-1).each do |i|
+      pdf_array_of_data << {"payload" => payload_queue[i], "meta_data" => meta_data_queue[i]}
+      end
+
+      pdf_array_of_data.each do |payload|
+        local_file = create_local_file(patientid, payload)
+        file_type = File.extname(local_file)
+        # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
+        document_type_regex = File.extname(local_file)
+        file_type_name = ''
+        if document_type_regex == '.jpg'
+          document_type_regex = '.jpg'
+          file_type_name = "JPG"
+        else
+          document_type_regex = '.pdf'
+          file_type_name = "PDF"
+        end
+        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
+
+        response = dms_upload(local_file, pass_in_token)
+
+        handler_id = response["nodeid"]
+
+        ## use rest client to do multipart form upload
+        FileUtils.remove(local_file)
+
+        ## add required entities to the request
+        payload['meta_data']['document']['patient_id'] = patientid
+        payload['meta_data']['document']['handler'] = handler_id
+        payload['meta_data']['document']['source'] = 1
+        payload['meta_data']['document']['format'] = file_type_name
+
+        #LOG.debug "Request body "
+        #LOG.debug(request_body.to_s)
+
+        create = create_document(patientid, pass_in_token, payload['meta_data'])
+        if create == 201
+           success << {:pdf_name =>  payload['meta_data']['document']['name'] }
+        else
+           errors << {:pdf_name =>  payload['meta_data']['document']['name'] }
+        end
+
+      end
+    else
+        api_svc_halt HTTP_BAD_REQUEST, '{"A mismatch of payload/metadata detected"}'
+    end
+    the_response_hash = {:patient_id => params[:patientid].to_s, :errors => errors, :success => success}
+    body(the_response_hash.to_json)
+    HTTP_CREATED
+
+  end
 
 
   # --------------------------
@@ -295,8 +395,8 @@ class ApiService < Sinatra::Base
 
   def create_local_file(patientid, params)
     # Now the picture is an IO object!
-    document_binary = params[:payload][:tempfile]
-    document_name = params[:payload][:filename]
+    document_binary = params['payload'][:tempfile]
+    document_name = params['payload'][:filename]
     #rewind this file
     document_binary.rewind
 
@@ -331,7 +431,7 @@ class ApiService < Sinatra::Base
     urldoccrt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
+    response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
     rescue => e
       begin
         errmsg = "Document Creation Failed - #{e.message}"
