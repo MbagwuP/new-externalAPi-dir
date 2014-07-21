@@ -322,7 +322,7 @@ class ApiService < Sinatra::Base
         end
       end
 
-      body resp.body
+      body resp.to_json
       status HTTP_OK
 
     rescue => e
