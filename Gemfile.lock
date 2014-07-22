@@ -4,7 +4,6 @@ PATH
     c_cloud_dms_client (0.1.1)
       c_cloud_http_client
     c_cloud_http_client (0.1.0)
-    health_check (0.2.0)
 
 GEM
   remote: http://rubygems.org/
@@ -28,6 +27,7 @@ GEM
     diff-lcs (1.2.5)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
+    health_check (0.3.0)
     i18n (0.6.9)
     json (1.8.1)
     log4r (1.1.10)
@@ -88,7 +88,7 @@ DEPENDENCIES
   cc_auth
   color
   dalli (~> 2.6)
-  health_check!
+  health_check (= 0.3.0)
   json
   log4r
   mongo_mapper
