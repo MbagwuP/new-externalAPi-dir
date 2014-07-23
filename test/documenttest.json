@@ -1,7 +1,8 @@
 {
     "document": {
-        "name": "test document",
+        "name": "Lebum James",
         "format": "PDF",
-        "description": "this is a test document"
+        "description": "this is a Encounter DOCUMENT",
+        "source":"3"
     }
 }
