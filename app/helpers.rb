@@ -247,7 +247,7 @@ class ApiService < Sinatra::Base
         resp = RestClient.get(urlpatient)
       rescue => e
         begin
-          errmsg = "Get Provider List Failed - #{e.message}"
+          errmsg = "Get Patient Failed - #{e.message}"
           api_svc_halt e.http_code, errmsg
         rescue
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
@@ -368,6 +368,8 @@ class ApiService < Sinatra::Base
 
   end
 
+
+
   def api_svc_halt(statuscode, message="{}")
     # There is a bug in Sinatra in that repsonse.status is not set prior to after filter being called when a "halt" occurs
     # This just caches the value and then halts
@@ -437,6 +439,25 @@ class ApiService < Sinatra::Base
     return entity_list.include? entity_id.to_s
   end
 
+  def error_handler_filter(e)
+    error_string = ''
+    begin
+      errors = JSON.parse(e.response.body) if e.response.body.length < 300
+      if errors['error']['details'].is_a? Array
+        errors['error']['details'].each do |exc|
+          error_string << exc['message'] + ','
+        end
+      elsif !errors['error'].nil?
+        error_string = errors['error']['message'] if errors['error']['details'].nil?
+      else
+        error_string = e.message
+      end
+    rescue
+      error_string = e.message
+      error_string = "An error has occurred, Please contact a CareCloud specialist" if e.message.blank?
+    end
+    error_string
+  end
 
   def process_backdoor_business_entity (pass_in_token)
 
