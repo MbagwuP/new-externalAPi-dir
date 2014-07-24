@@ -3,28 +3,33 @@ development:
     - "dms:critical"
     - "webservice:critical"
     - "mem_cache:critical"
+    - "cc_auth:critical"
     - "audit:warn"
 localhost:
   probes:
     - "dms:critical"
     - "webservice:critical"
     - "mem_cache:critical"
+    - "cc_auth:critical"
     - "audit:warn"
 qa:
   probes:
     - "dms:critical"
     - "webservice:critical"
     - "mem_cache:critical"
+    - "cc_auth:critical"
     - "audit:warn"
 staging:
   probes:
     - "dms:critical"
     - "webservice:critical"
     - "mem_cache:critical"
+    - "cc_auth:critical"
     - "audit:warn"
 production:
   probes:
     - "dms:critical"
     - "webservice:critical"
     - "mem_cache:critical"
+    - "cc_auth:critical"
     - "audit:warn"
