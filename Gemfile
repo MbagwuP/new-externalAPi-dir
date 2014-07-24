@@ -29,7 +29,7 @@ gem 'c_cloud_http_client', path: './vendor/bundle'
 gem 'cc_auth'
 
 group :test, :development, :localhost do
-  gem 'rspec'
+  gem 'rspec', '~> 2.14'
   gem 'rack-test'
   gem 'tux'
 end
