@@ -39,7 +39,7 @@ describe "ApiService" do
       post '/v1/service/authenticate'
       last_response.status.should == 400
       last_response.body.should == '{"error":"User is assigned to more then one business entity"}'
-     end
+    end
 
     it "should return 200 if authentication goes correctly" do
       authorize 'interface@interface.com', 'welcome'
@@ -59,13 +59,7 @@ describe "ApiService" do
 
   end
 
-  describe "Should return appointment and patient data " do
-
-    it "should return 403 if appointment id is not present" do
-      get '/v2/appointment/listbyid/?authentication='
-      last_response.status.should == 403
-    end
-
+  describe "Appointment API ::" do
 
     it "should return 500 if appointment id is not valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -93,16 +87,16 @@ describe "ApiService" do
       post '/v1/service/authenticate'
       url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication=2345'
       get url
-      last_response.status.should == 403
+      expect(last_response.status) == 403
     end
 
 
-    it "should return error for no token" do
+    it "should return 403 for no token" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication='
       get url
-      last_response.status.should == 403
+      expect(last_response.status) == 403
     end
 
 
@@ -117,12 +111,7 @@ describe "ApiService" do
 
   end
 
-  describe "Should get patient data correctly" do
-
-    it "should return 400 if request is not valid" do
-      get '/v1/patients/222'
-      last_response.status.should == 400
-    end
+  describe "Patient API ::" do
 
     it "should return 200 if gender request is valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -184,13 +173,13 @@ describe "ApiService" do
       last_response.status.should == 200
     end
 
-    it "should return 400 if request is not valid" do
-      get '/v1/patients/patient-2222222222222222222222222222222222222222222222222222222222222222222222222222222222'
-      last_response.status.should == 400
+    it "should return 403 if request is not valid" do
+      get '/v1/patients/patient-2222222222222222222222222222222222222222222222222222222222222222222222222222222222?authentication=1243'
+      last_response.status.should == 403
     end
 
     it "should return 403 if request is no auth token" do
-      get '/v1/patients/patient-2222'
+      get '/v1/patients/patient-2222?authentication=12'
       last_response.status.should == 403
     end
 
@@ -213,7 +202,7 @@ describe "ApiService" do
 
   end
 
-  describe "Should save patient data" do
+  describe "Patient API ::" do
 
     the_patient_id_to_use = '24044'
 
@@ -255,17 +244,17 @@ describe "ApiService" do
             "gender_id": "1",
             "date_of_birth": "2000-03-12"
         },
-        "addresses": {
+        "addresses": [{
             "line1": "123 fake st",
             "line2": "apt3",
             "city": "newton",
-            "state_code": "ma",
+            "state_id": "2",
             "zip_code": "07488",
             "county_name": "suffolk",
             "latitude": "",
             "longitude": "",
             "country_id": "225"
-        },
+        }],
         "phones": [
             {
                 "phone_number": "5552221212",
@@ -353,7 +342,7 @@ describe "ApiService" do
   end
 
 
-  describe "Should save appointment data" do
+  describe "Appointment API ::" do
 
     the_appt_id_to_use = '9ff6e7cc-ea0c-4a53-92fb-bf7116c183ee'
     the_appt_register_id_to_use = ''
@@ -561,7 +550,7 @@ describe "ApiService" do
   end
 
 
-  describe "Should work with provider data" do
+  describe "Providers API ::" do
 
     it "should return 200 if providers request is valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -576,7 +565,7 @@ describe "ApiService" do
   end
 
 
-  describe "Should create a charge" do
+  describe "Charges API :: " do
 
     it "should return 201 if charges are created" do
       authorize 'interface@interface.com', 'welcome'
