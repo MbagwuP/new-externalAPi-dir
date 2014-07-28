@@ -64,8 +64,9 @@ class ApiService < Sinatra::Base
       config_path = Dir.pwd + "/config/settings.yml"
       config = YAML.load(File.open(config_path))[settings.environment.to_s]
 
-      hc_path = Dir.pwd + "/config/vitals.yml"
-      hc_config = YAML.load(File.open(hc_path))[settings.environment.to_s]
+      # hc_path = Dir.pwd + "/config/vitals.yml"
+      # hc_config = YAML.load(File.open(hc_path))[settings.environment.to_s]
+      hc_config = File.open(File.dirname(__FILE__) + "/../config/vitals.yml") { |f| YAML.load(f) }[environment.to_s]
 
       LOG.debug(config)
 
@@ -82,6 +83,7 @@ class ApiService < Sinatra::Base
 
 
     ## config values
+    SVC_URLS = config
     API_SVC_URL = config["api_internal_svc_url"]
     MIRTH_SVC_URL = config["mirth_outbound_svc_url"]
     MIRTH_PRIVATE_KEY = config["mirth_private_key"]
@@ -125,10 +127,9 @@ class ApiService < Sinatra::Base
 
     #temp fix for rspec test
     if settings.environment.to_s != 'test'
-      use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
-      HealthCheck.app_setting = ApiService
-      HealthCheck.config = hc_config
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
+      #health check
+      HealthCheck.config, HealthCheck.probes_path = hc_config, File.dirname(__FILE__) + "/../probes"
       HealthCheck.start_health_monitor
       CCAuth.configure { |config| config.endpoint = settings.cc_auth_config['url'] }
     end

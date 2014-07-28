@@ -1,6 +1,6 @@
 ENV['RACK_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__), '..', 'main.rb')
+require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
 
 require 'test/unit'
 require 'rack/test'
@@ -18,5 +18,5 @@ end
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
-  config.color_enabled = true
+  config.color = true
 end

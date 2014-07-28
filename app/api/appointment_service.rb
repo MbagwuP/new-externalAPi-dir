@@ -738,6 +738,57 @@ class ApiService < Sinatra::Base
   end
 
 
+  #  get All location information
+  # Ellkay needed all locations id for mapping orginial v1 location endpoint did not return all locations
+  #
+  # server action: Return location information for authenticated user
+  # server response:
+  # --> if data found: 200, with location data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/appointment/all_locations?' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    business_entity = get_business_entity(pass_in_token)
+    #LOG.debug(business_entity)
+
+    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
+    urllocation = ''
+    urllocation << API_SVC_URL
+    urllocation << 'businesses/'
+    urllocation << business_entity
+    urllocation << '/location.json?token='
+    urllocation << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urllocation)
+    rescue => e
+      begin
+        errmsg = "Appointment Locations Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+
+    parsed = JSON.parse(response.body)
+    filtered_data = []
+    parsed.each do |data|
+      temp = {}
+      temp['id'] = data['id']
+      temp['location_name'] = data['name']
+      filtered_data << temp
+    end
+
+    body(filtered_data.to_json)
+    status HTTP_OK
+  end
+
+
   #  get resource information
   #
   # GET /v1/appointment/resources?authentication=<authenticationToken>

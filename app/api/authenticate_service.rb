@@ -309,6 +309,27 @@ class ApiService < Sinatra::Base
     end
   end
 
+  get '/oauth2/authorization' do
+    begin
+      begin
+        resp = CCAuth::OAuth2.new.authorization(get_oauth_token || params[:access_token])
+      rescue => e
+        begin
+          errmsg = e.message
+          api_svc_halt e.code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      body resp.to_json
+      status HTTP_OK
+
+    rescue => e
+      handle_exception(e)
+    end
+  end
+
   #authenticate vi auth_service
   post '/v3/service/authenticate' do
     begin

@@ -22,12 +22,12 @@ class ApiService < Sinatra::Base
   # --> if exception: 500
   get '/v1/patients/:patientid?' do
     # Validate the input parameters
-    validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
-
-    api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
-
+    # validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
+    #
+    # api_svc_halt HTTP_FORBIDDEN if params[:authentication] == nil
+    #
     pass_in_token = CGI::unescape(params[:authentication])
-    #format to what the devservice needs
+    # #format to what the devservice needs
     business_entity = get_business_entity(pass_in_token)
     patientid = params[:patientid]
     patientid.slice!(/^patient-/)
@@ -424,12 +424,14 @@ class ApiService < Sinatra::Base
     begin
       response = RestClient.post(urlpatient, request_body.to_json, :content_type => :json)
     rescue => e
-      begin
-        errmsg = "Patient Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
+       begin
+            exception = error_handler_filter(e.response)
+            errmsg = "Patient Creation Failed - #{exception}"
+            api_svc_halt e.http_code, errmsg
+       rescue
+         errmsg = "#{e.message}"
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
+       end
     end
 
     returnedBody = JSON.parse(response.body)
@@ -728,8 +730,6 @@ class ApiService < Sinatra::Base
       status HTTP_CREATED
     end
   end
-
-
 
   #  delete patient by id
   #
@@ -1757,7 +1757,7 @@ class ApiService < Sinatra::Base
   #
   # Params definition
   # JSON:
-  #{
+  # {
   #     "insurance_profile": {
   #         "responsible_party_relationship": "OTHER",
   #         "is_default": true,
@@ -1894,7 +1894,7 @@ class ApiService < Sinatra::Base
   #             ]
   #         }
   #     }
-  #}
+  # }
   # EOR
   # server action: Return patient id
   # server response:
@@ -1929,9 +1929,11 @@ class ApiService < Sinatra::Base
       response = RestClient.put(urlpatient, request_body.to_json, :content_type => :json)
     rescue => e
       begin
-        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        exception = error_handler_filter(e.response)
+        errmsg = "Retrieving Patient Data Failed - #{exception}"
         api_svc_halt e.http_code, errmsg
       rescue
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
@@ -1972,5 +1974,7 @@ class ApiService < Sinatra::Base
     patient["provider_assignment_indicator_id"] = patient["provider_assignment_indicator_id"].nil? ? patient_preference["default_provider_assignment_indicator_id"] : patient["provider_assignment_indicator_id"]
     return patient
   end
+
+
 
 end

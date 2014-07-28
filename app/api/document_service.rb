@@ -90,7 +90,7 @@ class ApiService < Sinatra::Base
     ## add required entities to the request
     request_body['document']['patient_id'] = patientid
     request_body['document']['handler'] = handler_id
-    request_body['document']['source'] = 1
+    request_body['document']['source'] = 1 if request_body['document']['source'].blank?
     request_body['document']['format'] = file_type_name
 
     #LOG.debug "Request body "
@@ -176,10 +176,10 @@ class ApiService < Sinatra::Base
         FileUtils.remove(local_file)
 
         ## add required entities to the request
-        payload['meta_data']['document']['patient_id'] = patientid
-        payload['meta_data']['document']['handler'] = handler_id
-        payload['meta_data']['document']['source'] = 1
-        payload['meta_data']['document']['format'] = file_type_name
+        request_body['document']['patient_id'] = patientid
+        request_body['document']['handler'] = handler_id
+        request_body['document']['source'] = 1 if request_body['document']['source'].blank?
+        request_body['document']['format'] = file_type_name
 
         #LOG.debug "Request body "
         #LOG.debug(request_body.to_s)
@@ -281,7 +281,7 @@ class ApiService < Sinatra::Base
     ## add required entities to the request
     request_body['document']['patient_id'] = patientid
     request_body['document']['handler'] = handler_id
-    request_body['document']['source'] = 1
+    request_body['document']['source'] = 1 if request_body['document']['source'].blank?
     request_body['document']['format'] = file_type_name
 
     #LOG.debug "Request body "
