@@ -147,10 +147,16 @@ class ApiService < Sinatra::Base
     if params[:metadata].length == params[:payload].length
 
       payload_queue = params[:payload].map{|pq| pq}
+      if params[:metadata][0].is_a?(String)
       meta_data_queue = params[:metadata].map{|mq| JSON.parse(mq)}
-
       (0..payload_queue.length-1).each do |i|
-      pdf_array_of_data << {"payload" => payload_queue[i], "meta_data" => meta_data_queue[i]}
+        pdf_array_of_data << {"payload" => payload_queue[i], "meta_data" => meta_data_queue[i]}
+      end
+
+      else
+        (0..payload_queue.length-1).each do |i|
+          pdf_array_of_data << {"payload" => payload_queue[i], "meta_data" => params[:metadata]["#{i}"]}
+        end
       end
 
       pdf_array_of_data.each do |payload|
@@ -162,38 +168,35 @@ class ApiService < Sinatra::Base
         if document_type_regex == '.jpg'
           document_type_regex = '.jpg'
           file_type_name = "JPG"
+        elsif document_type_regex == '.jpeg'
+          document_type_regex = '.jpeg'
+          file_type_name = "JPEG"
         else
           document_type_regex = '.pdf'
           file_type_name = "PDF"
         end
-        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
-
-        response = dms_upload(local_file, pass_in_token)
-
-        handler_id = response["nodeid"]
-
-        ## use rest client to do multipart form upload
-        FileUtils.remove(local_file)
-
-        ## add required entities to the request
-        request_body['document']['patient_id'] = patientid
-        request_body['document']['handler'] = handler_id
-        request_body['document']['source'] = 1 if request_body['document']['source'].blank?
-        request_body['document']['format'] = file_type_name
-
-        #LOG.debug "Request body "
-        #LOG.debug(request_body.to_s)
-
-        create = create_document(patientid, pass_in_token, payload['meta_data'])
-        if create == 201
-           success << {:pdf_name =>  payload['meta_data']['document']['name'] }
+        if file_type.match(document_type_regex) == nil
+          errors << {:pdf_name =>  payload['meta_data']['document']['name'] }
         else
-           errors << {:pdf_name =>  payload['meta_data']['document']['name'] }
+          response = dms_upload(local_file, pass_in_token)
+          handler_id = response["nodeid"]
+          ## use rest client to do multipart form upload
+          FileUtils.remove(local_file)
+          ## add required entities to the request
+          payload['meta_data']['document']['patient_id'] = patientid
+          payload['meta_data']['document']['handler'] = handler_id
+          payload['meta_data']['document']['source'] = 1 if payload['meta_data']['document']['source'].blank?
+          payload['meta_data']['document']['format'] = file_type_name
+          create = create_document(patientid, pass_in_token, payload['meta_data'])
+          if create == 201
+            success << {:pdf_name =>  payload['meta_data']['document']['name'] }
+          else
+            errors << {:pdf_name =>  payload['meta_data']['document']['name'] }
+          end
         end
-
       end
     else
-        api_svc_halt HTTP_BAD_REQUEST, '{"A mismatch of payload/metadata detected"}'
+      api_svc_halt HTTP_BAD_REQUEST, '{"A mismatch of payload/metadata detected"}'
     end
     the_response_hash = {:patient_id => params[:patientid].to_s, :errors => errors, :success => success}
     body(the_response_hash.to_json)
