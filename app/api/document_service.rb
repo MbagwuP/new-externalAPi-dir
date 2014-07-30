@@ -177,6 +177,7 @@ class ApiService < Sinatra::Base
         end
         if file_type.match(document_type_regex) == nil
           errors << {:pdf_name =>  payload['meta_data']['document']['name'] }
+          FileUtils.remove(local_file)
         else
           response = dms_upload(local_file, pass_in_token)
           handler_id = response["nodeid"]

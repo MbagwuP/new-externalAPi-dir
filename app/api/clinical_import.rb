@@ -342,7 +342,7 @@ class ApiService < Sinatra::Base
 
       urlimmunizations = ''
       urlimmunizations << API_SVC_URL
-      urlimmunizations << 'patient_immmunizations/'
+      urlimmunizations << 'patient_immunizations/'
       urlimmunizations << business_entity
       urlimmunizations << '/patients/'
       urlimmunizations << patient_id
