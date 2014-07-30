@@ -118,9 +118,11 @@ class ApiService < Sinatra::Base
           response = RestClient.post(urlallergies , Allergy.to_json, :content_type => :json)
         rescue => e
           begin
-            errmsg = "Updating Patient Data Failed - #{e.message}"
+            exception = error_handler_filter(e.response)
+            errmsg = "Updating Patient Data Failed - #{exception}"
             api_svc_halt e.http_code, errmsg
           rescue
+            errmsg = "Updating Patient Data Failed - #{e.message}"
             api_svc_halt HTTP_INTERNAL_ERROR, errmsg
           end
         end
@@ -146,9 +148,11 @@ class ApiService < Sinatra::Base
           response = RestClient.post(urlimmunizations , Immunizations.to_json, :content_type => :json)
         rescue => e
           begin
-            errmsg = "Updating Patient Data Failed - #{e.message}"
+            exception = error_handler_filter(e.response)
+            errmsg = "Updating Patient Data Failed - #{exception}"
             api_svc_halt e.http_code, errmsg
           rescue
+            errmsg = "Updating Patient Data Failed - #{e.message}"
             api_svc_halt HTTP_INTERNAL_ERROR, errmsg
           end
         end
@@ -177,9 +181,11 @@ class ApiService < Sinatra::Base
           response = RestClient.post(urlproblems , Problems.to_json, :content_type => :json)
         rescue => e
           begin
-            errmsg = "Updating Patient Data Failed - #{e.message}"
+            exception = error_handler_filter(e.response)
+            errmsg = "Updating Patient Data Failed - #{exception}"
             api_svc_halt e.http_code, errmsg
           rescue
+            errmsg = "Updating Patient Data Failed - #{e.message}"
             api_svc_halt HTTP_INTERNAL_ERROR, errmsg
           end
         end
@@ -202,9 +208,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlmedications , Medications.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Updating Patient Data Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Medications Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Updating Patient Data Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
@@ -213,15 +221,15 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
   end
 
-
-#{
+#
+# {
 #    "allergy": [
 #    {
 #        "rx_norm_code": null,
-#"onset_at": "2013-08-01T12:00:00-04:00",
+# "onset_at": "2013-08-01T12:00:00-04:00",
 #    "resolved_at": null,
-#"snomed_code": null,
-#"name": "Peanuts",
+# "snomed_code": null,
+# "name": "Peanuts",
 #    "status": "A",
 #    "comments": "test test test test test test test test test test test test test test !!!@@@###",
 #    "reaction": [
@@ -230,17 +238,17 @@ class ApiService < Sinatra::Base
 #    "severity_id": "1",
 #    "reaction_id": "14",
 #    "status": "A"
-#},
+# },
 #    {
 #        "description": "freakish!!!!",
 #    "severity_id": "2",
 #    "reaction_id": "12",
 #    "status": "A"
-#}
-#]
-#}
-#]
-#}
+# }
+# ]
+# }
+# ]
+# }
 
 # #PatientAllergiesController#create
 
@@ -276,9 +284,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlallergies, Allergy.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Allergy Creation Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Medications Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Allergy Creation Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
@@ -332,7 +342,7 @@ class ApiService < Sinatra::Base
 
       urlimmunizations = ''
       urlimmunizations << API_SVC_URL
-      urlimmunizations << 'patient_immmunizations/'
+      urlimmunizations << 'patient_immunizations/'
       urlimmunizations << business_entity
       urlimmunizations << '/patients/'
       urlimmunizations << patient_id
@@ -343,9 +353,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlimmunizations, Immunizations.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Immunizations Creation Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Medications Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Immunizations Creation Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
@@ -430,9 +442,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlmedications, Medications.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Medications Creation Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Medications Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Medications Creation Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
@@ -524,9 +538,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlvitals, Vitals.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Vitals Creation Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Vitals Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Vitals Creation Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end
@@ -594,9 +610,11 @@ class ApiService < Sinatra::Base
         response = RestClient.post(urlproblems, Problems.to_json, :content_type => :json)
       rescue => e
         begin
-          errmsg = "Problem Set Creation Failed - #{e.message}"
+          exception = error_handler_filter(e.response)
+          errmsg = "Patient Creation Failed - #{exception}"
           api_svc_halt e.http_code, errmsg
         rescue
+          errmsg = "Problem Set Creation Failed - #{e.message}"
           api_svc_halt HTTP_INTERNAL_ERROR, errmsg
         end
       end

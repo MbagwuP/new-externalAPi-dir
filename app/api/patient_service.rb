@@ -655,6 +655,7 @@ class ApiService < Sinatra::Base
   # }
   # }
 
+
   # server action: Return patient id
   # server response:
   # --> if success: 201, with patient id
@@ -788,6 +789,161 @@ class ApiService < Sinatra::Base
 
     status HTTP_OK
 
+  end
+
+
+  get '/v1/patients/getbatcherrors/:batch_id?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    #business_entity = get_business_entity(pass_in_token)
+    results = CareCloud::BatchErrors.find_by_id(params[:batch_id])
+    #validatation: Make sure the Business has correct access to the data.
+    #if results.business_entity_id.to_s == business_entity and !results.nil?
+      body(results.to_json(:except => :uuid))
+      status HTTP_OK
+    #else
+      #api_svc_halt 500, '{"error": "An error Has Occurred, Business Entity does not match."}'
+    #end
+  end
+
+  post '/v1/patients/business_entity/:business_entity_id/createBatch?' do
+    request_body = get_request_JSON
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = params[:business_entity_id]
+    data = Array.new
+    request_body['data'].each do |a|
+      data << a
+    end
+    #validatation: Make sure the Business has correct access to the data.
+    create_batch = CareCloud::BatchUploadData.create(:statuscode => 'Active',
+                                                     :is_processed => 'false',
+                                                     :batch_type => 'Create Patient Batch',
+                                                     :business_entity_id => business_entity.to_s,
+                                                     :json_data => data)
+    if create_batch
+      return_batch_id = {:Success => "Please Check Back in 24 hours for Results of upload: Batch ID: #{create_batch.id}"}
+      body(return_batch_id.to_json)
+      status HTTP_OK
+    else
+      api_svc_halt 500, '{"error": "An error Has Occurred, Business Entity does not match."}'
+    end
+  end
+
+  post '/v2/patients/createfullpatient?' do
+    # Validate the input parameters
+    # store errors
+    # add id and patient name to success
+    # success = []
+    request_body = get_request_JSON
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    index_counter = 0
+    errors =  Array.new
+    success = Array.new
+    request_body['batch_import'].each do |pc|
+      patient_json = pc["patient_data"]
+      if pc["patient_data"].nil?
+        pc["error"] = JSON.parse('{"error":"Patient_data is key required in JSON"}')
+        errors.push(pc)
+        index_counter += 1
+        next if index_counter < request_body['batch_import'].size
+        #TODO return logs.
+        value = return_results(success, errors)  if index_counter >= request_body['batch_import'].size
+        if value
+          begin
+            batch_error = CareCloud::BatchErrors.create(:statuscode => 'Active',
+                                                        :is_reprocess => 'false',
+                                                        :request_method => "Create Patient Batch",
+                                                        :business_entity_id => business_entity.to_s,
+                                                        :error_msgs => errors,
+                                                        :error_code => "Errors",
+                                                        :error_count => errors.size.to_s)
+            update_batch_number(params[:reprocess_batch_id]) if params[:reprocess_batch_id]
+            value_hash = {:errors => errors.length.to_s, :success => success.length.to_s, :batch_import_id => batch_error.id, :patients_processed => success }
+            body(value_hash.to_json)
+            status HTTP_OK
+            break
+          rescue
+          end
+        end
+      end
+
+      insurance_json = pc["insurance_information"] if pc["insurance_information"]
+      pass_in_token = CGI::unescape(params[:authentication])
+      business_entity = get_business_entity(pass_in_token)
+
+      urlpatient = ''
+      urlpatient << API_SVC_URL
+      urlpatient << 'businesses/'
+      urlpatient << business_entity
+      urlpatient << '/patients.json?token='
+      urlpatient << CGI::escape(params[:authentication])
+
+      begin
+        response = RestClient.post(urlpatient, patient_json, :content_type => :json)
+        if response.code == 201
+          success_value = JSON.parse(response.body)
+          success.push("{Patient Name: #{success_value['patient']['first_name']} #{success_value['patient']['last_name']}, Patient ID: #{success_value['patient']['external_id']}}")
+          index_counter += 1 if insurance_json.blank?
+        end
+      rescue => e
+        begin
+          errmsg = "Patient Creation Failed - #{e.message}"
+          pc["error"] = errmsg
+          errors.push(pc)
+          index_counter += 1
+          next if index_counter < request_body['batch_import'].size
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+      if pc["insurance_information"]
+        pc = JSON.parse(response.body)
+        patient_id = pc["patient"]["external_id"]
+
+        # http://localservices.carecloud.local:3000/business_entity/12/patients/2/createextended.json?token=
+        urlpatient = ''
+        urlpatient << API_SVC_URL
+        urlpatient << 'business_entity/'
+        urlpatient << business_entity
+        urlpatient << '/patients/'
+        urlpatient << patient_id
+        urlpatient << '/createextended.json?token='
+        urlpatient << CGI::escape(params[:authentication])
+
+        begin
+          response = RestClient.put(urlpatient, insurance_json, :content_type => :json)
+          if response.code == 201
+            success_value = JSON.parse(response.body)
+            success.push("{Patient Name: #{success_value['patient']['first_name']} #{success_value['patient']['last_name']}, Patient ID: #{success_value['patient']['external_id']}}")
+            index_counter += 1
+          end
+        rescue => e
+          begin
+            errors << pc.to_json
+            errmsg = "Retrieving Patient Data Failed - #{e.message}"
+            next if index_counter < request_body['batch_import'].size
+            index_counter += 1
+            value = return_results(success, errors)  if index_counter >= request_body['batch_import'].size
+            if value
+              batch_error = CareCloud::BatchErrors.create(:statuscode => 'Active',
+                                                          :is_reprocess => 'false',
+                                                          :request_method => "Create Patient Batch",
+                                                          :business_entity_id => business_entity.to_s,
+                                                          :error_msgs => errors,
+                                                          :error_code => "Errors",
+                                                          :error_count => errors.size.to_s)
+              update_batch_number(params[:reprocess_batch_id]) if params[:reprocess_batch_id]
+              value_hash = {:errors => errors.length.to_s, :success => success.length.to_s, :error_data => errors, :patients_processed => success }
+              body(value_hash.to_json)
+              status HTTP_OK
+              break
+            end
+          rescue
+            api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+          end
+        end
+      end
+    end
   end
 
   #  update a patient
@@ -1975,6 +2131,13 @@ class ApiService < Sinatra::Base
     return patient
   end
 
+  def return_results(success, errors)
+    value = Array.new
+    value.push(errors) if errors
+    value.push(success) if success
+    return value
+    #TODO Return Success and Errors
+  end
 
 
 end
