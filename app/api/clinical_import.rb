@@ -346,7 +346,7 @@ class ApiService < Sinatra::Base
       urlimmunizations << business_entity
       urlimmunizations << '/patients/'
       urlimmunizations << patient_id
-      urlimmunizations << '/patient_immmunizations.json?token='
+      urlimmunizations << '/patient_immunizations.json?token='
       urlimmunizations << CGI::escape(params[:authentication])
 
       begin
