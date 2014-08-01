@@ -96,6 +96,6 @@ DEPENDENCIES
   rack-test
   require_all
   rest-client
-  rspec
+  rspec (~> 2.14)
   sinatra
   tux
