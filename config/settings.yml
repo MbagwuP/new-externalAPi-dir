@@ -8,7 +8,7 @@ test:
     memcache_servers: cc-bl-mcache00-dev.carecloud.local:11211
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
-    version: 27.1
+    version: 26.2
     logging_level: 4
 
 development:
@@ -21,7 +21,7 @@ development:
     memcache_servers: cc-bl-mcache00-dev.carecloud.local:11211
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
-    version: 27.1
+    version: 26.2
     ## log level 0 - 7
     logging_level: 0
 
@@ -35,7 +35,7 @@ production:
     memcache_servers: cc-tm01-mcache00.carecloud.local:11211
     lab_user: spectra_prod
     lab_pass: mDYPQx1ompwLZN2TxWzOf8FOevkOlcdu
-    version: 27.1
+    version: 26.2
     logging_level: 5
 
 qa:
@@ -48,7 +48,7 @@ qa:
     memcache_servers: 192.168.123.61:11211
     lab_user: spectra_qa
     lab_pass: GUvBOevdOApyMDaryFsfKLPnGVeahtno
-    version: 27.1
+    version: 26.2
     logging_level: 0
 
 staging:
@@ -61,5 +61,5 @@ staging:
     memcache_servers: 192.168.123.61:11211
     lab_user: spectra_staging
     lab_pass: chgDkJDfm1CGJjlrh9lHKHqGExOSfTAe
-    version: 27.1
+    version: 26.2
     logging_level: 4
