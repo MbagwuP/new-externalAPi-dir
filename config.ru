@@ -7,7 +7,7 @@ require 'bundler/setup'
 # require all gems from Gemfile (:default namespace)
 Bundler.require(:default)
 
-use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "1.0"}
+use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: "26.2"}
 
 require './app/main'
 

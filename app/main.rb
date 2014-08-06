@@ -138,6 +138,7 @@ class ApiService < Sinatra::Base
     LOG.debug(config_path)
     LOG.debug(API_SVC_URL)
     LOG.debug(config)
+    LOG.debug(SOFTWARE_VERSION)
   end
 
   configure :development do
