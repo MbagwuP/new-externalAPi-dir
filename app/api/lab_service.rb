@@ -61,6 +61,7 @@ class ApiService < Sinatra::Base
 
     begin
 
+      #LOG.debug('Sending request to webservices')
       resource = RestClient::Resource.new( urllabinbound, { :user => settings.labs_user, :password => settings.labs_pass})
       resp = resource.post(request_body.to_json, :content_type => :json)
 
@@ -143,7 +144,7 @@ class ApiService < Sinatra::Base
       resp = RestClient.post(urllaboutbound, request_body.to_json, :content_type => :json)
     rescue => e
       begin
-        errmsg = "Appointment Creation Failed - #{e.message}"
+        errmsg = "Outbound lab request failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
