@@ -426,7 +426,7 @@ describe "ApiService" do
       last_response.status.should == 200
     end
 
-
+  end
 
     describe "Patient API ::" do
 
@@ -565,10 +565,22 @@ describe "ApiService" do
         delete url, var1
         last_response.status.should == 200
       end
-    end
 
+      it "should return the patient data from search" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = 'v1/patients/search?authentication='
+        url << var1
 
+        var1 = '{
+        "limit": 5,
+         "search": [ { "term": "brady"},
+         {"term": "555555555"}]}'
 
+        post url, var1
+        last_response.status.should == 200
+      end
   end
 
 
@@ -1172,6 +1184,123 @@ describe "ApiService" do
     end
 
 
+  end
+
+  describe "Clinical API Services::" do
+      it "should create problem set for patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/problems/create?authentication='
+        url << var1
+
+        var1 = '{
+        "problem": [
+            {
+                "snomed_code": "161891005",
+                "icd9": "724.5",
+                "name": "Backache unspecified",
+                "description": "Backache (finding)",
+                "onset_at": "2011-01-28",
+                "status": "A"
+            }
+        ]
+      }'
+      post url, var1
+      last_response.status.should == 201
+      end
+
+      it "should create allergies for patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/allergies/create?authentication='
+        url << var1
+
+        var1 = '{
+          "allergy": [
+              {
+                  "rx_norm_code": null,
+                  "onset_at": "2013-08-01T12:00:00-04:00",
+                  "resolved_at": null,
+                  "snomed_code": null,
+                  "name": "Peanuts",
+                  "status": "A",
+                  "comments": "test test test test test test test test test test test test test test !!!@@@###",
+                  "reaction": [
+                      {
+                          "description": "not bad",
+                          "severity_id": "1",
+                          "reaction_id": "14",
+                          "status": "A"
+                      },
+                      {
+                          "description": "freakish!!!!",
+                          "severity_id": "2",
+                          "reaction_id": "12",
+                          "status": "A"
+                      }
+                  ]
+              }
+          ]
+      }'
+        post url, var1
+        last_response.status.should == 201
+      end
+
+      it "should create immunizations for patient"  do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/immunizations/create?authentication='
+        url << var1
+
+        var1 = '{"immunization": [
+            {
+                "immunization_name": "DTaP",
+            "immunization_description": "DTaP",
+            "immunization_code": "20",
+            "vaccine_manufacturer_name": "ABBOTT LABORATORIES",
+            "administered_at": "2011-02-01",
+            "status": "A",
+            "vaccine_administration_quantity": "0.5",
+            "vaccine_administration_quantity_uom": "mL",
+            "vaccine_manufacturer_code": "AB",
+            "route_description": "IM"}]}'
+
+        post url, var1
+        last_response.status.should == 201
+      end
+
+      it "should create medication for patient"  do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/medications/create?authentication='
+        url << var1
+
+        var1 = '{
+            "medication": [
+            {
+                "drug_name": "A & D Barrier",
+            "effective_from": "2010-06-02",
+            "effective_to": "2010-06-02",
+            "drug_description": "A & D Barrier Ointment 1 Application TP TID",
+            "route_description": "TP",
+            "status": "A",
+            "frequency_description": "TID",
+            "dose": "1 Application",
+            "is_substitution_permitted": "true"
+        }
+        ]
+        }'
+        post url, var1
+        last_response.status.should == 201
+      end
   end
 
   describe "Should return list of locations" do
