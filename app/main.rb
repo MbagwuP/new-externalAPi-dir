@@ -119,7 +119,7 @@ class ApiService < Sinatra::Base
     ## connect to Mongo
     begin
       set :mongo, {options: {pool_size: 25, pool_timeout: 10, slave_ok: true},
-          config: YAML.load(File.open(File.expand_path('../config/mongodb.yml', __FILE__)))}
+          config: File.open(File.dirname(__FILE__) + "/../config/mongodb.yml") { |f| YAML.load(f) }[environment.to_s]}
     rescue => e
       set :mongo, {options: {pool_size: 25, pool_timeout: 10, slave_ok: true},
           config: {}}
@@ -184,17 +184,14 @@ class ApiService < Sinatra::Base
 
   # Test route
   get '/testmongo' do
-
-    auditoptions = {
-        :msg => "Test audit request"
-    }
-
-    audit_log(AUDIT_TYPE_TRANS, AUDIT_TYPE_TRANS, auditoptions)
-
-    auditcollection = settings.mongo.collection("audit_events")
-
-    auditcollection.find.each { |row| LOG.debug row.inspect }
-
+    begin
+      auditcollection = CareCloud::AuditRecord.first
+      LOG.debug('---- Audit Collections ----')
+      LOG.debug(auditcollection)
+      return 'Mongo is Active'
+    rescue
+      return 'Error Has Occurred'
+    end
   end
 
   get '/' do
