@@ -583,10 +583,9 @@ class ApiService < Sinatra::Base
       end
     end
 
-
     parsed = JSON.parse(response.body)
     parsed.each { |x|
-      x['appointment']['id'] = x['appointment']['external_id']
+      x['appointment_read_only']['id'] = x['appointment_read_only']['external_id']
     }
 
     body(parsed.to_json)
@@ -1168,5 +1167,82 @@ class ApiService < Sinatra::Base
     body(response)
     status HTTP_OK
   end
+
+
+  # Endpoint Created to return Appointment Templates Per BE
+  # Parameters
+  #    None:
+  # https://api.carecloud.com/v1/appointment_templates?
+
+  #get notification callback ids
+  get '/v1/appointment_templates?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointment_templates/'
+    urlappt << business_entity
+    urlappt << '.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("URL:" + urlappt)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Template Look Up Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Template Look Up Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
+  end
+
+
+  # Endpoint Created to return Appointment Templates by Date Per BE
+  # Parameters
+  #    None:
+  # https://api.carecloud.com/v1/appointment_templates?
+
+  #get notification callback ids
+  get '/v1/appointment_templates_by_dates/:date?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointment_templates/'
+    urlappt << business_entity
+    urlappt << '/date/'
+    urlappt << params[:date]
+    urlappt << '.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("URL:" + urlappt)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Template Look Up Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Template Look Up Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
+  end
+
 
 end

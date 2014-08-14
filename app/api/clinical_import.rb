@@ -194,8 +194,8 @@ class ApiService < Sinatra::Base
     end
 
     request_body['medication'].each do |newMed|
-      Medications = Hash.new
-      Medications['medication'] = newMed
+      medications = Hash.new
+      medications['medication'] = newMed
 
       urlmedications = ''
       urlmedications << API_SVC_URL
@@ -205,7 +205,7 @@ class ApiService < Sinatra::Base
       urlmedications << CGI::escape(params[:authentication])
 
       begin
-        response = RestClient.post(urlmedications , Medications.to_json, :content_type => :json)
+        response = RestClient.post(urlmedications , medications.to_json, :content_type => :json)
       rescue => e
         begin
           exception = error_handler_filter(e.response)
@@ -299,7 +299,7 @@ class ApiService < Sinatra::Base
   end
 
 #
-#{
+# {
 #     "immunization": [
 #         {
 #     "immunization_name": "Diphtheria and Tetanus Toxoids and Acellular Pertussis Adsorbed, Inactivated Poliovirus, Haemophilus b Conjugate (Meningococcal Outer Membrane Protein Complex), and Hepatitis B (Recombinant) Vaccine.",
@@ -320,7 +320,7 @@ class ApiService < Sinatra::Base
 #     "ndc_number": null
 #         }
 #     ]
-#}
+# }
 
 #PatientAllergiesController#create
 
@@ -346,7 +346,7 @@ class ApiService < Sinatra::Base
       urlimmunizations << business_entity
       urlimmunizations << '/patients/'
       urlimmunizations << patient_id
-      urlimmunizations << '/patient_immmunizations.json?token='
+      urlimmunizations << '/patient_immunizations.json?token='
       urlimmunizations << CGI::escape(params[:authentication])
 
       begin
@@ -366,7 +366,7 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
   end
 
-#{
+# {
 #     "medication": [
 #         {
 #             "patient_id": "b0b3a1b9-533e-47cb-83c5-585b12d84676",
@@ -392,7 +392,7 @@ class ApiService < Sinatra::Base
 #             "days_supply": null
 #         }
 #     ]
-#}
+# }
 
 #MedicationsController#create
 
@@ -427,8 +427,8 @@ class ApiService < Sinatra::Base
 
       #LOG.debug "Medication Object"
       #LOG.debug(newMed)
-      Medication = Hash.new
-      Medication["medication"] = newMed
+      medications = Hash.new
+      medications["medication"] = newMed
       #LOG.debug(Medication)
 
       urlmedications = ''
@@ -439,7 +439,7 @@ class ApiService < Sinatra::Base
       urlmedications << CGI::escape(params[:authentication])
 
       begin
-        response = RestClient.post(urlmedications, Medications.to_json, :content_type => :json)
+        response = RestClient.post(urlmedications, medications.to_json, :content_type => :json)
       rescue => e
         begin
           exception = error_handler_filter(e.response)
