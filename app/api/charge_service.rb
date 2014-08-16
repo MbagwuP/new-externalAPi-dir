@@ -125,6 +125,95 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
 
   end
+
+
+  # {
+  #     "debit": {
+  #     "entered_at": "",
+  #     "posting_date": "",
+  #     "effective_date": "",
+  #     "period_closed_date": "",
+  #     "amount": "123",
+  #     "balance": "0",
+  #     "value": "111",
+  #     "value_balance": "0",
+  #     "batch_number": "",
+  #     "date_first_statement": "",
+  #     "date_last_statement": "",
+  #     "statement_count": "",
+  #     "note_set_id": "",
+  #     "document_set_id": "",
+  #     "transaction_status": ""
+  # },
+  #     "simple_charge": {
+  #     "provider_id": "57",
+  #     "location_id": "3695",
+  #     "units": "1",
+  #     "patient_payments_applied": "100",
+  #     "patient_adjustments_applied": "0",
+  #     "simple_charge_type": "25462",
+  #     "description": "Simple Charge Test"
+  # }
+  # }
+
+  post '/v1/simple_charge/:patient_id/create?' do
+    # Validate the input parameters
+    request_body = get_request_JSON
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    patient_id = params[:patient_id]
+    patient_id.slice!(/^patient-/)
+    patient_id = get_internal_patient_id(patient_id , business_entity, pass_in_token)
+    #provider_ids = get_providers_by_business_entity(business_entity, pass_in_token)
+    #check_for_valid_provider(provider_ids, request_body['charge']['provider_id']) if request_body['charge']['provider_id']
+
+    ## validate provider id
+    #providerid = request_body['charge']['provider_id']
+
+    ## validate the provider
+    #providerids = get_providers_by_business_entity(business_entity, pass_in_token)
+
+    ## validate the request based on token
+    #check_for_valid_provider(providerids, providerid)
+
+    #http://localservices.carecloud.local:3000/charges/create.json?token=
+    urlcharge = ''
+    urlcharge << API_SVC_URL
+    urlcharge << 'simple_charges/'
+    urlcharge << patient_id
+    urlcharge << '/business_entity/'
+    urlcharge << business_entity
+    urlcharge << '/create.json?token='
+    urlcharge << CGI::escape(pass_in_token)
+
+    #LOG.debug("url for charge create: " + urlcharge)
+    #LOG.debug(request_body.to_json)
+
+    begin
+      response = RestClient.post(urlcharge, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        error = e.response.body
+        error_json = JSON.parse(error)
+        #used to prevent giving out too much data.
+        error_json["error"]["message"] = "Internal Server Error" if (error_json["error"]["message"].size > 40)
+        errmsg = "Charge Creation Failed - #{error_json["error"]["error_code"]} - #{error_json["error"]["message"]}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    #return_value = parsed["id"]
+    #body("Charge has been created, Confirmation Code: #{return_value}")
+    parsed = JSON.parse(response.body)
+    body("A Charge has successfully posted for patient: #{params[:patient_id]}")
+    status HTTP_CREATED
+
+  end
+
+
   #returns charges
 
   get '/v1/charges/:patient_id?' do

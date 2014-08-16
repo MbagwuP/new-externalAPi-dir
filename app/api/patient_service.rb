@@ -1231,7 +1231,7 @@ class ApiService < Sinatra::Base
   #
   # the rails app accepts "search" and "limit". Search is a whitespace separated token of criteria
 
-  #{
+  # {
   #    "limit": 5,
   #    "search": [
   #    {
@@ -1241,7 +1241,7 @@ class ApiService < Sinatra::Base
   #        "term": "smith"
   #    }
   #    ]
-  #}
+  # }
   post '/v1/patients/search?' do
 
     ## Validate the input parameters
@@ -1265,6 +1265,7 @@ class ApiService < Sinatra::Base
 
     #business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format  {:controller=>"patients", :action=>"search_by_business_entity"}
     #http://localservices.carecloud.local:3000/businesses/1/patients/search.json?token=<token>&search=test%20smith&limit=50
+    #/businesses/:business_entity_id/patients/search.:format
     urlpatient = ''
     urlpatient << API_SVC_URL
     urlpatient << 'businesses/'
@@ -1288,7 +1289,9 @@ class ApiService < Sinatra::Base
     end
 
     returnedBody = JSON.parse(response.body)
-    returnedBody["patient"]["id"] = returnedBody["patient"]["external_id"]
+    returnedBody["patients"].each do |x|
+    x["id"] = x["external_id"]
+    end
     body(returnedBody.to_json)
     status HTTP_OK
 

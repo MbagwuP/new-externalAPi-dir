@@ -57,9 +57,6 @@ describe "ApiService" do
       last_response.status.should == 200
     end
 
-  end
-
-  describe "Appointment API ::" do
 
     it "should return 500 if appointment id is not valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -109,9 +106,10 @@ describe "ApiService" do
       last_response.status.should == 200
     end
 
+
   end
 
-  describe "Patient API ::" do
+  describe "Util Resource API ::" do
 
     it "should return 200 if gender request is valid" do
       authorize 'interface@interface.com', 'welcome'
@@ -201,146 +199,6 @@ describe "ApiService" do
     end
 
   end
-
-  describe "Patient API ::" do
-
-    the_patient_id_to_use = '24044'
-
-    it "should return 403 if request is not authorized" do
-      var1 = '{"todo":"this"}'
-      post '/v1/patients/create?authentication=3333333', var1
-      last_response.status.should == 403
-      last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
-    end
-
-    it "should return 400 if request is in valid" do
-      authorize 'interface@interface.com', 'welcome'
-      post '/v1/service/authenticate'
-      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/patients/create?authentication='
-      url << var1
-
-      var1 = '{"todo":"this"}'
-      put url, var1
-      last_response.status.should == 400
-    end
-
-    it "should return 201 if request is in valid" do
-      authorize 'interface@interface.com', 'welcome'
-      post '/v1/service/authenticate'
-      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/patients/create?authentication='
-      url << var1
-
-      var1 = '{
-        "patient": {
-            "first_name": "bob",
-            "last_name": "smith",
-            "middle_initial": "E",
-            "email": "no@email.com",
-            "prefix": "mr",
-            "suffix": "jr",
-            "ssn": "123-45-6789",
-            "gender_id": "1",
-            "date_of_birth": "2000-03-12"
-        },
-        "addresses": [{
-            "line1": "123 fake st",
-            "line2": "apt3",
-            "city": "newton",
-            "state_id": "2",
-            "zip_code": "07488",
-            "county_name": "suffolk",
-            "latitude": "",
-            "longitude": "",
-            "country_id": "225"
-        }],
-        "phones": [
-            {
-                "phone_number": "5552221212",
-                "phone_type_id": "3",
-                "extension": "3433"
-            },
-            {
-                "phone_number": "3332221212",
-                "phone_type_id": "2",
-                "extension": "5566"
-            }
-        ]
-   }'
-
-
-      post url, var1
-      #the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
-      valid_regex = /{"patient":"(.*)"}/
-      last_response.body.should =~ (valid_regex)
-      last_response.status.should == 201
-    end
-
-    it "should update the patient" do
-      authorize 'interface@interface.com', 'welcome'
-      post '/v1/service/authenticate'
-      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/patients/patient-'
-      url << the_patient_id_to_use
-      url << '?authentication='
-      url << var1
-
-      var1 = '{
-        "patient": {
-            "first_name": "Roger",
-            "last_name": "smith",
-            "middle_initial": "E",
-            "email": "no@email.com",
-            "prefix": "mr",
-            "suffix": "jr",
-            "ssn": "123-45-6789",
-            "gender_id": "1",
-            "date_of_birth": "2000-03-12"
-        },
-        "addresses": {
-            "line1": "123 fake st",
-            "line2": "apt3",
-            "city": "newton",
-            "state_code": "ma",
-            "zip_code": "07488",
-            "county_name": "suffolk",
-            "latitude": "",
-            "longitude": "",
-            "country_id": "225"
-        },
-        "phones": [
-            {
-                "phone_number": "5552221212",
-                "phone_type_id": "3",
-                "extension": "3433"
-            },
-            {
-                "phone_number": "3332221212",
-                "phone_type_id": "2",
-                "extension": "5566"
-            }
-        ]
-   }'
-      put url, var1
-      ## todo check response for ROGER
-      last_response.status.should == 200
-    end
-
-    it "should return delete the patient" do
-      authorize 'interface@interface.com', 'welcome'
-      post '/v1/service/authenticate'
-      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/patients/patient-'
-      url << the_patient_id_to_use
-      url << '?authentication='
-      url << var1
-
-      delete url, var1
-      last_response.status.should == 200
-    end
-  end
-
 
   describe "Appointment API ::" do
 
@@ -543,10 +401,186 @@ describe "ApiService" do
 
       delete url, var2
       last_response.status.should == 200
+
     end
 
+    it "Should return appointment templates" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment_templates?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+    end
+
+    it "Should return appointment templates by a date" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment_templates_by_dates/2014-08-11?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+    end
+
+  end
+
+    describe "Patient API ::" do
+
+      the_patient_id_to_use = '24044'
+
+      it "should return 403 if request is not authorized" do
+        var1 = '{"todo":"this"}'
+        post '/v1/patients/create?authentication=3333333', var1
+        last_response.status.should == 403
+        last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
+      end
+
+      it "should return 400 if request is in valid" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = '/v1/patients/create?authentication='
+        url << var1
+
+        var1 = '{"todo":"this"}'
+        put url, var1
+        last_response.status.should == 400
+      end
+
+      it "should return 201 if request is in valid" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = '/v1/patients/create?authentication='
+        url << var1
+
+        var1 = '{
+        "patient": {
+            "first_name": "bob",
+            "last_name": "smith",
+            "middle_initial": "E",
+            "email": "no@email.com",
+            "prefix": "mr",
+            "suffix": "jr",
+            "ssn": "123-45-6789",
+            "gender_id": "1",
+            "date_of_birth": "2000-03-12"
+        },
+        "addresses": [{
+            "line1": "123 fake st",
+            "line2": "apt3",
+            "city": "newton",
+            "state_id": "2",
+            "zip_code": "07488",
+            "county_name": "suffolk",
+            "latitude": "",
+            "longitude": "",
+            "country_id": "225"
+        }],
+        "phones": [
+            {
+                "phone_number": "5552221212",
+                "phone_type_id": "3",
+                "extension": "3433"
+            },
+            {
+                "phone_number": "3332221212",
+                "phone_type_id": "2",
+                "extension": "5566"
+            }
+        ]
+   }'
 
 
+        post url, var1
+        #the_patient_id_to_use = JSON.parse(last_response.body)["patient"]
+        valid_regex = /{"patient":"(.*)"}/
+        last_response.body.should =~ (valid_regex)
+        last_response.status.should == 201
+      end
+
+      it "should update the patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = '/v1/patients/patient-'
+        url << the_patient_id_to_use
+        url << '?authentication='
+        url << var1
+
+        var1 = '{
+        "patient": {
+            "first_name": "Roger",
+            "last_name": "smith",
+            "middle_initial": "E",
+            "email": "no@email.com",
+            "prefix": "mr",
+            "suffix": "jr",
+            "ssn": "123-45-6789",
+            "gender_id": "1",
+            "date_of_birth": "2000-03-12"
+        },
+        "addresses": {
+            "line1": "123 fake st",
+            "line2": "apt3",
+            "city": "newton",
+            "state_code": "ma",
+            "zip_code": "07488",
+            "county_name": "suffolk",
+            "latitude": "",
+            "longitude": "",
+            "country_id": "225"
+        },
+        "phones": [
+            {
+                "phone_number": "5552221212",
+                "phone_type_id": "3",
+                "extension": "3433"
+            },
+            {
+                "phone_number": "3332221212",
+                "phone_type_id": "2",
+                "extension": "5566"
+            }
+        ]
+   }'
+        put url, var1
+        ## todo check response for ROGER
+        last_response.status.should == 200
+      end
+
+      it "should return delete the patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = '/v1/patients/patient-'
+        url << the_patient_id_to_use
+        url << '?authentication='
+        url << var1
+
+        delete url, var1
+        last_response.status.should == 200
+      end
+
+      it "should return the patient data from search" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = 'v1/patients/search?authentication='
+        url << var1
+
+        var1 = '{
+        "limit": 5,
+         "search": [ { "term": "brady"},
+         {"term": "555555555"}]}'
+
+        post url, var1
+        last_response.status.should == 200
+      end
   end
 
 
@@ -1150,6 +1184,123 @@ describe "ApiService" do
     end
 
 
+  end
+
+  describe "Clinical API Services::" do
+      it "should create problem set for patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/problems/create?authentication='
+        url << var1
+
+        var1 = '{
+        "problem": [
+            {
+                "snomed_code": "161891005",
+                "icd9": "724.5",
+                "name": "Backache unspecified",
+                "description": "Backache (finding)",
+                "onset_at": "2011-01-28",
+                "status": "A"
+            }
+        ]
+      }'
+      post url, var1
+      last_response.status.should == 201
+      end
+
+      it "should create allergies for patient" do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/allergies/create?authentication='
+        url << var1
+
+        var1 = '{
+          "allergy": [
+              {
+                  "rx_norm_code": null,
+                  "onset_at": "2013-08-01T12:00:00-04:00",
+                  "resolved_at": null,
+                  "snomed_code": null,
+                  "name": "Peanuts",
+                  "status": "A",
+                  "comments": "test test test test test test test test test test test test test test !!!@@@###",
+                  "reaction": [
+                      {
+                          "description": "not bad",
+                          "severity_id": "1",
+                          "reaction_id": "14",
+                          "status": "A"
+                      },
+                      {
+                          "description": "freakish!!!!",
+                          "severity_id": "2",
+                          "reaction_id": "12",
+                          "status": "A"
+                      }
+                  ]
+              }
+          ]
+      }'
+        post url, var1
+        last_response.status.should == 201
+      end
+
+      it "should create immunizations for patient"  do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/immunizations/create?authentication='
+        url << var1
+
+        var1 = '{"immunization": [
+            {
+                "immunization_name": "DTaP",
+            "immunization_description": "DTaP",
+            "immunization_code": "20",
+            "vaccine_manufacturer_name": "ABBOTT LABORATORIES",
+            "administered_at": "2011-02-01",
+            "status": "A",
+            "vaccine_administration_quantity": "0.5",
+            "vaccine_administration_quantity_uom": "mL",
+            "vaccine_manufacturer_code": "AB",
+            "route_description": "IM"}]}'
+
+        post url, var1
+        last_response.status.should == 201
+      end
+
+      it "should create medication for patient"  do
+        authorize 'interface@interface.com', 'welcome'
+        post '/v1/service/authenticate'
+        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+        url = ''
+        url << 'v1/patients/c7fd9c2f-28ce-41e3-a4f4-1bee56e3e7f0/medications/create?authentication='
+        url << var1
+
+        var1 = '{
+            "medication": [
+            {
+                "drug_name": "A & D Barrier",
+            "effective_from": "2010-06-02",
+            "effective_to": "2010-06-02",
+            "drug_description": "A & D Barrier Ointment 1 Application TP TID",
+            "route_description": "TP",
+            "status": "A",
+            "frequency_description": "TID",
+            "dose": "1 Application",
+            "is_substitution_permitted": "true"
+        }
+        ]
+        }'
+        post url, var1
+        last_response.status.should == 201
+      end
   end
 
   describe "Should return list of locations" do

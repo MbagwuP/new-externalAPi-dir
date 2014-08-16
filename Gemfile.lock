@@ -27,7 +27,7 @@ GEM
     diff-lcs (1.2.5)
     faraday (0.9.0)
       multipart-post (>= 1.2, < 3)
-    health_check (0.3.0)
+    health_check (0.3.3)
     i18n (0.6.9)
     json (1.8.1)
     log4r (1.1.10)
@@ -88,7 +88,7 @@ DEPENDENCIES
   cc_auth
   color
   dalli (~> 2.6)
-  health_check (= 0.3.0)
+  health_check (= 0.3.3)
   json
   log4r
   mongo_mapper
