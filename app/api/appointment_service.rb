@@ -222,9 +222,11 @@ class ApiService < Sinatra::Base
       response = RestClient.delete(urlapptdel)
     rescue => e
       begin
-        errmsg = "Appointment Deletion Failed - #{e.message}"
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Deletion Failed - #{exception}"
         api_svc_halt e.http_code, errmsg
       rescue
+        errmsg = "Appointment Deletion Failed - #{e.message}"
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
@@ -235,6 +237,53 @@ class ApiService < Sinatra::Base
     status HTTP_OK
 
   end
+
+
+
+  # Endpoint to cancel Appointments
+  # Parameters
+  # :id => Appointment ID
+  # request => {"cancellation_comments":""}
+
+  post '/v1/appointment/:id/cancel_appointment?' do
+    request_body = get_request_JSON
+    request_body['appointment_cancellation_reason_id'] = 4
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    ## request parameter validation
+    business_entity = get_business_entity(pass_in_token)
+    appointmentid = get_appointment_internal_id(params[:id], business_entity, pass_in_token)
+
+    # 'appointments/:business_entity_id/:id/cancel_appointment.:format' => "appointments#cancel"
+    urlapptcancel = "#{API_SVC_URL}appointments/#{business_entity}/#{appointmentid}/cancel_appointment.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.post(urlapptcancel, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Candelation has Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Cancelation has Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    filtered_data = {}
+    filtered_data["id"] = parsed["external_id"]
+    filtered_data["start_time"] = parsed["start_time"]
+    filtered_data["cancellation_comments"] = parsed["cancellation_comments"]
+    filtered_data["updated_at"] = parsed["updated_at"]
+
+
+    body(filtered_data.to_json)
+
+    status HTTP_OK
+
+  end
+
 
 
   ##  get appointments by provider id and date
