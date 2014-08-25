@@ -213,6 +213,34 @@ class ApiService < Sinatra::Base
 
   end
 
+  # get Simple Charge Types
+  # parameters -> Token
+  # returns array of Simple Charge Types
+  get '/v1/simple_charge_types?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    #simple_charges_types/business_entity/:business_entity/get(.:format)
+    url = "#{API_SVC_URL}/simple_charges_types/business_entity/#{business_entity}/get.json?token=#{pass_in_token}"
+
+    begin
+      response = RestClient.get(url)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Simple Charge Type Look Up Failed- #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Simple Charge Type Look Up Failed- #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+      parsed = JSON.parse(response.body)
+      body(parsed.to_json)
+      status HTTP_OK
+  end
+
+
 
   #returns charges
 

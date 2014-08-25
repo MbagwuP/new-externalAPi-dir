@@ -1226,6 +1226,20 @@ describe "ApiService" do
 
     end
 
+    it "should return 200 if simple charges are found" do
+
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/simple_charge_types?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+
+    end
+
 
   end
 
