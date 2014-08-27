@@ -634,7 +634,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed.each { |x|
-      x['appointment_read_only']['id'] = x['appointment_read_only']['external_id']
+      x['id'] = x['external_id']
     }
 
     body(parsed.to_json)
