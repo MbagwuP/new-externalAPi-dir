@@ -49,7 +49,7 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v1/nature_of_visit?' do
+  get '/v1/nature_of_visits?' do
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
