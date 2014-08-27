@@ -1360,7 +1360,7 @@ describe "ApiService" do
       end
   end
 
-  describe "Should return list of locations" do
+  describe "Util Helper API Methods ::" do
 
     it "should return 403 if bad authentication token" do
       authorize 'interface@interface.com', 'welcome'
@@ -1384,6 +1384,19 @@ describe "ApiService" do
       get url
       last_response.status.should == 200
     end
+
+    it "should return 200 nature of visits found" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/nature_of_visits?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+    end
+
 
   end
 
