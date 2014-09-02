@@ -1111,7 +1111,50 @@ describe "ApiService" do
 
   end
 
+  describe "Simple Charge API ::" do
+    it "should return 201 if a simple charge is created" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/simple_charge/patient-'
+      url << '23d2fe12-3f54-487d-be78-b56d96694d82'
+      url << '/create?authentication='
+      url << var1
 
+      var1 = '  {
+      "debit": {
+      "entered_at": "",
+      "posting_date": "",
+      "effective_date": "",
+      "period_closed_date": "",
+      "amount": "123",
+      "balance": "0",
+      "value": "111",
+      "value_balance": "0",
+      "batch_number": "",
+      "date_first_statement": "",
+      "date_last_statement": "",
+      "statement_count": "",
+      "note_set_id": "",
+      "document_set_id": "",
+      "transaction_status": ""
+  },
+      "simple_charge": {
+      "provider_id": "57",
+      "location_id": "3695",
+      "units": "1",
+      "patient_payments_applied": "100",
+      "patient_adjustments_applied": "0",
+      "simple_charge_type": "25462",
+      "description": "Simple Charge Test"
+  }
+  }'
+      post  url, var1
+      last_response.status.should == 201
+
+    end
+  end
 
 
 
@@ -1180,6 +1223,20 @@ describe "ApiService" do
 
       get url
       last_response.status.should == 500
+
+    end
+
+    it "should return 200 if simple charges are found" do
+
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/simple_charge_types?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
 
     end
 
@@ -1303,7 +1360,7 @@ describe "ApiService" do
       end
   end
 
-  describe "Should return list of locations" do
+  describe "Util Helper API Methods ::" do
 
     it "should return 403 if bad authentication token" do
       authorize 'interface@interface.com', 'welcome'
@@ -1327,6 +1384,19 @@ describe "ApiService" do
       get url
       last_response.status.should == 200
     end
+
+    it "should return 200 nature of visits found" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/nature_of_visits?authentication='
+      url << var1
+
+      get url
+      last_response.status.should == 200
+    end
+
 
   end
 

@@ -49,7 +49,7 @@ class ApiService < Sinatra::Base
 
       audit_log(AUDIT_TYPE_TRANS, AUDIT_TYPE_TRANS, auditoptions)
 
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid request sent"}'
+      api_svc_halt HTTP_NOT_AUTHORIZED, '{"error":"Invalid request sent"}'
 
     end
 
