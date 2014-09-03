@@ -1294,4 +1294,35 @@ class ApiService < Sinatra::Base
   end
 
 
+  # Endpoint Created to return Appointment Templates by Location Per BE
+  # Parameters
+  #    None:
+  # https://api.carecloud.com/v1/appointment_templates?
+
+  #get notification callback ids
+  get '/v1/appointment_templates/find_by_location/:location_id?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urllocation = "#{API_SVC_URL}appointment_templates/find_by_location/#{params[:location_id]}/#{business_entity}.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.get(urllocation)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Template Look Up Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Template Look Up Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
+  end
+
+
+
 end
