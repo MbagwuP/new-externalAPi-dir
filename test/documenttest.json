@@ -3,6 +3,7 @@
         "name": "Lebum James",
         "format": "PDF",
         "description": "this is a Encounter DOCUMENT",
-        "source":"3"
+        "source":"3",
+        "tag_name":"Tag Name"
     }
 }

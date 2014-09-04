@@ -49,7 +49,7 @@ class ApiService < Sinatra::Base
 
       audit_log(AUDIT_TYPE_TRANS, AUDIT_TYPE_TRANS, auditoptions)
 
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid request sent"}'
+      api_svc_halt  HTTP_NOT_AUTHORIZED, '{"error":"Invalid request sent"}'
 
     end
 
@@ -57,11 +57,11 @@ class ApiService < Sinatra::Base
     urllabinbound << API_SVC_URL
     urllabinbound << 'labs/inboundrequest'
 
-    #LOG.debug("url for lab inbound request: " + urllabinbound)
+    LOG.debug("url for lab inbound request: " + urllabinbound)
 
     begin
 
-      #LOG.debug('Sending request to webservices')
+      LOG.debug('Sending request to webservices')
       resource = RestClient::Resource.new( urllabinbound, { :user => settings.labs_user, :password => settings.labs_pass})
       resp = resource.post(request_body.to_json, :content_type => :json)
 

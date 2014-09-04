@@ -303,6 +303,29 @@ class ApiService < Sinatra::Base
 
   end
 
+  def get_appointment_internal_id (id, business_entity_id, pass_in_token)
+
+    pass_in_token = pass_in_token
+    appointmentid = id
+    business_entity = business_entity_id
+    #http://devservices.carecloud.local/appointments/1/abcd93832/listbyexternalid.json?token=
+    urlappt = "#{API_SVC_URL}appointments/#{business_entity}/#{appointmentid}/listbyexternalid.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body).first
+    return parsed["appointment"]["id"]
+  end
+
   # Control the level of logging based on settings
   before do
     content_type 'application/json', :charset => 'utf-8'
@@ -369,6 +392,29 @@ class ApiService < Sinatra::Base
   end
 
 
+  def create_batch_error(options)
+    return if !settings.enable_auditing
+    begin
+      batch_error = CareCloud::BatchErrors.create(:statuscode => options[:status_code],
+                                                  :is_reprocess => options[:is_reprocess],
+                                                  :request_method => options[:request_method],
+                                                  :busines_entity_id => options[:busines_entity_id],
+                                                  :error_msg => options[:error_msg],
+                                                  :response_body => options[:response_body],
+                                                  :error_code => options[:error_code],
+                                                  :response_body => options[:response_body])
+    rescue Exception => e
+      err_msg = {}
+      err_msg["error"] = "Batch Error Failed! - #{e.message}"
+      LOG.error(err_msg)
+      return
+      # Don't think this should cause the API call to fail
+      # api_svc_halt HTTP_INTERNAL_ERROR, err_msg.to_json
+    end
+
+    LOG.debug "Audit Entry UUID:#{batch_error._id} Type:#{batch_error.type} Business_entity:#{batch_error.ip_address} Created:#{batch_error.created_at} Updated:#{batch_error.updated_at}"
+
+  end
 
   def api_svc_halt(statuscode, message="{}")
     # There is a bug in Sinatra in that repsonse.status is not set prior to after filter being called when a "halt" occurs
