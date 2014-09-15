@@ -39,7 +39,13 @@ class ApiService < Sinatra::Base
     #LOG.debug(params[:payload])
 
     # Validate the input parameters
-    request_body = JSON.parse(params[:metadata])
+    begin
+       request_body = JSON.parse(params[:metadata])
+    rescue
+       request_body = params[:metadata] if params[:metadata].kind_of?(Hash)
+       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Failed Parsing Request Body!"}' if request_body.blank?
+    end
+
 
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]

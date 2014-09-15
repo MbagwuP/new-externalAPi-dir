@@ -602,7 +602,7 @@ class ApiService < Sinatra::Base
       urlproblems << '/patients/'
       urlproblems << patient_id
       urlproblems << '/create/'
-      urlproblems << '/problems.json?token='
+      urlproblems << 'problems.json?token='
       urlproblems << CGI::escape(params[:authentication])
 
 

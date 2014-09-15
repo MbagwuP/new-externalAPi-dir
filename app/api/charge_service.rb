@@ -208,7 +208,7 @@ class ApiService < Sinatra::Base
     #return_value = parsed["id"]
     #body("Charge has been created, Confirmation Code: #{return_value}")
     parsed = JSON.parse(response.body)
-    body("A Charge has successfully posted for patient: #{params[:patient_id]}")
+    body("A Simple Charge has successfully posted for patient: #{params[:patient_id]}")
     status HTTP_CREATED
 
   end
