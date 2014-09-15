@@ -32,4 +32,6 @@ group :test, :development, :localhost do
   gem 'rspec', '~> 2.14'
   gem 'rack-test'
   gem 'tux'
+  gem 'pry'
+  gem 'shotgun'
 end

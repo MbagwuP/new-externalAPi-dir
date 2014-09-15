@@ -751,6 +751,40 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  get '/v2/practices/:practice_id/appointment/locations' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+    #LOG.debug(business_entity)
+
+    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
+    urllocation = ''
+    urllocation << API_SVC_URL
+    urllocation << 'public/businesses/'
+    urllocation << business_entity
+    urllocation << '/locations.json?token='
+    urllocation << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urllocation)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+
+    body(parsed.to_json)
+
+    status HTTP_OK
+
+  end
+
   #  get status information
   #
   # GET /v1/appointment/statuses?authentication=<authenticationToken>
@@ -858,6 +892,26 @@ class ApiService < Sinatra::Base
 
 
     #http://localservices.carecloud.local:3000/appointments/1/resources.json?token=
+    urlresource = ''
+    urlresource << API_SVC_URL
+    urlresource << 'appointments/'
+    urlresource << business_entity
+    urlresource << '/resources.json?token='
+    urlresource << CGI::escape(pass_in_token)
+
+    resp = get(urlresource)
+    body(resp.body)
+    status HTTP_OK
+
+  end
+
+  get '/v2/practices/:practice_id/appointment/resources' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+
+
     urlresource = ''
     urlresource << API_SVC_URL
     urlresource << 'appointments/'
