@@ -702,6 +702,47 @@ class ApiService < Sinatra::Base
 
   end
 
+  get '/v2/practices/:practice_id/appointment/listbyresource/:resource_id' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+    resource_id = params[:resource_id]
+    #LOG.debug(business_entity)
+    #
+    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << business_entity
+    urlappt << '/'
+    urlappt << resource_id
+    urlappt << '/listbyresource.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+
+    parsed = JSON.parse(response.body)
+    parsed.each { |x|
+      x['appointment']['id'] = x['appointment']['external_id']
+    }
+
+    body(parsed.to_json)
+
+    status HTTP_OK
+  end
+
 
   #  get location information
   #
