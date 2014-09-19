@@ -1262,7 +1262,8 @@ class ApiService < Sinatra::Base
       end
     end
     parsed = JSON.parse(response.body)
-    results = ("Patient Contacted has been set to '#{parsed['appointment']['patient_contacted']}' for Appointment: #{parsed['appointment']['external_id']}  ")
+    LOG.debug(parsed.inspect)
+    results = ("Patient Confirmation has been updated for Appointment: #{params['appointmentid']}")
     body(results)
     status HTTP_OK
   end
