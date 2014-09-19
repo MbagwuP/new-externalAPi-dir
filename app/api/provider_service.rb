@@ -113,5 +113,43 @@ class ApiService < Sinatra::Base
 
   end
 
+  get '/v2/practices/:practice_id/provider/list' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+
+    business_entity = params[:practice_id]
+    #LOG.debug(business_entity)
+
+    ## save the result of this to the cache
+    cache_key = "business-entity-" + business_entity + "-providers-" + CGI::unescape(pass_in_token)
+
+    #LOG.debug("cache key: " + cache_key)
+
+    #http://localservices.carecloud.local:3000/public/businesses/1/providers.json?token=
+    urlprovider = ''
+    urlprovider << API_SVC_URL
+    urlprovider << 'public/businesses/'
+    urlprovider << business_entity
+    urlprovider << '/providers.json?token='
+    urlprovider << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlprovider)
+    rescue => e
+      begin
+        errmsg = "Provider Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response.body)
+
+    status HTTP_OK
+
+  end
+
 
 end
