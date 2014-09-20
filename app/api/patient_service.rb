@@ -252,6 +252,62 @@ class ApiService < Sinatra::Base
 
   end
 
+
+  #  get patient by other means
+  #
+  # GET /v1/patients/othermeans/<id#>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :id-chart of legacy id     - the legacy patient identifier number
+  #    (ex: 1234)
+  #
+  # server action: Return patient information
+  # server response:
+  # --> if patient found: 200, with patient data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/patients/othermeans/:patientid?' do
+
+    patientid = params[:patientid]
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    business_entity = get_business_entity(pass_in_token)
+    LOG.debug(business_entity)
+    ## http://localservices.carecloud.local:3000/businesses/:business_entity_id/patients/:id/othermeans.json?token=
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/patients/'
+    urlpatient << patientid
+    urlpatient << '/othermeans.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+    begin
+      LOG.debug(urlpatient)
+
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data (by other means1) Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+
+    body(parsed.to_json)
+
+    status HTTP_OK
+
+  end
+
+
   #  get patient by provider id
   #
   # GET /v1/patients/provider/<providerid#>?authentication=<authenticationToken>
