@@ -1425,6 +1425,37 @@ class ApiService < Sinatra::Base
   end
 
 
+  get '/v2/practices/:practice_id/appointment_templates' do
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointment_templates/'
+    urlappt << business_entity
+    urlappt << '.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    LOG.debug("URL:" + urlappt)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Template Look Up Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Template Look Up Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
+  end
+
+
   # Endpoint Created to return Appointment Templates by Date Per BE
   # Parameters
   #    None:
