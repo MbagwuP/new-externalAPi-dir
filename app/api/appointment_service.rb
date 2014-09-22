@@ -861,6 +861,28 @@ class ApiService < Sinatra::Base
   end
 
 
+  get '/v2/practices/:practice_id/appointment/statuses' do
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+
+    #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
+    urllocation = ''
+    urllocation << API_SVC_URL
+    urllocation << 'appointments/'
+    urllocation << business_entity
+    urllocation << '/statuses.json?token='
+    urllocation << CGI::escape(pass_in_token)
+
+
+    resp = get(urllocation)
+    body(resp.body)
+    status HTTP_OK
+
+  end
+
+
   #  get All location information
   # Ellkay needed all locations id for mapping orginial v1 location endpoint did not return all locations
   #
