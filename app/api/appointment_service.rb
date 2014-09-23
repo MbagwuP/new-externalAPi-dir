@@ -366,6 +366,66 @@ class ApiService < Sinatra::Base
   end
 
 
+  get '/v2/practices/:practice_id/appointment/listbydate/:date/:providerid?' do
+
+    # Validate the input parameters
+    validate_param(params[:providerid], PROVIDER_REGEX, PROVIDER_MAX_LEN)
+    providerid = params[:providerid]
+
+    validate_param(params[:date], DATE_REGEX, DATE_MAX_LEN)
+    the_date = params[:date]
+
+    #format to what the devservice needs
+    providerid.slice!(/^provider-/)
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+
+    providerids = get_providers_by_business_entity(business_entity, pass_in_token)
+
+    ## validate the request based on token
+    check_for_valid_provider(providerids, providerid)
+
+    #http://devservices.carecloud.local/providers/2/appointments.json?token=&date=20130424
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'providers/'
+    urlappt << providerid
+    urlappt << '/appointments.json?token='
+    urlappt << CGI::escape(pass_in_token)
+    urlappt << '&date='
+    urlappt << the_date
+
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+
+    parsed = JSON.parse(response.body)
+
+    # iterate the array of appointments
+    parsed["appointments"].each { |x|
+      x['id'] = x['external_id']
+      x['patient']['id'] = x['patient']['external_id']
+    }
+
+    #LOG.debug(parsed)
+    body(parsed.to_json)
+
+    status HTTP_OK
+
+  end
+
+
   ##  get appointments by id
   #
   # GET /v1/appointment/listbyid/<appointmentid#>?authentication=<authenticationToken>
