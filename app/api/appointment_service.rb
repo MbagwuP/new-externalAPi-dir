@@ -103,8 +103,76 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
     status HTTP_CREATED
 
+  end
+
+
+  post '/v2/practices/:practice_id/appointment/create?' do
+
+    # Validate the input parameters
+    request_body = get_request_JSON
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = get_oauth_token
+    business_entity = params[:practice_id]
+
+    begin
+      providerid = request_body['appointment']['provider_id']
+      request_body['appointment'].delete('provider_id')
+    rescue
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
+    end
+
+    ## add business entity to the request
+    request_body['appointment']['business_entity_id'] = business_entity
+
+    ## validate the provider
+    providerids = get_providers_by_business_entity(business_entity, pass_in_token)
+
+    ## validate the request based on token
+    check_for_valid_provider(providerids, providerid)
+
+    ## retrieve the internal patient id for the request
+    patientid = ''
+    request_body['appointment']['patients'].each { |x|
+
+      patientid = x['id'].to_s
+
+      #LOG.debug(patientid)
+
+      patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
+
+      x['id'] = patientid
+
+      #LOG.debug(patientid)
+    }
+
+    #LOG.debug(request_body)
+
+    ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
+    urlapptcrt = ''
+    urlapptcrt << API_SVC_URL
+    urlapptcrt << 'providers/'
+    urlapptcrt << providerid.to_s
+    urlapptcrt << '/appointments.json?token='
+    urlapptcrt << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.post(urlapptcrt, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        errmsg = "Appointment Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse(response.body)
+    the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
+    body(the_response_hash.to_json)
+    status HTTP_CREATED
 
   end
+
 
   #  update an appointment for a patient
   #
