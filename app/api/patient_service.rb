@@ -1355,6 +1355,56 @@ class ApiService < Sinatra::Base
   end
 
 
+  post '/v2/practices/:practice_id/patients/search?' do
+
+    ## Validate the input parameters
+    request_body, pass_in_token, business_entity = get_request_JSON, get_oauth_token, params[:practice_id]
+
+    #TODO: Build search_limit and search_data variables smarter then whats there
+    search_data = ""
+    request_body['search'].each { |x|
+      search_data = search_data + x["term"] + " "
+      #LOG.debug(search_data)
+    }
+
+    search_limit = request_body['limit'].to_s
+    #TODO: add external id to patient search
+    #TODO: replace id with external id
+
+    #business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format  {:controller=>"patients", :action=>"search_by_business_entity"}
+    #http://localservices.carecloud.local:3000/businesses/1/patients/search.json?token=<token>&search=test%20smith&limit=50
+    #/businesses/:business_entity_id/patients/search.:format
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/patients/search.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+    urlpatient << '&limit='
+    urlpatient << search_limit
+    urlpatient << '&search='
+    urlpatient << CGI::escape(search_data)
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Search Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    returnedBody = JSON.parse(response.body)
+    returnedBody["patients"].each do |x|
+    x["id"] = x["external_id"]
+    end
+    body(returnedBody.to_json)
+    status HTTP_OK
+
+  end
+
 
   #  get gender information
   #
