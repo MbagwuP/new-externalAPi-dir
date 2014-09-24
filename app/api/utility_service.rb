@@ -102,7 +102,7 @@ class ApiService < Sinatra::Base
     nature_of_visit_url << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(nature_of_visit_url)
+      response = RestClient.get(nature_of_visit_url, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Nature Of Visit Look Up Failed - #{e.message}"

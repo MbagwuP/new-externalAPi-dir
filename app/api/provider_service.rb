@@ -135,7 +135,7 @@ class ApiService < Sinatra::Base
     urlprovider << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlprovider)
+      response = RestClient.get(urlprovider, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Provider Look Up Failed - #{e.message}"
