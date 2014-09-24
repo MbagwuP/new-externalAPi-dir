@@ -157,7 +157,8 @@ class ApiService < Sinatra::Base
     urlapptcrt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.post(urlapptcrt, request_body.to_json, :content_type => :json)
+      response = RestClient.post(urlapptcrt, request_body.to_json,
+        {:content_type => :json, :api_key => APP_API_KEY})
     rescue => e
       begin
         errmsg = "Appointment Creation Failed - #{e.message}"
@@ -465,9 +466,8 @@ class ApiService < Sinatra::Base
     urlappt << '&date='
     urlappt << the_date
 
-
     begin
-      response = RestClient.get(urlappt)
+      response = RestClient.get(urlappt, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -585,7 +585,7 @@ class ApiService < Sinatra::Base
     urlappt << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urlappt)
+      response = RestClient.get(urlappt, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -830,6 +830,7 @@ class ApiService < Sinatra::Base
 
   end
 
+
   get '/v2/practices/:practice_id/appointment/listbyresource/:resource_id' do
 
     ## token management. Need unencoded tokens!
@@ -848,9 +849,8 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyresource.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-
     begin
-      response = RestClient.get(urlappt)
+      response = RestClient.post(urlappt, nil, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -860,7 +860,6 @@ class ApiService < Sinatra::Base
       end
     end
 
-
     parsed = JSON.parse(response.body)
     parsed.each { |x|
       x['appointment']['id'] = x['appointment']['external_id']
@@ -869,6 +868,7 @@ class ApiService < Sinatra::Base
     body(parsed.to_json)
 
     status HTTP_OK
+
   end
 
 
@@ -936,7 +936,10 @@ class ApiService < Sinatra::Base
     urllocation << CGI::escape(pass_in_token)
 
     begin
-      response = RestClient.get(urllocation)
+      response = RestClient.get(urllocation, :api_key => APP_API_KEY)
+      parsed = JSON.parse(response.body)
+      body(parsed.to_json)
+      status HTTP_OK
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -946,13 +949,8 @@ class ApiService < Sinatra::Base
       end
     end
 
-    parsed = JSON.parse(response.body)
-
-    body(parsed.to_json)
-
-    status HTTP_OK
-
   end
+
 
   #  get status information
   #
@@ -1003,10 +1001,18 @@ class ApiService < Sinatra::Base
     urllocation << '/statuses.json?token='
     urllocation << CGI::escape(pass_in_token)
 
-
-    resp = get(urllocation)
-    body(resp.body)
-    status HTTP_OK
+    begin
+      resp = RestClient.get(urllocation, :api_key => APP_API_KEY)
+      body(resp.body)
+      status HTTP_OK
+    rescue => e
+      begin
+        errmsg = "Appointment Status Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
   end
 
@@ -1111,7 +1117,7 @@ class ApiService < Sinatra::Base
     urlresource << CGI::escape(pass_in_token)
 
     begin
-      resp = get(urlresource)
+      resp = RestClient.get(urlresource, :api_key => APP_API_KEY)
       body(resp.body)
       status HTTP_OK
     rescue => e
@@ -1576,7 +1582,7 @@ class ApiService < Sinatra::Base
     LOG.debug("URL:" + urlappt)
 
     begin
-      response = RestClient.get(urlappt)
+      response = RestClient.get(urlappt, :api_key => APP_API_KEY)
     rescue => e
       begin
         exception = error_handler_filter(e.response)
