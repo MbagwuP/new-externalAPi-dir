@@ -1110,9 +1110,18 @@ class ApiService < Sinatra::Base
     urlresource << '/resources.json?token='
     urlresource << CGI::escape(pass_in_token)
 
-    resp = get(urlresource)
-    body(resp.body)
-    status HTTP_OK
+    begin
+      resp = get(urlresource)
+      body(resp.body)
+      status HTTP_OK
+    rescue => e
+      begin
+        errmsg = "Resource Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
 
   end
 
