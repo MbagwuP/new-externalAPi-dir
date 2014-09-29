@@ -123,7 +123,6 @@ class ApiService < Sinatra::Base
     end
 
     ## add business entity to the request
-    request_body['appointment']['business_entity_id'] = business_entity
 
     ## validate the provider
     providerids = get_providers_by_business_entity(business_entity, pass_in_token)
@@ -147,6 +146,7 @@ class ApiService < Sinatra::Base
     }
 
     #LOG.debug(request_body)
+    request_body['business_entity_id'] = business_entity
 
     ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
     urlapptcrt = ''
