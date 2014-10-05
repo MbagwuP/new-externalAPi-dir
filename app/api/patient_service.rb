@@ -100,6 +100,26 @@ class ApiService < Sinatra::Base
     body(parsed.to_json); status HTTP_OK
   end
 
+  get '/v2/practices/:practice_id/patients/:patient_id' do
+    begin
+      access_token, patient_id, practice_id = get_oauth_token, params[:patient_id], params[:practice_id]
+      url   = "#{ApiService::API_SVC_URL}businesses/#{practice_id}/patients/#{patient_id}"
+      url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
+      url  += "?token=#{access_token}&do_full_export=true"
+      response = RestClient.get url, extapikey: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json); status HTTP_OK
+  end
+
   #Use to test for production
   #have to make sure master token likes the pharmacy additions
 
@@ -251,6 +271,62 @@ class ApiService < Sinatra::Base
     status HTTP_OK
 
   end
+
+
+  #  get patient by other means
+  #
+  # GET /v1/patients/othermeans/<id#>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :id-chart of legacy id     - the legacy patient identifier number
+  #    (ex: 1234)
+  #
+  # server action: Return patient information
+  # server response:
+  # --> if patient found: 200, with patient data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  get '/v1/patients/othermeans/:patientid?' do
+
+    patientid = params[:patientid]
+
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+
+    business_entity = get_business_entity(pass_in_token)
+    LOG.debug(business_entity)
+    ## http://localservices.carecloud.local:3000/businesses/:business_entity_id/patients/:id/othermeans.json?token=
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/patients/'
+    urlpatient << patientid
+    urlpatient << '/othermeans.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+
+    begin
+      LOG.debug(urlpatient)
+
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data (by other means1) Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+
+    body(parsed.to_json)
+
+    status HTTP_OK
+
+  end
+
 
   #  get patient by provider id
   #
@@ -441,6 +517,25 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
     status HTTP_CREATED
 
+  end
+
+  post '/v2/practices/:practice_id/patients/create' do
+    begin
+      request_body, access_token = get_request_JSON, get_oauth_token
+      url      = "#{ApiService::API_SVC_URL}businesses/#{params[:practice_id]}/patients.json?token=#{access_token}"
+      response = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Patient Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    returnedBody  = JSON.parse response.body
+    value         = returnedBody["patient"]["external_id"]
+    response_hash = { :patient => value.to_s }
+    body(response_hash.to_json); status HTTP_CREATED
   end
 
   post '/v2/patients/create' do
@@ -1298,6 +1393,56 @@ class ApiService < Sinatra::Base
 
   end
 
+
+  post '/v2/practices/:practice_id/patients/search?' do
+
+    ## Validate the input parameters
+    request_body, pass_in_token, business_entity = get_request_JSON, get_oauth_token, params[:practice_id]
+
+    #TODO: Build search_limit and search_data variables smarter then whats there
+    search_data = ""
+    request_body['search'].each { |x|
+      search_data = search_data + x["term"] + " "
+      #LOG.debug(search_data)
+    }
+
+    search_limit = request_body['limit'].to_s
+    #TODO: add external id to patient search
+    #TODO: replace id with external id
+
+    #business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format  {:controller=>"patients", :action=>"search_by_business_entity"}
+    #http://localservices.carecloud.local:3000/businesses/1/patients/search.json?token=<token>&search=test%20smith&limit=50
+    #/businesses/:business_entity_id/patients/search.:format
+    urlpatient = ''
+    urlpatient << API_SVC_URL
+    urlpatient << 'businesses/'
+    urlpatient << business_entity
+    urlpatient << '/patients/search.json?token='
+    urlpatient << CGI::escape(pass_in_token)
+    urlpatient << '&limit='
+    urlpatient << search_limit
+    urlpatient << '&search='
+    urlpatient << CGI::escape(search_data)
+
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Search Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    returnedBody = JSON.parse(response.body)
+    returnedBody["patients"].each do |x|
+    x["id"] = x["external_id"]
+    end
+    body(returnedBody.to_json)
+    status HTTP_OK
+
+  end
 
 
   #  get gender information
