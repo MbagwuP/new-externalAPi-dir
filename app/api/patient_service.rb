@@ -100,6 +100,26 @@ class ApiService < Sinatra::Base
     body(parsed.to_json); status HTTP_OK
   end
 
+  get '/v2/practices/:practice_id/patients/:patient_id' do
+    begin
+      access_token, patient_id, practice_id = get_oauth_token, params[:patient_id], params[:practice_id]
+      url   = "#{ApiService::API_SVC_URL}businesses/#{practice_id}/patients/#{patient_id}"
+      url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
+      url  += "?token=#{access_token}&do_full_export=true"
+      response = RestClient.get url, extapikey: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    parsed = JSON.parse(response.body)
+    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    body(parsed.to_json); status HTTP_OK
+  end
+
   #Use to test for production
   #have to make sure master token likes the pharmacy additions
 
@@ -535,6 +555,25 @@ class ApiService < Sinatra::Base
     body(the_response_hash.to_json)
     status HTTP_CREATED
 
+  end
+
+  post '/v2/practices/:practice_id/patients/create' do
+    begin
+      request_body, access_token = get_request_JSON, get_oauth_token
+      url      = "#{ApiService::API_SVC_URL}businesses/#{params[:practice_id]}/patients.json?token=#{access_token}"
+      response = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
+    rescue => e
+      begin
+        errmsg = "Patient Creation Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    returnedBody  = JSON.parse response.body
+    value         = returnedBody["patient"]["external_id"]
+    response_hash = { :patient => value.to_s }
+    body(response_hash.to_json); status HTTP_CREATED
   end
 
   post '/v2/patients/create' do
