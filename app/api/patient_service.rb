@@ -373,6 +373,44 @@ class ApiService < Sinatra::Base
   end
 
 
+  #  get patients by business_entity
+  #
+  # GET /v1/patients/provider/<providerid#>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :providerid     - the primary provider id
+  #    (ex: patient-1234)
+  #
+  # server action: Return patient information
+  # server response:
+  # --> if patient found: 200, with patient data payload
+  # --> if not authorized: 401
+  # --> if not found: 404
+  # --> if exception: 500
+  #'/patients/business_entity/:business_entity_id/get_all_patients.:format
+  get '/v1/findallpatients?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlpatient = "#{API_SVC_URL}patients/business_entity/#{business_entity}/get_all_patients.json?token=#{CGI::escape(pass_in_token)}"
+    LOG.debug(urlpatient)
+    begin
+      response = RestClient.get(urlpatient)
+    rescue => e
+      begin
+        errmsg = "Retrieving Patient Data Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    data = JSON.parse(response.body)
+    body(data.to_json)
+    status HTTP_OK
+ end
+
+
   #  create a patient
   #
   #  POST /v1/patients/create?authentication=<authenticationToken>
@@ -935,7 +973,7 @@ class ApiService < Sinatra::Base
       urlpatient << CGI::escape(params[:authentication])
 
       begin
-        response = RestClient.post(urlpatient, patient_json, :content_type => :json)
+        response = RestClient.post(urlpatient, patient_json.to_json, :content_type => :json)
         if response.code == 201
           success_value = JSON.parse(response.body)
           success.push("{Patient Name: #{success_value['patient']['first_name']} #{success_value['patient']['last_name']}, Patient ID: #{success_value['patient']['external_id']}}")
@@ -967,7 +1005,7 @@ class ApiService < Sinatra::Base
         urlpatient << CGI::escape(params[:authentication])
 
         begin
-          response = RestClient.put(urlpatient, insurance_json, :content_type => :json)
+          response = RestClient.put(urlpatient, insurance_json.to_json, :content_type => :json)
           if response.code == 201
             success_value = JSON.parse(response.body)
             success.push("{Patient Name: #{success_value['patient']['first_name']} #{success_value['patient']['last_name']}, Patient ID: #{success_value['patient']['external_id']}}")
@@ -1000,6 +1038,9 @@ class ApiService < Sinatra::Base
         end
       end
     end
+    value_hash = {:errors => errors.length.to_s, :success => success.length.to_s, :error_data => errors, :patients_processed => success }
+    body(value_hash.to_json)
+    status HTTP_OK
   end
 
   #  update a patient
