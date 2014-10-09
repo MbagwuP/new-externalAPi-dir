@@ -1697,6 +1697,34 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  # Endpoint Created to return nature of visits tied to an Appointment Templates Id
+  # Parameters
+  #    None:
+  # https://api.carecloud.com/v1/appointment_templates?
+
+  #get notification callback ids
+  get '/v1/appointment_templates/find_nature_of_visit/:appointment_template_id?' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+
+    urlresource = "#{API_SVC_URL}appointment_templates/find_nature_of_visit/#{params[:appointment_template_id]}/#{business_entity}.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.get(urlresource)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Template Look Up Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Template Look Up Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    body(response)
+    status HTTP_OK
+  end
 
 
 
