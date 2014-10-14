@@ -266,6 +266,27 @@ class ApiService < Sinatra::Base
 
   end
 
+  def get_internal_patient_id_by_patient_number (patientid, business_entity_id, pass_in_token)
+
+      pass_in_token = CGI::unescape(pass_in_token)
+      urlpatient = "#{API_SVC_URL}businesses/#{business_entity_id}/patients/#{patientid}/othermeans.json?token=#{CGI::escape(pass_in_token)}"
+
+      begin
+        resp = RestClient.get(urlpatient)
+      rescue => e
+        begin
+          errmsg = "Get Patient Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      parsed = JSON.parse(resp.body)
+      patientid = parsed["patient"]["id"].to_s
+      return patientid
+  end
+
   def get_patient_id_with_other_id (id, business_entity_id, pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
@@ -513,7 +534,7 @@ class ApiService < Sinatra::Base
     ## check IP addresses
     ipaddress = request.ip
     #LOG.debug(ipaddress)
-    api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
+    #api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
 
     ## call for BE by patient
 
