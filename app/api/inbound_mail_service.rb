@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
         parsed = JSON.parse(resp.body)
         token = CGI::unescape(parsed['authtoken'])
         LOG.debug "Auth token:#{token}"
-        
+
         begin
         
             LOG.debug "To: #{params['to']} CC: #{params['cc']} From: #{params['from']} Subject: #{params['subject']}"
@@ -63,17 +63,24 @@ class ApiService < Sinatra::Base
                             # Upload to DMS
                             response = dms_upload(temp_file, token)
                             docID = response['nodeid']
+                            page_count = response['metadata']['pages']
                             LOG.debug "DMS handler id: #{docID}"
 
                             # Create a task in the respective inbox
                             # Use "from" field to differeniate Inbound Fax vs other documents
-                            if JSON.parse(params['envelope'])['from'][0] == 'faxserver@carecloud.com'
-                                docType = 'Fax'
-                            else
-                                docType = 'Document'
-                            end
-                            taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], docID, params['subject'], params['text'], token, docType)
-                            LOG.debug "Task id: #{taskID}"
+                            #if JSON.parse(params['envelope'])['from'][0] == 'faxserver@carecloud.com'
+                            #    docType = 'Fax'
+                            #else
+                            #    docType = 'Document'
+                            #end
+                            #taskID = add_to_user_inbox(user['userID'], user['business_entity_id'], docID, params['subject'], params['text'], token, docType)
+                            #LOG.debug "Task id: #{taskID}"
+
+                            from = JSON.parse(params['envelope'])['from'][0]
+                            to = recipient
+                            subject = params['subject']
+
+                            add_to_inbound_documents(docID, from, to, subject, page_count, token)
                         end
 
                     rescue Exception => e
@@ -132,6 +139,21 @@ class ApiService < Sinatra::Base
             LOG.error "Error Creating Inbox task: #{e.message}"
             return nil
         end
+    end
+
+    ## Create an Inbox task
+    def add_to_inbound_documents( doc_id, from, to, subject, page_count, token)
+      begin
+        doc =  {:from => from, :to => to, :subject => subject, :page_count => page_count, :document_handler => doc_id}
+        request_body = {:doc => doc}
+        LOG.debug ""
+        response = RestClient.post("#{API_SVC_URL}/documents/inbound.json?token=#{token}", request_body.to_json, :content_type => :json)
+        parsed = JSON.parse(response.body)
+        return parsed
+      rescue Exception => e
+        LOG.error "Error Creating Inbox task: #{e.message}"
+        return nil
+      end
     end
 
 end
