@@ -17,9 +17,9 @@ class ApiService < Sinatra::Base
   # {
   #     "appointment": {
   #     "appointment_status_id": "1",
-  #     "end_time": "2014-11-17 10:00:00 -05:00",
+  #     "end_time": "2014-01-17 10:00:00 -05:00",
   #     "location_id": "3695",
-  #     "nature_of_visit_id": "15931",
+  #     "nature_of_visit_id": "25470",
   #     "patients": [
   #     {
   #         "id": "d380643f-bbd1-4ee1-a3fe-9728e654aeee",
@@ -27,8 +27,8 @@ class ApiService < Sinatra::Base
   # }
   # ],
   #     "provider_id": "3538",
-  #     "resource_id": "4486",
-  #     "start_time": "2014-03-17 09:00:00 -05:00"
+  #     "resource_id": "8088",
+  #     "start_time": "2014-01-17 09:00:00 -05:00"
   # }
   # }
   #
@@ -94,9 +94,11 @@ class ApiService < Sinatra::Base
       response = RestClient.post(urlapptcrt, request_body.to_json, :content_type => :json)
     rescue => e
       begin
-        errmsg = "Appointment Creation Failed - #{e.message}"
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Failed - #{exception}"
         api_svc_halt e.http_code, errmsg
       rescue
+        errmsg = "Appointment Failed - #{e.message}"
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
