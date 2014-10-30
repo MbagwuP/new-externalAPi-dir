@@ -162,8 +162,13 @@ class ApiService < Sinatra::Base
 
     begin
       @current_business_entity = settings.cache.fetch(cache_key, 54000) do
-        session = CCAuth::OAuth2.new.authorization(oauth_token)
-        return session[:business_entity_id].to_s
+        begin
+          session = CCAuth::OAuth2.new.authorization(oauth_token)
+          return session[:business_entity_id].to_s
+        rescue CCAuth::Error::ResponseError => e
+          api_svc_halt e.code, e.message
+          return nil
+        end
       end
     rescue Dalli::DalliError
       LOG.warn("cannot reach cache store")
