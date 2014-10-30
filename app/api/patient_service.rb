@@ -543,10 +543,12 @@ class ApiService < Sinatra::Base
       response     = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
     rescue => e
       begin
-        errmsg = "Patient Creation Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
+          exception = error_handler_filter(e.response)
+          errmsg = "Patient Creation Failed - #{exception}"
+          api_svc_halt e.http_code, errmsg
       rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+          errmsg = "#{e.message}"
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
     returnedBody  = JSON.parse response.body
