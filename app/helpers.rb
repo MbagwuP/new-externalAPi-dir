@@ -35,6 +35,18 @@ class ApiService < Sinatra::Base
     end
   end
 
+  def escaped_oauth_token
+    CGI::escape oauth_token
+  end
+
+  def oauth_token
+    return @oauth_token if defined?(@oauth_token) # caching
+    if request.env['HTTP_AUTHORIZATION']
+      @oauth_token = CGI.unescape request.env["HTTP_AUTHORIZATION"].gsub('Bearer','').gsub(' ','')
+    end
+    @oauth_token
+  end
+
   def base_url
     # @base_url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
     @base_url ||= "https://#{request.env['HTTP_HOST']}"
@@ -142,6 +154,23 @@ class ApiService < Sinatra::Base
 
     end
 
+  end
+
+  def current_business_entity
+    return @current_business_entity if defined?(@current_business_entity) # caching
+    cache_key = "business-entity-guid-" + oauth_token
+
+    begin
+      @current_business_entity = settings.cache.fetch(cache_key, 54000) do
+        session = CCAuth::OAuth2.new.authorization(oauth_token)
+        session[:business_entity_id].to_s
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @current_business_entity
   end
 
   def get_providers_by_business_entity(business_entity_id, pass_in_token)

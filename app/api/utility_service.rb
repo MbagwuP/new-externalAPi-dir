@@ -88,18 +88,14 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/practices/:practice_id/nature_of_visits?' do
-
-    ## token management. Need unencoded tokens!
-    pass_in_token = get_oauth_token
-    business_entity = params[:practice_id]
+  get '/v2/nature_of_visits?' do
 
     nature_of_visit_url = ''
     nature_of_visit_url << API_SVC_URL
     nature_of_visit_url << 'nature_of_visits/list_by_business_entity/'
-    nature_of_visit_url << business_entity
+    nature_of_visit_url << current_business_entity
     nature_of_visit_url << '.json?token='
-    nature_of_visit_url << CGI::escape(pass_in_token)
+    nature_of_visit_url << escaped_oauth_token
 
     begin
       response = RestClient.get(nature_of_visit_url, :api_key => APP_API_KEY)
