@@ -152,6 +152,8 @@ class ApiService < Sinatra::Base
     urlapptcrt << providerid.to_s
     urlapptcrt << '/appointments.json?token='
     urlapptcrt << escaped_oauth_token
+    urlapptcrt << '&business_entity_id='
+    urlapptcrt << current_business_entity
 
     begin
       response = RestClient.post(urlapptcrt, request_body.to_json,
@@ -970,6 +972,70 @@ class ApiService < Sinatra::Base
     body(data.to_json)
     status HTTP_OK
 
+  end
+
+  get '/v2/appointmentblockouts/listbyresourceanddate/:resourceid/date/:date?' do
+    resourceid = params[:resourceid]
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << current_business_entity
+    urlappt << '/'
+    urlappt << resourceid
+    urlappt << '/'
+    urlappt << params[:date]
+    urlappt << '/list_by_resource.json?token='
+    urlappt << escaped_oauth_token
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    data = Array.new
+    parsed = Hash.new
+    parsed['block_outs'] = JSON.parse(response.body)
+    data << parsed
+    if params[:include_appointments] == true or params[:include_appointments] == 'true'
+
+      urlappt = ''
+      urlappt << API_SVC_URL
+      urlappt << 'appointments/'
+      urlappt << current_business_entity
+      urlappt << '/'
+      urlappt << resourceid
+      urlappt << '/'
+      urlappt << params[:date]
+      urlappt << '/listbyresourceanddate.json?token='
+      urlappt << escaped_oauth_token
+
+      begin
+        response = RestClient.get(urlappt)
+      rescue => e
+        begin
+          errmsg = "Appointment Look Up Failed - #{e.message}"
+          api_svc_halt e.http_code, errmsg
+        rescue
+          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        end
+      end
+
+      parsed2 = JSON.parse(response.body)
+      parsed2.each { |x|
+        x['appointment']['id'] = x['appointment']['external_id']
+      }
+      data << parsed2
+    end
+
+    body(data.to_json)
+    status HTTP_OK
   end
 
   get '/v2/appointment/listbyresource/:resource_id' do
