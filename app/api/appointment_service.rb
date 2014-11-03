@@ -152,6 +152,8 @@ class ApiService < Sinatra::Base
     urlapptcrt << providerid.to_s
     urlapptcrt << '/appointments.json?token='
     urlapptcrt << escaped_oauth_token
+    urlapptcrt << '&business_entity_id='
+    urlapptcrt << current_business_entity
 
     begin
       response = RestClient.post(urlapptcrt, request_body.to_json,
