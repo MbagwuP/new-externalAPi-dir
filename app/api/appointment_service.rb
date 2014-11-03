@@ -1198,17 +1198,14 @@ class ApiService < Sinatra::Base
     urllocation << escaped_oauth_token
 
     begin
-      require 'pry'; binding.pry
       resp = RestClient.get(urllocation, :api_key => APP_API_KEY)
       body(resp.body)
       status HTTP_OK
     rescue => e
       begin
-        require 'pry'; binding.pry
         errmsg = "Appointment Status Look Up Failed - #{e.message}"
         api_svc_halt e.http_code, errmsg
       rescue
-        require 'pry'; binding.pry
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
