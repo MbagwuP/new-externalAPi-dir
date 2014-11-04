@@ -160,7 +160,8 @@ class ApiService < Sinatra::Base
         {:content_type => :json, :api_key => APP_API_KEY})
     rescue => e
       begin
-        errmsg = "Appointment Creation Failed - #{e.message}"
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Creation Failed - #{exception}"
         api_svc_halt e.http_code, errmsg
       rescue
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
