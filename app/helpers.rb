@@ -541,6 +541,7 @@ class ApiService < Sinatra::Base
     error_string = ''
     begin
       errors = JSON.parse(e.response.body) if e.response.body.length < 300
+      return 'Internal Server Error' if errors['error']['error_code'] == 500
       if errors['error']['details'].is_a? Array
         errors['error']['details'].each do |exc|
           error_string << exc['message'] + ','
