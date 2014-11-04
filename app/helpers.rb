@@ -43,6 +43,8 @@ class ApiService < Sinatra::Base
     return @oauth_token if defined?(@oauth_token) # caching
     if request.env['HTTP_AUTHORIZATION']
       @oauth_token = CGI.unescape request.env["HTTP_AUTHORIZATION"].gsub('Bearer','').gsub(' ','')
+    else
+      api_svc_halt HTTP_NOT_AUTHORIZED, '{"error": "Access token is required"}'
     end
     @oauth_token
   end
