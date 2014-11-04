@@ -43,6 +43,8 @@ class ApiService < Sinatra::Base
     return @oauth_token if defined?(@oauth_token) # caching
     if request.env['HTTP_AUTHORIZATION']
       @oauth_token = CGI.unescape request.env["HTTP_AUTHORIZATION"].gsub('Bearer','').gsub(' ','')
+    else
+      api_svc_halt HTTP_NOT_AUTHORIZED, '{"error": "Access token is required"}'
     end
     @oauth_token
   end
@@ -539,6 +541,7 @@ class ApiService < Sinatra::Base
     error_string = ''
     begin
       errors = JSON.parse(e.response.body) if e.response.body.length < 300
+      return 'Internal Server Error' if errors['error']['error_code'] == 500
       if errors['error']['details'].is_a? Array
         errors['error']['details'].each do |exc|
           error_string << exc['message'] + ','
