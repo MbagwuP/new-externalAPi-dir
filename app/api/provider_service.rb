@@ -113,16 +113,10 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/practices/:practice_id/provider/list' do
-
-    ## token management. Need unencoded tokens!
-    pass_in_token = get_oauth_token
-
-    business_entity = params[:practice_id]
-    #LOG.debug(business_entity)
+  get '/v2/provider/list' do
 
     ## save the result of this to the cache
-    cache_key = "business-entity-" + business_entity + "-providers-" + CGI::unescape(pass_in_token)
+    cache_key = "business-entity-" + current_business_entity + "-providers-" + oauth_token
 
     #LOG.debug("cache key: " + cache_key)
 
@@ -130,9 +124,9 @@ class ApiService < Sinatra::Base
     urlprovider = ''
     urlprovider << API_SVC_URL
     urlprovider << 'public/businesses/'
-    urlprovider << business_entity
+    urlprovider << current_business_entity
     urlprovider << '/providers.json?token='
-    urlprovider << CGI::escape(pass_in_token)
+    urlprovider << escaped_oauth_token
 
     begin
       response = RestClient.get(urlprovider, :api_key => APP_API_KEY)

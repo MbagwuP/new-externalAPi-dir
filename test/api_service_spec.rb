@@ -268,6 +268,152 @@ describe "ApiService" do
       last_response.status.should == 200
     end
 
+
+    it "should return 400 if request is in invalid provider" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment/create?authentication='
+      url << var1
+
+      var1 = '{
+        "appointment": {
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
+            "location_id": 2,
+            "nature_of_visit_id": 25470,
+            "provider_id": 222222222222222,
+            "resource_id": "8088",
+            "patients": [
+                {
+                    "id":  "d380643f-bbd1-4ee1-a3fe-9728e654aeee",
+                    "comments": "patienthasheadache"
+                }]
+        }
+   }'
+
+
+      post url, var1
+      last_response.body.should match(/Invalid provider presented/)
+    end
+
+    it "should return 400 if request is in invalid location" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment/create?authentication='
+      url << var1
+
+      var1 = '{
+        "appointment": {
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
+            "location_id": 12,
+            "nature_of_visit_id": 25470,
+            "provider_id": 3538,
+            "resource_id": "8088",
+            "patients": [
+                {
+                    "id":  "d380643f-bbd1-4ee1-a3fe-9728e654aeee",
+                    "comments": "patienthasheadache"
+                }]
+        }
+   }'
+      post url, var1
+      last_response.body.should match(/Location Provided Does Not Match Entity/)
+    end
+
+
+
+    it "should return 400 if request is in invalid nature_of_visit" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment/create?authentication='
+      url << var1
+
+      var1 = '{
+        "appointment": {
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
+            "location_id": 3695,
+            "nature_of_visit_id": 21212,
+            "provider_id": 3538,
+            "resource_id": "8088",
+            "patients": [
+                {
+                    "id":  "d380643f-bbd1-4ee1-a3fe-9728e654aeee",
+                    "comments": "patienthasheadache"
+                }]
+        }
+   }'
+
+
+      post url, var1
+      last_response.body.should match(/Nature of Visit Provided Does Not Match Entity/)
+    end
+
+
+    it "should return 400 if request is in invalid resource" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment/create?authentication='
+      url << var1
+
+      var1 = '{
+        "appointment": {
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
+            "location_id": 3695,
+            "resource_id": 134,
+            "nature_of_visit_id": 25470,
+            "provider_id": 3538,
+            "patients": [
+                {
+                    "id": "d380643f-bbd1-4ee1-a3fe-9728e654aeee",
+                    "comments": "patienthasheadache"
+                }]
+        }
+   }'
+
+
+      post url, var1
+      last_response.body.should match(/Resource Provided Does Not Match Entity/)
+    end
+
+    it "should return 400 if request is in invalid patient" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/appointment/create?authentication='
+      url << var1
+
+      var1 = '{
+        "appointment": {
+            "start_time":"'+start_date.to_s+'",
+            "end_time":"'+end_date.to_s+'",
+            "location_id": 1212,
+            "resource_id": 121122,
+            "nature_of_visit_id": 2,
+            "provider_id": 3538,
+            "resource_id": "121313",
+            "patients": [
+                {
+                    "id": 123,
+                    "comments": "patienthasheadache"
+                }]
+        }
+   }'
+
+
+      post url, var1
+      last_response.body.should match(/Patient Provided Does Not Match Entity/)
+    end
+
+
+
+
     it "should return 400 if request is in invalid provider" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
@@ -284,7 +430,7 @@ describe "ApiService" do
             "provider_id": 222222222222222,
             "patients": [
                 {
-                    "id": 1819622,
+                    "id": 1,
                     "comments": "patienthasheadache"
                 }]
         }
