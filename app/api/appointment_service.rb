@@ -286,6 +286,8 @@ class ApiService < Sinatra::Base
     urlapptdel << params[:appointmentid]
     urlapptdel << '.json?token='
     urlapptdel << CGI::escape(pass_in_token)
+    urlapptdel << '&business_entity_id='
+    urlapptdel << business_entity
 
     begin
       response = RestClient.delete(urlapptdel)
