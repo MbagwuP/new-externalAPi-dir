@@ -309,6 +309,35 @@ class ApiService < Sinatra::Base
 
   end
 
+  # Endpoint to change appointment status to checked-in
+  # Parameters
+  # :id => Appointment ID
+  #http://localservices.carecloud.local:8888/v1/appointment/032ea3e9-fc99-4c1c-8d85-99b4142aec9c/checkin?authentication=AQIC5wM2LY4Sfcwvx_K-0r2wtxhPOGliZDxq6y11p1osMoI.*AAJTSQACMDE.*
+  put '/v1/appointment/:id/checkin?' do
+    request_body = get_request_JSON
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    appointmentid = get_appointment_internal_id(params[:id], business_entity, pass_in_token)
+
+    # 'appointments/:business_entity_id/:id/cancel_appointment.:format' => "appointments#cancel"
+    urlapptcheckin = "#{API_SVC_URL}appointments/#{business_entity}/#{appointmentid}/checkin.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.put(urlapptcheckin, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Check In has Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Check In has Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    body('{"Update":"Patient has been checked in"}')
+    status HTTP_OK
+
+  end
 
 
   # Endpoint to cancel Appointments
@@ -831,7 +860,7 @@ class ApiService < Sinatra::Base
   end
 
   ##  get appointments by resource id
-  # Test - URL :: /v1/appointments/listbyresourceanddate/7/date/20140421?authentication=
+  # Test - URL :: /v1/appointments/listbyresource/7/date/20140421?authentication=
   #
   # GET /v1/appointments/listbyresource/<resource>?authentication=<authenticationToken>
   #
@@ -1894,6 +1923,7 @@ class ApiService < Sinatra::Base
   # Parameters
   #    None:
   # https://api.carecloud.com/v1/appointment_templates?
+  # /v1/appointment_templates/find_nature_of_visit/37566?
 
   #get notification callback ids
   get '/v1/appointment_templates/find_nature_of_visit/:appointment_template_id?' do
