@@ -128,21 +128,6 @@ class ApiService < Sinatra::Base
     ## validate the request based on token
     check_for_valid_provider(providerids, providerid)
 
-    ## retrieve the internal patient id for the request
-    patientid = ''
-    request_body['appointment']['patients'].each { |x|
-
-      patientid = x['id'].to_s
-
-      #LOG.debug(patientid)
-
-      patientid = get_internal_patient_id(patientid, current_business_entity, oauth_token)
-
-      x['id'] = patientid
-
-      #LOG.debug(patientid)
-    }
-
     #LOG.debug(request_body)
 
     ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
