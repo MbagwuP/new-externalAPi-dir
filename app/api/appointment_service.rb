@@ -1108,6 +1108,58 @@ class ApiService < Sinatra::Base
 
   end
 
+  ##  get appointments_blockouts by location id
+  # Test - URL :: /v1/appointmentblockouts/listbylocationanddate/33/date/20100906?authentication=
+  #
+  # GET /v1/appointment/listbyresource/<resource>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :resource     - the resource identifier number
+  #    (ex: 1234)
+  #
+  # server action: Return appointment information for selected resource
+  # server response:
+  # --> if data found: 200, with array of appointment data in response body
+  # --> if not authorized: 401
+  # --> if provider not found: 404
+  # --> if exception: 500
+  get '/v1/appointmentblockouts/listbylocationanddate/:locationid/date/:date?' do
+    # Validate the input parameters
+    locationid = params[:locationid]
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    ##  get providers by business entity - check to make sure they are legit in pass in
+    business_entity = get_business_entity(pass_in_token)
+
+    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << business_entity
+    urlappt << '/'
+    urlappt << locationid
+    urlappt << '/'
+    urlappt << params[:date]
+    urlappt << '/list_by_location.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    body(parsed.to_json)
+    status HTTP_OK
+
+  end
 
   #  get location information
   #
@@ -1679,7 +1731,7 @@ class ApiService < Sinatra::Base
   #location_id - location of appointment
   #resource_id - resource
 
-  get '/v1/schedule/:date/:appointment_status_id/:location_id/:resource_id?' do
+  get '/v1/schedule/:date/getblockouts/:location_id/:resource_id?' do
 
     appt_id = params[:appointmentid]
     pass_in_token = CGI::unescape(params[:authentication])
