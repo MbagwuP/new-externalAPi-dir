@@ -1,0 +1,244 @@
+/provider/list:
+  get:
+    summary: Provider
+    description: |
+      List Providers for a Practice
+    parameters:
+    tags:
+      - Provider
+    responses:
+      200:
+        description: List of Providers for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Provider
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/locations:
+  get:
+    summary: Appointment Location
+    description: |
+      List Locations for a Practice
+    parameters:
+    tags:
+      - Location
+    responses:
+      200:
+        description: List of Locations for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Location
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/nature_of_visits:
+  get:
+    summary: Nature of Visit
+    description: |
+      List Nature of Visits for a Practice
+    parameters:
+    tags:
+      - Nature of Visit
+    responses:
+      200:
+        description: List of Nature of Visits for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: NatureOfVisit
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/patients/{patient_id}:
+  get:
+    summary: Patient
+    description: |
+      Show a patient by its ID
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the Patient.
+        required: true
+        type: string
+        format: double
+    tags:
+      - Patient
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          $ref: Patient
+          #type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/patient/create:
+  post:
+    summary: Patient
+    description: |
+      Create a Patient
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the Patient.
+        required: true
+        type: string
+        format: double
+    tags:
+      - Patient
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          $ref: Patient
+          #type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/patients/search:
+  post:
+    summary: Patient
+    description: |
+      Search for a Patient
+    parameters:
+      - name: query
+        in: body
+        description: Search Query.
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: PatientSearchRequest
+    tags:
+      - Patient
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          #$ref: PatientSearch
+          type: array
+          items:
+            $ref: PatientSearch
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/create:
+  post:
+    summary: Appointment
+    description: |
+      Create an Appointment
+    parameters:
+      - name: appointment
+        in: body
+        description: Appointment Information.
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          $ref: Patient
+          #type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/listbydate/{date}/provider-{provider_id}:
+  get:
+    summary: Appointment
+    description: |
+      List Appointments for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          $ref: Patient
+          #type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/statuses:
+  get:
+    summary: Appointment Status
+    description: |
+      List Appointment Statuses for a Practice
+    parameters:
+    tags:
+      - Appointment Status
+    responses:
+      200:
+        description: List of Appointment Statuses.
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentStatus
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/listbyresource/{resource_id}:
+  get:
+    summary: Appointment
+    description: |
+      List Appointments by Resource
+    parameters:
+      - name: resource_id
+        in: path
+        description: GUID of the Resource.
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment
+    responses:
+      200:
+        description: Details about a Patient.
+        schema:
+          #$ref: AppointmentsByResource
+          type: array
+          items:
+            $ref: AppointmentsByResource
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error

@@ -1,0 +1,253 @@
+Patient:
+  properties:
+    id:
+      type: string
+    first_name:
+      type: string
+    last_name:
+      type: string
+    insurance:
+      $ref: Insurance
+Insurance:
+  properties:
+    company:
+      type: string
+    premium:
+      type: string
+Provider:
+  properties:
+    id:
+      type: string
+    npi:
+      type: string
+    name:
+      type: string
+Location:
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    is_visible_appointment_scheduler:
+      type: string
+NatureOfVisit:
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+Product:
+  properties:
+    product_id:
+      type: string
+      description: Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles.
+    description:
+      type: string
+      description: Description of product.
+    display_name:
+      type: string
+      description: Display name of product.
+    capacity:
+      type: string
+      description: Capacity of product. For example, 4 people.
+    image:
+      type: string
+      description: Image URL representing the product.
+PriceEstimate:
+  properties:
+    product_id:
+      type: string
+      description: Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles
+    currency_code:
+      type: string
+      description: "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
+    display_name:
+      type: string
+      description: Display name of product.
+    estimate:
+      type: string
+      description: Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or "Metered" for TAXI.
+    low_estimate:
+      type: number
+      description: Lower bound of the estimated price.
+    high_estimate:
+      type: number
+      description: Upper bound of the estimated price.
+    surge_multiplier:
+      type: number
+      description: Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier.
+Profile:
+  properties:
+    first_name:
+      type: string
+      description: First name of the Uber user.
+    last_name:
+      type: string
+      description: Last name of the Uber user.
+    email:
+      type: string
+      description: Email address of the Uber user
+    picture:
+      type: string
+      description: Image URL of the Uber user.
+    promo_code:
+      type: string
+      description: Promo code of the Uber user.
+AppointmentStatus:
+  properties:
+    appointment_status:
+      $ref: AppointmentStatusInner
+AppointmentStatusInner:
+  properties:
+    code:
+      type: string
+    id:
+      type: string
+    name:
+      type: string
+PatientSearch:
+  properties:
+    patients:
+      $ref: PatientSearchInner
+PatientSearchInner:
+  properties:
+    id:
+      type: string
+    external_id:
+      type: string
+    first_name:
+      type: string
+    last_name:
+      type: string
+    middle_initial:
+      type: string
+    name:
+      type: string
+    dob:
+      type: string
+    account_balance:
+      type: string
+    chart_number:
+      type: string
+    last_seen_date:
+      type: string
+    gender:
+      type: string
+    gender_id:
+      type: string
+    primary_location_id:
+      type: string
+    photo:
+      type: string
+AppointmentsByResource:
+  properties:
+    appointment:
+      $ref: AppointmentsByResourceInner
+AppointmentsByResourceInner:
+  properties:
+    admit_diagnosis_id:
+      type: string
+    appointment_cancellation_reason_id:
+      type: string
+    appointment_status_id:
+      type: string
+    arrived_at:
+      type: string
+    business_entity_id:
+      type: string
+    cancellation_comments:
+      type: string
+    cancellation_details:
+      type: string
+    confirmation_details:
+      type: string
+    contrast:
+      type: string
+    created_at:
+      type: string
+    created_by:
+      type: string
+    departed_at:
+      type: string
+    document_set_id:
+      type: string
+    end_time:
+      type: string
+    exam_room_id:
+      type: string
+    external_id:
+      type: string
+    id:
+      type: string
+    is_confirmed:
+      type: string
+    is_force_overbook:
+      type: string
+    laterality:
+      type: string
+    location_id:
+      type: string
+    nature_of_visit_id:
+      type: string
+    note_set_id:
+      type: string
+    patient_contacted:
+      type: string
+    reason_for_visit:
+      type: string
+    recurrence_id:
+      type: string
+    recurrence_index:
+      type: string
+    resource_id:
+      type: string
+    start_time:
+      type: string
+    task_id:
+      type: string
+    updated_at:
+      type: string
+    updated_by:
+      type: string
+PatientSearchRequest:
+  properties:
+    limit: 5
+    search:
+      $ref: PatientSearchRequestInner
+PatientSearchRequestInner:
+  properties:
+    term:
+      type: string
+Activity:
+  properties:
+    uuid:
+      type: string
+      description: Unique identifier for the activity
+Activities:
+  properties:
+    offset:
+      type: integer
+      format: int32
+      description: Position in pagination.
+    limit:
+      type: integer
+      format: int32
+      description: Number of items to retrieve (100 max).
+    count:
+      type: integer
+      format: int32
+      description: Total number of items available.
+    history:
+      type: array
+      $ref: Activity
+Error:
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string
+    fields:
+      type: string
