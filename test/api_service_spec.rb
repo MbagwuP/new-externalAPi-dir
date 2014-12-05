@@ -262,7 +262,7 @@ describe "ApiService" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
-      url = '/v1/appointment/listbyresource/1?authentication='
+      url = '/v1/appointment/listbyresource/11?authentication='
       url << var1
       get url
       last_response.status.should == 200
@@ -1389,6 +1389,172 @@ describe "ApiService" do
 
   end
 
+  describe "Appointment Templates::" do
+    it "should return appointment templates" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+    it "should return appointment templates" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates_by_dates/20141010?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+    it "should return 500 for appointment templates" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates_by_dates/1240?authentication='
+      url << var1
+      get url
+      last_response.status.should == 500
+    end
+
+    it "should return 200 for appointment templates by location" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates/find_by_location/33?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+    it "should return 200 for appointment templates by resource" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates/find_by_resource/7?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+    it "should return 200 for find_nature_of_visit tied to a template" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates/find_nature_of_visit/37583?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+
+    it "should return 500 for invalid template id" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates/find_nature_of_visit/123asd321334545?authentication='
+      url << var1
+      get url
+      last_response.status.should == 500
+    end
+
+    it "should return 500 for template tied to another BE" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = ''
+      url << '/v1/appointment_templates/find_nature_of_visit/24?authentication='
+      url << var1
+      get url
+      last_response.status.should == 500
+    end
+
+  end
+
+  describe "Appointment Blockouts::" do
+     it "should return appointment blockouts by resource and date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << 'v1/appointmentblockouts/listbyresourceanddate/7/date/20140421?authentication='
+       url << var1
+       url << '&include_appointments=true'
+       get url
+       last_response.status.should == 200
+     end
+
+     it "should return 500 appointment blockouts by resource and invalid date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << 'v1/appointmentblockouts/listbyresourceanddate/7/date/2010421?authentication='
+       url << var1
+       url << '&include_appointments=true'
+       get url
+       last_response.status.should == 500
+     end
+
+
+     it "should return appointment blockouts by location and date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/appointmentblockouts/listbylocationanddate/33/date/20100906?authentication='
+       url << var1
+       get url
+       last_response.status.should == 200
+     end
+
+     it "should return 500 appointment blockouts by location and invalid date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/appointmentblockouts/listbylocationanddate/33/date/2100906?authentication='
+       url << var1
+       url << '&include_appointments=true'
+       get url
+       last_response.status.should == 500
+     end
+
+     it "should return appointment blockouts by location, resource, and date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/schedule/20100901/getblockouts/33/11?authentication='
+       url << var1
+       get url
+       last_response.status.should == 200
+     end
+
+     it "should return 500 for appointment blockouts by location, resource, and date" do
+       authorize 'interface@interface.com', 'welcome'
+       post '/v1/service/authenticate'
+       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+       url = ''
+       url << '/v1/schedule/2010901/getblockouts/33/11?authentication='
+       url << var1
+       get url
+       last_response.status.should ==500
+     end
+
+
+  end
+
   describe "Clinical API Services::" do
       it "should create problem set for patient" do
         authorize 'interface@interface.com', 'welcome'
@@ -1463,7 +1629,7 @@ describe "ApiService" do
 
         var1 = '{"immunization": [
             {
-                "immunization_name": "DTaP",
+            "immunization_name": "DTaP",
             "immunization_description": "DTaP",
             "immunization_code": "20",
             "vaccine_manufacturer_name": "ABBOTT LABORATORIES",
