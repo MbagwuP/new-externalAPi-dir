@@ -128,21 +128,6 @@ class ApiService < Sinatra::Base
     ## validate the request based on token
     check_for_valid_provider(providerids, providerid)
 
-    ## retrieve the internal patient id for the request
-    patientid = ''
-    request_body['appointment']['patients'].each { |x|
-
-      patientid = x['id'].to_s
-
-      #LOG.debug(patientid)
-
-      patientid = get_internal_patient_id(patientid, current_business_entity, oauth_token)
-
-      x['id'] = patientid
-
-      #LOG.debug(patientid)
-    }
-
     #LOG.debug(request_body)
 
     ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
@@ -309,6 +294,35 @@ class ApiService < Sinatra::Base
 
   end
 
+  # Endpoint to change appointment status to checked-in
+  # Parameters
+  # :id => Appointment ID
+  #http://localservices.carecloud.local:8888/v1/appointment/032ea3e9-fc99-4c1c-8d85-99b4142aec9c/checkin?authentication=AQIC5wM2LY4Sfcwvx_K-0r2wtxhPOGliZDxq6y11p1osMoI.*AAJTSQACMDE.*
+  put '/v1/appointment/:id/checkin?' do
+    request_body = get_request_JSON
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    appointmentid = get_appointment_internal_id(params[:id], business_entity, pass_in_token)
+
+    # 'appointments/:business_entity_id/:id/cancel_appointment.:format' => "appointments#cancel"
+    urlapptcheckin = "#{API_SVC_URL}appointments/#{business_entity}/#{appointmentid}/checkin.json?token=#{CGI::escape(pass_in_token)}"
+
+    begin
+      response = RestClient.put(urlapptcheckin, request_body.to_json, :content_type => :json)
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Check In has Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        errmsg = "Appointment Check In has Failed - #{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    body('{"Update":"Patient has been checked in"}')
+    status HTTP_OK
+
+  end
 
 
   # Endpoint to cancel Appointments
@@ -831,7 +845,7 @@ class ApiService < Sinatra::Base
   end
 
   ##  get appointments by resource id
-  # Test - URL :: /v1/appointments/listbyresourceanddate/7/date/20140421?authentication=
+  # Test - URL :: /v1/appointments/listbyresource/7/date/20140421?authentication=
   #
   # GET /v1/appointments/listbyresource/<resource>?authentication=<authenticationToken>
   #
@@ -1079,6 +1093,58 @@ class ApiService < Sinatra::Base
 
   end
 
+  ##  get appointments_blockouts by location id
+  # Test - URL :: /v1/appointmentblockouts/listbylocationanddate/33/date/20100906?authentication=
+  #
+  # GET /v1/appointment/listbyresource/<resource>?authentication=<authenticationToken>
+  #
+  # Params definition
+  # :resource     - the resource identifier number
+  #    (ex: 1234)
+  #
+  # server action: Return appointment information for selected resource
+  # server response:
+  # --> if data found: 200, with array of appointment data in response body
+  # --> if not authorized: 401
+  # --> if provider not found: 404
+  # --> if exception: 500
+  get '/v1/appointmentblockouts/listbylocationanddate/:locationid/date/:date?' do
+    # Validate the input parameters
+    locationid = params[:locationid]
+    ## token management. Need unencoded tokens!
+    pass_in_token = CGI::unescape(params[:authentication])
+    ##  get providers by business entity - check to make sure they are legit in pass in
+    business_entity = get_business_entity(pass_in_token)
+
+    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << business_entity
+    urlappt << '/'
+    urlappt << locationid
+    urlappt << '/'
+    urlappt << params[:date]
+    urlappt << '/list_by_location.json?token='
+    urlappt << CGI::escape(pass_in_token)
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    body(parsed.to_json)
+    status HTTP_OK
+
+  end
 
   #  get location information
   #
@@ -1650,7 +1716,7 @@ class ApiService < Sinatra::Base
   #location_id - location of appointment
   #resource_id - resource
 
-  get '/v1/schedule/:date/:appointment_status_id/:location_id/:resource_id?' do
+  get '/v1/schedule/:date/getblockouts/:location_id/:resource_id?' do
 
     appt_id = params[:appointmentid]
     pass_in_token = CGI::unescape(params[:authentication])
@@ -1894,6 +1960,7 @@ class ApiService < Sinatra::Base
   # Parameters
   #    None:
   # https://api.carecloud.com/v1/appointment_templates?
+  # /v1/appointment_templates/find_nature_of_visit/37566?
 
   #get notification callback ids
   get '/v1/appointment_templates/find_nature_of_visit/:appointment_template_id?' do
