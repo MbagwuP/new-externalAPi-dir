@@ -1,63 +1,3 @@
-/provider/list:
-  get:
-    summary: List Providers
-    description: |
-      List Providers for a Practice
-    parameters:
-    tags:
-      - Provider
-    responses:
-      200:
-        description: List of Providers for a Practice.
-        schema:
-          #$ref: NatureOfVisit
-          type: array
-          items:
-            $ref: Provider
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
-/appointment/locations:
-  get:
-    summary: List Locations
-    description: |
-      List Locations for a Practice
-    parameters:
-    tags:
-      - Location
-    responses:
-      200:
-        description: List of Locations for a Practice.
-        schema:
-          #$ref: NatureOfVisit
-          type: array
-          items:
-            $ref: Location
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
-/nature_of_visits:
-  get:
-    summary: List Nature of Visits
-    description: |
-      List Nature of Visits for a Practice
-    parameters:
-    tags:
-      - Nature of Visit
-    responses:
-      200:
-        description: List of Nature of Visits for a Practice.
-        schema:
-          #$ref: NatureOfVisit
-          type: array
-          items:
-            $ref: NatureOfVisit
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /patients/{patient_id}:
   get:
     summary: Show Patient
@@ -71,7 +11,7 @@
         type: string
         format: double
     tags:
-      - Patient
+      - Patients
     responses:
       200:
         description: Details about a Patient.
@@ -99,7 +39,7 @@
         schema:
           $ref: PatientCreate
     tags:
-      - Patient
+      - Patients
     responses:
       200:
         description: Details about a Patient.
@@ -127,7 +67,7 @@
         schema:
           $ref: PatientSearchRequest
     tags:
-      - Patient
+      - Patients
     responses:
       200:
         description: Details about a Patient.
@@ -155,7 +95,7 @@
         schema:
           $ref: CreateAppointment_Request
     tags:
-      - Appointment
+      - Appointments
     responses:
       200:
         description: created
@@ -187,7 +127,7 @@
         type: string
         format: double
     tags:
-      - Appointment
+      - Appointments
     responses:
       200:
         description: List of Appointment Blockouts
@@ -219,7 +159,7 @@
         type: string
         format: double
     tags:
-      - Appointment
+      - Appointments
     responses:
       200:
         description: Details about a Patient.
@@ -239,7 +179,7 @@
       List Appointment Statuses for a Practice
     parameters:
     tags:
-      - Appointment Status
+      - Appointments
     responses:
       200:
         description: List of Appointment Statuses.
@@ -265,7 +205,7 @@
         type: string
         format: double
     tags:
-      - Appointment
+      - Appointments
     responses:
       200:
         description: Details about a Patient.
@@ -274,6 +214,66 @@
           type: array
           items:
             $ref: AppointmentsByResource
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/provider/list:
+  get:
+    summary: List Providers
+    description: |
+      List Providers for a Practice
+    parameters:
+    tags:
+      - Providers
+    responses:
+      200:
+        description: List of Providers for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Provider
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointment/locations:
+  get:
+    summary: List Locations
+    description: |
+      List Locations for a Practice
+    parameters:
+    tags:
+      - Locations
+    responses:
+      200:
+        description: List of Locations for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Location
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/nature_of_visits:
+  get:
+    summary: List Nature of Visits
+    description: |
+      List Nature of Visits for a Practice
+    parameters:
+    tags:
+      - Nature of Visits
+    responses:
+      200:
+        description: List of Nature of Visits for a Practice.
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: NatureOfVisit
       default:
         description: Unexpected error
         #schema:
