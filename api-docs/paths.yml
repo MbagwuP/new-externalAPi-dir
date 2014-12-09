@@ -76,7 +76,7 @@
       200:
         description: Details about a Patient.
         schema:
-          $ref: Patient
+          $ref: PatientShow
           #type: array
           #items:
           #  $ref: Patient
@@ -90,12 +90,14 @@
     description: |
       Create a Patient
     parameters:
-      - name: patient_id
-        in: path
-        description: GUID of the Patient.
+      - name: query
+        in: body
+        description: Patient Creation Payload.
         required: true
         type: string
         format: double
+        schema:
+          $ref: PatientCreate
     tags:
       - Patient
     responses:

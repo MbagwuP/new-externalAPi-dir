@@ -1,4 +1,147 @@
-Patient:
+PatientShow: 
+  properties:
+    id: string
+    first_name: string
+    last_name: string
+    middle_initial: string
+    prefix: string
+    suffix: string
+    ssn: string
+    name: string
+    dob: string
+    email_address: string
+    status: string
+    status_id: string
+    external_id: string
+    legacy_patient_id: string
+    race_id: integer
+    chart_number: string
+    account_number: string
+    business_entity_id: integer
+    business_entity_name: string
+    interface: 
+      $ref: PatientInterface
+    date_of_death: string
+    last_seen_date: string
+    drivers_license_number: string
+    drivers_license_state_id: string
+    marital_status: string
+    language_id: integer
+    language: string
+    language_code: string
+    gender: string
+    gender_id: integer
+    ethnicity: string
+    ethnicity_id: integer
+    ethnicity_code: string
+    race: string
+    race_code: string
+    primary_location:
+      $ref: PatientPrimaryLocation
+    primary_provider_id: string
+    referring_physician_npi: string
+    responsible_party:
+      $ref: PatientResponsibleParty
+    insurance_profiles:
+      $ref: InsuranceProfile
+    addresses: 
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+    photo: string
+PatientInterface:
+  properties:
+    interface_code: string
+    interface_password: string
+PatientResponsibleParty:
+  properties:
+    responsible_party_person_relationship_type_id: integer
+    responsible_party_person_relationship_type_name: string
+    responsible_party_person_relationship_type_code: string
+    id: integer
+    name: string
+    last_name: string
+    first_name: string
+    middle: string
+    dob: string
+    gender_id: integer
+    gender: string
+    addresses: 
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+InsuranceProfile:
+  properties:
+    id: integer
+    self_pay: boolean
+    insurance_policies: array
+PatientPrimaryLocation:
+  properties:
+    id: integer
+    name: string
+    mnemonic: string
+    additional_name: string
+    fda_number: string
+    clia_number: string
+    npi: string
+    is_default: boolean
+    address:
+      $ref: PatientAddress
+PatientCreate:
+  properties:
+    patient:
+      $ref: Patient
+    addresses:
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+Patient: 
+  properties:
+    first_name: string
+    last_name: string
+    middle_initial: string
+    email: string
+    prefix: string
+    suffix: string
+    ssn: string
+    gender_id: string
+    date_of_birth: string
+    race_id: integer
+    marital_status_id: integer
+    language_id: integer
+    chart_number: string
+    drivers_license_number: string
+    drivers_license_state_id: string
+    employment_status_id: integer
+    school_name: string
+    employer_name: string
+    account_number: string
+    legacy_patient_id: string
+    employer_phone_number: string
+    ethnicity_id: integer
+    student_status_id: integer
+PatientAddress: 
+  properties:
+    line1: string
+    line2: string
+    city: string
+    state_id: integer
+    zip_code: string
+    country_id: integer
+    is_primary: string
+PatientPhone: 
+  properties:
+    phone_number: string
+    phone_type_id: integer
+    extension: string
+    is_primary: boolean
+PatientTest:
   properties:
     id:
       type: string
