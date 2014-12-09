@@ -1,6 +1,6 @@
 /provider/list:
   get:
-    summary: Provider
+    summary: List Providers
     description: |
       List Providers for a Practice
     parameters:
@@ -20,7 +20,7 @@
         #  $ref: Error
 /appointment/locations:
   get:
-    summary: Appointment Location
+    summary: List Locations
     description: |
       List Locations for a Practice
     parameters:
@@ -40,7 +40,7 @@
         #  $ref: Error
 /nature_of_visits:
   get:
-    summary: Nature of Visit
+    summary: List Nature of Visits
     description: |
       List Nature of Visits for a Practice
     parameters:
@@ -60,7 +60,7 @@
         #  $ref: Error
 /patients/{patient_id}:
   get:
-    summary: Patient
+    summary: Show Patient
     description: |
       Show a patient by its ID
     parameters:
@@ -86,7 +86,7 @@
         #  $ref: Error
 /patient/create:
   post:
-    summary: Patient
+    summary: Create Patient
     description: |
       Create a Patient
     parameters:
@@ -114,7 +114,7 @@
         #  $ref: Error
 /patients/search:
   post:
-    summary: Patient
+    summary: Search Patients
     description: |
       Search for a Patient
     parameters:
@@ -142,7 +142,7 @@
         #  $ref: Error
 /appointment/create:
   post:
-    summary: Appointment
+    summary: Create Appointment
     description: |
       Create an Appointment
     parameters:
@@ -152,13 +152,47 @@
         required: true
         type: string
         format: double
+        schema:
+          $ref: CreateAppointment_Request
     tags:
       - Appointment
     responses:
       200:
-        description: Details about a Patient.
+        description: created
         schema:
-          $ref: Patient
+          $ref: CreateAppointment_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
+/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment
+    responses:
+      200:
+        description: List of Appointment Blockouts
+        schema:
+          $ref: AppointmentBlockouts_Response
           #type: array
           #items:
           #  $ref: Patient
@@ -168,7 +202,7 @@
         #  $ref: Error
 /appointment/listbydate/{date}/provider-{provider_id}:
   get:
-    summary: Appointment
+    summary: List Appointments
     description: |
       List Appointments for Provider by Date
     parameters:
@@ -190,7 +224,7 @@
       200:
         description: Details about a Patient.
         schema:
-          $ref: Patient
+          $ref: AppointmentsByDateWithProvider_Response
           #type: array
           #items:
           #  $ref: Patient
@@ -200,7 +234,7 @@
         #  $ref: Error
 /appointment/statuses:
   get:
-    summary: Appointment Status
+    summary: List Appointment Statuses
     description: |
       List Appointment Statuses for a Practice
     parameters:
@@ -220,7 +254,7 @@
         #  $ref: Error
 /appointment/listbyresource/{resource_id}:
   get:
-    summary: Appointment
+    summary: List Appointments
     description: |
       List Appointments by Resource
     parameters:

@@ -1,3 +1,148 @@
+# AppointmentByDateWithProviderParent:
+#   properties:
+#     appointments:
+#       type: array
+#       $ref: AppointmentByDateWithProvider
+# AppointmentByDateWithProvider:
+#   properties:
+
+CreateAppointment_Response:
+  properties:
+    appointment: string
+
+# AppointmentBlockouts_Response:
+#   type: array
+#   $ref: AppointmentBlockouts_Response_Inner
+# AppointmentBlockouts_Response_Inner:
+AppointmentBlockouts_Response:
+  properties:
+    block_outs:
+      type: array
+      $ref: AppointmentBlockouts_Response_block_outs
+AppointmentBlockouts_Response_block_outs:
+  properties:
+    id: string
+    business_entity_id: string
+    name: string
+    description: string
+    start_hour: string
+    start_minutes: string
+    end_hour: string
+    end_minutes: string
+    use_sunday: string
+    use_monday: string
+    use_tuesday: string
+    use_wednesday: string
+    use_thursday: string
+    use_friday: string
+    use_saturday: string
+    effective_from: string
+    effective_to: string
+    created_by: string
+    created_at: string
+    updated_at: string
+    updated_by: string
+    start_hour_bak: string
+    end_hour_bak: string
+    
+AppointmentsByDateWithProvider_Response:
+  properties:
+    appointments:
+      type: array
+      $ref: AppointmentsByDateWithProvider_Response_appointments
+    blockouts: array
+    stats:
+      $ref: AppointmentsByDateWithProvider_Response_stats
+AppointmentsByDateWithProvider_Response_stats:
+  properties:
+    wait_time:
+      $ref: AppointmentsByDateWithProvider_Response_stats_wait_time
+    todos: string
+    billing: string
+    payment: string
+    statuses:
+      type: array
+      $ref: AppointmentsByDateWithProvider_Response_stats_statuses
+AppointmentsByDateWithProvider_Response_stats_statuses:
+  properties:
+    apt_status: string
+    count: string
+AppointmentsByDateWithProvider_Response_stats_wait_time:
+  properties:
+    average: integer
+AppointmentsByDateWithProvider_Response_appointments:
+  properties:
+    id: string
+    start_time: string
+    end_time: string
+    arrived_at: string
+    is_confirmed: boolean
+    business_entity_id: integer
+    status_name: string
+    nature_of_visit_name: string
+    nature_of_visit_flagged: boolean
+    status_id: integer
+    is_new_patient: boolean
+    wait_time: integer
+    reason_for_visit: string
+    external_id: string
+    referring_physician: string
+    resource:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_resource
+    location:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_location
+    patient:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_patient
+AppointmentsByDateWithProvider_Response_appointments_patient:
+  properties:
+    id: string
+    external_id: string
+    first_name: string
+    last_name: string
+    name: string
+    dob: string
+    insurance_profile_name: string
+    gender: string
+    gender_id: string
+    account_balance: string
+    patient_balance: string
+    insurance_balance: string
+    photo:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_patient_photo
+AppointmentsByDateWithProvider_Response_appointments_patient_photo:
+  properties:
+    small: string
+    avatar: string
+    medium: string
+AppointmentsByDateWithProvider_Response_appointments_location:
+  properties:
+    location_id: integer
+    location_name: string
+AppointmentsByDateWithProvider_Response_appointments_resource:
+  properties:
+    id: integer
+    name: string
+
+CreateAppointment_Request:
+  properties:
+    appointment:
+      $ref: CreateAppointment_Request_appointment
+CreateAppointment_Request_appointment:
+  properties:
+    start_time: string
+    end_time: string
+    location_id: integer
+    provider_id: integer
+    nature_of_visit_id: integer
+    resource_id: integer
+    patients:
+      type: array
+      $ref: CreateAppointment_Request_appointment_patients
+CreateAppointment_Request_appointment_patients:
+  properties:
+    id: string
+    comments: string
+
 PatientShow: 
   properties:
     id: string
