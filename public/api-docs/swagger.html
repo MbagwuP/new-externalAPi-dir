@@ -7,6 +7,7 @@
   <link href='css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
   <link href='css/reset.css' media='print' rel='stylesheet' type='text/css'/>
   <link href='css/screen.css' media='print' rel='stylesheet' type='text/css'/>
+  <link href='simplemodal/basic.css' media='screen' rel='stylesheet' type='text/css'/>
   <script type="text/javascript" src="lib/shred.bundle.js"></script>
   <script src='lib/jquery-1.8.0.min.js' type='text/javascript'></script>
   <script src='lib/jquery.slideto.min.js' type='text/javascript'></script>
@@ -19,10 +20,22 @@
   <script src='lib/swagger-client.js' type='text/javascript'></script>
   <script src='swagger-ui.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
+  <script src='simplemodal/jquery.simplemodal-1.4.4.js' type='text/javascript'></script>
 
   <!-- enabling this will enable oauth2 implicit scope support -->
   <script src='lib/swagger-oauth.js' type='text/javascript'></script>
   <script type="text/javascript">
+
+$(function () {
+   $.ajaxSetup({
+       beforeSend: function (jqXHR, settings) {
+            console.log("SENDING");
+            // debugger;
+           // jqXHR.setRequestHeader("YourApiKeyHeader", $("#input_apiKey").val());
+       }
+   });
+});
+
     $(function () {
       var url = window.location.search.match(/url=([^&]+)/);
       if (url && url.length > 1) {
@@ -67,16 +80,70 @@
       }
 
       function addAccessTokenHeaderAuthorization() {
-        var key = $('#input_apiKey')[0].value;
+        var key = $('#input_accessToken')[0].value;
         if(key && key.trim() != "") {
           window.authorizations.add("key", new ApiKeyAuthorization("authorization", key, "header"));
         }
       }
 
-      $('#input_apiKey').change(function() {
+      $('#input_accessToken').change(function() {
         // addApiKeyAuthorization();
         addAccessTokenHeaderAuthorization();
       });
+
+      $('#refresh_token').click(function() {
+        // $('#get_token_modal').modal();
+        $.modal($('#refresh_token_modal'));
+        $('#use_token_from_refresh').hide();
+      });
+
+      $('#use_token_from_refresh').click(function() {
+        // $('#use_token_from_refresh').hide();
+        $('#input_accessToken').val($('#refresh_token_response').data('token'));
+        $('#input_accessToken').trigger('change');
+      });
+
+      $('#demo_token').click(function() {
+        $.modal($('#demo_token_modal'));
+      });
+
+      $('#submit_refresh_token').click(function() {
+        refreshTokenCall();
+      });
+
+      $('#input_apiKey').val('mnQ2yOcOAGVRVL8VujUcC3TpufkueozK');
+      $('#input_secretKey').val('ly8JZ0RKyx9jQyLi');
+      $('#input_refreshToken').val('rEZKRVRrqM6S95yc_xNjhGS_UFvf0HH7');
+
+      function refreshTokenCall() {
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:9292/oauth2/access_token",
+          dataType: 'json',
+          async: false,
+          headers: {
+            Authorization: btoa($('#input_apiKey').val() + ':' + $('#input_secretKey').val())
+          },
+          // username: $('#input_apiKey').val(),
+          // password: $('#input_secretKey').val(),
+          data: {
+            grant_type: "refresh_token",
+            refresh_token: $('#input_refreshToken').val()
+          },
+          success: function(e) {
+            console.log("Refresh token grant finished");
+            // debugger;
+            $('#refresh_token_response').html(JSON.stringify(e));
+            if (e && e.access_token) {
+              // show Use This Token button
+              // $('#use_token_from_refresh').removeClass('hide');
+              $('#use_token_from_refresh').show();
+              $('#refresh_token_response').data('token', e.access_token);
+            }
+            // alert('Thanks for your comment!'); 
+          }
+        });
+      }
 
       // if you have an apiKey you would like to pre-populate on the page for demonstration purposes...
       /*
@@ -101,14 +168,45 @@
       <div class='input icon-btn' style='display: none;'>
         <img id="show-wordnik-dev-icon" src="images/wordnik_api.png" title="Show Wordnik Developer Apis">
       </div>
-      <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text" style="display: none;"/></div>
-      <div class='input'><input placeholder="access token" id="input_apiKey" name="apiKey" type="text"/></div>
-      <div class='input'><a id="explore" href="#">Use This Token</a></div>
+      <!-- <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text" style="display: none;"/></div> -->
+      <div class='input' style=''><a id="refresh_token" class="carecloud_swagger_button" href="#">Refresh Token</a></div>
+      <div class='input' style=''><a id="demo_token" class="carecloud_swagger_button" href="#">Demo Token</a></div>
+      <!-- <div style="display: inline&#45;block; width: 80px; height: 10px;">&#38;nbsp;</div> -->
+      <div class='input'><input placeholder="access token" id="input_accessToken" name="accessToken" type="text"/></div>
+      <!-- <div class='input' style='display: none;'><a id="explore" href="#">Use This Token</a></div> -->
     </form>
   </div>
 </div>
 
 <div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+
+<div id="refresh_token_modal" class="carecloud_simplemodal" style="display:none;">
+  <h1>Refresh Token</h1>
+  <span>If you have your API credentials already, and have activated your Authorization Grant, you may exchange your Refresh Token for a new Access Token here.</span>
+  <br/><br/>
+  <div class='input'><input placeholder="API key" id="input_apiKey" name="apiKey" type="text"/></div>
+  <div class='input'><input placeholder="secret key" id="input_secretKey" name="secretKey" type="password"/></div>
+  <div class='input'><input placeholder="refresh token" id="input_refreshToken" name="refreshToken" type="text"/></div>
+  <br/><br/>
+  <code id="refresh_token_response">{message: "Response with access token goes here."}</code>
+  <div class='input carecloud_modal_button' style='width: 150px;'><a id="submit_refresh_token" class="carecloud_swagger_button" href="#">Submit</a></div>
+  <div class='input carecloud_modal_button' style='width: 150px;'><a id="use_token_from_refresh" class="carecloud_swagger_button" href="#">Use This Token</a></div>
+</div>
+
+<div id="demo_token_modal" class="carecloud_simplemodal" style="display:none;">
+  <h1>Demo Token</h1>
+  <span>You may request a demo token here. With this token, you can make calls against a test Practice, on behalf of the CareCloud Interactive API Docs application.</span>
+  <br/><br/><br/>
+  <!-- <div class='input'><input placeholder="API key" id="input_apiKey" name="apiKey" type="text"/></div> -->
+  <!-- <div class='input'><input placeholder="secret key" id="input_secretKey" name="secretKey" type="password"/></div> -->
+  <!-- <div class='input'><input placeholder="refresh token" id="input_refreshToken" name="refreshToken" type="password"/></div> -->
+  <!-- <br/><br/> -->
+  <code id="demo_token_response">{message: "Response with access token goes here."}</code>
+  <br/><br/>
+  <div class='input' style='width: 150px; display: inline-block;'><a id="submit_demo_token" class="carecloud_swagger_button" href="#">Submit</a></div>
+  <div class='input' style='width: 150px; display: inline-block;'><a id="use_token_from_demo" class="carecloud_swagger_button" href="#">Use This Token</a></div>
+</div>
+
 </body>
 </html>

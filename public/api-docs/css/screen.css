@@ -1188,10 +1188,30 @@
 .swagger-section #header form#api_selector .input input#input_apiKey {
   width: 300px;
 }
+.swagger-section #header form#api_selector .input input#input_accessToken {
+  width: 300px;
+}
 .swagger-section #header form#api_selector .input input#input_baseUrl {
   width: 400px;
 }
 .swagger-section #header form#api_selector .input a#explore {
+  display: block;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 8px;
+  font-size: 0.9em;
+  color: white;
+  background-color: #1D86BD;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+.carecloud_swagger_button {
+  text-align: center;
+  color: white !important;
   display: block;
   text-decoration: none;
   font-weight: bold;
