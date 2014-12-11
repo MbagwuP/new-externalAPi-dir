@@ -1761,6 +1761,45 @@ class ApiService < Sinatra::Base
 
   end
 
+  get '/v2/schedule/:date/getblockouts/:location_id/:resource_id' do
+
+    urlappt = ''
+    urlappt << API_SVC_URL
+    urlappt << 'appointments/'
+    urlappt << current_business_entity
+    urlappt << '/'
+    urlappt <<  params[:date]
+    urlappt << '/1/'
+    urlappt <<  params[:location_id]
+    urlappt << '/'
+    urlappt <<  params[:resource_id]
+    urlappt << '/getByDay.json?token='
+    urlappt << escaped_oauth_token
+
+    begin
+      response = RestClient.get(urlappt)
+    rescue => e
+      begin
+        errmsg = "Appointment Look Up Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    parsed = JSON.parse(response.body)
+    blockouts = parsed["theBlockouts"]
+    blockouts.each do |bo|
+      bo["appointment_blockout"].delete("end_hour_bak")
+      bo["appointment_blockout"].delete("end_minutes")
+      bo["appointment_blockout"].delete("start_minutes")
+      bo["appointment_blockout"].delete("start_hour_bak")
+    end
+    body(blockouts.to_json)
+    status HTTP_OK
+
+  end
+
   #params none, just need to pass in a valid token
   # GET /v1/notificationcallbacks?authentication=<TOKEN>
   #get notification callback ids
