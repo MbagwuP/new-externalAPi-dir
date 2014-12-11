@@ -103,12 +103,22 @@ $(function () {
         $('#input_accessToken').trigger('change');
       });
 
+      $('#use_token_from_demo').click(function() {
+        // $('#use_token_from_refresh').hide();
+        $('#input_accessToken').val($('#demo_token_response').data('token'));
+        $('#input_accessToken').trigger('change');
+      });
+
       $('#demo_token').click(function() {
         $.modal($('#demo_token_modal'));
       });
 
       $('#submit_refresh_token').click(function() {
         refreshTokenCall();
+      });
+
+      $('#submit_demo_token').click(function() {
+        demoTokenCall();
       });
 
       $('#input_apiKey').val('mnQ2yOcOAGVRVL8VujUcC3TpufkueozK');
@@ -139,6 +149,31 @@ $(function () {
               // $('#use_token_from_refresh').removeClass('hide');
               $('#use_token_from_refresh').show();
               $('#refresh_token_response').data('token', e.access_token);
+            }
+            // alert('Thanks for your comment!'); 
+          }
+        });
+      }
+
+      function demoTokenCall() {
+        $.ajax({
+          type: "POST",
+          url: "http://localhost:9292/api-docs/demotoken",
+          dataType: 'json',
+          async: false,
+          // data: {
+          //   grant_type: "refresh_token",
+          //   refresh_token: $('#input_refreshToken').val()
+          // },
+          success: function(e) {
+            console.log("Refresh token grant finished");
+            // debugger;
+            $('#demo_token_response').html(JSON.stringify(e));
+            if (e && e.access_token) {
+              // show Use This Token button
+              // $('#use_token_from_refresh').removeClass('hide');
+              $('#use_token_from_demo').show();
+              $('#demo_token_response').data('token', e.access_token);
             }
             // alert('Thanks for your comment!'); 
           }
@@ -195,6 +230,7 @@ $(function () {
 </div>
 
 <div id="demo_token_modal" class="carecloud_simplemodal" style="display:none;">
+  <!-- <div class="border_wrapper"> -->
   <h1>Demo Token</h1>
   <span>You may request a demo token here. With this token, you can make calls against a test Practice, on behalf of the CareCloud Interactive API Docs application.</span>
   <br/><br/><br/>
@@ -206,6 +242,7 @@ $(function () {
   <br/><br/>
   <div class='input' style='width: 150px; display: inline-block;'><a id="submit_demo_token" class="carecloud_swagger_button" href="#">Submit</a></div>
   <div class='input' style='width: 150px; display: inline-block;'><a id="use_token_from_demo" class="carecloud_swagger_button" href="#">Use This Token</a></div>
+  <!-- </div> -->
 </div>
 
 </body>
