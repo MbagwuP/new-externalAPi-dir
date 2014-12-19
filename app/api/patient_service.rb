@@ -511,7 +511,7 @@ class ApiService < Sinatra::Base
     urlpatient << API_SVC_URL
     urlpatient << 'businesses/'
     urlpatient << business_entity
-    urlpatient << '/patients.json?token='
+    urlpatient << '/patients.json?commit_search=false&token='
     urlpatient << CGI::escape(params[:authentication])
 
     begin
