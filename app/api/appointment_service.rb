@@ -479,7 +479,7 @@ class ApiService < Sinatra::Base
     urlappt << the_date
     urlappt << '&business_entity_id='
     urlappt << current_business_entity
-    urlappt << '&local_timezone=true'
+    urlappt << '&local_timezone=true' if local_timezone?
 
     begin
       response = RestClient.get(urlappt, :api_key => APP_API_KEY)
@@ -1071,7 +1071,7 @@ class ApiService < Sinatra::Base
     urlappt << resource_id
     urlappt << '/listbyresource.json?token='
     urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true'
+    urlappt << '&local_timezone=true' if local_timezone?
 
     begin
       response = RestClient.post(urlappt, nil, :api_key => APP_API_KEY)
@@ -1777,7 +1777,7 @@ class ApiService < Sinatra::Base
     urlappt <<  params[:resource_id]
     urlappt << '/getByDay.json?token='
     urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true'
+    urlappt << '&local_timezone=true' if local_timezone?
 
     begin
       response = RestClient.get(urlappt)
@@ -1879,7 +1879,7 @@ class ApiService < Sinatra::Base
     urlappt << current_business_entity
     urlappt << '.json?token='
     urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true'
+    urlappt << '&local_timezone=true' if local_timezone?
 
     LOG.debug("URL:" + urlappt)
 

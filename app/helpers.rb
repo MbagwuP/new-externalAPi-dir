@@ -39,6 +39,10 @@ class ApiService < Sinatra::Base
     CGI::escape oauth_token
   end
 
+  def local_timezone?
+    params[:local_timezone] && ["true",true,"1",1].include?(params[:local_timezone])
+  end
+
   def oauth_token
     return @oauth_token if defined?(@oauth_token) # caching
     if request.env['HTTP_AUTHORIZATION']
