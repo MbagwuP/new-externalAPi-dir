@@ -1,7 +1,6 @@
 class ApiService < Sinatra::Base
 
   get '/api-docs/swagger.json' do
-    # body YAML.load_file('public/swagger.yaml').to_json
     base = YAML.load_file 'api-docs/base.yml'
     base['paths'] = YAML.load_file 'api-docs/paths.yml'
     base['definitions'] = YAML.load_file 'api-docs/definitions.yml'
@@ -10,10 +9,8 @@ class ApiService < Sinatra::Base
   end
 
   get '/api-docs' do
-    # this doesn't work yet, just access it here for now:
-    # http://localhost:9292/api-docs/swagger.html
-    #
-    # erb File.read 'public/api-docs/swagger.html'
+    content_type :html
+    erb File.read 'public/api-docs/swagger.html'
   end
 
   post '/api-docs/demotoken' do 
@@ -27,7 +24,6 @@ class ApiService < Sinatra::Base
     response = RestClient::Request.execute(:method => :post, :url => 'http://localhost:9292/oauth2/access_token',
                   :user => 'mnQ2yOcOAGVRVL8VujUcC3TpufkueozK', :password => 'ly8JZ0RKyx9jQyLi',
                   :payload => {grant_type: 'refresh_token', refresh_token: 'rEZKRVRrqM6S95yc_xNjhGS_UFvf0HH7'})
-    # require 'pry'; binding.pry
     body response
     status HTTP_OK
   end
