@@ -14,6 +14,37 @@ CreateAppointment_Response:
 #   type: array
 #   $ref: AppointmentBlockouts_Response_Inner
 # AppointmentBlockouts_Response_Inner:
+# -- use this --
+# AppointmentBlockoutsByLocation_Response:
+#   type: array
+#   $ref: AppointmentBlockoutsByLocation_Response_array
+AppointmentBlockoutsByLocation_Response_array:
+  properties:
+    appointment_blockout:
+      $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+AppointmentBlockoutsByLocation_Response_appointment_blockout:
+  properties:
+    business_entity_id: integer
+    created_at: string
+    created_by: integer
+    description: string
+    effective_from: string
+    effective_to: string
+    end_hour: integer
+    id: integer
+    location_id: string
+    name: string
+    resource_id: string
+    start_hour: integer
+    updated_at: string
+    updated_by: integer
+    use_friday: boolean
+    use_monday: boolean
+    use_saturday: boolean
+    use_sunday: boolean
+    use_thursday: boolean
+    use_tuesday: boolean
+    use_wednesday: boolean
 AppointmentBlockouts_Response:
   properties:
     block_outs:

@@ -108,6 +108,45 @@
         description: Unexpected error
         #schema:
         #  $ref: Error
+/schedule/{date}/getblockouts/{location_id}/{resource_id}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts by Date, Location and Resource
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: location_id
+        in: path
+        description: Location ID
+        required: true
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: List of Appointment Blockouts
+        schema:
+          $ref: AppointmentBlockoutsByLocation_Response_array
+          # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+          type: array
+          #items:
+          #  $ref: Patient
+      default:
+        description: Unexpected error
+        #schema:
+        #  $ref: Error
 /appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
   get:
     summary: List Appointment Blockouts
