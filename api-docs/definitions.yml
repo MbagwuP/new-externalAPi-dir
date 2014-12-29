@@ -267,6 +267,9 @@ PatientPrimaryLocation:
     is_default: boolean
     address:
       $ref: PatientAddress
+PatientCreate_Response:
+  properties:
+    patient: string
 PatientCreate:
   properties:
     patient:

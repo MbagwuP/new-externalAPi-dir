@@ -2,11 +2,11 @@
   get:
     summary: Show Patient
     description: |
-      Show a patient by its ID
+      Show a Patient by its ID
     parameters:
       - name: patient_id
         in: path
-        description: GUID of the Patient.
+        description: GUID of the patient
         required: true
         type: string
         format: double
@@ -14,16 +14,14 @@
       - Patients
     responses:
       200:
-        description: Details about a Patient.
+        description: details about a patient
         schema:
           $ref: PatientShow
           #type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
+      404:
+        description: patient not found for current practice
 /patient/create:
   post:
     summary: Create Patient
@@ -32,7 +30,7 @@
     parameters:
       - name: query
         in: body
-        description: Patient Creation Payload.
+        description: patient creation payload
         required: true
         type: string
         format: double
@@ -41,17 +39,15 @@
     tags:
       - Patients
     responses:
-      200:
-        description: Details about a Patient.
+      201:
+        description: patient created successfully
         schema:
-          $ref: Patient
+          $ref: PatientCreate_Response
           #type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
+      422:
+        description: validation error
 /patients/search:
   post:
     summary: Search Patients
@@ -60,7 +56,7 @@
     parameters:
       - name: query
         in: body
-        description: Search Query.
+        description: search query
         required: true
         type: string
         format: double
@@ -70,16 +66,12 @@
       - Patients
     responses:
       200:
-        description: Details about a Patient.
+        description: details about a patient
         schema:
           #$ref: PatientSearch
           type: array
           items:
             $ref: PatientSearch
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /appointment/create:
   post:
     summary: Create Appointment
@@ -88,7 +80,7 @@
     parameters:
       - name: appointment
         in: body
-        description: Appointment Information.
+        description: appointment information
         required: true
         type: string
         format: double
@@ -97,17 +89,15 @@
     tags:
       - Appointments
     responses:
-      200:
-        description: created
+      201:
+        description: appointment created successfully
         schema:
           $ref: CreateAppointment_Response
           #type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
+      422:
+        description: validation error
 /schedule/{date}/getblockouts/{location_id}/{resource_id}:
   get:
     summary: List Appointment Blockouts
@@ -136,17 +126,13 @@
       - Appointments
     responses:
       200:
-        description: List of Appointment Blockouts
+        description: list of appointment blockouts
         schema:
           $ref: AppointmentBlockoutsByLocation_Response_array
           # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
           type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
   get:
     summary: List Appointment Blockouts
@@ -169,16 +155,12 @@
       - Appointments
     responses:
       200:
-        description: List of Appointment Blockouts
+        description: list of appointment vlockouts
         schema:
           $ref: AppointmentBlockouts_Response
           #type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /appointment/listbydate/{date}/provider-{provider_id}:
   get:
     summary: List Appointments
@@ -201,16 +183,14 @@
       - Appointments
     responses:
       200:
-        description: Details about a Patient.
+        description: list of appointments
         schema:
           $ref: AppointmentsByDateWithProvider_Response
           #type: array
           #items:
           #  $ref: Patient
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
+      404:
+        description: provider not found for current practice
 /appointment/statuses:
   get:
     summary: List Appointment Statuses
@@ -221,16 +201,12 @@
       - Appointments
     responses:
       200:
-        description: List of Appointment Statuses.
+        description: list of appointment statuses
         schema:
           #$ref: AppointmentStatus
           type: array
           items:
             $ref: AppointmentStatus
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /appointment/listbyresource/{resource_id}:
   get:
     summary: List Appointments
@@ -239,7 +215,7 @@
     parameters:
       - name: resource_id
         in: path
-        description: GUID of the Resource.
+        description: GUID of the resource
         required: true
         type: string
         format: double
@@ -247,16 +223,14 @@
       - Appointments
     responses:
       200:
-        description: Details about a Patient.
+        description: details about a patient
         schema:
           #$ref: AppointmentsByResource
           type: array
           items:
             $ref: AppointmentsByResource
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
+      404:
+        description: resource not found for current practice
 /provider/list:
   get:
     summary: List Providers
@@ -267,16 +241,12 @@
       - Providers
     responses:
       200:
-        description: List of Providers for a Practice.
+        description: list of providers for a practice
         schema:
           #$ref: NatureOfVisit
           type: array
           items:
             $ref: Provider
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /appointment/locations:
   get:
     summary: List Locations
@@ -287,16 +257,12 @@
       - Locations
     responses:
       200:
-        description: List of Locations for a Practice.
+        description: list of locations for a practice
         schema:
           #$ref: NatureOfVisit
           type: array
           items:
             $ref: Location
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
 /nature_of_visits:
   get:
     summary: List Nature of Visits
@@ -307,13 +273,9 @@
       - Nature of Visits
     responses:
       200:
-        description: List of Nature of Visits for a Practice.
+        description: list of nature of visits for a practice
         schema:
           #$ref: NatureOfVisit
           type: array
           items:
             $ref: NatureOfVisit
-      default:
-        description: Unexpected error
-        #schema:
-        #  $ref: Error
