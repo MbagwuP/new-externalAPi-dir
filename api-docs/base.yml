@@ -4,7 +4,7 @@ info:
   description: CareCloud API Documentation/Demo
   version: "2.0.0"
 # the domain of the service
-host: localhost:9292
+# host: localhost:9292
 # array of all schemes that your API supports
 schemes:
   - http
