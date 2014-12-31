@@ -1,0 +1,575 @@
+# AppointmentByDateWithProviderParent:
+#   properties:
+#     appointments:
+#       type: array
+#       $ref: AppointmentByDateWithProvider
+# AppointmentByDateWithProvider:
+#   properties:
+
+CreateAppointment_Response:
+  properties:
+    appointment: string
+
+# AppointmentBlockouts_Response:
+#   type: array
+#   $ref: AppointmentBlockouts_Response_Inner
+# AppointmentBlockouts_Response_Inner:
+# -- use this --
+# AppointmentBlockoutsByLocation_Response:
+#   type: array
+#   $ref: AppointmentBlockoutsByLocation_Response_array
+AppointmentBlockoutsByLocation_Response_array:
+  properties:
+    appointment_blockout:
+      $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+AppointmentBlockoutsByLocation_Response_appointment_blockout:
+  properties:
+    business_entity_id: integer
+    created_at: string
+    created_by: integer
+    description: string
+    effective_from: string
+    effective_to: string
+    end_hour: integer
+    id: integer
+    location_id: string
+    name: string
+    resource_id: string
+    start_hour: integer
+    updated_at: string
+    updated_by: integer
+    use_friday: boolean
+    use_monday: boolean
+    use_saturday: boolean
+    use_sunday: boolean
+    use_thursday: boolean
+    use_tuesday: boolean
+    use_wednesday: boolean
+AppointmentBlockouts_Response:
+  properties:
+    block_outs:
+      type: array
+      $ref: AppointmentBlockouts_Response_block_outs
+AppointmentBlockouts_Response_block_outs:
+  properties:
+    id: string
+    business_entity_id: string
+    name: string
+    description: string
+    start_hour: string
+    start_minutes: string
+    end_hour: string
+    end_minutes: string
+    use_sunday: string
+    use_monday: string
+    use_tuesday: string
+    use_wednesday: string
+    use_thursday: string
+    use_friday: string
+    use_saturday: string
+    effective_from: string
+    effective_to: string
+    created_by: string
+    created_at: string
+    updated_at: string
+    updated_by: string
+    start_hour_bak: string
+    end_hour_bak: string
+    
+AppointmentsByDateWithProvider_Response:
+  properties:
+    appointments:
+      type: array
+      $ref: AppointmentsByDateWithProvider_Response_appointments
+    blockouts: array
+    stats:
+      $ref: AppointmentsByDateWithProvider_Response_stats
+AppointmentsByDateWithProvider_Response_stats:
+  properties:
+    wait_time:
+      $ref: AppointmentsByDateWithProvider_Response_stats_wait_time
+    todos: string
+    billing: string
+    payment: string
+    statuses:
+      type: array
+      $ref: AppointmentsByDateWithProvider_Response_stats_statuses
+AppointmentsByDateWithProvider_Response_stats_statuses:
+  properties:
+    apt_status: string
+    count: string
+AppointmentsByDateWithProvider_Response_stats_wait_time:
+  properties:
+    average: integer
+AppointmentsByDateWithProvider_Response_appointments:
+  properties:
+    id: string
+    start_time: string
+    end_time: string
+    arrived_at: string
+    is_confirmed: boolean
+    business_entity_id: integer
+    status_name: string
+    nature_of_visit_name: string
+    nature_of_visit_flagged: boolean
+    status_id: integer
+    is_new_patient: boolean
+    wait_time: integer
+    reason_for_visit: string
+    external_id: string
+    referring_physician: string
+    resource:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_resource
+    location:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_location
+    patient:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_patient
+AppointmentsByDateWithProvider_Response_appointments_patient:
+  properties:
+    id: string
+    external_id: string
+    first_name: string
+    last_name: string
+    name: string
+    dob: string
+    insurance_profile_name: string
+    gender: string
+    gender_id: string
+    account_balance: string
+    patient_balance: string
+    insurance_balance: string
+    photo:
+      $ref: AppointmentsByDateWithProvider_Response_appointments_patient_photo
+AppointmentsByDateWithProvider_Response_appointments_patient_photo:
+  properties:
+    small: string
+    avatar: string
+    medium: string
+AppointmentsByDateWithProvider_Response_appointments_location:
+  properties:
+    location_id: integer
+    location_name: string
+AppointmentsByDateWithProvider_Response_appointments_resource:
+  properties:
+    id: integer
+    name: string
+
+CreateAppointment_Request:
+  properties:
+    appointment:
+      $ref: CreateAppointment_Request_appointment
+CreateAppointment_Request_appointment:
+  properties:
+    start_time: string
+    end_time: string
+    location_id: integer
+    provider_id: integer
+    nature_of_visit_id: integer
+    resource_id: integer
+    patients:
+      type: array
+      $ref: CreateAppointment_Request_appointment_patients
+CreateAppointment_Request_appointment_patients:
+  properties:
+    id: string
+    comments: string
+
+PatientShow: 
+  properties:
+    id: string
+    first_name: string
+    last_name: string
+    middle_initial: string
+    prefix: string
+    suffix: string
+    ssn: string
+    name: string
+    dob: string
+    email_address: string
+    status: string
+    status_id: string
+    external_id: string
+    legacy_patient_id: string
+    race_id: integer
+    chart_number: string
+    account_number: string
+    business_entity_id: integer
+    business_entity_name: string
+    interface: 
+      $ref: PatientInterface
+    date_of_death: string
+    last_seen_date: string
+    drivers_license_number: string
+    drivers_license_state_id: string
+    marital_status: string
+    language_id: integer
+    language: string
+    language_code: string
+    gender: string
+    gender_id: integer
+    ethnicity: string
+    ethnicity_id: integer
+    ethnicity_code: string
+    race: string
+    race_code: string
+    primary_location:
+      $ref: PatientPrimaryLocation
+    primary_provider_id: string
+    referring_physician_npi: string
+    responsible_party:
+      $ref: PatientResponsibleParty
+    insurance_profiles:
+      $ref: InsuranceProfile
+    addresses: 
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+    photo: string
+PatientInterface:
+  properties:
+    interface_code: string
+    interface_password: string
+PatientResponsibleParty:
+  properties:
+    responsible_party_person_relationship_type_id: integer
+    responsible_party_person_relationship_type_name: string
+    responsible_party_person_relationship_type_code: string
+    id: integer
+    name: string
+    last_name: string
+    first_name: string
+    middle: string
+    dob: string
+    gender_id: integer
+    gender: string
+    addresses: 
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+InsuranceProfile:
+  properties:
+    id: integer
+    self_pay: boolean
+    insurance_policies: array
+PatientPrimaryLocation:
+  properties:
+    id: integer
+    name: string
+    mnemonic: string
+    additional_name: string
+    fda_number: string
+    clia_number: string
+    npi: string
+    is_default: boolean
+    address:
+      $ref: PatientAddress
+PatientCreate_Response:
+  properties:
+    patient: string
+PatientCreate:
+  properties:
+    patient:
+      $ref: Patient
+    addresses:
+      type: array
+      $ref: PatientAddress
+    phones:
+      type: array
+      $ref: PatientPhone
+Patient: 
+  properties:
+    first_name: string
+    last_name: string
+    middle_initial: string
+    email: string
+    prefix: string
+    suffix: string
+    ssn: string
+    gender_id: string
+    date_of_birth: string
+    race_id: integer
+    marital_status_id: integer
+    language_id: integer
+    chart_number: string
+    drivers_license_number: string
+    drivers_license_state_id: string
+    employment_status_id: integer
+    school_name: string
+    employer_name: string
+    account_number: string
+    legacy_patient_id: string
+    employer_phone_number: string
+    ethnicity_id: integer
+    student_status_id: integer
+PatientAddress: 
+  properties:
+    line1: string
+    line2: string
+    city: string
+    state_id: integer
+    zip_code: string
+    country_id: integer
+    is_primary: string
+PatientPhone: 
+  properties:
+    phone_number: string
+    phone_type_id: integer
+    extension: string
+    is_primary: boolean
+PatientTest:
+  properties:
+    id:
+      type: string
+    first_name:
+      type: string
+    last_name:
+      type: string
+    insurance:
+      $ref: Insurance
+Insurance:
+  properties:
+    company:
+      type: string
+    premium:
+      type: string
+Provider:
+  properties:
+    id:
+      type: string
+    npi:
+      type: string
+    name:
+      type: string
+Location:
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    is_visible_appointment_scheduler:
+      type: string
+NatureOfVisit:
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    description:
+      type: string
+Product:
+  properties:
+    product_id:
+      type: string
+      description: Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles.
+    description:
+      type: string
+      description: Description of product.
+    display_name:
+      type: string
+      description: Display name of product.
+    capacity:
+      type: string
+      description: Capacity of product. For example, 4 people.
+    image:
+      type: string
+      description: Image URL representing the product.
+PriceEstimate:
+  properties:
+    product_id:
+      type: string
+      description: Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles
+    currency_code:
+      type: string
+      description: "[ISO 4217](http://en.wikipedia.org/wiki/ISO_4217) currency code."
+    display_name:
+      type: string
+      description: Display name of product.
+    estimate:
+      type: string
+      description: Formatted string of estimate in local currency of the start location. Estimate could be a range, a single number (flat rate) or "Metered" for TAXI.
+    low_estimate:
+      type: number
+      description: Lower bound of the estimated price.
+    high_estimate:
+      type: number
+      description: Upper bound of the estimated price.
+    surge_multiplier:
+      type: number
+      description: Expected surge multiplier. Surge is active if surge_multiplier is greater than 1. Price estimate already factors in the surge multiplier.
+Profile:
+  properties:
+    first_name:
+      type: string
+      description: First name of the Uber user.
+    last_name:
+      type: string
+      description: Last name of the Uber user.
+    email:
+      type: string
+      description: Email address of the Uber user
+    picture:
+      type: string
+      description: Image URL of the Uber user.
+    promo_code:
+      type: string
+      description: Promo code of the Uber user.
+AppointmentStatus:
+  properties:
+    appointment_status:
+      $ref: AppointmentStatusInner
+AppointmentStatusInner:
+  properties:
+    code:
+      type: string
+    id:
+      type: string
+    name:
+      type: string
+PatientSearch:
+  properties:
+    patients:
+      $ref: PatientSearchInner
+PatientSearchInner:
+  properties:
+    id:
+      type: string
+    external_id:
+      type: string
+    first_name:
+      type: string
+    last_name:
+      type: string
+    middle_initial:
+      type: string
+    name:
+      type: string
+    dob:
+      type: string
+    account_balance:
+      type: string
+    chart_number:
+      type: string
+    last_seen_date:
+      type: string
+    gender:
+      type: string
+    gender_id:
+      type: string
+    primary_location_id:
+      type: string
+    photo:
+      type: string
+AppointmentsByResource:
+  properties:
+    appointment:
+      $ref: AppointmentsByResourceInner
+AppointmentsByResourceInner:
+  properties:
+    admit_diagnosis_id:
+      type: string
+    appointment_cancellation_reason_id:
+      type: string
+    appointment_status_id:
+      type: string
+    arrived_at:
+      type: string
+    business_entity_id:
+      type: string
+    cancellation_comments:
+      type: string
+    cancellation_details:
+      type: string
+    confirmation_details:
+      type: string
+    contrast:
+      type: string
+    created_at:
+      type: string
+    created_by:
+      type: string
+    departed_at:
+      type: string
+    document_set_id:
+      type: string
+    end_time:
+      type: string
+    exam_room_id:
+      type: string
+    external_id:
+      type: string
+    id:
+      type: string
+    is_confirmed:
+      type: string
+    is_force_overbook:
+      type: string
+    laterality:
+      type: string
+    location_id:
+      type: string
+    nature_of_visit_id:
+      type: string
+    note_set_id:
+      type: string
+    patient_contacted:
+      type: string
+    reason_for_visit:
+      type: string
+    recurrence_id:
+      type: string
+    recurrence_index:
+      type: string
+    resource_id:
+      type: string
+    start_time:
+      type: string
+    task_id:
+      type: string
+    updated_at:
+      type: string
+    updated_by:
+      type: string
+PatientSearchRequest:
+  properties:
+    limit: 5
+    search:
+      $ref: PatientSearchRequestInner
+PatientSearchRequestInner:
+  properties:
+    term:
+      type: string
+Activity:
+  properties:
+    uuid:
+      type: string
+      description: Unique identifier for the activity
+Activities:
+  properties:
+    offset:
+      type: integer
+      format: int32
+      description: Position in pagination.
+    limit:
+      type: integer
+      format: int32
+      description: Number of items to retrieve (100 max).
+    count:
+      type: integer
+      format: int32
+      description: Total number of items available.
+    history:
+      type: array
+      $ref: Activity
+Error:
+  properties:
+    code:
+      type: integer
+      format: int32
+    message:
+      type: string
+    fields:
+      type: string

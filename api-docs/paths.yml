@@ -1,0 +1,281 @@
+/patients/{patient_id}:
+  get:
+    summary: Show Patient
+    description: |
+      Show a Patient by its ID
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the patient
+        required: true
+        type: string
+        format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: details about a patient
+        schema:
+          $ref: PatientShow
+          #type: array
+          #items:
+          #  $ref: Patient
+      404:
+        description: patient not found for current practice
+/patient/create:
+  post:
+    summary: Create Patient
+    description: |
+      Create a Patient
+    parameters:
+      - name: query
+        in: body
+        description: patient creation payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: PatientCreate
+    tags:
+      - Patients
+    responses:
+      201:
+        description: patient created successfully
+        schema:
+          $ref: PatientCreate_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      422:
+        description: validation error
+/patients/search:
+  post:
+    summary: Search Patients
+    description: |
+      Search for a Patient
+    parameters:
+      - name: query
+        in: body
+        description: search query
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: PatientSearchRequest
+    tags:
+      - Patients
+    responses:
+      200:
+        description: details about a patient
+        schema:
+          #$ref: PatientSearch
+          type: array
+          items:
+            $ref: PatientSearch
+/appointment/create:
+  post:
+    summary: Create Appointment
+    description: |
+      Create an Appointment
+    parameters:
+      - name: appointment
+        in: body
+        description: appointment information
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: CreateAppointment_Request
+    tags:
+      - Appointments
+    responses:
+      201:
+        description: appointment created successfully
+        schema:
+          $ref: CreateAppointment_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      422:
+        description: validation error
+/schedule/{date}/getblockouts/{location_id}/{resource_id}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts by Date, Location and Resource
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: location_id
+        in: path
+        description: Location ID
+        required: true
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment blockouts
+        schema:
+          $ref: AppointmentBlockoutsByLocation_Response_array
+          # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+          type: array
+          #items:
+          #  $ref: Patient
+/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment vlockouts
+        schema:
+          $ref: AppointmentBlockouts_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+/appointment/listbydate/{date}/provider-{provider_id}:
+  get:
+    summary: List Appointments
+    description: |
+      List Appointments for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointments
+        schema:
+          $ref: AppointmentsByDateWithProvider_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      404:
+        description: provider not found for current practice
+/appointment/statuses:
+  get:
+    summary: List Appointment Statuses
+    description: |
+      List Appointment Statuses for a Practice
+    parameters:
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment statuses
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentStatus
+/appointment/listbyresource/{resource_id}:
+  get:
+    summary: List Appointments
+    description: |
+      List Appointments by Resource
+    parameters:
+      - name: resource_id
+        in: path
+        description: GUID of the resource
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: details about a patient
+        schema:
+          #$ref: AppointmentsByResource
+          type: array
+          items:
+            $ref: AppointmentsByResource
+      404:
+        description: resource not found for current practice
+/provider/list:
+  get:
+    summary: List Providers
+    description: |
+      List Providers for a Practice
+    parameters:
+    tags:
+      - Providers
+    responses:
+      200:
+        description: list of providers for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Provider
+/appointment/locations:
+  get:
+    summary: List Locations
+    description: |
+      List Locations for a Practice
+    parameters:
+    tags:
+      - Locations
+    responses:
+      200:
+        description: list of locations for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Location
+/nature_of_visits:
+  get:
+    summary: List Nature of Visits
+    description: |
+      List Nature of Visits for a Practice
+    parameters:
+    tags:
+      - Nature of Visits
+    responses:
+      200:
+        description: list of nature of visits for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: NatureOfVisit

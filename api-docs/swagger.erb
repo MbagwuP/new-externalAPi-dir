@@ -1,0 +1,207 @@
+<% base_path = '/api-docs/' %>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CareCloud Interactive API Documentation</title>
+  <link href='//fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'/>
+  <link href='<%=base_path%>css/reset.css' media='screen' rel='stylesheet' type='text/css'/>
+  <link href='<%=base_path%>css/screen.css' media='screen' rel='stylesheet' type='text/css'/>
+  <link href='<%=base_path%>css/reset.css' media='print' rel='stylesheet' type='text/css'/>
+  <link href='<%=base_path%>css/screen.css' media='print' rel='stylesheet' type='text/css'/>
+  <link href='<%=base_path%>simplemodal/basic.css' media='screen' rel='stylesheet' type='text/css'/>
+  <script src="<%=base_path%>lib/shred.bundle.js" type='text/javascript'></script>
+  <script src='<%=base_path%>lib/jquery-1.8.0.min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/jquery.slideto.min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/jquery.wiggle.min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/jquery.ba-bbq.min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/handlebars-1.0.0.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/underscore-min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/backbone-min.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/swagger.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/swagger-client.js' type='text/javascript'></script>
+  <script src='<%=base_path%>swagger-ui.js' type='text/javascript'></script>
+  <script src='<%=base_path%>lib/highlight.7.3.pack.js' type='text/javascript'></script>
+  <script src='<%=base_path%>simplemodal/jquery.simplemodal-1.4.4.js' type='text/javascript'></script>
+
+  <%#>
+  <!-- enabling this will enable oauth2 implicit scope support -->
+  <script src='api-docs/lib/swagger-oauth.js' type='text/javascript'></script>
+  %>
+  <script type="text/javascript">
+
+    $(function () {
+      var url = window.location.search.match(/url=([^&]+)/);
+      if (url && url.length > 1) {
+        url = url[1];
+      } else {
+        url = "swagger.json";
+      }
+      window.swaggerUi = new SwaggerUi({
+        url: url,
+        dom_id: "swagger-ui-container",
+        supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
+        onComplete: function(swaggerApi, swaggerUi){
+          log("Loaded SwaggerUI");
+          $('pre code').each(function(i, e) {
+            hljs.highlightBlock(e)
+          });
+        },
+        onFailure: function(data) {
+          log("Unable to Load SwaggerUI");
+        },
+        docExpansion: "none",
+        sorter : "alpha"
+      });
+
+      function addApiKeyAuthorization() {
+        var key = $('#input_apiKey')[0].value;
+        log("key: " + key);
+        if(key && key.trim() != "") {
+            log("added key " + key);
+            window.authorizations.add("api_key", new ApiKeyAuthorization("api_key", key, "query"));
+        }
+      }
+
+      function addAccessTokenHeaderAuthorization() {
+        var key = $('#input_accessToken')[0].value;
+        if(key && key.trim() != "") {
+          window.authorizations.add("key", new ApiKeyAuthorization("authorization", key, "header"));
+        }
+      }
+
+      $('#input_accessToken').change(function() {
+        // addApiKeyAuthorization();
+        addAccessTokenHeaderAuthorization();
+      });
+
+      $('#refresh_token').click(function() {
+        $.modal($('#refresh_token_modal'));
+        $('#use_token_from_refresh').hide();
+      });
+
+      $('#use_token_from_refresh').click(function() {
+        $('#input_accessToken').val($('#refresh_token_response').data('token'));
+        $('#input_accessToken').trigger('change');
+      });
+
+      $('#use_token_from_demo').click(function() {
+        $('#input_accessToken').val($('#demo_token_response').data('token'));
+        $('#input_accessToken').trigger('change');
+      });
+
+      $('#demo_token').click(function() {
+        $.modal($('#demo_token_modal'));
+      });
+
+      $('#submit_refresh_token').click(function() {
+        refreshTokenCall();
+      });
+
+      $('#submit_demo_token').click(function() {
+        demoTokenCall();
+      });
+
+<%#
+      $('#input_apiKey').val('mnQ2yOcOAGVRVL8VujUcC3TpufkueozK');
+      $('#input_secretKey').val('ly8JZ0RKyx9jQyLi');
+      $('#input_refreshToken').val('rEZKRVRrqM6S95yc_xNjhGS_UFvf0HH7');
+%>
+
+      function refreshTokenCall() {
+        $.ajax({
+          type: "POST",
+          url: "/oauth2/access_token",
+          dataType: 'json',
+          async: false,
+          headers: {
+            Authorization: btoa($('#input_apiKey').val() + ':' + $('#input_secretKey').val())
+          },
+          data: {
+            grant_type: "refresh_token",
+            refresh_token: $('#input_refreshToken').val()
+          },
+          success: function(e) {
+            console.log("Refresh token grant finished");
+            $('#refresh_token_response').html(JSON.stringify(e));
+            if (e && e.access_token) {
+              // show Use This Token button
+              $('#use_token_from_refresh').show();
+              $('#refresh_token_response').data('token', e.access_token);
+            }
+          }
+        });
+      }
+
+      function demoTokenCall() {
+        $.ajax({
+          type: "POST",
+          url: "/api-docs/demotoken",
+          dataType: 'json',
+          async: false,
+          // data: {
+          //   grant_type: "refresh_token",
+          //   refresh_token: $('#input_refreshToken').val()
+          // },
+          success: function(e) {
+            console.log("Refresh token grant finished");
+            $('#demo_token_response').html(JSON.stringify(e));
+            if (e && e.access_token) {
+              // show Use This Token button
+              $('#use_token_from_demo').show();
+              $('#demo_token_response').data('token', e.access_token);
+            }
+          }
+        });
+      }
+
+      window.swaggerUi.load();
+  });
+  </script>
+</head>
+
+<body class="swagger-section">
+<div id='header'>
+  <div class="swagger-ui-wrap">
+    <a id="logo" href="http://www.carecloud.com"></a>
+    <form id='api_selector'>
+      <div class='input icon-btn' style='display: none;'>
+        <%# <img id="show-pet-store-icon" src="images/pet_store_api.png" title="Show Swagger Petstore Example Apis"> %>
+      </div>
+      <div class='input icon-btn' style='display: none;'>
+        <%# <img id="show-wordnik-dev-icon" src="images/wordnik_api.png" title="Show Wordnik Developer Apis"> %>
+      </div>
+      <div class='input' style=''><a id="refresh_token" class="carecloud_swagger_button" href="#">Refresh Token</a></div>
+      <%# <div class='input' style=''><a id="demo_token" class="carecloud_swagger_button" href="#">Demo Token</a></div> %>
+      <div class='input'><input placeholder="access token" id="input_accessToken" name="accessToken" type="text"/></div>
+    </form>
+  </div>
+</div>
+
+<div id="message-bar" class="swagger-ui-wrap">&nbsp;</div>
+<div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+
+<div id="refresh_token_modal" class="carecloud_simplemodal" style="display:none;">
+  <h1>Refresh Token</h1>
+  <span>If you have your API credentials already, and have activated your Authorization Grant, you may exchange your Refresh Token for a new Access Token here.</span>
+  <br/><br/>
+  <div class='input'><input placeholder="API key" id="input_apiKey" name="apiKey" type="text"/></div>
+  <div class='input'><input placeholder="secret key" id="input_secretKey" name="secretKey" type="password"/></div>
+  <div class='input'><input placeholder="refresh token" id="input_refreshToken" name="refreshToken" type="text"/></div>
+  <br/><br/>
+  <code id="refresh_token_response">{message: "Response with access token goes here."}</code>
+  <div class='input carecloud_modal_button' style='width: 150px;'><a id="submit_refresh_token" class="carecloud_swagger_button" href="#">Submit</a></div>
+  <div class='input carecloud_modal_button' style='width: 150px;'><a id="use_token_from_refresh" class="carecloud_swagger_button" href="#">Use This Token</a></div>
+</div>
+
+<div id="demo_token_modal" class="carecloud_simplemodal" style="display:none;">
+  <h1>Demo Token</h1>
+  <span>You may request a demo token here. With this token, you can make calls against a test Practice, on behalf of the CareCloud Interactive API Docs application.</span>
+  <br/><br/><br/>
+  <code id="demo_token_response">{message: "Response with access token goes here."}</code>
+  <br/><br/>
+  <div class='input' style='width: 150px; display: inline-block;'><a id="submit_demo_token" class="carecloud_swagger_button" href="#">Submit</a></div>
+  <div class='input' style='width: 150px; display: inline-block;'><a id="use_token_from_demo" class="carecloud_swagger_button" href="#">Use This Token</a></div>
+</div>
+
+</body>
+</html>
