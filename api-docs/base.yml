@@ -7,7 +7,7 @@ info:
 # host: localhost:9292
 # array of all schemes that your API supports
 schemes:
-  - http
+  - https
 # will be prefixed to all paths
 basePath: /v2
 produces:
