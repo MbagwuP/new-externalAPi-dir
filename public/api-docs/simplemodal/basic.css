@@ -83,3 +83,7 @@
 #simplemodal-container {
   padding: none !important;
 }
+
+img#validator {
+  display: none;
+}
