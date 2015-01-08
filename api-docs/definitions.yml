@@ -535,9 +535,11 @@ AppointmentsByResourceInner:
       type: string
 PatientSearchRequest:
   properties:
-    limit: 5
+    limit:
+      type: integer
     search:
       $ref: PatientSearchRequestInner
+      type: array
 PatientSearchRequestInner:
   properties:
     term:
