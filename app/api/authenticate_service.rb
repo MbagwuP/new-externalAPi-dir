@@ -260,6 +260,20 @@ class ApiService < Sinatra::Base
     end
   end
 
+  get '/oauth2/auth_code/success' do
+    resp = RestClient.get(CCAuth.endpoint + '/oauth2/auth_code/success', params: {code: params[:code]})
+    body resp.body
+    content_type :html
+    status HTTP_OK
+  end
+
+  get '/oauth2/auth_code/email_success' do
+    resp = RestClient.get(CCAuth.endpoint + '/oauth2/auth_code/email_success', params: {code: params[:code]})
+    body resp.body
+    content_type :html
+    status HTTP_OK
+  end
+
   post '/oauth2/access_token' do
     begin
       auth = Rack::Auth::Basic::Request.new(request.env)
