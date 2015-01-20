@@ -151,6 +151,12 @@
         required: true
         type: string
         format: double
+      - name: include_appointments
+        in: query
+        description: Include Appointments for specified Date and Provider along with the Blockouts
+        required: false
+        type: boolean
+        format: double
     tags:
       - Appointments
     responses:
