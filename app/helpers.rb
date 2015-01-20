@@ -488,6 +488,7 @@ class ApiService < Sinatra::Base
   end
 
   def valid_json?(str)
+    return false if !str.is_a?(String)
     begin
       !JSON.parse(str).nil?
     rescue JSON::ParserError

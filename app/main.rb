@@ -225,7 +225,7 @@ class ApiService < Sinatra::Base
     audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_ERROR, auditoptions)
 
     LOG.warn 'attempted route that does not exist'
-    if response.body.nil?
+    if response.body.nil? || response.body.first.nil? || !valid_json?(response.body.first)
       %{Sorry, we couldn't find the resource you were looking for.}
     else
       response.body
