@@ -477,6 +477,7 @@ class ApiService < Sinatra::Base
     # This just caches the value and then halts
     @statuscode = statuscode
     @message = message
+    message = wrap_message_as_json(message_keyname, message) if !valid_json?(message)
 
     halt statuscode, message
   end
@@ -486,6 +487,22 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
   end
 
+  def valid_json?(str)
+    begin
+      !JSON.parse(str).nil?
+    rescue Oj::ParseError
+      false
+    end
+  end
+
+  def message_keyname(statuscode=nil)
+    statuscode = @statuscode if defined?(@statuscode)
+    !statuscode.nil? && statuscode >= 400 ? 'error' : 'message'
+  end
+
+  def wrap_message_as_json(message_keyname, message)
+    {message_keyname => message}.to_json
+  end
 
   def get_all_business_entities(pass_in_token)
 
