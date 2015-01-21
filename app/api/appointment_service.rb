@@ -1017,7 +1017,7 @@ class ApiService < Sinatra::Base
       end
     end
 
-    data = Hash.new
+    data = {}
     data['block_outs'] = JSON.parse(response.body)
     if params[:include_appointments] == true or params[:include_appointments] == 'true'
 
