@@ -50,6 +50,9 @@ AppointmentBlockouts_Response:
     block_outs:
       type: array
       $ref: AppointmentBlockouts_Response_block_outs
+    appointments:
+      type: array
+      $ref: AppointmentBlockouts_Response_appointments
 AppointmentBlockouts_Response_block_outs:
   properties:
     id: string
@@ -75,7 +78,40 @@ AppointmentBlockouts_Response_block_outs:
     updated_by: string
     start_hour_bak: string
     end_hour_bak: string
-    
+AppointmentBlockouts_Response_appointments:
+  properties:
+    admit_diagnosis_id: string
+    appointment_cancellation_reason_id: string
+    appointment_status_id: string
+    arrived_at: string
+    business_entity_id: string
+    cancellation_comments: string
+    cancellation_details: string
+    confirmation_details: string
+    contrast: string
+    created_at: string
+    created_by: string
+    departed_at: string
+    document_set_id: string
+    end_time: string
+    exam_room_id: string
+    external_id: string
+    id: string
+    is_confirmed: string
+    is_force_overbook: string
+    laterality: string
+    location_id: string
+    nature_of_visit_id: string
+    note_set_id: string
+    patient_contacted: string
+    reason_for_visit: string
+    recurrence_id: string
+    recurrence_index: string
+    resource_id: string
+    start_time: string
+    task_id: string
+    updated_at: string
+    updated_by: string
 AppointmentsByDateWithProvider_Response:
   properties:
     appointments:
