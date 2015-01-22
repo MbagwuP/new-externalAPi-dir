@@ -253,6 +253,10 @@ class ApiService < Sinatra::Base
       if [ 302, 303 ].include?(resp.status)
         redirect to base_url + request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
         redirect to resp.headers['location']
+      else
+        body resp.body
+        content_type :html
+        status HTTP_OK
       end
 
     rescue => e
