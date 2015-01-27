@@ -314,7 +314,7 @@ class ApiService < Sinatra::Base
     end
   end
 
-  get '/oauth2/token_info' do
+  get /(\/v2\/)?oauth2\/token_info/ do
     begin
       begin
         resp = CCAuth::OAuth2.new.token_info(get_oauth_token || params[:access_token])
@@ -335,7 +335,7 @@ class ApiService < Sinatra::Base
     end
   end
 
-  get '/oauth2/authorization' do
+  get /(\/v2\/)?oauth2\/authorization/ do
     begin
       begin
         resp = CCAuth::OAuth2.new.authorization(get_oauth_token || params[:access_token])
