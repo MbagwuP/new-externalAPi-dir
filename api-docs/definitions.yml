@@ -611,3 +611,28 @@ Error:
       type: string
     fields:
       type: string
+OAuth2TokenInfo_Response:
+  properties:
+    access_token: string
+    type: string
+    expires_in: integer
+    scope: string
+OAuth2Authorization_Response:
+  properties:
+    access_token: string
+    type: string
+    expires_in: integer
+    scopes: array
+    business_entity_id: string
+    application:
+      $ref: OAuth2Authorization_Response_application
+    user:
+      $ref: OAuth2Authorization_Response_user
+OAuth2Authorization_Response_user:
+  properties:
+    id: string
+    first_name: string
+    last_name: string
+OAuth2Authorization_Response_application:
+  properties:
+    id: string
