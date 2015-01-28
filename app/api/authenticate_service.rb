@@ -253,10 +253,36 @@ class ApiService < Sinatra::Base
       if [ 302, 303 ].include?(resp.status)
         redirect to base_url + request.fullpath + '&' + error unless resp.headers['cc_oauth2_status_error'].blank?
         redirect to resp.headers['location']
+      else
+        body resp.body
+        content_type :html
+        status HTTP_OK
       end
 
     rescue => e
       handle_exception(e)
+    end
+  end
+
+  get '/oauth2/auth_code/success' do
+    begin
+      resp = RestClient.get(CCAuth.endpoint + '/oauth2/auth_code/success', params: {code: params[:code]})
+      body resp.body
+      content_type :html
+      status HTTP_OK
+    rescue => e
+      api_svc_halt e.http_code, e.response
+    end
+  end
+
+  get '/oauth2/auth_code/email_success' do
+    begin
+      resp = RestClient.get(CCAuth.endpoint + '/oauth2/auth_code/email_success', params: {code: params[:code]})
+      body resp.body
+      content_type :html
+      status HTTP_OK
+    rescue => e
+      api_svc_halt e.http_code, e.response
     end
   end
 
@@ -288,7 +314,7 @@ class ApiService < Sinatra::Base
     end
   end
 
-  get '/oauth2/token_info' do
+  get /(\/v2\/)?oauth2\/token_info/ do
     begin
       begin
         resp = CCAuth::OAuth2.new.token_info(get_oauth_token || params[:access_token])
@@ -309,7 +335,7 @@ class ApiService < Sinatra::Base
     end
   end
 
-  get '/oauth2/authorization' do
+  get /(\/v2\/)?oauth2\/authorization/ do
     begin
       begin
         resp = CCAuth::OAuth2.new.authorization(get_oauth_token || params[:access_token])

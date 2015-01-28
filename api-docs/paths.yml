@@ -151,6 +151,12 @@
         required: true
         type: string
         format: double
+      - name: include_appointments
+        in: query
+        description: Include Appointments for specified Date and Provider along with the Blockouts
+        required: false
+        type: boolean
+        format: double
     tags:
       - Appointments
     responses:
@@ -279,3 +285,27 @@
           type: array
           items:
             $ref: NatureOfVisit
+/oauth2/authorization:
+  get:
+    summary: Authorization Details
+    description:
+      Show information about an authorization grant, such as the Practice ID, OAuth scopes, and the User who allowed it
+    tags:
+      - Authorization
+    responses:
+      200:
+        description: info about an authorization
+        schema:
+          $ref: OAuth2Authorization_Response
+/oauth2/token_info:
+  get:
+    summary: Token Details
+    description:
+      Show information about a token, such as the time remaining until it expires
+    tags:
+      - Authorization
+    responses:
+      200:
+        description: info about a token
+        schema:
+          $ref: OAuth2TokenInfo_Response

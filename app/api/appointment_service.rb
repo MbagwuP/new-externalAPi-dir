@@ -1017,10 +1017,8 @@ class ApiService < Sinatra::Base
       end
     end
 
-    data = Array.new
-    parsed = Hash.new
-    parsed['block_outs'] = JSON.parse(response.body)
-    data << parsed
+    data = {}
+    data['block_outs'] = JSON.parse(response.body)
     if params[:include_appointments] == true or params[:include_appointments] == 'true'
 
       urlappt = ''
@@ -1045,11 +1043,11 @@ class ApiService < Sinatra::Base
         end
       end
 
-      parsed2 = JSON.parse(response.body)
-      parsed2.each { |x|
+      appointments_data = JSON.parse(response.body)
+      appointments_data.each { |x|
         x['appointment']['id'] = x['appointment']['external_id']
       }
-      data << parsed2
+      data['appointments'] = appointments_data
     end
 
     body(data.to_json)
