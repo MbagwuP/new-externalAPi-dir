@@ -75,6 +75,13 @@ class ApiService < Sinatra::Base
     end
   end
 
+  # Generate a URI for a Webservices call - query_params can be a hash or a string
+  def webservices_uri path, query_params
+    uri = URI.parse(API_SVC_URL + path)
+    uri.query = query_params.is_a?(Hash) ? query_params.to_query : query_params
+    uri.to_s
+  end
+
   # Convenience method for retrieving the JSON body
   def get_request_JSON
     if request && request.body
@@ -485,6 +492,19 @@ class ApiService < Sinatra::Base
   def handle_exception(exception)
     LOG.error(exception)
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
+  end
+
+  def rescue_service_call call_description
+    begin
+      yield
+    rescue => e
+      begin
+        errmsg = "#{call_description} Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
   end
 
   def valid_json?(str)
