@@ -100,18 +100,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointment/resources' do
-    urlresource = webservices_uri "appointments/#{current_business_entity}/resources.json", token: escaped_oauth_token
-
-    resp = rescue_service_call 'Resource Look Up' do
-      RestClient.get(urlresource, :api_key => APP_API_KEY)
-    end
-
-    body(resp.body)
-    status HTTP_OK
-  end
-
-
   get '/v2/schedule/:date/getblockouts/:location_id/:resource_id' do
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:date]}/1/#{params[:location_id]}/#{params[:resource_id]}/getByDay.json",
               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
