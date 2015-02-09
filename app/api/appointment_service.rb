@@ -109,57 +109,6 @@ class ApiService < Sinatra::Base
 
   end
 
-
-  post '/v2/appointment/create?' do
-
-    # Validate the input parameters
-    request_body = get_request_JSON
-
-    begin
-      providerid = request_body['appointment']['provider_id']
-      request_body['appointment'].delete('provider_id')
-    rescue
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
-    end
-
-    ## validate the provider
-    providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
-
-    ## validate the request based on token
-    check_for_valid_provider(providerids, providerid)
-
-    #LOG.debug(request_body)
-
-    ## http://localservices.carecloud.local:3000/providers/2/appointments.json?token=
-    urlapptcrt = ''
-    urlapptcrt << API_SVC_URL
-    urlapptcrt << 'providers/'
-    urlapptcrt << providerid.to_s
-    urlapptcrt << '/appointments.json?token='
-    urlapptcrt << escaped_oauth_token
-    urlapptcrt << '&business_entity_id='
-    urlapptcrt << current_business_entity
-
-    begin
-      response = RestClient.post(urlapptcrt, request_body.to_json,
-        {:content_type => :json, :api_key => APP_API_KEY})
-    rescue => e
-      begin
-        exception = error_handler_filter(e.response)
-        errmsg = "Appointment Creation Failed - #{exception}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-    parsed = JSON.parse(response.body)
-    the_response_hash = {:appointment => parsed['appointment']['external_id'].to_s}
-    body(the_response_hash.to_json)
-    status HTTP_CREATED
-
-  end
-
-
   #  update an appointment for a patient
   #
   # PUT /v1/appointment/<appointmentId>?authentication=<authenticationToken>
@@ -425,64 +374,6 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.get(urlappt)
-    rescue => e
-      begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-
-    parsed = JSON.parse(response.body)
-
-    # iterate the array of appointments
-    parsed["appointments"].each { |x|
-      x['id'] = x['external_id']
-      x['patient']['id'] = x['patient']['external_id']
-    }
-
-    #LOG.debug(parsed)
-    body(parsed.to_json)
-
-    status HTTP_OK
-
-  end
-
-
-  get '/v2/appointment/listbydate/:date/:providerid?' do
-
-    # Validate the input parameters
-    validate_param(params[:providerid], PROVIDER_REGEX, PROVIDER_MAX_LEN)
-    providerid = params[:providerid]
-
-    validate_param(params[:date], DATE_REGEX, DATE_MAX_LEN)
-    the_date = params[:date]
-
-    #format to what the devservice needs
-    providerid.slice!(/^provider-/)
-
-    providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
-
-    ## validate the request based on token
-    check_for_valid_provider(providerids, providerid)
-
-    #http://devservices.carecloud.local/providers/2/appointments.json?token=&date=20130424
-    urlappt = ''
-    urlappt << API_SVC_URL
-    urlappt << 'providers/'
-    urlappt << providerid
-    urlappt << '/appointments.json?token='
-    urlappt << escaped_oauth_token
-    urlappt << '&date='
-    urlappt << the_date
-    urlappt << '&business_entity_id='
-    urlappt << current_business_entity
-    urlappt << '&local_timezone=true' if local_timezone?
-
-    begin
-      response = RestClient.get(urlappt, :api_key => APP_API_KEY)
     rescue => e
       begin
         errmsg = "Appointment Look Up Failed - #{e.message}"
@@ -992,107 +883,6 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/appointmentblockouts/listbyresourceanddate/:resourceid/date/:date?' do
-    resourceid = params[:resourceid]
-
-    urlappt = ''
-    urlappt << API_SVC_URL
-    urlappt << 'appointments/'
-    urlappt << current_business_entity
-    urlappt << '/'
-    urlappt << resourceid
-    urlappt << '/'
-    urlappt << params[:date]
-    urlappt << '/list_by_resource.json?token='
-    urlappt << escaped_oauth_token
-
-    begin
-      response = RestClient.get(urlappt)
-    rescue => e
-      begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    data = {}
-    data['block_outs'] = JSON.parse(response.body)
-    if params[:include_appointments] == true or params[:include_appointments] == 'true'
-
-      urlappt = ''
-      urlappt << API_SVC_URL
-      urlappt << 'appointments/'
-      urlappt << current_business_entity
-      urlappt << '/'
-      urlappt << resourceid
-      urlappt << '/'
-      urlappt << params[:date]
-      urlappt << '/listbyresourceanddate.json?token='
-      urlappt << escaped_oauth_token
-
-      begin
-        response = RestClient.get(urlappt)
-      rescue => e
-        begin
-          errmsg = "Appointment Look Up Failed - #{e.message}"
-          api_svc_halt e.http_code, errmsg
-        rescue
-          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-        end
-      end
-
-      appointments_data = JSON.parse(response.body)
-      appointments_data.each { |x|
-        x['appointment']['id'] = x['appointment']['external_id']
-      }
-      data['appointments'] = appointments_data
-    end
-
-    body(data.to_json)
-    status HTTP_OK
-  end
-
-  get '/v2/appointment/listbyresource/:resource_id' do
-
-    ## token management. Need unencoded tokens!
-    resource_id = params[:resource_id]
-    #LOG.debug(business_entity)
-    #
-    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
-    urlappt = ''
-    urlappt << API_SVC_URL
-    urlappt << 'appointments/'
-    urlappt << current_business_entity
-    urlappt << '/'
-    urlappt << resource_id
-    urlappt << '/listbyresource.json?token='
-    urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true' if local_timezone?
-
-    begin
-      response = RestClient.post(urlappt, nil, :api_key => APP_API_KEY)
-    rescue => e
-      begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    parsed = JSON.parse(response.body)
-    parsed.each { |x|
-      x['appointment']['id'] = x['appointment']['external_id']
-    }
-
-    body(parsed.to_json)
-
-    status HTTP_OK
-
-  end
-
   ##  get appointments_blockouts by location id
   # Test - URL :: /v1/appointmentblockouts/listbylocationanddate/33/date/20100906?authentication=
   #
@@ -1194,34 +984,6 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
-  get '/v2/appointment/locations' do
-
-    #LOG.debug(business_entity)
-
-    #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
-    urllocation = ''
-    urllocation << API_SVC_URL
-    urllocation << 'public/businesses/'
-    urllocation << current_business_entity
-    urllocation << '/locations.json?token='
-    urllocation << escaped_oauth_token
-
-    begin
-      response = RestClient.get(urllocation, :api_key => APP_API_KEY)
-      parsed = JSON.parse(response.body)
-      body(parsed.to_json)
-      status HTTP_OK
-    rescue => e
-      begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-  end
-
 
   #  get status information
   #
@@ -1258,30 +1020,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointment/statuses' do
-
-    #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
-    urllocation = ''
-    urllocation << API_SVC_URL
-    urllocation << 'appointments/'
-    urllocation << current_business_entity
-    urllocation << '/statuses.json?token='
-    urllocation << escaped_oauth_token
-
-    begin
-      resp = RestClient.get(urllocation, :api_key => APP_API_KEY)
-      body(resp.body)
-      status HTTP_OK
-    rescue => e
-      begin
-        errmsg = "Appointment Status Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-  end
 
 
   #  get All location information
@@ -1369,29 +1107,6 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/appointment/resources' do
-
-    urlresource = ''
-    urlresource << API_SVC_URL
-    urlresource << 'appointments/'
-    urlresource << current_business_entity
-    urlresource << '/resources.json?token='
-    urlresource << escaped_oauth_token
-
-    begin
-      resp = RestClient.get(urlresource, :api_key => APP_API_KEY)
-      body(resp.body)
-      status HTTP_OK
-    rescue => e
-      begin
-        errmsg = "Resource Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-  end
 
 
   #  register for appointment notifications
@@ -1761,45 +1476,6 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/schedule/:date/getblockouts/:location_id/:resource_id' do
-
-    urlappt = ''
-    urlappt << API_SVC_URL
-    urlappt << 'appointments/'
-    urlappt << current_business_entity
-    urlappt << '/'
-    urlappt <<  params[:date]
-    urlappt << '/1/'
-    urlappt <<  params[:location_id]
-    urlappt << '/'
-    urlappt <<  params[:resource_id]
-    urlappt << '/getByDay.json?token='
-    urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true' if local_timezone?
-
-    begin
-      response = RestClient.get(urlappt)
-    rescue => e
-      begin
-        errmsg = "Appointment Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    parsed = JSON.parse(response.body)
-    blockouts = parsed["theBlockouts"]
-    blockouts.each do |bo|
-      bo["appointment_blockout"].delete("end_hour_bak")
-      bo["appointment_blockout"].delete("end_minutes")
-      bo["appointment_blockout"].delete("start_minutes")
-      bo["appointment_blockout"].delete("start_hour_bak")
-    end
-    body(blockouts.to_json)
-    status HTTP_OK
-
-  end
 
   #params none, just need to pass in a valid token
   # GET /v1/notificationcallbacks?authentication=<TOKEN>
@@ -1854,35 +1530,6 @@ class ApiService < Sinatra::Base
 
     begin
       response = RestClient.get(urlappt)
-    rescue => e
-      begin
-        exception = error_handler_filter(e.response)
-        errmsg = "Appointment Template Look Up Failed - #{exception}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        errmsg = "Appointment Template Look Up Failed - #{e.message}"
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    body(response)
-    status HTTP_OK
-  end
-
-
-  get '/v2/appointment_templates' do
-    urlappt = ''
-    urlappt << API_SVC_URL
-    urlappt << 'appointment_templates/'
-    urlappt << current_business_entity
-    urlappt << '.json?token='
-    urlappt << escaped_oauth_token
-    urlappt << '&local_timezone=true' if local_timezone?
-
-    LOG.debug("URL:" + urlappt)
-
-    begin
-      response = RestClient.get(urlappt, :api_key => APP_API_KEY)
     rescue => e
       begin
         exception = error_handler_filter(e.response)

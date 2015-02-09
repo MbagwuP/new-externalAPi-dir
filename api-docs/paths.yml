@@ -22,7 +22,7 @@
           #  $ref: Patient
       404:
         description: patient not found for current practice
-/patient/create:
+/patients:
   post:
     summary: Create Patient
     description: |
@@ -72,7 +72,7 @@
           type: array
           items:
             $ref: PatientSearch
-/appointment/create:
+/appointments:
   post:
     summary: Create Appointment
     description: |
@@ -237,7 +237,7 @@
             $ref: AppointmentsByResource
       404:
         description: resource not found for current practice
-/provider/list:
+/providers:
   get:
     summary: List Providers
     description: |
@@ -253,7 +253,7 @@
           type: array
           items:
             $ref: Provider
-/appointment/locations:
+/locations:
   get:
     summary: List Locations
     description: |
@@ -269,17 +269,17 @@
           type: array
           items:
             $ref: Location
-/nature_of_visits:
+/visit_reasons:
   get:
-    summary: List Nature of Visits
+    summary: List Visit Reasons
     description: |
-      List Nature of Visits for a Practice
+      List Visit Reasons for a Practice
     parameters:
     tags:
-      - Nature of Visits
+      - Visit Reasons
     responses:
       200:
-        description: list of nature of visits for a practice
+        description: list of visit reasons for a practice
         schema:
           #$ref: NatureOfVisit
           type: array
