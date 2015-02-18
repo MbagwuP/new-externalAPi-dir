@@ -12,9 +12,9 @@ class ApiService < Sinatra::Base
       RestClient.get(urllocation, :api_key => APP_API_KEY)
     end
 
-      parsed = JSON.parse(response.body)
-      body(parsed.to_json)
-      status HTTP_OK
+    parsed = JSON.parse(response.body)
+    body(parsed.to_json)
+    status HTTP_OK
   end
 
 end

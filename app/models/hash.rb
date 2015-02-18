@@ -17,4 +17,11 @@ class Hash
   def compact!
     self.reject! { |_, value| value.nil? }
   end
+
+  def rename_key old_key, new_key
+    # if self[old_key]
+      self[new_key] = self[old_key]
+      self.delete(old_key)
+    # end
+  end
 end

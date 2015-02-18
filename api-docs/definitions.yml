@@ -101,7 +101,7 @@ AppointmentBlockouts_Response_appointments:
     is_force_overbook: string
     laterality: string
     location_id: string
-    nature_of_visit_id: string
+    visit_reason_id: string
     note_set_id: string
     patient_contacted: string
     reason_for_visit: string
@@ -200,7 +200,7 @@ CreateAppointment_Request_appointment:
     end_time: string
     location_id: integer
     provider_id: integer
-    nature_of_visit_id: integer
+    visit_reason_id: integer
     resource_id: integer
     patients:
       type: array
@@ -636,3 +636,55 @@ OAuth2Authorization_Response_user:
 OAuth2Authorization_Response_application:
   properties:
     id: string
+AppointmentTemplates_Response:
+  properties:
+    appointment_templates:
+      $ref: AppointmentTemplates_Response_appointment_templates
+      type: array
+AppointmentTemplates_Response_appointment_templates:
+  properties:
+    id: integer
+    name: string
+    locations:
+      $ref: AppointmentTemplates_Response_appointment_templates_locations
+      type: array
+    resources:
+      $ref: AppointmentTemplates_Response_appointment_templates_resources
+      type: array
+    visit_reasons:
+      $ref: AppointmentTemplates_Response_appointment_templates_visit_reasons
+      type: array
+    business_entity_id: integer
+    description: string
+    use_monday: boolean
+    use_tuesday: boolean
+    use_wednesday: boolean
+    use_thursday: boolean
+    use_friday: boolean
+    use_saturday: boolean
+    use_sunday: boolean
+    effective_from: string
+    effective_to: string
+    max_appointments_allowed: integer
+    start_at: string
+    end_at: string
+    occurences:
+      $ref: AppointmentTemplates_Response_appointment_templates_occurences
+      type: array
+AppointmentTemplates_Response_appointment_templates_occurences:
+  properties:
+    start_at: string
+    end_at: string
+AppointmentTemplates_Response_appointment_templates_visit_reasons:
+  properties:
+    id: integer
+    name: string
+    max_appointments_allowed: string
+AppointmentTemplates_Response_appointment_templates_resources:
+  properties:
+    id: integer
+    name: string
+AppointmentTemplates_Response_appointment_templates_locations:
+  properties:
+    id: integer
+    name: string
