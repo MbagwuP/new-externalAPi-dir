@@ -197,6 +197,86 @@
           #  $ref: Patient
       404:
         description: provider not found for current practice
+/appointment_templates:
+  get:
+    summary: List Appointment Templates
+    description: |
+      List Appointment Templates for a Practice
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointment Templates
+    responses:
+      200:
+        description: list of appointment templates
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentTemplates_Response
+/resources/{resource_id}/appointment_templates:
+  get:
+    summary: List Appointment Templates By Resource
+    description: |
+      List Appointment Templates for a Practice
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment Templates
+    responses:
+      200:
+        description: list of appointment templates
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentTemplates_Response
 /appointment/statuses:
   get:
     summary: List Appointment Statuses

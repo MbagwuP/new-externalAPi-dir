@@ -1,5 +1,6 @@
 class ApiService < Sinatra::Base
 
+
   get '/v2/appointment/listbydate/:date/:providerid?' do
     # Validate the input parameters
     validate_param(params[:providerid], PROVIDER_REGEX, PROVIDER_MAX_LEN)
@@ -29,6 +30,8 @@ class ApiService < Sinatra::Base
     parsed["appointments"].each { |x|
       x['id'] = x['external_id']
       x['patient']['id'] = x['patient']['external_id']
+      x.rename_key 'nature_of_visit_name', 'visit_reason_name'
+      x.rename_key 'nature_of_visit_flagged', 'visit_reason_flagged'
     }
 
     #LOG.debug(parsed)
@@ -56,7 +59,10 @@ class ApiService < Sinatra::Base
       end
 
       appointments_data = JSON.parse(response.body)
-      appointments_data.each { |x| x['appointment']['id'] = x['appointment']['external_id'] }
+      appointments_data.each { |x|
+        x['appointment']['id'] = x['appointment']['external_id']
+        x['appointment'].rename_key('nature_of_visit_id', 'visit_reason_id')
+      }
       data['appointments'] = appointments_data
     end
 
@@ -122,29 +128,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointment_templates' do
-
-    urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
-                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
-    LOG.debug("URL:" + urlappt)
-
-    response = rescue_service_call 'Appointment Template Look Up' do
-      RestClient.get(urlappt, :api_key => APP_API_KEY)
-    end
-
-    body(response)
-    status HTTP_OK
-  end
-
-
-  get '/v2/resources/:resource_id/appointment_templates' do
-    # /v2/resources/8088/appointment_templates?location_id=299&nature_of_visit_id=1414&start_date=2015-01-01&end_date=2015-01-30
-    if params[:location_id]
-      nil
-    end
-  end
-
-
   # /v2/appointments
   # /v2/appointment/create (legacy)
   post /\/v2\/(appointment\/create|appointments)/ do
@@ -154,6 +137,7 @@ class ApiService < Sinatra::Base
     begin
       providerid = request_body['appointment']['provider_id']
       request_body['appointment'].delete('provider_id')
+      request_body['nature_of_visit_id'] = request_body['visit_reason_id'] if request_body['visit_reason_id']
     rescue
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
     end
