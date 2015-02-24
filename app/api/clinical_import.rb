@@ -452,7 +452,7 @@ class ApiService < Sinatra::Base
       end
     end
     body('"Success":"Medications has been created"')
-    body('{"Patient identifier":"'+params[:patient_id]+'","Success":"'+"#{success}"+' Medications has been created", "Failures":'+"#{failed.to_json}"+'}') if failed.size > 0
+    body('{"Patient identifier":"'+params[:patient_id]+'","Success":"'+"#{success}"+' Medications have been created", "Failures":'+"#{failed.to_json}"+'}') if failed.size > 0
 
     status HTTP_CREATED
 
