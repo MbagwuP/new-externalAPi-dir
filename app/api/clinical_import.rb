@@ -445,14 +445,14 @@ class ApiService < Sinatra::Base
       rescue => e
         begin
           exception = error_handler_filter(e.response)
-          failed.push("{Medication Name: - #{newMed['drug_name']}, Error: #{exception}")
+          failed.push({:medication_name => newMed['drug_name'], :error_msg => exception })
         rescue
-          failed.push("{Medication Name: - #{newMed['drug_name']}")
+          failed.push({:medication_name => newMed['drug_name']})
         end
       end
     end
     body('"Success":"Medications has been created"')
-    body("#{success} Medications have been created for patient #{params[:patient_id]}. #{failed.size} Failed Requests: : #{failed}") if failed.size > 0
+    body('{"Patient identifier":"'+params[:patient_id]+'","Success":"'+"#{success}"+' Medications has been created", "Failures":'+"#{failed.to_json}"+'}') if failed.size > 0
 
     status HTTP_CREATED
 
