@@ -1,6 +1,7 @@
 class RecurringTimespan
 
   def initialize options
+    options.symbolize_keys!
     @days_of_week = []
     @days_of_week << 0 if options[:use_sunday]
     @days_of_week << 1 if options[:use_monday]
@@ -10,10 +11,19 @@ class RecurringTimespan
     @days_of_week << 5 if options[:use_friday]
     @days_of_week << 6 if options[:use_saturday]
 
+    @timezone_offset = options[:timezone_offset]
+    @timezone_name = options[:timezone_name]
+
+    if has_hour_and_minute_fields? options
+      @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
+      @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
+    else
+      @start_at = Time.parse options[:start_at] rescue nil
+      @end_at = Time.parse options[:end_at] rescue nil
+    end
+
     @effective_from = Date.parse options[:effective_from] rescue nil
     @effective_to = Date.parse options[:effective_to] rescue nil
-    @start_at = Time.parse options[:start_at] rescue nil
-    @end_at = Time.parse options[:end_at] rescue nil
   end
 
   def occurences_in_date_range filter_start_date, filter_end_date, as_strings=nil
@@ -30,11 +40,9 @@ class RecurringTimespan
 
   def filter_by_effective_dates array_of_dates
     array_of_dates.map{|x|
-      x if @effective_from.nil?
-      x if x >= @effective_from
+      (x if @effective_from.nil?) || (x if x >= @effective_from)
     }.compact.map{|x|
-      x if @effective_to.nil?
-      x if x <= @effective_to
+      (x if @effective_to.nil?) || (x if x <= @effective_to) || nil
     }.compact
   end
 
@@ -48,15 +56,38 @@ class RecurringTimespan
   end
 
   def add_start_time_to_date date
-    Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at))
+    Time.use_zone(@timezone_name) do 
+      dt = Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at)).in_time_zone
+      dt = dt - 1.hour if dt.dst?
+      dt
+    end
   end
 
   def add_end_time_to_date date
-    Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at))
+    Time.use_zone(@timezone_name) do
+      dt = Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at)).in_time_zone
+      dt = dt - 1.hour if dt.dst?
+      dt
+    end
   end
 
+  # gets just the time part off of a timestamp that also has the date in it
   def timestamp_segment timestamp_string
     timestamp_string.to_s.split(' ')[1..-1].join
+  end
+
+  def has_hour_and_minute_fields? options
+    (options.keys & [:start_hour, :end_hour, :start_minutes, :end_minutes]).any?
+  end
+
+  def number_with_preceding_zero number
+    number.to_s.rjust(2,"0")
+  end
+
+  def hour_and_minute_to_time hour, minute
+    hour   = number_with_preceding_zero(hour)
+    minute = number_with_preceding_zero(minute)
+    Chronic.parse("#{hour}:#{minute}")
   end
 
 end
