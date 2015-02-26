@@ -135,9 +135,11 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
 
     begin
-      providerid = request_body['appointment']['provider_id']
       request_body['appointment'].delete('provider_id')
-      request_body['nature_of_visit_id'] = request_body['visit_reason_id'] if request_body['visit_reason_id']
+      if request_body['appointment']['visit_reason_id']
+        request_body['appointment']['nature_of_visit_id'] = request_body['appointment']['visit_reason_id']
+        request_body['appointment'].delete('visit_reason_id')
+      end
     rescue
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
     end
