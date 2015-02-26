@@ -40,37 +40,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointmentblockouts/listbyresourceanddate/:resourceid/date/:date?' do
-    resourceid = params[:resourceid]
-
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{resourceid}/#{params[:date]}/list_by_resource.json", token: escaped_oauth_token
-
-    response = rescue_service_call 'Appointment Look Up' do
-      RestClient.get(urlappt)
-    end
-
-    data = {}
-    data['block_outs'] = JSON.parse(response.body)
-
-    if params[:include_appointments] == true or params[:include_appointments] == 'true'
-      urlappt = webservices_uri "appointments/#{current_business_entity}/#{resourceid}/#{params[:date]}/listbyresourceanddate.json", token: escaped_oauth_token
-      response = rescue_service_call 'Appointment Look Up' do
-        RestClient.get(urlappt)
-      end
-
-      appointments_data = JSON.parse(response.body)
-      appointments_data.each { |x|
-        x['appointment']['id'] = x['appointment']['external_id']
-        x['appointment'].rename_key('nature_of_visit_id', 'visit_reason_id')
-      }
-      data['appointments'] = appointments_data
-    end
-
-    body(data.to_json)
-    status HTTP_OK
-  end
-
-
   get '/v2/appointment/listbyresource/:resource_id' do
     resource_id = params[:resource_id]
     #LOG.debug(business_entity)
@@ -93,7 +62,7 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointment/statuses' do
+  get /\/v2\/(appointment\/statuses|appointment_statuses)/ do
     #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
     urllocation = webservices_uri "appointments/#{current_business_entity}/statuses.json", token: escaped_oauth_token
 
@@ -106,25 +75,43 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/schedule/:date/getblockouts/:location_id/:resource_id' do
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:date]}/1/#{params[:location_id]}/#{params[:resource_id]}/getByDay.json",
-              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
+  # /v2/appointments
+  get '/v2/appointments' do
+    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date]}
+    using_date_filter = params[:start_date] && params[:end_date]
+    missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
+    forwarded_params[:from] = forwarded_params[:from] + ' 00:00:00' if using_date_filter
+    forwarded_params[:to] = forwarded_params[:to] + ' 23:59:59' if using_date_filter
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
+    urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
+                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil), use_current_business_entity: 'true'}.merge(forwarded_params).compact
 
-    response = rescue_service_call 'Appointment Look Up' do
-      response = RestClient.get(urlappt)
+    resp = rescue_service_call 'Appointment Look Up' do
+      RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
 
-    parsed = JSON.parse(response.body)
-    blockouts = parsed["theBlockouts"]
-    blockouts.each do |bo|
-      bo["appointment_blockout"].delete("end_hour_bak")
-      bo["appointment_blockout"].delete("end_minutes")
-      bo["appointment_blockout"].delete("start_minutes")
-      bo["appointment_blockout"].delete("start_hour_bak")
+    resp = JSON.parse(resp)['theAppointments']
+    body resp.to_json
+  end
+
+
+  get '/v2/appointments/:appointment_id' do
+    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
+      token: escaped_oauth_token, include_confirmation_method: 'true'
+
+    resp = rescue_service_call 'Appointment Look Up' do
+      RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
 
-    body(blockouts.to_json)
+    body(resp)
     status HTTP_OK
+  end
+
+
+  post '/v2/appointments/:appointment_id/confirmation' do
+    # to be implemented later
+    request_body = get_request_JSON
+    nil
   end
 
 
