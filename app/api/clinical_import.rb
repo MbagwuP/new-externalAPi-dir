@@ -406,7 +406,8 @@ class ApiService < Sinatra::Base
     business_entity = get_business_entity(pass_in_token)
     local_pid = params[:patient_id]
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
-
+    failed = []
+    success = 0
     #LOG.debug "Request Body >>>>>"
     #LOG.debug(request_body)
 
@@ -440,18 +441,19 @@ class ApiService < Sinatra::Base
 
       begin
         response = RestClient.post(urlmedications, medications.to_json, :content_type => :json)
+        success += 1
       rescue => e
         begin
           exception = error_handler_filter(e.response)
-          errmsg = "Medications Creation Failed - #{exception}"
-          api_svc_halt e.http_code, errmsg
+          failed.push({:medication_name => newMed['drug_name'], :error_msg => exception })
         rescue
-          errmsg = "Medications Creation Failed - #{e.message}"
-          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+          failed.push({:medication_name => newMed['drug_name']})
         end
       end
     end
-    body('"Success":"Medication has been created"')
+    body('"Success":"Medications has been created"')
+    body('{"Patient identifier":"'+params[:patient_id]+'","Success":"'+"#{success}"+' Medications have been created", "Failures":'+"#{failed.to_json}"+'}') if failed.size > 0
+
     status HTTP_CREATED
 
   end
