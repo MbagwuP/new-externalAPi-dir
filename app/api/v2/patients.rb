@@ -57,7 +57,7 @@ class ApiService < Sinatra::Base
   # /patients/{guid}
   # /v2/patients/{guid}
   # /v2/patients/{integer_id}
-  get /(\/v2\/)?patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})|[0-9]*)/ do |patient_id|
+  get /\/v2\/patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})|[0-9]*)/ do |patient_id|
     pass if params[:patient_id] == "search"
     begin
       patient_id = params[:patient_id]

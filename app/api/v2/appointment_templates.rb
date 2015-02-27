@@ -35,7 +35,7 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/resources/:resource_id/appointment_templates' do
+  get '/v2/appointment_resources/:resource_id/appointment_templates' do
 
     # urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
     # urlappt = webservices_uri "appointment_templates/list_by_business_entity_with_filtering",
