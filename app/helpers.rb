@@ -739,4 +739,40 @@ class ApiService < Sinatra::Base
     end
     output
   end
+
+
+  def communication_outcomes
+    return @communication_outcomes if defined?(@communication_outcomes) # caching
+    cache_key = "communication-outcomes"
+
+    begin
+      @communication_outcomes = settings.cache.fetch(cache_key, 54000) do
+        communication_outcomes_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @communication_outcomes = communication_outcomes_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @communication_outcomes
+  end
+
+  def communication_outcomes_from_webservices
+    urlco = webservices_uri "communication_outcomes/list_all.json"
+
+    resp = rescue_service_call 'Communication Outcome Look Up' do
+      RestClient.get(urlco, :api_key => APP_API_KEY)
+    end
+
+    resp = JSON.parse resp
+    output = {}
+    resp.each do |co|
+      key = co['communication_outcome']['name'].underscore.gsub(' ', '_')
+      val = co['communication_outcome']['id']
+      output[key] = val
+    end
+    output
+  end
+
 end
