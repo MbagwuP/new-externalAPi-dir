@@ -31,6 +31,30 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  post '/v2/patients/find?' do
+    ## Validate the input parameters
+    request_body = get_request_JSON
+    first_name = request_body['search']['first_name']
+    last_name = request_body['search']['last_name']
+    dob = request_body['search']['dob']
+
+    search_limit = request_body['limit'].to_s
+    #TODO: add external id to patient search
+    #TODO: replace id with external id
+
+    urlpatient = webservices_uri "businesses/#{current_business_entity}/patients/search.json",
+                                 {token: escaped_oauth_token, limit: search_limit, must_match_on_specific_fields: 'true', 
+                                  last_name: last_name, first_name: first_name, dob: dob}.compact
+
+    response = rescue_service_call 'Search' do
+      RestClient.get(urlpatient)
+    end
+
+    returnedBody = JSON.parse(response.body)
+    returnedBody["patients"].each {|x| x["id"] = x["external_id"]}
+    body(returnedBody.to_json)
+    status HTTP_OK
+  end
 
   put '/v2/patientsextended/:patient_id' do
     begin
