@@ -34,9 +34,9 @@ class ApiService < Sinatra::Base
   post '/v2/patients/find?' do
     ## Validate the input parameters
     request_body = get_request_JSON
-    first_name = request_body['search']['first_name']
-    last_name = request_body['search']['last_name']
-    dob = request_body['search']['dob']
+    first_name = request_body['find']['first_name']
+    last_name = request_body['find']['last_name']
+    dob = request_body['find']['dob']
 
     search_limit = request_body['limit'].to_s
     #TODO: add external id to patient search
