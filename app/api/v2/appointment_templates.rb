@@ -7,6 +7,8 @@ class ApiService < Sinatra::Base
     forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date], include_expanded_info: 'true'}
     using_date_filter = params[:start_date] && params[:end_date]
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
+    blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date filtering fields cannot be blank."}' if blank_date_field_passed
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
@@ -42,6 +44,8 @@ class ApiService < Sinatra::Base
     forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date], include_expanded_info: 'true'}
     using_date_filter = params[:start_date] && params[:end_date]
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
+    blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date filtering fields cannot be blank."}' if blank_date_field_passed
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
