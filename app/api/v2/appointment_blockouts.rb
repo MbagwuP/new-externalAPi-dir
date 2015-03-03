@@ -2,9 +2,15 @@ class ApiService < Sinatra::Base
 
   get '/v2/appointment_blockouts' do
     forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date]}
-    using_date_filter = params[:start_date] && params[:end_date]
+    blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
+    using_date_filter = params[:start_date] && params[:end_date]
+    if !using_date_filter
+      forwarded_params[:from] = Date.today.to_s
+      forwarded_params[:to] = Date.today.to_s
+    end
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date filtering fields cannot be blank."}' if blank_date_field_passed
 
     urlappt = webservices_uri "appointment_blockouts/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
