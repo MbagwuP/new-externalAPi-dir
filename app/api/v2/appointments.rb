@@ -78,11 +78,19 @@ class ApiService < Sinatra::Base
   # /v2/appointments
   get '/v2/appointments' do
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date]}
-    using_date_filter = params[:start_date] && params[:end_date]
+    blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
-    forwarded_params[:from] = forwarded_params[:from] + ' 00:00:00' if using_date_filter
-    forwarded_params[:to] = forwarded_params[:to] + ' 23:59:59' if using_date_filter
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date filtering fields cannot be blank."}' if blank_date_field_passed
+
+    using_date_filter = params[:start_date] && params[:end_date]
+    if !using_date_filter
+      forwarded_params[:from] = Date.today.to_s
+      forwarded_params[:to] = Date.today.to_s
+    end
+    forwarded_params[:from] = forwarded_params[:from] + ' 00:00:00'
+    forwarded_params[:to] = forwarded_params[:to] + ' 23:59:59'
+
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil), use_current_business_entity: 'true'}.merge(forwarded_params).compact
 
