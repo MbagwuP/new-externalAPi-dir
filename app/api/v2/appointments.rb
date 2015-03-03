@@ -117,9 +117,23 @@ class ApiService < Sinatra::Base
 
 
   post '/v2/appointments/:appointment_id/confirmation' do
-    # to be implemented later
     request_body = get_request_JSON
-    nil
+    communication_method_slug = request_body.delete('communication_method')
+    communication_outcome_slug = request_body.delete('communication_outcome')
+
+    request_body['communication_method_id'] = communication_methods[communication_method_slug]
+    request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil?
+
+    urlconf = webservices_uri "appointments/#{current_business_entity}/#{request_body['appointment_id']}/patient_confirmed.json",
+      token: escaped_oauth_token
+
+    resp = rescue_service_call 'Confirmation Creation' do
+      RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
+    end
+
+    body(resp)
   end
 
 
