@@ -3,58 +3,44 @@ class ApiService < Sinatra::Base
   post '/v2/patients/search?' do
     ## Validate the input parameters
     request_body = get_request_JSON
+    searching_by_fields = request_body['fields'].present?
+    using_old_search_format = request_body['search'].present?
+    searching_by_terms = request_body['terms'].present? || using_old_search_format
 
-    #TODO: Build search_limit and search_data variables smarter then whats there
-    search_data = ""
-    request_body['search'].each { |x|
-      search_data = search_data + x["term"] + " "
-      #LOG.debug(search_data)
-    }
+    if (searching_by_terms && searching_by_fields) || (!searching_by_terms && !searching_by_fields)
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"You must search by either a list of terms, or specific terms against specific fields."}'
+    end
 
-    search_limit = request_body['limit'].to_s
-    #TODO: add external id to patient search
-    #TODO: replace id with external id
+    if using_old_search_format
+      search_data = ""
+      request_body['search'].each { |x|
+        search_data = search_data + x["term"] + " "
+      }
+      request_payload = {search: search_data}
+    elsif searching_by_terms
+      search_data = request_body['terms'].join(' ')
+      request_payload = {search: search_data}
+    elsif searching_by_fields
+      request_payload = {fields: request_body['fields']}
+    end
+
+    request_payload[:limit] = request_body['limit'].to_s
 
     #business_entity_patient_search        /businesses/:business_entity_id/patients/search.:format  {:controller=>"patients", :action=>"search_by_business_entity"}
     #http://localservices.carecloud.local:3000/businesses/1/patients/search.json?token=<token>&search=test%20smith&limit=50
     #/businesses/:business_entity_id/patients/search.:format
-    urlpatient = webservices_uri "businesses/#{current_business_entity}/patients/search.json",
-                                 {token: escaped_oauth_token, limit: search_limit, search: search_data}
+    urlpatient = webservices_uri "businesses/#{current_business_entity}/patients/search.json", token: escaped_oauth_token
 
-    response = rescue_service_call 'Search' do
-      RestClient.get(urlpatient)
+    response = rescue_service_call 'Patient Search' do
+      RestClient.post(urlpatient, request_payload)
     end
 
     returnedBody = JSON.parse(response.body)
-    returnedBody["patients"].each {|x| x["id"] = x["external_id"]}
+    returnedBody["patients"].each {|x| x.rename_key('external_id', 'id') }
     body(returnedBody.to_json)
     status HTTP_OK
   end
 
-  post '/v2/patients/find?' do
-    ## Validate the input parameters
-    request_body = get_request_JSON
-    first_name = request_body['find']['first_name']
-    last_name = request_body['find']['last_name']
-    dob = request_body['find']['dob']
-
-    search_limit = request_body['limit'].to_s
-    #TODO: add external id to patient search
-    #TODO: replace id with external id
-
-    urlpatient = webservices_uri "businesses/#{current_business_entity}/patients/search.json",
-                                 {token: escaped_oauth_token, limit: search_limit, must_match_on_specific_fields: 'true', 
-                                  last_name: last_name, first_name: first_name, dob: dob}.compact
-
-    response = rescue_service_call 'Search' do
-      RestClient.get(urlpatient)
-    end
-
-    returnedBody = JSON.parse(response.body)
-    returnedBody["patients"].each {|x| x["id"] = x["external_id"]}
-    body(returnedBody.to_json)
-    status HTTP_OK
-  end
 
   put '/v2/patientsextended/:patient_id' do
     begin
