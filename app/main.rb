@@ -90,7 +90,7 @@ class ApiService < Sinatra::Base
     DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
     SOFTWARE_VERSION = config["version"]
 
-    set :enable_auditing, true
+    set :enable_auditing, false
     set :api_url, config["api_internal_svc_url"]
     set :memcached_server, config["memcache_servers"]
     set :mongo_server, config["mongo_server"]
@@ -172,13 +172,13 @@ class ApiService < Sinatra::Base
   end
 
   # Establish connection to mongoDB; database as defined in model
-  begin
-    LOG.debug ("Connecting to MongoMapper at: #{settings.mongo[:config].inspect}")
-    MongoMapper.setup(settings.mongo[:config], settings.environment, settings.mongo[:options])
-  rescue => e
-    LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
-    #    exit if settings.enable_auditing        # Using as a proxy for test environment
-  end
+  # begin
+  #   LOG.debug ("Connecting to MongoMapper at: #{settings.mongo[:config].inspect}")
+  #   MongoMapper.setup(settings.mongo[:config], settings.environment, settings.mongo[:options])
+  # rescue => e
+  #   LOG.error("Connecting to MongoMapper Failed! - #{e.message}")
+  #   #    exit if settings.enable_auditing        # Using as a proxy for test environment
+  # end
 
 
 
