@@ -395,8 +395,8 @@ class ApiService < Sinatra::Base
   end
 
   # # Control the level of logging based on settings
-  # before do
-  #   content_type 'application/json', :charset => 'utf-8'
+  before do
+    content_type 'application/json', :charset => 'utf-8'
   #   @start_time = Time.now
   # 
   #   auditoptions = {
@@ -407,7 +407,7 @@ class ApiService < Sinatra::Base
   #   
   #   audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
   # 
-  # end
+  end
 
    after do
      #request_duration = ((Time.now - @start_time) * 1000.0).to_i
