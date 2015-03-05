@@ -22,7 +22,7 @@
           #  $ref: Patient
       404:
         description: patient not found for current practice
-/patient/create:
+/patients:
   post:
     summary: Create Patient
     description: |
@@ -72,7 +72,7 @@
           type: array
           items:
             $ref: PatientSearch
-/appointment/create:
+/appointments:
   post:
     summary: Create Appointment
     description: |
@@ -197,6 +197,86 @@
           #  $ref: Patient
       404:
         description: provider not found for current practice
+/appointment_templates:
+  get:
+    summary: List Appointment Templates
+    description: |
+      List Appointment Templates for a Practice
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointment Templates
+    responses:
+      200:
+        description: list of appointment templates
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentTemplates_Response
+/resources/{resource_id}/appointment_templates:
+  get:
+    summary: List Appointment Templates By Resource
+    description: |
+      List Appointment Templates for a Practice
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment Templates
+    responses:
+      200:
+        description: list of appointment templates
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentTemplates_Response
 /appointment/statuses:
   get:
     summary: List Appointment Statuses
@@ -237,7 +317,7 @@
             $ref: AppointmentsByResource
       404:
         description: resource not found for current practice
-/provider/list:
+/providers:
   get:
     summary: List Providers
     description: |
@@ -253,7 +333,7 @@
           type: array
           items:
             $ref: Provider
-/appointment/locations:
+/locations:
   get:
     summary: List Locations
     description: |
@@ -269,17 +349,17 @@
           type: array
           items:
             $ref: Location
-/nature_of_visits:
+/visit_reasons:
   get:
-    summary: List Nature of Visits
+    summary: List Visit Reasons
     description: |
-      List Nature of Visits for a Practice
+      List Visit Reasons for a Practice
     parameters:
     tags:
-      - Nature of Visits
+      - Visit Reasons
     responses:
       200:
-        description: list of nature of visits for a practice
+        description: list of visit reasons for a practice
         schema:
           #$ref: NatureOfVisit
           type: array

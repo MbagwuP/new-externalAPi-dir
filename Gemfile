@@ -4,6 +4,8 @@ source "http://gem.carecloud.com"
 gem 'sinatra', :require => 'sinatra/base'
 gem 'require_all'
 gem 'color'
+gem 'chronic'
+gem 'tzinfo'
 
 # cache
 gem 'dalli', '~> 2.6'

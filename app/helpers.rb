@@ -75,6 +75,13 @@ class ApiService < Sinatra::Base
     end
   end
 
+  # Generate a URI for a Webservices call - query_params can be a hash or a string
+  def webservices_uri path, query_params=nil
+    uri = URI.parse(API_SVC_URL + path)
+    uri.query = query_params.is_a?(Hash) ? query_params.to_query : query_params
+    uri.to_s
+  end
+
   # Convenience method for retrieving the JSON body
   def get_request_JSON
     if request && request.body
@@ -162,17 +169,22 @@ class ApiService < Sinatra::Base
 
   end
 
+  def business_entity_from_auth_service
+    session = CCAuth::OAuth2.new.authorization(oauth_token)
+    session[:business_entity_id].to_s
+  end
+
   def current_business_entity
     return @current_business_entity if defined?(@current_business_entity) # caching
     cache_key = "business-entity-guid-" + oauth_token
 
     begin
       @current_business_entity = settings.cache.fetch(cache_key, 54000) do
-        session = CCAuth::OAuth2.new.authorization(oauth_token)
-        session[:business_entity_id].to_s
+        business_entity_from_auth_service
       end
     rescue Dalli::DalliError
       LOG.warn("cannot reach cache store")
+      @current_business_entity = business_entity_from_auth_service
     rescue CCAuth::Error::ResponseError => e
       api_svc_halt e.code, e.message
     end
@@ -487,6 +499,19 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
   end
 
+  def rescue_service_call call_description
+    begin
+      yield
+    rescue => e
+      begin
+        errmsg = "#{call_description} Failed - #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+  end
+
   def valid_json?(str)
     return false if !str.is_a?(String)
     begin
@@ -677,5 +702,77 @@ class ApiService < Sinatra::Base
   end
 
 
+  def communication_methods
+    return @communication_methods if defined?(@communication_methods) # caching
+    cache_key = "communication-methods"
+
+    begin
+      @communication_methods = settings.cache.fetch(cache_key, 54000) do
+        communication_methods_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @communication_methods = communication_methods_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @communication_methods
+  end
+
+  def allowed_communication_method? communication_method_slug
+    ['phone','email','text_message','fax','other'].include? communication_method_slug
+  end
+
+  def communication_methods_from_webservices
+    urlcm = webservices_uri "communication_methods/list_all.json"
+
+    resp = rescue_service_call 'Communication Method Look Up' do
+      RestClient.get(urlcm, :api_key => APP_API_KEY)
+    end
+
+    resp = JSON.parse resp
+    output = {}
+    resp.each do |cm|
+      key = cm['communication_method']['name'].underscore.gsub(' ', '_')
+      val = cm['communication_method']['id']
+      output[key] = val if allowed_communication_method?(key)
+    end
+    output
+  end
+
+
+  def communication_outcomes
+    return @communication_outcomes if defined?(@communication_outcomes) # caching
+    cache_key = "communication-outcomes"
+
+    begin
+      @communication_outcomes = settings.cache.fetch(cache_key, 54000) do
+        communication_outcomes_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @communication_outcomes = communication_outcomes_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @communication_outcomes
+  end
+
+  def communication_outcomes_from_webservices
+    urlco = webservices_uri "communication_outcomes/list_all.json"
+
+    resp = rescue_service_call 'Communication Outcome Look Up' do
+      RestClient.get(urlco, :api_key => APP_API_KEY)
+    end
+
+    resp = JSON.parse resp
+    output = {}
+    resp.each do |co|
+      key = co['communication_outcome']['name'].underscore.gsub(' ', '_')
+      val = co['communication_outcome']['id']
+      output[key] = val
+    end
+    output
+  end
 
 end

@@ -113,37 +113,5 @@ class ApiService < Sinatra::Base
 
   end
 
-  get '/v2/provider/list' do
-
-    ## save the result of this to the cache
-    cache_key = "business-entity-" + current_business_entity + "-providers-" + oauth_token
-
-    #LOG.debug("cache key: " + cache_key)
-
-    #http://localservices.carecloud.local:3000/public/businesses/1/providers.json?token=
-    urlprovider = ''
-    urlprovider << API_SVC_URL
-    urlprovider << 'public/businesses/'
-    urlprovider << current_business_entity
-    urlprovider << '/providers.json?token='
-    urlprovider << escaped_oauth_token
-
-    begin
-      response = RestClient.get(urlprovider, :api_key => APP_API_KEY)
-    rescue => e
-      begin
-        errmsg = "Provider Look Up Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
-      rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
-      end
-    end
-
-    body(response.body)
-
-    status HTTP_OK
-
-  end
-
 
 end
