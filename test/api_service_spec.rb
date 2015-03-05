@@ -37,8 +37,8 @@ describe "ApiService" do
     it "should return 400 if authentication goes correctly - user assigned more then one business unit" do
       authorize 'jyeung@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
-      last_response.status.should == 400
-      last_response.body.should == '{"error":"User is assigned to more then one business entity"}'
+      last_response.status.should == 401
+      last_response.body.should == '{"error":"Authenticate Failed - 401 Unauthorized"}'
     end
 
     it "should return 200 if authentication goes correctly" do
@@ -184,7 +184,7 @@ describe "ApiService" do
     it "should return 403 if request is not authorized" do
       get '/v1/patients/patient-2222?authentication=3333333'
       last_response.status.should == 403
-      last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
+      last_response.body.should == '{"error":"Get Business Entity Failed - 403 Forbidden"}'
     end
 
     # setup accurate request of patient data
@@ -582,7 +582,7 @@ describe "ApiService" do
         var1 = '{"todo":"this"}'
         post '/v1/patients/create?authentication=3333333', var1
         last_response.status.should == 403
-        last_response.body.should == 'Get Business Entity Failed - 403 Forbidden'
+        last_response.body.should == '{"error":"Get Business Entity Failed - 403 Forbidden"}'
       end
 
       it "should return 400 if request is in valid" do
@@ -1457,18 +1457,20 @@ describe "ApiService" do
     end
 
 
-    it "should return 500 for invalid template id" do
+    it "should return empty array for invalid template id" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
-      url << '/v1/appointment_templates/find_nature_of_visit/123asd321334545?authentication='
+      url << '/v1/appointment_templates/find_nature_of_visit/123321334545?authentication='
       url << var1
       get url
-      last_response.status.should == 500
+
+      puts last_response.body
+      JSON.parse(last_response.body).should == []
     end
 
-    it "should return 500 for template tied to another BE" do
+    it "should return empty array for template tied to another BE" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
@@ -1476,7 +1478,7 @@ describe "ApiService" do
       url << '/v1/appointment_templates/find_nature_of_visit/24?authentication='
       url << var1
       get url
-      last_response.status.should == 500
+      JSON.parse(last_response.body).should == []
     end
 
   end
@@ -1590,31 +1592,22 @@ describe "ApiService" do
 
         var1 = '{
           "allergy": [
-              {
-                  "rx_norm_code": null,
-                  "onset_at": "2013-08-01T12:00:00-04:00",
-                  "resolved_at": null,
-                  "snomed_code": null,
-                  "name": "Peanuts",
-                  "status": "A",
-                  "comments": "test test test test test test test test test test test test test test !!!@@@###",
-                  "reaction": [
-                      {
-                          "description": "not bad",
-                          "severity_id": "1",
-                          "reaction_id": "14",
-                          "status": "A"
-                      },
-                      {
-                          "description": "freakish!!!!",
-                          "severity_id": "2",
-                          "reaction_id": "12",
-                          "status": "A"
-                      }
-                  ]
-              }
-          ]
-      }'
+           {
+            "rx_norm_code": "196468",
+            "allergen_type_id": "2",
+            "onset_at": "2003-10-09",
+            "name": "Cardura",
+            "status": "A",
+            "reaction": [
+                {
+                    "description":"testing",
+                    "severity_id": "4",
+                    "reaction_id": "8"
+                }
+            ]
+        }
+      ]
+    }'
         post url, var1
         last_response.status.should == 201
       end

@@ -264,6 +264,8 @@ class ApiService < Sinatra::Base
     business_entity = get_business_entity(pass_in_token)
     patient_id = get_internal_patient_id(local_pid, business_entity, pass_in_token)
     id = patient_id
+    failed = []
+    success = 0
 
     request_body['allergy'].each do |newAllergy|
       Allergy = Hash.new
@@ -282,18 +284,18 @@ class ApiService < Sinatra::Base
 
       begin
         response = RestClient.post(urlallergies, Allergy.to_json, :content_type => :json)
+        success += 1
       rescue => e
         begin
           exception = error_handler_filter(e.response)
-          errmsg = "Medications Creation Failed - #{exception}"
-          api_svc_halt e.http_code, errmsg
+          failed.push({:allergy_name => newAllergy['name'], :error_msg => exception })
         rescue
-          errmsg = "Allergy Creation Failed - #{e.message}"
-          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+          failed.push({:allergy_name => newAllergy['name']})
         end
       end
     end
-    body('"Success":"Allergy has been created"')
+    body('"Success":"Allergy Records has been created"')
+    body('{"Patient identifier":"'+params[:patient_id]+'","Success":"'+"#{success}"+' Allergens created", "Failures":'+"#{failed.to_json}"+'}') if failed.size > 0
     status HTTP_CREATED
 
   end
