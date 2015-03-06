@@ -23,7 +23,7 @@ class ApiService < Sinatra::Base
     
     if using_date_filter
       urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
-                                     {token: escaped_oauth_token, include_timezone: 'true'}
+                                     {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
       busentity = rescue_service_call 'Practice Look Up' do
         RestClient.get(urlbusentity)
       end
