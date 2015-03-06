@@ -13,6 +13,17 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  get '/v2/visit_reasons/:visit_reason_id/appointment_resources' do
+    urlresource = webservices_uri "appointments/#{current_business_entity}/resources.json", token: escaped_oauth_token, filter_nature_of_visit_id: params[:visit_reason_id]
+
+    resp = rescue_service_call 'Resource Look Up' do
+      RestClient.get(urlresource, :api_key => APP_API_KEY)
+    end
+
+    body(resp.body)
+    status HTTP_OK
+  end
+
   get '/v2/appointment_resources/:resource_id' do
     urlresource = webservices_uri "businesses/#{current_business_entity}/resources/#{params[:resource_id]}.json",
       token: escaped_oauth_token, include_default_provider: 'true'
