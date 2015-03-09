@@ -109,6 +109,19 @@ describe "ApiService" do
 
   end
 
+  describe "Document API ::" do
+    it "should return 200 if document sources are found" do
+      authorize 'interface@interface.com', 'welcome'
+      post '/v1/service/authenticate'
+      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
+      url = '/v1/documentsources?authentication='
+      url << var1
+      get url
+      last_response.status.should == 200
+    end
+
+  end
+
   describe "Util Resource API ::" do
 
     it "should return 200 if gender request is valid" do
