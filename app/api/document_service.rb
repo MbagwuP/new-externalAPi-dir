@@ -403,6 +403,24 @@ class ApiService < Sinatra::Base
     pdf.to_str
    end
 
+  get '/v1/documentsources' do
+    pass_in_token = CGI::unescape(params[:authentication])
+    business_entity = get_business_entity(pass_in_token)
+    document_source = "#{API_SVC_URL}businesses/#{business_entity}/document_sources.json?token=#{CGI::escape(pass_in_token)}"
+    begin
+      response = RestClient.get(document_source)
+    rescue => e
+      begin
+        errmsg = "Document Source Look Up Failed. #{e.message}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+    body(response.body)
+    status HTTP_OK
+  end
+
   def create_local_file(patientid, params)
     # Now the picture is an IO object!
     document_binary = params['payload'][:tempfile]
