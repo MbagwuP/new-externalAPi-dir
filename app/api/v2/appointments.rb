@@ -104,6 +104,8 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointments/:appointment_id' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' if !params[:appointment_id].is_guid?
+
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
       token: escaped_oauth_token, include_confirmation_method: 'true'
 
@@ -111,7 +113,25 @@ class ApiService < Sinatra::Base
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
 
-    body(resp)
+    filtered = JSON.parse(resp)['appointment']
+    filtered.rename_key 'external_id', 'id'
+    filtered.rename_key 'nature_of_visit_id', 'visit_reason_id'
+    filtered.delete('created_by')
+    filtered.delete('updated_by')
+    filtered.delete('reason_for_visit')
+    filtered['business_entity_id'] = current_business_entity
+
+    if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
+      # build new confirmation_method hash, and replace the old one
+      confirmation_method = filtered['confirmation_method']['communication_method']
+      confirmation_method.delete('created_by')
+      confirmation_method.delete('updated_by')
+      confirmation_method['slug'] = communication_methods.invert[confirmation_method['id']]
+      filtered['preferred_confirmation_method'] = confirmation_method
+      filtered.delete('confirmation_method')
+    end
+
+    body({appointment: filtered}.to_json)
     status HTTP_OK
   end
 
