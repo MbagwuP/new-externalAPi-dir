@@ -53,6 +53,10 @@
     summary: Search Patients
     description: |
       Search for a Patient
+
+      You must choose between searching by "terms" or by "fields".
+      When providing an array of terms, results will match provided terms against any field.
+      When providing a fields object, results must match the provided values for the specific fields given.
     parameters:
       - name: query
         in: body
@@ -61,7 +65,7 @@
         type: string
         format: double
         schema:
-          $ref: PatientSearchRequest
+          $ref: PatientSearch_Request
     tags:
       - Patients
     responses:
@@ -98,41 +102,85 @@
           #  $ref: Patient
       422:
         description: validation error
-/schedule/{date}/getblockouts/{location_id}/{resource_id}:
+# /schedule/{date}/getblockouts/{location_id}/{resource_id}:
+#   get:
+#     summary: List Appointment Blockouts
+#     description: |
+#       List Appointment Blockouts by Date, Location and Resource
+#     parameters:
+#       - name: date
+#         in: path
+#         description: Appointment Date
+#         required: true
+#         type: string
+#         format: double
+#       - name: location_id
+#         in: path
+#         description: Location ID
+#         required: true
+#         type: string
+#         format: double
+#       - name: resource_id
+#         in: path
+#         description: Resource ID
+#         required: true
+#         type: string
+#         format: double
+#     tags:
+#       - Appointments
+#     responses:
+#       200:
+#         description: list of appointment blockouts
+#         schema:
+#           $ref: AppointmentBlockoutsByLocation_Response_array
+#           # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+#           type: array
+#           #items:
+#           #  $ref: Patient
+/appointment_blockouts:
   get:
     summary: List Appointment Blockouts
     description: |
-      List Appointment Blockouts by Date, Location and Resource
+      List Appointment Blockouts with Filtering
+
+      Filtering params are optional.
+      If date filtering is provided, occurences of each blockout within the given timespan will be included.
+      Without date filtering, blockouts will be returned for today's date.
     parameters:
-      - name: date
-        in: path
-        description: Appointment Date
-        required: true
-        type: string
-        format: double
       - name: location_id
-        in: path
+        in: query
         description: Location ID
-        required: true
+        required: false
         type: string
         format: double
       - name: resource_id
-        in: path
+        in: query
         description: Resource ID
-        required: true
+        required: false
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date for date filtering
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date for date filtering
+        required: false
         type: string
         format: double
     tags:
-      - Appointments
+      - Appointment Blockouts
     responses:
       200:
         description: list of appointment blockouts
         schema:
-          $ref: AppointmentBlockoutsByLocation_Response_array
-          # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+          # $ref: AppointmentBlockouts_Response
           type: array
-          #items:
-          #  $ref: Patient
+          items:
+           $ref: AppointmentBlockouts_Response
 /appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
   get:
     summary: List Appointment Blockouts
@@ -158,7 +206,7 @@
         type: boolean
         format: double
     tags:
-      - Appointments
+      - Appointment Blockouts
     responses:
       200:
         description: list of appointment vlockouts
@@ -202,6 +250,10 @@
     summary: List Appointment Templates
     description: |
       List Appointment Templates for a Practice
+
+      Filtering params are optional.
+      If date filtering is provided, occurences of each template within the given timespan will be included.
+      Without date filtering, all templates for the Practice will be returned.
     parameters:
       - name: start_date
         in: query
@@ -237,7 +289,7 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
-/resources/{resource_id}/appointment_templates:
+/appointment_resources/{resource_id}/appointment_templates:
   get:
     summary: List Appointment Templates By Resource
     description: |
@@ -277,7 +329,29 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
-/appointment/statuses:
+/appointment_resources/{resource_id}:
+  get:
+    summary: Show Appointment Resource
+    description: |
+      Show Appointment Resource and its Default Provider
+    parameters:
+      - name: id
+        in: path
+        description: Appointment Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment Resources
+    responses:
+      200:
+        description: appointment resource
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: ShowResource_Response
+/appointment_statuses:
   get:
     summary: List Appointment Statuses
     description: |
@@ -293,15 +367,57 @@
           type: array
           items:
             $ref: AppointmentStatus
-/appointment/listbyresource/{resource_id}:
+/appointments:
   get:
     summary: List Appointments
     description: |
-      List Appointments by Resource
+      List Appointment with Filtering
+
+      Filtering params are optional.
+      Without date filtering, appointments will be returned for today's date.
     parameters:
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
       - name: resource_id
+        in: query
+        description: Resource ID
+        required: false
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date for date filtering
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date for date filtering
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointments
+        schema:
+          type: array
+          items:
+           $ref: ListAppointments_Response
+/appointments/{guid}:
+  get:
+    summary: Show Appointment
+    description: |
+      Show an Appointment, including the Patient's preferred communication method
+    parameters:
+      - name: guid
         in: path
-        description: GUID of the resource
+        description: GUID of the appointment
         required: true
         type: string
         format: double
@@ -309,14 +425,72 @@
       - Appointments
     responses:
       200:
-        description: details about a patient
+        description: appointment
         schema:
-          #$ref: AppointmentsByResource
-          type: array
-          items:
-            $ref: AppointmentsByResource
-      404:
-        description: resource not found for current practice
+          $ref: ShowAppointment_Response
+          # type: array
+          # items:
+            # $ref: CHANGETHIS
+/appointments/{appointment_id}/confirmation:
+  post:
+    summary: Confirm Appointment
+    description: |
+      Record Attempt to Confirm an Appointment and its Outcome
+
+      The following Confirmation Methods can be used:
+      "other", "phone", "email", "text_message", "fax"
+
+      The following Confirmation Outcomes can be used:
+      "terminated", "undeliverable", "error", "responded", "processing", "message_sent", "left_message_to_reschedule", "incorrect_number", "confirmed", "line_busy", "no_answer", "left_message", "disconnected"
+    parameters:
+      - name: appointment_id
+        in: path
+        description: GUID of the appointment
+        required: true
+        type: string
+        format: double
+      - name: confirmation
+        in: body
+        description: appointment confirmation payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: CreateAppointmentConfirmation_Request
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment confirmation record
+        schema:
+          $ref: CreateAppointmentConfirmation_Response
+          # type: array
+          # items:
+            # $ref: CHANGETHIS
+# /appointment/listbyresource/{resource_id}:
+#   get:
+#     summary: List Appointments
+#     description: |
+#       List Appointments by Resource
+#     parameters:
+#       - name: resource_id
+#         in: path
+#         description: GUID of the resource
+#         required: true
+#         type: string
+#         format: double
+#     tags:
+#       - Appointments
+#     responses:
+#       200:
+#         description: details about a patient
+#         schema:
+#           #$ref: AppointmentsByResource
+#           type: array
+#           items:
+#             $ref: AppointmentsByResource
+#       404:
+#         description: resource not found for current practice
 /providers:
   get:
     summary: List Providers
@@ -333,6 +507,65 @@
           type: array
           items:
             $ref: Provider
+/appointment_resources:
+  get:
+    summary: List Appointment Resources
+    description: |
+      List Appointment Resources for a Practice
+    parameters:
+    tags:
+      - Appointment Resources
+    responses:
+      200:
+        description: list of appointment resources for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: ListResources_Response
+/visit_reasons/{id}/appointment_resources:
+  get:
+    summary: List Appointment Resources for a Visit Reason
+    description: |
+      List Appointment Resources for a Practice, filtered by a Visit Reason
+    parameters:
+      - name: id
+        in: path
+        description: ID of the Visit Reason
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointment Resources
+    responses:
+      200:
+        description: filtered list of visit reasons for a practice
+        schema:
+          type: array
+          items:
+            $ref: ListResources_Response
+/appointment_resources/{id}/visit_reasons:
+  get:
+    summary: List Visit Reasons for an Appointment Resource
+    description: |
+      List Visit Reasons for a Practice, filtered by an Appointment Resource
+    parameters:
+      - name: id
+        in: path
+        description: ID of the Appointment Resource
+        required: true
+        type: string
+        format: double
+    tags:
+      - Visit Reasons
+    responses:
+      200:
+        description: filtered list of visit reasons for a practice
+        schema:
+          # $ref: NatureOfVisit
+          type: array
+          items:
+            $ref: NatureOfVisit
 /locations:
   get:
     summary: List Locations

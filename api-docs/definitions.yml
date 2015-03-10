@@ -112,6 +112,35 @@ AppointmentBlockouts_Response_appointments:
     task_id: string
     updated_at: string
     updated_by: string
+AppointmentBlockouts_Response:
+  properties:
+    appointment_blockout:
+      $ref: AppointmentBlockouts_Response_appointment_blockout
+AppointmentBlockouts_Response_appointment_blockout:
+  properties:
+    business_entity_id: integer
+    created_at: string
+    created_by: integer
+    description: string
+    effective_from: string
+    effective_to: string
+    end_hour: integer
+    end_hour_bak: string
+    end_minutes: integer
+    id: integer
+    name: string
+    start_hour: integer
+    start_hour_bak: string
+    start_minutes: integer
+    updated_at: string
+    updated_by: integer
+    use_friday: boolean
+    use_monday: boolean
+    use_saturday: boolean
+    use_sunday: boolean
+    use_thursday: boolean
+    use_tuesday: boolean
+    use_wednesday: boolean
 AppointmentsByDateWithProvider_Response:
   properties:
     appointments:
@@ -209,6 +238,28 @@ CreateAppointment_Request_appointment_patients:
   properties:
     id: string
     comments: string
+
+CreateAppointmentConfirmation_Response:
+  properties:
+    appointment_confirmation:
+      $ref: CreateAppointmentConfirmation_Response_appointment_confirmation
+CreateAppointmentConfirmation_Response_appointment_confirmation:
+  properties:
+    appointment_id: integer
+    comments: string
+    communication_method_id: integer
+    communication_outcome_id: integer
+    created_at: string
+    created_by: integer
+    date_confirmed: string
+    id: integer
+    is_automated: string
+    method_description: string
+    redemption_code: string
+    redemption_code_expiration: string
+    updated_at: string
+    updated_by: integer
+
 
 PatientShow: 
   properties:
@@ -499,6 +550,173 @@ PatientSearchInner:
       type: string
     photo:
       type: string
+ShowResource_Response:
+  properties:
+    resource:
+      $ref: ShowResource_Response_resource
+ShowResource_Response_resource:
+  properties:
+    id: integer
+    business_entity_id: integer
+    name: string
+    code: string
+    description: string
+    status: string
+    sort_code: integer
+    created_at: string
+    updated_at: string
+    is_for_requests: boolean
+    appointment_confirmation: string
+    default_provider:
+      $ref: ShowResource_Response_resource_default_provider
+ShowResource_Response_resource_default_provider:
+  properties:
+    id: integer
+    name: string
+ListResources_Response:
+  properties:
+    resource:
+      $ref: ListResources_Response_resource
+ListResources_Response_resource:
+  properties:
+    appointment_confirmation: string
+    business_entity_id: integer
+    code: string
+    created_at: string
+    created_by: integer
+    description: string
+    id: integer
+    is_for_requests: boolean
+    name: string
+    sort_code: integer
+    status: string
+    updated_at: string
+    updated_by: integer
+CreateAppointmentConfirmation_Request:
+  properties:
+    date_confirmed: string
+    method_description: string
+    comments: string
+    communication_method: string
+    communication_outcome: string
+ShowAppointment_Response:
+  properties:
+    appointment:
+      $ref: ShowAppointment_Response_appointment
+ShowAppointment_Response_appointment:
+  properties:
+    id: string
+    start_time: string
+    end_time: string
+    location_id: integer
+    appointment_status_id: integer
+    is_confirmed: boolean
+    appointment_cancellation_reason_id: string
+    cancellation_comments: string
+    admit_diagnosis_id: string
+    note_set_id: integer
+    document_set_id: integer
+    resource_id: integer
+    confirmation_details: string
+    cancellation_details: string
+    business_entity_id: string
+    contrast: string
+    laterality: string
+    recurrence_id: string
+    created_at: string
+    updated_at: string
+    arrived_at: string
+    recurrence_index: string
+    task_id: string
+    departed_at: string
+    exam_room_id: string
+    patient_contacted: string
+    is_force_overbook: boolean
+    visit_reason_id: integer
+    preferred_confirmation_method:
+      $ref: ShowAppointment_Response_appointment_preferred_confirmation_method
+ShowAppointment_Response_appointment_preferred_confirmation_method:
+  properties:
+    code: string
+    created_at: string
+    description: string
+    id: integer
+    is_automated: boolean
+    is_visible: boolean
+    name: string
+    priority: integer
+    status: string
+    updated_at: string
+    slug: string
+ListAppointments_Response:
+  properties:
+    appointment:
+      $ref: ListAppointments_Response_appointment
+ListAppointments_Response_appointment:
+  properties:
+    id: string
+    appointment_status:
+      $ref: ListAppointments_Response_appointment_appointment_status
+    patient:
+      $ref: ListAppointments_Response_appointment_patient
+    location:
+      $ref: ListAppointments_Response_appointment_location
+    last_eligibility_outcome:
+      $ref: ListAppointments_Response_appointment_last_eligibility_outcome
+    cancellation_details:
+      $ref: ListAppointments_Response_appointment_cancellation_details
+    appointment_cancellation_reason_id: string
+    arrived_at: string
+    business_entity_id: integer
+    comments: string
+    confirmation_details: string
+    departed_at: string
+    exam_room_id: string
+    is_confirmed: string
+    is_force_overbook: boolean
+    patient_contacted: string
+    recurrence_id: string
+    recurrence_index: string
+    referring_physician_name: string
+    visit_reason_id: integer
+    resource_id: integer
+    provider_id: string
+    start_time: string
+    end_time: string
+    created_at: string
+    updated_at: string
+ListAppointments_Response_appointment_cancellation_details:
+  properties:
+    id: string
+    detail: string
+    comments: string
+ListAppointments_Response_appointment_last_eligibility_outcome:
+  properties:
+    id: string
+    code: string
+    message: string
+ListAppointments_Response_appointment_location:
+  properties:
+    id: integer
+    name: string
+ListAppointments_Response_appointment_patient:
+  properties:
+    id: string
+    chart_number: string
+    date_of_birth: string
+    first_name: string
+    last_name: string
+    middle_initial: string
+    gender_id: string
+    email: string
+    patient_status: string
+    photo_handler: string
+    primary_phone_number: string
+ListAppointments_Response_appointment_appointment_status:
+  properties:
+    id: integer
+    code: string
+    name: string
 AppointmentsByResource:
   properties:
     appointment:
@@ -569,17 +787,17 @@ AppointmentsByResourceInner:
       type: string
     updated_by:
       type: string
-PatientSearchRequest:
+PatientSearch_Request:
   properties:
-    limit:
-      type: integer
-    search:
-      $ref: PatientSearchRequestInner
-      type: array
-PatientSearchRequestInner:
+    limit: integer
+    terms: array
+    fields:
+      $ref: PatientSearch_Request_fields
+PatientSearch_Request_fields:
   properties:
-    term:
-      type: string
+    first_name: string
+    last_name: string
+    dob: string
 Activity:
   properties:
     uuid:
