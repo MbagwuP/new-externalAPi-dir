@@ -141,6 +141,7 @@ class ApiService < Sinatra::Base
     communication_method_slug = request_body.delete('communication_method')
     communication_outcome_slug = request_body.delete('communication_outcome')
 
+    request_body['appointment_id'] = params[:appointment_id]
     request_body['communication_method_id'] = communication_methods[communication_method_slug]
     request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
