@@ -9,7 +9,12 @@ class ApiService < Sinatra::Base
       RestClient.get(urlresource, :api_key => APP_API_KEY)
     end
 
-    body(resp.body)
+    filtered = JSON.parse resp.body
+    filtered.each do |x|
+      x['resource']['business_entity_id'] = current_business_entity
+    end
+
+    body(filtered.to_json)
     status HTTP_OK
   end
 
@@ -20,7 +25,12 @@ class ApiService < Sinatra::Base
       RestClient.get(urlresource, :api_key => APP_API_KEY)
     end
 
-    body(resp.body)
+    filtered = JSON.parse resp.body
+    filtered.each do |x|
+      x['resource']['business_entity_id'] = current_business_entity
+    end
+
+    body(filtered.to_json)
     status HTTP_OK
   end
 
