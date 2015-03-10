@@ -154,7 +154,15 @@ class ApiService < Sinatra::Base
       RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
     end
 
-    body(resp)
+    filtered = JSON.parse(resp)
+    filtered['appointment_confirmation']['appointment_id'] = params[:appointment_id]
+    filtered['appointment_confirmation'].delete('is_automated')
+    filtered['appointment_confirmation'].delete('redemption_code')
+    filtered['appointment_confirmation'].delete('redemption_code_expiration')
+    filtered['appointment_confirmation'].delete('created_by')
+    filtered['appointment_confirmation'].delete('updated_by')
+
+    body(filtered.to_json)
   end
 
 
