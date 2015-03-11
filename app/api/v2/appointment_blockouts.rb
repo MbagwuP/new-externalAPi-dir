@@ -22,6 +22,7 @@ class ApiService < Sinatra::Base
 
     
     if using_date_filter
+      # fetch the BE's details, we need its local timezone
       urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
                                      {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
       busentity = rescue_service_call 'Practice Look Up' do

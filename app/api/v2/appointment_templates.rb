@@ -22,7 +22,18 @@ class ApiService < Sinatra::Base
     response = JSON.parse(response)
     
     if using_date_filter
+      # fetch the BE's details, we need its local timezone
+      urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
+                                     {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
+      busentity = rescue_service_call 'Practice Look Up' do
+        RestClient.get(urlbusentity)
+      end
+      busentity = JSON.parse(busentity)
+
       response = response.map { |template|
+        template['appointment_template']['business_entity_id'] = current_business_entity
+        template['appointment_template']['timezone_offset'] = busentity['business_entity']['timezone']['utc_delta']
+        template['appointment_template']['timezone_name'] = busentity['business_entity']['timezone']['name']
         template['appointment_template'][:occurences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
         if template['appointment_template'][:occurences].any?
           template
