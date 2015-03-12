@@ -87,7 +87,8 @@ class RecurringTimespan
   def hour_and_minute_to_time hour, minute
     hour   = number_with_preceding_zero(hour)
     minute = number_with_preceding_zero(minute)
-    Time.use_zone(@timezone_name){ Chronic.parse("#{hour}:#{minute}") }
+    time = Time.use_zone(@timezone_name){ Time.zone.parse("#{hour}:#{minute}") }
+    time += 1.hour if time.dst?
   end
 
 end
