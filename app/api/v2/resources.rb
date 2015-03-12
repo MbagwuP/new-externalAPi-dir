@@ -43,6 +43,7 @@ class ApiService < Sinatra::Base
     end
 
     resp = JSON.parse(resp.body)
+    resp['resource']['business_entity_id'] = current_business_entity
     ['created_by', 'updated_by'].each {|key| resp['resource'].delete(key)}
 
     body(resp.to_json)
