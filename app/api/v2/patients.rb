@@ -84,7 +84,8 @@ class ApiService < Sinatra::Base
       end
     end
     parsed = JSON.parse(response.body)
-    parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    parsed['patient'].rename_key 'external_id', 'id'
+    parsed['patient']['business_entity_id'] = current_business_entity
     body(parsed.to_json); status HTTP_OK
   end
 
