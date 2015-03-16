@@ -17,6 +17,8 @@ class RecurringTimespan
     if has_hour_and_minute_fields? options
       @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
       @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
+      @start_hour = options[:start_hour]
+      @end_hour = options[:end_hour]
     else
       @start_at = Time.parse options[:start_at] rescue nil
       @end_at = Time.parse options[:end_at] rescue nil
@@ -32,7 +34,7 @@ class RecurringTimespan
     result = (filter_start_date..filter_end_date).to_a.select {|k| @days_of_week.include?(k.wday)}
     filtered = filter_by_effective_dates result
     filtered.map{|x|
-      start_and_end_for_occurence x, as_strings
+      start_and_end_for_occurence x
     }
   end
 
@@ -46,28 +48,32 @@ class RecurringTimespan
     }.compact
   end
 
-  def start_and_end_for_occurence date, as_strings=nil
+  def start_and_end_for_occurence date
     output = {
       start_at: add_start_time_to_date(date),
       end_at: add_end_time_to_date(date)
     }
-    output.each {|k,v| output[k] = v.iso8601} if as_strings
+    if @start_hour && @end_hour
+      output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_hour)
+      output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_hour)
+    else
+      output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_at.hour)
+      output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_at.hour)
+      # output[:start_at] = output[:start_at].iso8601
+      # output[:end_at] = output[:end_at].iso8601
+    end
     output
   end
 
   def add_start_time_to_date date
     Time.use_zone(@timezone_name) do 
-      dt = Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at)).in_time_zone
-      dt = dt - 1.hour if dt.dst?
-      dt
+      Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at)).in_time_zone
     end
   end
 
   def add_end_time_to_date date
     Time.use_zone(@timezone_name) do
-      dt = Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at)).in_time_zone
-      dt = dt - 1.hour if dt.dst?
-      dt
+      Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at)).in_time_zone
     end
   end
 
@@ -88,7 +94,15 @@ class RecurringTimespan
     hour   = number_with_preceding_zero(hour)
     minute = number_with_preceding_zero(minute)
     time = Time.use_zone(@timezone_name){ Time.zone.parse("#{hour}:#{minute}") }
-    time += 1.hour if time.dst?
+  end
+
+  def iso8601_change_hour iso8601_str, new_hour
+    iso8601_str[11..12] = number_with_preceding_zero(new_hour)
+    iso8601_str
+  end
+
+  def iso8601_get_hour iso8601_str
+    iso8601_str[11..12]
   end
 
 end
