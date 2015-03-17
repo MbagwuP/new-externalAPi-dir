@@ -15,20 +15,26 @@ class RecurringTimespan
     @timezone_name = options[:timezone_name]
 
     if has_hour_and_minute_fields? options
+      # it's a blockout
       @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
       @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
       @start_hour = options[:start_hour]
       @end_hour = options[:end_hour]
     else
-      @start_at = Time.parse options[:start_at] rescue nil
-      @end_at = Time.parse options[:end_at] rescue nil
+      # it's a template, so extract the original hour from the timestamp
+      Time.use_zone(@timezone_name) do
+        @start_at = Time.parse options[:start_at] rescue nil
+        @end_at = Time.parse options[:end_at] rescue nil
+      end
+      @start_hour = iso8601_get_hour(options[:start_at]).to_i
+      @end_hour = iso8601_get_hour(options[:end_at]).to_i
     end
 
     @effective_from = Date.parse options[:effective_from] rescue nil
     @effective_to = Date.parse options[:effective_to] rescue nil
   end
 
-  def occurences_in_date_range filter_start_date, filter_end_date, as_strings=nil
+  def occurences_in_date_range filter_start_date, filter_end_date
     filter_start_date = Date.parse(filter_start_date) if filter_start_date.is_a?(String)
     filter_end_date = Date.parse(filter_end_date) if filter_end_date.is_a?(String)
     result = (filter_start_date..filter_end_date).to_a.select {|k| @days_of_week.include?(k.wday)}
@@ -53,15 +59,10 @@ class RecurringTimespan
       start_at: add_start_time_to_date(date),
       end_at: add_end_time_to_date(date)
     }
-    if @start_hour && @end_hour
-      output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_hour)
-      output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_hour)
-    else
-      output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_at.hour)
-      output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_at.hour)
-      # output[:start_at] = output[:start_at].iso8601
-      # output[:end_at] = output[:end_at].iso8601
-    end
+    # @start_at and @end_at are reliable for the offset with regards to DST, but not for the actual hour..
+    # so, replace the hours in the occurences with the original hours from the input hash
+    output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_hour)
+    output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_hour)
     output
   end
 
@@ -96,6 +97,8 @@ class RecurringTimespan
     time = Time.use_zone(@timezone_name){ Time.zone.parse("#{hour}:#{minute}") }
   end
 
+  # these take an iso8601 string, for example:
+  # "2014-09-24T14:00:00-04:00"
   def iso8601_change_hour iso8601_str, new_hour
     iso8601_str[11..12] = number_with_preceding_zero(new_hour)
     iso8601_str
@@ -103,6 +106,14 @@ class RecurringTimespan
 
   def iso8601_get_hour iso8601_str
     iso8601_str[11..12]
+  end
+
+  def self.iso8601_get_offset_as_integer iso8601_str
+    iso8601_str[-6..-4].to_i
+  end
+
+  def timezone_offset_as_integer
+    @timezone_offset[0..2].to_i
   end
 
 end

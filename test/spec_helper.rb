@@ -5,6 +5,7 @@ require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
 require 'test/unit'
 require 'rack/test'
 require 'sinatra'
+require 'chronic'
 
 # setup test environment
 set :environment, :test
