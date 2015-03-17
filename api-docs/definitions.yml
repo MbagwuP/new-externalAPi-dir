@@ -141,6 +141,13 @@ AppointmentBlockouts_Response_appointment_blockout:
     use_thursday: boolean
     use_tuesday: boolean
     use_wednesday: boolean
+    occurrences:
+      $ref: AppointmentBlockouts_Response_appointment_blockout_occurrences
+      type: array
+AppointmentBlockouts_Response_appointment_blockout_occurrences:
+  properties:
+    start_at: string
+    end_at: string
 AppointmentsByDateWithProvider_Response:
   properties:
     appointments:
@@ -886,10 +893,10 @@ AppointmentTemplates_Response_appointment_templates:
     max_appointments_allowed: integer
     start_at: string
     end_at: string
-    occurences:
-      $ref: AppointmentTemplates_Response_appointment_templates_occurences
+    occurrences:
+      $ref: AppointmentTemplates_Response_appointment_templates_occurrences
       type: array
-AppointmentTemplates_Response_appointment_templates_occurences:
+AppointmentTemplates_Response_appointment_templates_occurrences:
   properties:
     start_at: string
     end_at: string
