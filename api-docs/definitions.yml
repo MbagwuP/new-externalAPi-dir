@@ -227,6 +227,7 @@ CreateAppointment_Request_appointment:
   properties:
     start_time: string
     end_time: string
+    appointment_status_id: string
     location_id: integer
     provider_id: integer
     visit_reason_id: integer

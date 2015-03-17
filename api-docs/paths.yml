@@ -77,6 +77,47 @@
           items:
             $ref: PatientSearch
 /appointments:
+  get:
+    summary: List Appointments
+    description: |
+      List Appointment with Filtering
+
+      Filtering params are optional.
+      Without date filtering, appointments will be returned for today's date.
+    parameters:
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: query
+        description: Resource ID
+        required: false
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date for date filtering
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date for date filtering
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointments
+        schema:
+          type: array
+          items:
+           $ref: ListAppointments_Response
   post:
     summary: Create Appointment
     description: |
@@ -367,48 +408,6 @@
           type: array
           items:
             $ref: AppointmentStatus
-/appointments:
-  get:
-    summary: List Appointments
-    description: |
-      List Appointment with Filtering
-
-      Filtering params are optional.
-      Without date filtering, appointments will be returned for today's date.
-    parameters:
-      - name: location_id
-        in: query
-        description: Location ID
-        required: false
-        type: string
-        format: double
-      - name: resource_id
-        in: query
-        description: Resource ID
-        required: false
-        type: string
-        format: double
-      - name: start_date
-        in: query
-        description: Start Date for date filtering
-        required: false
-        type: string
-        format: double
-      - name: end_date
-        in: query
-        description: End Date for date filtering
-        required: false
-        type: string
-        format: double
-    tags:
-      - Appointments
-    responses:
-      200:
-        description: list of appointments
-        schema:
-          type: array
-          items:
-           $ref: ListAppointments_Response
 /appointments/{guid}:
   get:
     summary: Show Appointment
