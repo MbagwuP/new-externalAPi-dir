@@ -211,4 +211,25 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
   end
 
+
+  get '/v2/appointment_cancellation_reasons' do
+    urlreasons = webservices_uri "businesses/#{current_business_entity}/appointment_cancellation_reasons/by_business_entity.json", token: escaped_oauth_token
+
+    response = rescue_service_call 'Appointment Cancellation Reason' do
+      RestClient.get(urlreasons, :api_key => APP_API_KEY)
+    end
+
+    parsed = JSON.parse(response)
+    if [1, '1', true, 'true'].include? params[:global_only]
+      parsed = parsed.map{|p| p if p['appointment_cancellation_reason']['business_entity_id'].nil? }
+    end
+    parsed.each do |p|
+      p['appointment_cancellation_reason'].delete('created_by')
+      p['appointment_cancellation_reason'].delete('updated_by')
+    end
+
+    body(parsed.to_json)
+    status HTTP_OK
+  end
+
 end
