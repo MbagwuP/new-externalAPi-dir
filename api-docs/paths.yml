@@ -506,6 +506,35 @@
           type: array
           items:
             $ref: Provider
+/appointments/{appointment_id}/cancel:
+  post:
+    summary: Cancel Appointment
+    description: |
+      Cancel an Appointment
+    parameters:
+      - name: appointment_id
+        in: path
+        description: Appointment ID
+        required: true
+        type: string
+        format: double
+      - name: query
+        in: body
+        description: appointment cancellation payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: AppointmentCancel_Request
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment cancelled successfully
+        schema:
+          $ref: AppointmentCancel_Response
+      422:
+        description: validation error
 /appointment_resources:
   get:
     summary: List Appointment Resources

@@ -222,7 +222,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     filtered_data = {}
-    filtered_data["id"] = parsed["external_id"]
+    filtered_data["appointment_id"] = parsed["external_id"]
     filtered_data["start_time"] = parsed["start_time"]
     filtered_data["appointment_cancellation_reason_id"] = parsed["appointment_cancellation_reason_id"]
     filtered_data["cancellation_details"] = parsed["cancellation_details"]
