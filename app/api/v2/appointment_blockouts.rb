@@ -31,6 +31,8 @@ class ApiService < Sinatra::Base
       busentity = JSON.parse(busentity)
 
       response = response.map {|blockout|
+        blockout['appointment_blockout'].delete('created_by')
+        blockout['appointment_blockout'].delete('updated_by')
         blockout['appointment_blockout']['business_entity_id'] = current_business_entity
         blockout['appointment_blockout']['timezone_offset'] = busentity['business_entity']['timezone']['utc_delta']
         blockout['appointment_blockout']['timezone_name'] = busentity['business_entity']['timezone']['name']
