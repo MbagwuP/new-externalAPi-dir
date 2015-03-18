@@ -18,6 +18,18 @@ CreateAppointment_Response:
 # AppointmentBlockoutsByLocation_Response:
 #   type: array
 #   $ref: AppointmentBlockoutsByLocation_Response_array
+AppointmentCancel_Request:
+  properties:
+    appointment_cancellation_request_id: string
+    cancellation_comments: string
+AppointmentCancel_Response:
+  properties:
+    appointment_id: string
+    start_time: string
+    appointment_cancellation_request_id: string
+    cancellation_details: string
+    cancellation_comments: string
+    updated_at: string
 AppointmentBlockoutsByLocation_Response_array:
   properties:
     appointment_blockout:
