@@ -221,7 +221,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response)
     if [1, '1', true, 'true'].include? params[:global_only]
-      parsed = parsed.map{|p| p if p['appointment_cancellation_reason']['business_entity_id'].nil? }
+      parsed = parsed.map{|p| p if p['appointment_cancellation_reason']['business_entity_id'].nil? }.compact
     end
     parsed.each do |p|
       p['appointment_cancellation_reason'].delete('created_by')
