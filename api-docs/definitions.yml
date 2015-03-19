@@ -926,3 +926,18 @@ AppointmentTemplates_Response_appointment_templates_locations:
   properties:
     id: integer
     name: string
+AppointmentCancellationReason_Response:
+  properties:
+    appointment_cancellation_reason:
+      $ref: AppointmentCancellationReason_Response_appointment_cancellation_reason
+AppointmentCancellationReason_Response_appointment_cancellation_reason:
+  properties:
+    business_entity_id: string
+    code: string
+    created_at: string
+    description: string
+    id: integer
+    is_default: boolean
+    name: string
+    sort_code: integer
+    updated_at: string

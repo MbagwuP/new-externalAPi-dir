@@ -408,6 +408,30 @@
           type: array
           items:
             $ref: AppointmentStatus
+/appointment_cancellation_reasons:
+  get:
+    summary: List Appointment Cancellation Reasons
+    description: |
+      List Appointment Cancellation Reasons. Some are global, while others belong to specific Practices.
+      
+      By default, all Appointment Cancellation Reasons that could apply to a Practice are listed.
+    parameters:
+      - name: global_only
+        in: query
+        description: Only Show Global Cancellation Reasons
+        required: false
+        type: boolean
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment cancellation reasons
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentCancellationReason_Response
 /appointments/{guid}:
   get:
     summary: Show Appointment
