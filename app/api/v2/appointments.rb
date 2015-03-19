@@ -213,7 +213,7 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointment_cancellation_reasons' do
-    urlreasons = webservices_uri "businesses/#{current_business_entity}/appointment_cancellation_reasons/by_business_entity.json", token: escaped_oauth_token
+    urlreasons = webservices_uri "appointment_cancellation_reasons/#{current_business_entity}/list_by_business_entity.json", token: escaped_oauth_token
 
     response = rescue_service_call 'Appointment Cancellation Reason' do
       RestClient.get(urlreasons, :api_key => APP_API_KEY)
