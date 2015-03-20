@@ -18,6 +18,18 @@ CreateAppointment_Response:
 # AppointmentBlockoutsByLocation_Response:
 #   type: array
 #   $ref: AppointmentBlockoutsByLocation_Response_array
+AppointmentCancel_Request:
+  properties:
+    appointment_cancellation_request_id: string
+    cancellation_comments: string
+AppointmentCancel_Response:
+  properties:
+    appointment_id: string
+    start_time: string
+    appointment_cancellation_request_id: string
+    cancellation_details: string
+    cancellation_comments: string
+    updated_at: string
 AppointmentBlockoutsByLocation_Response_array:
   properties:
     appointment_blockout:
@@ -141,6 +153,13 @@ AppointmentBlockouts_Response_appointment_blockout:
     use_thursday: boolean
     use_tuesday: boolean
     use_wednesday: boolean
+    occurrences:
+      $ref: AppointmentBlockouts_Response_appointment_blockout_occurrences
+      type: array
+AppointmentBlockouts_Response_appointment_blockout_occurrences:
+  properties:
+    start_at: string
+    end_at: string
 AppointmentsByDateWithProvider_Response:
   properties:
     appointments:
@@ -227,6 +246,7 @@ CreateAppointment_Request_appointment:
   properties:
     start_time: string
     end_time: string
+    appointment_status_id: string
     location_id: integer
     provider_id: integer
     visit_reason_id: integer
@@ -886,10 +906,10 @@ AppointmentTemplates_Response_appointment_templates:
     max_appointments_allowed: integer
     start_at: string
     end_at: string
-    occurences:
-      $ref: AppointmentTemplates_Response_appointment_templates_occurences
+    occurrences:
+      $ref: AppointmentTemplates_Response_appointment_templates_occurrences
       type: array
-AppointmentTemplates_Response_appointment_templates_occurences:
+AppointmentTemplates_Response_appointment_templates_occurrences:
   properties:
     start_at: string
     end_at: string
@@ -906,3 +926,18 @@ AppointmentTemplates_Response_appointment_templates_locations:
   properties:
     id: integer
     name: string
+AppointmentCancellationReason_Response:
+  properties:
+    appointment_cancellation_reason:
+      $ref: AppointmentCancellationReason_Response_appointment_cancellation_reason
+AppointmentCancellationReason_Response_appointment_cancellation_reason:
+  properties:
+    business_entity_id: string
+    code: string
+    created_at: string
+    description: string
+    id: integer
+    is_default: boolean
+    name: string
+    sort_code: integer
+    updated_at: string

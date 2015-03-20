@@ -34,8 +34,8 @@ class ApiService < Sinatra::Base
         template['appointment_template']['business_entity_id'] = current_business_entity
         template['appointment_template']['timezone_offset'] = busentity['business_entity']['timezone']['utc_delta']
         template['appointment_template']['timezone_name'] = busentity['business_entity']['timezone']['name']
-        template['appointment_template'][:occurences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
-        if template['appointment_template'][:occurences].any?
+        template['appointment_template'][:occurrences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
+        if template['appointment_template'][:occurrences].any?
           template
         else
           nil
@@ -71,8 +71,8 @@ class ApiService < Sinatra::Base
     
     if using_date_filter
       response = response.map { |template|
-        template['appointment_template'][:occurences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
-        if template['appointment_template'][:occurences].any?
+        template['appointment_template'][:occurrences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
+        if template['appointment_template'][:occurrences].any?
           template
         else
           nil

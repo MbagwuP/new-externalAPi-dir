@@ -211,4 +211,50 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
   end
 
+
+  get '/v2/appointment_cancellation_reasons' do
+    urlreasons = webservices_uri "appointment_cancellation_reasons/#{current_business_entity}/list_by_business_entity.json", token: escaped_oauth_token
+
+    response = rescue_service_call 'Appointment Cancellation Reason' do
+      RestClient.get(urlreasons, :api_key => APP_API_KEY)
+    end
+
+    parsed = JSON.parse(response)
+    if [1, '1', true, 'true'].include? params[:global_only]
+      parsed = parsed.map{|p| p if p['appointment_cancellation_reason']['business_entity_id'].nil? }.compact
+    end
+    parsed.each do |p|
+      if p['appointment_cancellation_reason']['business_entity_id'].present?
+        p['appointment_cancellation_reason']['business_entity_id'] = current_business_entity
+      end
+      p['appointment_cancellation_reason'].delete('created_by')
+      p['appointment_cancellation_reason'].delete('updated_by')
+    end
+
+    body(parsed.to_json)
+    status HTTP_OK
+  end
+
+  put '/v2/appointments/:id/cancel' do
+    request_body = get_request_JSON
+    urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
+
+    response = rescue_service_call 'Appointment Cancellation' do
+      RestClient.post(urlapptcancel, request_body.to_json, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    parsed = JSON.parse(response.body)
+    filtered_data = {}
+    filtered_data["appointment_id"] = parsed["external_id"]
+    filtered_data["start_time"] = parsed["start_time"]
+    filtered_data["appointment_cancellation_reason_id"] = parsed["appointment_cancellation_reason_id"]
+    filtered_data["cancellation_details"] = parsed["cancellation_details"]
+    filtered_data["cancellation_comments"] = parsed["cancellation_comments"]
+    filtered_data["updated_at"] = parsed["updated_at"]
+
+    body(filtered_data.to_json)
+
+    status HTTP_OK
+  end
+
 end

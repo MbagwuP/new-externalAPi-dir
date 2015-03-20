@@ -77,6 +77,47 @@
           items:
             $ref: PatientSearch
 /appointments:
+  get:
+    summary: List Appointments
+    description: |
+      List Appointment with Filtering
+
+      Filtering params are optional.
+      Without date filtering, appointments will be returned for today's date.
+    parameters:
+      - name: location_id
+        in: query
+        description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: resource_id
+        in: query
+        description: Resource ID
+        required: false
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date for date filtering
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date for date filtering
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointments
+        schema:
+          type: array
+          items:
+           $ref: ListAppointments_Response
   post:
     summary: Create Appointment
     description: |
@@ -367,48 +408,30 @@
           type: array
           items:
             $ref: AppointmentStatus
-/appointments:
+/appointment_cancellation_reasons:
   get:
-    summary: List Appointments
+    summary: List Appointment Cancellation Reasons
     description: |
-      List Appointment with Filtering
-
-      Filtering params are optional.
-      Without date filtering, appointments will be returned for today's date.
+      List Appointment Cancellation Reasons. Some are global, while others belong to specific Practices.
+      
+      By default, all Appointment Cancellation Reasons that could apply to a Practice are listed.
     parameters:
-      - name: location_id
+      - name: global_only
         in: query
-        description: Location ID
+        description: Only Show Global Cancellation Reasons
         required: false
-        type: string
-        format: double
-      - name: resource_id
-        in: query
-        description: Resource ID
-        required: false
-        type: string
-        format: double
-      - name: start_date
-        in: query
-        description: Start Date for date filtering
-        required: false
-        type: string
-        format: double
-      - name: end_date
-        in: query
-        description: End Date for date filtering
-        required: false
-        type: string
+        type: boolean
         format: double
     tags:
       - Appointments
     responses:
       200:
-        description: list of appointments
+        description: list of appointment cancellation reasons
         schema:
+          #$ref: AppointmentStatus
           type: array
           items:
-           $ref: ListAppointments_Response
+            $ref: AppointmentCancellationReason_Response
 /appointments/{guid}:
   get:
     summary: Show Appointment
@@ -507,6 +530,35 @@
           type: array
           items:
             $ref: Provider
+/appointments/{appointment_id}/cancel:
+  post:
+    summary: Cancel Appointment
+    description: |
+      Cancel an Appointment
+    parameters:
+      - name: appointment_id
+        in: path
+        description: Appointment ID
+        required: true
+        type: string
+        format: double
+      - name: query
+        in: body
+        description: appointment cancellation payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: AppointmentCancel_Request
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment cancelled successfully
+        schema:
+          $ref: AppointmentCancel_Response
+      422:
+        description: validation error
 /appointment_resources:
   get:
     summary: List Appointment Resources
