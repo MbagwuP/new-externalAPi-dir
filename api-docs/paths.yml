@@ -531,7 +531,7 @@
           items:
             $ref: Provider
 /appointments/{appointment_id}/cancel:
-  post:
+  put:
     summary: Cancel Appointment
     description: |
       Cancel an Appointment
