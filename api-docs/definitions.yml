@@ -20,7 +20,7 @@ CreateAppointment_Response:
 #   $ref: AppointmentBlockoutsByLocation_Response_array
 AppointmentCancel_Request:
   properties:
-    appointment_cancellation_request_id: string
+    appointment_cancellation_reason_id: string
     cancellation_comments: string
 AppointmentCancel_Response:
   properties:
