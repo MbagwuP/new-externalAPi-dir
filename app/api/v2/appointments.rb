@@ -168,7 +168,7 @@ class ApiService < Sinatra::Base
 
   # /v2/appointments
   # /v2/appointment/create (legacy)
-  post /\/v2\/(appointment\/create|appointments)/ do
+  post /\/v2\/(appointment\/create|appointments)\z/ do
     # Validate the input parameters
     request_body = get_request_JSON
     providerid = request_body['appointment']['provider_id']
