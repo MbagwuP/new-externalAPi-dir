@@ -432,13 +432,13 @@
           type: array
           items:
             $ref: AppointmentCancellationReason_Response
-/appointments/{guid}:
+/appointments/{appointment_id}:
   get:
     summary: Show Appointment
     description: |
       Show an Appointment, including the Patient's preferred communication method
     parameters:
-      - name: guid
+      - name: appointment_id
         in: path
         description: GUID of the appointment
         required: true
@@ -575,13 +575,13 @@
           type: array
           items:
             $ref: ListResources_Response
-/visit_reasons/{id}/appointment_resources:
+/visit_reasons/{visit_reason_id}/appointment_resources:
   get:
     summary: List Appointment Resources for a Visit Reason
     description: |
       List Appointment Resources for a Practice, filtered by a Visit Reason
     parameters:
-      - name: id
+      - name: visit_reason_id
         in: path
         description: ID of the Visit Reason
         required: true
@@ -596,13 +596,13 @@
           type: array
           items:
             $ref: ListResources_Response
-/appointment_resources/{id}/visit_reasons:
+/appointment_resources/{resource_id}/visit_reasons:
   get:
     summary: List Visit Reasons for an Appointment Resource
     description: |
       List Visit Reasons for a Practice, filtered by an Appointment Resource
     parameters:
-      - name: id
+      - name: resource_id
         in: path
         description: ID of the Appointment Resource
         required: true
