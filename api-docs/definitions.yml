@@ -657,16 +657,7 @@ ShowAppointment_Response_appointment:
       $ref: ShowAppointment_Response_appointment_preferred_confirmation_method
 ShowAppointment_Response_appointment_preferred_confirmation_method:
   properties:
-    code: string
-    created_at: string
-    description: string
     id: integer
-    is_automated: boolean
-    is_visible: boolean
-    name: string
-    priority: integer
-    status: string
-    updated_at: string
     slug: string
 ListAppointments_Response:
   properties:
