@@ -436,7 +436,7 @@
   get:
     summary: Show Appointment
     description: |
-      Show an Appointment, including the Patient's preferred communication method
+      Show an Appointment, including the Patient's preferred confirmation method
     parameters:
       - name: appointment_id
         in: path

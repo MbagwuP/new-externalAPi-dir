@@ -123,10 +123,11 @@ class ApiService < Sinatra::Base
 
     if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
       # build new confirmation_method hash, and replace the old one
-      confirmation_method = filtered['confirmation_method']['communication_method']
-      confirmation_method.delete('created_by')
-      confirmation_method.delete('updated_by')
-      confirmation_method['slug'] = communication_methods.invert[confirmation_method['id']]
+      confirmation_method_id = filtered['confirmation_method']['communication_method']['id']
+      confirmation_method = {
+        id:   confirmation_method_id,
+        slug: communication_methods.invert[confirmation_method_id]
+      }
       filtered['preferred_confirmation_method'] = confirmation_method
       filtered.delete('confirmation_method')
     end
