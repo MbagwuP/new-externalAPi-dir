@@ -267,18 +267,13 @@ CreateAppointmentConfirmation_Response_appointment_confirmation:
   properties:
     appointment_id: integer
     comments: string
-    communication_method_id: integer
-    communication_outcome_id: integer
+    communication_method: string
+    communication_method_description: string
+    communication_outcome: string
     created_at: string
-    created_by: integer
     date_confirmed: string
     id: integer
-    is_automated: string
-    method_description: string
-    redemption_code: string
-    redemption_code_expiration: string
     updated_at: string
-    updated_by: integer
 
 
 PatientShow: 
@@ -615,7 +610,7 @@ ListResources_Response_resource:
 CreateAppointmentConfirmation_Request:
   properties:
     date_confirmed: string
-    method_description: string
+    communication_method_description: string
     comments: string
     communication_method: string
     communication_outcome: string

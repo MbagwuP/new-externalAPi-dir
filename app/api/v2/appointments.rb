@@ -145,6 +145,7 @@ class ApiService < Sinatra::Base
     request_body['appointment_id'] = params[:appointment_id]
     request_body['communication_method_id'] = communication_methods[communication_method_slug]
     request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
+    request_body.rename_key('communication_method_description', 'method_description') if request_body['communication_method_description'].present?
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil?
 
@@ -162,6 +163,11 @@ class ApiService < Sinatra::Base
     filtered['appointment_confirmation'].delete('redemption_code_expiration')
     filtered['appointment_confirmation'].delete('created_by')
     filtered['appointment_confirmation'].delete('updated_by')
+    communication_method_id = filtered['appointment_confirmation'].delete('communication_method_id')
+    communication_outcome_id = filtered['appointment_confirmation'].delete('communication_outcome_id')
+    filtered['appointment_confirmation'].rename_key('method_description', 'communication_method_description')
+    filtered['appointment_confirmation']['communication_method'] = communication_methods.invert[communication_method_id]
+    filtered['appointment_confirmation']['communication_outcome'] = communication_outcomes.invert[communication_outcome_id]
 
     body(filtered.to_json)
   end
