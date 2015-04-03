@@ -432,13 +432,13 @@
           type: array
           items:
             $ref: AppointmentCancellationReason_Response
-/appointments/{guid}:
+/appointments/{appointment_id}:
   get:
     summary: Show Appointment
     description: |
-      Show an Appointment, including the Patient's preferred communication method
+      Show an Appointment, including the Patient's preferred confirmation method
     parameters:
-      - name: guid
+      - name: appointment_id
         in: path
         description: GUID of the appointment
         required: true
@@ -465,6 +465,8 @@
 
       The following Confirmation Outcomes can be used:
       "terminated", "undeliverable", "error", "responded", "processing", "message_sent", "left_message_to_reschedule", "incorrect_number", "confirmed", "line_busy", "no_answer", "left_message", "disconnected"
+
+      When passing "confirmed" as the Confirmation Outcome, the Appointment will be marked as Confirmed.
     parameters:
       - name: appointment_id
         in: path
@@ -531,7 +533,7 @@
           items:
             $ref: Provider
 /appointments/{appointment_id}/cancel:
-  post:
+  put:
     summary: Cancel Appointment
     description: |
       Cancel an Appointment
@@ -575,13 +577,13 @@
           type: array
           items:
             $ref: ListResources_Response
-/visit_reasons/{id}/appointment_resources:
+/visit_reasons/{visit_reason_id}/appointment_resources:
   get:
     summary: List Appointment Resources for a Visit Reason
     description: |
       List Appointment Resources for a Practice, filtered by a Visit Reason
     parameters:
-      - name: id
+      - name: visit_reason_id
         in: path
         description: ID of the Visit Reason
         required: true
@@ -596,13 +598,13 @@
           type: array
           items:
             $ref: ListResources_Response
-/appointment_resources/{id}/visit_reasons:
+/appointment_resources/{resource_id}/visit_reasons:
   get:
     summary: List Visit Reasons for an Appointment Resource
     description: |
       List Visit Reasons for a Practice, filtered by an Appointment Resource
     parameters:
-      - name: id
+      - name: resource_id
         in: path
         description: ID of the Appointment Resource
         required: true

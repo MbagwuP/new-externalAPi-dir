@@ -1,5 +1,5 @@
 PATH
-  remote: ./vendor/bundle
+  remote: ./vendor/gems
   specs:
     c_cloud_dms_client (0.1.1)
       c_cloud_http_client

@@ -26,8 +26,8 @@ gem 'bson_ext'
 # health check
 gem 'health_check', '0.3.3'
 
-gem 'c_cloud_dms_client', path: './vendor/bundle'
-gem 'c_cloud_http_client', path: './vendor/bundle'
+gem 'c_cloud_dms_client', path: './vendor/gems'
+gem 'c_cloud_http_client', path: './vendor/gems'
 
 gem 'cc_auth'
 

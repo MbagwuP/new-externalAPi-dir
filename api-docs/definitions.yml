@@ -20,7 +20,7 @@ CreateAppointment_Response:
 #   $ref: AppointmentBlockoutsByLocation_Response_array
 AppointmentCancel_Request:
   properties:
-    appointment_cancellation_request_id: string
+    appointment_cancellation_reason_id: string
     cancellation_comments: string
 AppointmentCancel_Response:
   properties:
@@ -267,18 +267,13 @@ CreateAppointmentConfirmation_Response_appointment_confirmation:
   properties:
     appointment_id: integer
     comments: string
-    communication_method_id: integer
-    communication_outcome_id: integer
+    communication_method: string
+    communication_method_description: string
+    communication_outcome: string
     created_at: string
-    created_by: integer
     date_confirmed: string
     id: integer
-    is_automated: string
-    method_description: string
-    redemption_code: string
-    redemption_code_expiration: string
     updated_at: string
-    updated_by: integer
 
 
 PatientShow: 
@@ -615,7 +610,7 @@ ListResources_Response_resource:
 CreateAppointmentConfirmation_Request:
   properties:
     date_confirmed: string
-    method_description: string
+    communication_method_description: string
     comments: string
     communication_method: string
     communication_outcome: string
@@ -657,16 +652,7 @@ ShowAppointment_Response_appointment:
       $ref: ShowAppointment_Response_appointment_preferred_confirmation_method
 ShowAppointment_Response_appointment_preferred_confirmation_method:
   properties:
-    code: string
-    created_at: string
-    description: string
     id: integer
-    is_automated: boolean
-    is_visible: boolean
-    name: string
-    priority: integer
-    status: string
-    updated_at: string
     slug: string
 ListAppointments_Response:
   properties:
