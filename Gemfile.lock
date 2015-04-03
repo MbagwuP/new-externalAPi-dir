@@ -108,7 +108,7 @@ DEPENDENCIES
   chronic
   color
   dalli (~> 2.6)
-  health_check (= 0.3.3)!
+  health_check (= 0.3.3)
   json
   log4r
   mongo_mapper
