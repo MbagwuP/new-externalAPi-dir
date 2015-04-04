@@ -4,7 +4,6 @@ development:
     - "webservice:critical"
     - "mem_cache:critical"
     - "cc_auth:critical"
-    - "audit:warn"
 localhost:
   probes:
     - "dms:critical"
