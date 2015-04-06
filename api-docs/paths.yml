@@ -376,7 +376,7 @@
     description: |
       Show Appointment Resource and its Default Provider
     parameters:
-      - name: id
+      - name: resource_id
         in: path
         description: Appointment Resource ID
         required: true
