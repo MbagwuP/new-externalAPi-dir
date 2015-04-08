@@ -129,8 +129,10 @@ class ApiService < Sinatra::Base
         slug: communication_methods.invert[confirmation_method_id]
       }
       filtered['preferred_confirmation_method'] = confirmation_method
-      filtered.delete('confirmation_method')
+    else
+      filtered['preferred_confirmation_method'] = nil
     end
+    filtered.delete('confirmation_method')
 
     body({appointment: filtered}.to_json)
     status HTTP_OK
