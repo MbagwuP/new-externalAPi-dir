@@ -648,12 +648,7 @@ ShowAppointment_Response_appointment:
     patient_contacted: string
     is_force_overbook: boolean
     visit_reason_id: integer
-    preferred_confirmation_method:
-      $ref: ShowAppointment_Response_appointment_preferred_confirmation_method
-ShowAppointment_Response_appointment_preferred_confirmation_method:
-  properties:
-    id: integer
-    slug: string
+    preferred_confirmation_method: string
 ListAppointments_Response:
   properties:
     appointment:
