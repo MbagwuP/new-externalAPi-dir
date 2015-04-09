@@ -20,7 +20,14 @@ class ApiService < Sinatra::Base
     end
 
     response = JSON.parse(response)
-    
+    response = response.map { |x|
+      if x['appointment_template']['status'] == 'A'
+        x['appointment_template'].delete('status')
+        x['appointment_template']['business_entity_id'] = current_business_entity
+        x
+      end
+    }.compact
+
     if using_date_filter
       # fetch the BE's details, we need its local timezone
       urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
@@ -31,7 +38,6 @@ class ApiService < Sinatra::Base
       busentity = JSON.parse(busentity)
 
       response = response.map { |template|
-        template['appointment_template']['business_entity_id'] = current_business_entity
         template['appointment_template']['timezone_offset'] = busentity['business_entity']['timezone']['utc_delta']
         template['appointment_template']['timezone_name'] = busentity['business_entity']['timezone']['name']
         template['appointment_template'][:occurrences] = RecurringTimespan.new(template['appointment_template']).occurences_in_date_range(params[:start_date], params[:end_date])
