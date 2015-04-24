@@ -10,7 +10,12 @@ class ApiService < Sinatra::Base
 
   get '/v2/api-docs' do
     content_type :html
-    erb File.read 'api-docs/swagger.erb'
+    erb File.read('api-docs/swagger.erb'), layout: File.read('api-docs/layout.erb')
+  end
+
+  get '/v2/api-docs/help' do
+    content_type :html
+    erb File.read('api-docs/help.erb'), layout: File.read('api-docs/layout.erb')
   end
 
   post '/v2/api-docs/demotoken' do 
