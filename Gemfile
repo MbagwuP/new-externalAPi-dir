@@ -6,6 +6,7 @@ gem 'require_all'
 gem 'color'
 gem 'chronic'
 gem 'tzinfo'
+gem 'redcarpet'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 
 # cache

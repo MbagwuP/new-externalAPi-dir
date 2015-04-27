@@ -41,3 +41,16 @@
 .swagger-section #header form#api_selector .input input#input_accessToken {
   width: 300px;
 }
+
+.release_notes {
+  padding-bottom: 30px;
+}
+
+.release_notes ul li {
+  list-style-position: inside;
+  list-style-type: disc;
+}
+
+.hide {
+  display: none !important;
+}

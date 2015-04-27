@@ -36,9 +36,12 @@
       <div class='input icon-btn' style='display: none;'>
         <%# <img id="show-wordnik-dev-icon" src="images/wordnik_api.png" title="Show Wordnik Developer Apis"> %>
       </div>
-      <div class='input' style=''><a id="refresh_token" class="carecloud_swagger_button" href="#">Refresh Token</a></div>
+      <div class='input carecloud_swagger_token_control hide'><a id="refresh_token" class="carecloud_swagger_button" href="#">Refresh Token</a></div>
       <%# <div class='input' style=''><a id="demo_token" class="carecloud_swagger_button" href="#">Demo Token</a></div> %>
-      <div class='input'><input placeholder="access token" id="input_accessToken" name="accessToken" type="text"/></div>
+      <div class='input carecloud_swagger_token_control hide'><input placeholder="access token" id="input_accessToken" name="accessToken" type="text"/></div>
+      <div class='input' style='width: 50px'>&nbsp;</div>
+      <div class='input'><a class="carecloud_swagger_button" href="/v2/api-docs/help">Using the API</a></div>
+      <div class='input'><a class="carecloud_swagger_button" href="/v2/api-docs/releases">What's New?</a></div>
     </form>
   </div>
 </div>

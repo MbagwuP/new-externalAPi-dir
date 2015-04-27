@@ -1,45 +1,14 @@
-<h2>Modified endpoints</h2>
+<div id="swagger-ui-container" class="swagger-ui-wrap">
+  <div class="container" id="resources_container">
 
-<pre>
-Show Appointment (GET /appointments/:id)
-Response Payload changes
-Modified Fields
-preferred_communication method: Now returns a String describing the Communication Method (such as “phone”, “email”, “text_message”, etc.) instead of an Object
-Removed Fields (under “preferred_communication_method”)
-id
-slug
-code
-created_at
-description
-is_automated
-is_visible
-name
-priority
-status
-updated_at
-Confirm Appointment (POST /appointments/:id/confirmation)
-Request Payload Changes
-Renamed Fields
-“method_description” is now “communication_method_description”
-Response Payload Changes
-Added Fields
-communication_method (matches string from request)
-communication_outcome (matches string from request)
-Removed Fields
-communication_method_id
-communication_outcome_id
-created_by
-is_automated
-method_description
-redemption_code
-redemption_code_expiration
-updated_by
-List Appointment Templates (GET /appointment_templates)
-Response Payload Changes
-now returns only Appointment Templates with a status of “Active”
+    </br><br/>
 
-Interactive Documentation Changes
+    <h1>What's New?</h1>
+    <br/>
 
-Cancel Appointment (PUT /appointments/:id/cancel) is now callable from the docs
-</pre>
+    <div class="release_notes">
+      <%= @md_release_notes %>
+    </div>
 
+  </div>
+</div>
