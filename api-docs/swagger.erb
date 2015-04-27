@@ -30,7 +30,7 @@
         validatorUrl: null,
         supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
         onComplete: function(swaggerApi, swaggerUi){
-          log("Loaded SwaggerUI");
+          console.log("Loaded SwaggerUI");
           $('pre code').each(function(i, e) {
             hljs.highlightBlock(e)
           });
