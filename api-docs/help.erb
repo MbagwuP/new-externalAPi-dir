@@ -1,0 +1,68 @@
+<div id="swagger-ui-container" class="swagger-ui-wrap">
+<div class="container" id="resources_container">
+
+<br/><br/>
+
+<h1>Using the API</h1>
+
+<h2>Verbs</h2>
+<ul>
+  <li><strong>GET</strong>: Used to show or list existing resources.</li>
+  <li><strong>POST</strong>: Used to create a new resource, or perform a more complex operation.</li>
+  <li><strong>PUT</strong>: Used to update an existing resource.</li>
+</ul>
+<br/>
+
+<h2>Response Codes</h2>
+<ul>
+  <li><strong>200</strong>: Successful response.</li>
+  <li><strong>201</strong>: Resource was created successfully.</li>
+  <li><strong>401</strong>: Authentication error, this token is not allowed access to the API.</li>
+  <li><strong>403</strong>: Authorization error, this token does not have privileges for the requested endpoint.</li>
+  <li><strong>404</strong>: Resource or API endpoint not found.</li>
+  <li><strong>422</strong>: Request could not be processed, typically indicates a validation error.</li>
+  <li><strong>500</strong>: Internal Server Error. 500 errors are not an expected response. If an endpoint returns 500, please <a href="#support">contact API Support</a>.</li>
+</ul>
+<br/>
+
+<h2>Authentication</h2>
+<p>Access to the API is represented by an Access Token. All requests should have the Access Token included under the 'authorization' header.</p>
+
+<h2>Authorization</h2>
+<p>In addition to overall access to the API, Access Tokens also have privileges assigned to them. Applications are assigned these priviliges by CareCloud, and Practices must agree to these privileges when granting the Application access in the OAuth flow.</p>
+
+<h2>Data Types</h2>
+<p>Being a JSON API, data types used by the API correspond to those data types supported by the JSON specification. However, some fields, represented as strings, are dependent on formatting.</p>
+
+<h3>GUIDs</h3>
+<p>Resources often use <a href='http://en.wikipedia.org/wiki/Universally_unique_identifier'>GUIDs</a>, rather than numeric IDs, as their unique identifiers.</p>
+<h3>Dates</h3>
+<p>Dates are represented in accordance with <a href='http://en.wikipedia.org/wiki/ISO_8601'>ISO8601</a>, in the format YYYY-MM-DD.</p>
+<h3>Timestamps</h3>
+<p>Timestamps are represented in accordance with <a href='http://en.wikipedia.org/wiki/ISO_8601'>ISO8601</a>, for example: 2015-04-25T09:00-05:00</p>
+
+<style>
+.cc_codeblock {
+  word-wrap: break-word;
+  font-size: 80%;
+}
+</style>
+
+<!-- <pre class="cc_codeblock">curl &#45;s &#45;H "Content&#45;Type: application/json" &#45;X PUT &#45;&#45;data '{"patient": {"first_name": "Tom","last_name": "Brady","middle_initial": ""}}' https://test.carecloud.com/v1/patients/legacy/patient&#45;6987?authentication=AQIC5wM2LY4SfczYcdKiUbxKqeKcqSNoYTDOSodpkEkFflU.*AAJTSQACMDE.*</pre> -->
+
+<h2 id="support">Support</h2>
+
+<p>Need help? Contact API support at <a href="mailto: apihelp@carecloud.com">apihelp@carecloud.com</a></p>
+<p>Some helpful information to include:</p>
+<ul>
+  <li>request URLs</li>
+  <li>request payloads</li>
+  <li>response codes</li>
+  <li>response payloads</li>
+  <li>access tokens</li>
+</ul>
+
+<br/><br/><br/><br/>
+
+</div>
+</div>
