@@ -32,8 +32,6 @@ gem 'c_cloud_http_client', path: './vendor/gems'
 
 gem 'cc_auth'
 
-gem 'rake', '~> 10.4.2'
-
 group :test, :development, :localhost do
   gem 'rspec', '~> 2.14'
   gem 'rack-test'
