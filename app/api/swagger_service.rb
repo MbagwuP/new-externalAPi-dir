@@ -20,7 +20,7 @@ class ApiService < Sinatra::Base
 
   get '/v2/api-docs/releases' do
     content_type :html
-    @md_release_notes = Dir['api-docs/release_notes/*.md'].sort.map { |md|
+    @md_release_notes = Dir['api-docs/release_notes/*.md'].sort.reverse.map { |md|
       Markdown.new(File.read(md)).to_html
     }.join('<br/><br/>')
     erb File.read('api-docs/releases.erb'), layout: File.read('api-docs/layout.erb')
