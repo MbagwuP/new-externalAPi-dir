@@ -1,0 +1,45 @@
+<html>
+  <head>
+    <title><%= 'Select Practice' %></title>
+    <style>
+      input { border: 1px solid gray; padding: 10px; margin: 0 0 5px 0;
+              -webkit-box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); 
+              -moz-box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); 
+              box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); }
+    </style>
+  </head>
+  <body>
+    <br/><br/>
+    <center><h1>Integrate with ZocDoc</h1></center>
+
+    <form action="/integration_landing/finish" method="post" style="width: 400px;margin-left: auto;margin-right: auto;">
+<% if params[:error] %>
+  <div style='color:red; font-size:12px;'>
+    <b><%= CGI.unescape params[:error]%></b>
+  </div>
+<% end %>
+<% if @entities.length == 1 %>
+      <h3>Confirm Practice</h3>
+      <span>Please confirm that <em><%# @app.application_name %></em> will be allowed access to <em><%= @entities.first['name_alias'] %></em> with the following privileges:</span><br><br>
+      <input type="hidden" name="practice_id" value=<%= @entities.first['id'] %>>
+<% else %>
+      <h3>Select Practice</h3>
+      <span>Choose which practice:</span><br><br>
+      <select name="practice_id">
+        <option name="">- select a practice -</option>
+        <% @entities.each do |acc| %>
+        <option value="<%= acc['name'] %>"><%= acc['name_alias'] %></option>
+        <% end %>
+      </select>
+      <br><br>
+<% end %>
+      <!-- Required parameters -->
+      <input type="hidden" name="redirect_uri" value=<%# CGI.unescape params[:redirect_uri] %>>
+      <input type="hidden" name="response_type" value=<%# params[:response_type] %>>
+      <input type="hidden" name="client_id" value=<%# params[:client_id] %>>
+      <input type="hidden" name="zocdoc" value=<%= params[:zocdoc] %>>
+      <!-- Decision -->
+      <input type="submit" name="decision" value="Continue" style='cursor:pointer;'>
+     </form>
+   </body>
+</html>
