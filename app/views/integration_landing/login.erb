@@ -1,0 +1,41 @@
+<html>
+  <head>
+    <title><%= 'Login Page' %></title>
+    <style>
+      input { border: 1px solid gray; padding: 10px; margin: 0 0 5px 0;
+              -webkit-box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); 
+              -moz-box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); 
+              box-shadow: inset 0 0 8px  rgba(0,0,0,0.1), 0 0 8px rgba(0,0,0,0.1); }
+    </style>
+  </head>
+  <body>
+    <center><h1>Integrate with ZocDoc</h1></center>
+
+    <center>
+    <% if params[:zocdoc] %>
+      <p>Log in to proceed with connecting your CareCloud and ZocDoc systems</p>
+    <% else %>
+      <p>Log in to learn more about ZocDoc</p>
+    <% end %>
+    </center>
+
+    <form action=<%= request.fullpath %> method="post" style="width: 400px;margin-left: auto;margin-right: auto;">
+      <h3>Sign In To CareCloud </h3>
+      <input type="text" name="user_name"v placeholder="user name" style="width: 95%;"><br>
+      <input type="password" name="password" placeholder="password" style="width: 95%;">
+      <% if params[:error] %>
+        <div style='color:red; font-size:12px;'>
+          <b><%= CGI.unescape params[:error]%></b>
+        </div>
+      <% end %>
+      <!-- Optional parameters -->
+      <input type="hidden" name="practice_id" value=<%# params[:practice_id] %>>
+      <input type="hidden" name="redirect_uri" value=<%# CGI.unescape params[:redirect_uri] %>>
+      <!-- Required parameters -->
+      <input type="hidden" name="response_type" value=<%# params[:response_type] %>>
+      <input type="hidden" name="client_id" value=<%# params[:client_id] %>>
+      <!-- Custom parameters -->
+      <input type="submit" name="decision" value="Login" style='cursor:pointer;'>
+     </form>
+   </body>
+</html>
