@@ -15,9 +15,9 @@ class ApiService < Sinatra::Base
     params.delete('error')
     content_type :html
 
-    urllogin = webservices_uri 'login.json', login: params[:user_name], password: params[:password]
+    urllogin = "#{CCAuth.endpoint}/users/authenticate"
     begin
-      login_response = RestClient.get(urllogin)
+      login_response = RestClient.post(urllogin, {user_name: params[:user_name], password: params[:password]})
     rescue Exception => e
       redirect_error_url = "/integration_landing/login?error=#{CGI.escape 'Login failed, please try again.'}"
       redirect_error_url << '&zocdoc=true' if params[:zocdoc] == 'true'
@@ -25,13 +25,11 @@ class ApiService < Sinatra::Base
     end
 
     login_response = JSON.parse(login_response)
-    token = login_response['authtoken']
+    require 'pry'; binding.pry
+    token = login_response['access_token']
     if token.nil?
       raise 'Invalid Login'
     end
-    openam_id = login_response['user']['login']
-    user_id = login_response['user']['id']
-    contact_id = login_response['user']['contact_id']
 
     # reach out to auth and get user GUID for token from session
     urlsession = "#{CCAuth.endpoint}/sessions/#{token}"
@@ -43,9 +41,9 @@ class ApiService < Sinatra::Base
     entities = RestClient.get(urlentities, authorization: token)
     @entities = JSON.parse(entities)
 
-    urllogout = webservices_uri 'logout.json', token: token
+    urllogout = "#{CCAuth.endpoint}/logout"
     logout_response = rescue_service_call 'Logout' do
-      RestClient.get(urllogout)
+      RestClient.post(urllogout, authorization: token)
     end
 
     puts logout_response
