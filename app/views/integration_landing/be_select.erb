@@ -37,7 +37,9 @@
       <input type="hidden" name="redirect_uri" value=<%# CGI.unescape params[:redirect_uri] %>>
       <input type="hidden" name="response_type" value=<%# params[:response_type] %>>
       <input type="hidden" name="client_id" value=<%# params[:client_id] %>>
+      <% if params[:zocdoc] %>
       <input type="hidden" name="zocdoc" value=<%= params[:zocdoc] %>>
+      <% end %>
       <!-- Decision -->
       <input type="submit" name="decision" value="Continue" style='cursor:pointer;'>
      </form>
