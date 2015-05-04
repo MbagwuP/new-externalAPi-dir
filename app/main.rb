@@ -51,6 +51,14 @@ SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
 
+  def self.build_version
+    build_number = File.open(File.join(APP_ROOT, '.build'), 'rb').read rescue ''
+    build_number = build_number.split(':')[1] unless build_number.empty?
+    build_number.strip
+  end
+
+  use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: ApiService.build_version}
+
   configure do
     set :protection, :except => [:remote_referrer, :json_csrf]
     set :public_folder, 'public'

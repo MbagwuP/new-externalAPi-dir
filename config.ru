@@ -7,9 +7,8 @@ require 'bundler/setup'
 # require all gems from Gemfile (:default namespace)
 Bundler.require(:default)
 
-use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: `git describe --tags`.strip}
+APP_ROOT = File.expand_path('.', File.dirname(__FILE__)) unless defined? APP_ROOT
 
 require './app/main'
-
 run ApiService
 
