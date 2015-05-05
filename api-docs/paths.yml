@@ -9,7 +9,6 @@
         description: GUID of the patient
         required: true
         type: string
-        format: double
     tags:
       - Patients
     responses:
