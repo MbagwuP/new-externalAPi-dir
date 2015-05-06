@@ -13,9 +13,7 @@ class SalesforceEvent
       sqs.send_message(queue_url: ExternalAPI::Settings::AWS_SQS_QUEUES['salesforce_queue_url'],
                        message_body: message_body.to_json)
     rescue => e
-      require 'pry'; binding.pry
-      # AuthApp.log_error_message(500, e.message, e)
-      nil
+      ApiService::LOG.error(e.message)
     end
   end
 
