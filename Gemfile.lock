@@ -15,11 +15,25 @@ GEM
     activesupport (3.2.17)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    aws-sdk (2.0.39)
+      aws-sdk-resources (= 2.0.39)
+    aws-sdk-core (2.0.39)
+      builder (~> 3.0)
+      jmespath (~> 1.0)
+      multi_json (~> 1.0)
+    aws-sdk-resources (2.0.39)
+      aws-sdk-core (= 2.0.39)
     bond (0.4.3)
     bson (1.10.0)
     bson_ext (1.10.0)
       bson (~> 1.10.0)
     builder (3.0.4)
+    care_cloud-core (0.0.8)
+      aws-sdk (~> 2.0.39)
+    care_cloud-queue (0.0.2)
+      care_cloud-core (~> 0.0.8)
+    care_cloud-storage (0.0.9)
+      care_cloud-core (~> 0.0.8)
     cc_auth (0.0.4.9)
       faraday
     chronic (0.10.2)
@@ -34,6 +48,8 @@ GEM
     jbuilder (2.2.6)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
+    jmespath (1.0.2)
+      multi_json (~> 1.0)
     json (1.8.1)
     log4r (1.1.10)
     method_source (0.8.2)
@@ -105,6 +121,8 @@ DEPENDENCIES
   bson_ext
   c_cloud_dms_client!
   c_cloud_http_client!
+  care_cloud-queue (~> 0.0.2)
+  care_cloud-storage (~> 0.0.9)
   cc_auth
   chronic
   color
