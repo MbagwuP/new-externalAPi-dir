@@ -3,7 +3,6 @@ class ApiService < Sinatra::Base
   get '/integration_landing' do
     content_type :html
     erb File.read('app/views/integration_landing/choice.erb')
-    # erb File.read('api-docs/help.erb'), layout: File.read('api-docs/layout.erb')
   end
 
   get '/integration_landing/login' do
@@ -17,7 +16,7 @@ class ApiService < Sinatra::Base
 
     urllogin = "#{CCAuth.endpoint}/users/authenticate"
     begin
-      login_response = RestClient.post(urllogin, {user_name: params[:user_name], password: params[:password], include_scope: true})
+      login_response = RestClient.post(urllogin, {user_name: params[:user_email], password: params[:password], include_scope: true})
     rescue Exception => e
       redirect_error_url = "/integration_landing/login?error=#{CGI.escape 'Login failed, please try again.'}"
       redirect_error_url << '&zocdoc=true' if params[:zocdoc] == 'true'
@@ -38,13 +37,7 @@ class ApiService < Sinatra::Base
     urlentities = "#{CCAuth.endpoint}/accounts/#{user_guid}"
     entities = RestClient.get(urlentities, authorization: token)
     @entities = JSON.parse(entities)
-
-    urllogout = "#{CCAuth.endpoint}/logout"
-    logout_response = rescue_service_call 'Logout' do
-      RestClient.post(urllogout, authorization: token)
-    end
-
-    puts logout_response
+    @token = token
 
     erb File.read('app/views/integration_landing/be_select.erb')
 
@@ -56,12 +49,14 @@ class ApiService < Sinatra::Base
 
     if params[:zocdoc]
       @copy = 'We sent your info to ZocDoc Service'
-      # Webservices Show Business Entity
-      # Webservices Show Person by Contact ID
-      # send email to ZocDoc Service
+      event = SalesforceEvent.new('IntegrationSignup.CarecloudZocdocJoint.Completed',
+        { practice_id: params[:practice_id], user_email: params[:user_email], token: params[:token] })
+      event.push_to_sqs
     else
       @copy = 'We sent your info to ZocDoc Sales'
-      # API call create referral in Salesforce
+      event = SalesforceEvent.new('IntegrationSignup.ReferralToZocdoc.Completed',
+        { practice_id: params[:practice_id], user_email: params[:user_email], token: params[:token] })
+      event.push_to_sqs
     end
 
     erb File.read('app/views/integration_landing/confirm.erb')

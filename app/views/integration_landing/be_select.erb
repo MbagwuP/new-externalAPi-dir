@@ -28,15 +28,14 @@
       <select name="practice_id">
         <option name="">- select a practice -</option>
         <% @entities.each do |acc| %>
-        <option value="<%= acc['name'] %>"><%= acc['name_alias'] %></option>
+        <option value="<%= acc['id'] %>"><%= acc['name_alias'] %></option>
         <% end %>
       </select>
       <br><br>
 <% end %>
       <!-- Required parameters -->
-      <input type="hidden" name="redirect_uri" value=<%# CGI.unescape params[:redirect_uri] %>>
-      <input type="hidden" name="response_type" value=<%# params[:response_type] %>>
-      <input type="hidden" name="client_id" value=<%# params[:client_id] %>>
+      <input type="hidden" name="user_email" value=<%= params[:user_email] %>>
+      <input type="hidden" name="token" value=<%= @token %>>
       <% if params[:zocdoc] %>
       <input type="hidden" name="zocdoc" value=<%= params[:zocdoc] %>>
       <% end %>

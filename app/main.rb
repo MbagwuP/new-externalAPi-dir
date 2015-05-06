@@ -90,6 +90,7 @@ class ApiService < Sinatra::Base
 
     NewRelic::Agent.after_fork(:force_reconnect => true)
 
+    Aws.config = { region:'us-east-1' }
 
     ## config values
     SVC_URLS = config

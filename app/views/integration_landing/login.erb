@@ -21,7 +21,7 @@
 
     <form action=<%= request.fullpath %> method="post" style="width: 400px;margin-left: auto;margin-right: auto;">
       <h3>Sign In To CareCloud </h3>
-      <input type="text" name="user_name"v placeholder="user name" style="width: 95%;"><br>
+      <input type="text" name="user_email"v placeholder="user email" style="width: 95%;"><br>
       <input type="password" name="password" placeholder="password" style="width: 95%;">
       <% if params[:error] %>
         <div style='color:red; font-size:12px;'>
