@@ -10,7 +10,6 @@ gem 'redcarpet'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 
 # AWS
-gem 'aws-sdk', '~> 2.0.39'
 gem 'care_cloud-storage', '~> 0.0.9'
 gem 'care_cloud-queue', '~> 0.0.2'
 
