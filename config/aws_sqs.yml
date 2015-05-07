@@ -1,0 +1,14 @@
+development: &development
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_dev"
+
+test:
+  <<: *development
+
+qa: 
+  salesforce_queue_url: ""
+
+staging: 
+  salesforce_queue_url: ""
+
+production: 
+  salesforce_queue_url: ""
