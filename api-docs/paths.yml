@@ -9,7 +9,6 @@
         description: GUID of the patient
         required: true
         type: string
-        format: double
     tags:
       - Patients
     responses:
@@ -465,6 +464,24 @@
 
       The following Confirmation Outcomes can be used:
       "terminated", "undeliverable", "error", "responded", "processing", "message_sent", "left_message_to_reschedule", "incorrect_number", "confirmed", "line_busy", "no_answer", "left_message", "disconnected"
+
+      name                       |description                                   |
+      ---------------------------|----------------------------------------------|
+      terminated                 |Terminated by System                          |
+      undeliverable              |Undeliverable: Missing or Invalid Information |
+      error                      |Error Message                                 |
+      responded                  |Message Responded                             |
+      processing                 |Processing                                    |
+      message_sent               |Message Sent                                  |
+      left_message_to_reschedule |Left message to reschedule                    |
+      incorrect_number           |The phone number was not correct              |
+      confirmed                  |The patient confirmed the appointment         |
+      line_Busy                  |The line dialed was busy                      |
+      no_answer                  |No one answered the phone                     |
+      left_message               |Left a message                                |
+      disconnected               |Phone number disconnected                     |
+
+      &nbsp;
 
       When passing "confirmed" as the Confirmation Outcome, the Appointment will be marked as Confirmed.
     parameters:
