@@ -9,12 +9,12 @@ class SalesforceEvent
   end
 
   def push_to_sqs
-    begin
+    # begin
       sqs.send_message(queue_url: ExternalAPI::Settings::AWS_SQS_QUEUES['salesforce_queue_url'],
                        message_body: message_body.to_json)
-    rescue => e
-      ApiService::LOG.error(e.message)
-    end
+    # rescue => e
+      # ApiService::LOG.error(e.message)
+    # end
   end
 
   def message_body

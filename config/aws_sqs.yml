@@ -5,10 +5,10 @@ test:
   <<: *development
 
 qa: 
-  salesforce_queue_url: ""
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_qa"
 
 staging: 
-  salesforce_queue_url: ""
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_staging"
 
 production: 
-  salesforce_queue_url: ""
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_prod"

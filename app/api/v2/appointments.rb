@@ -92,7 +92,7 @@ class ApiService < Sinatra::Base
     forwarded_params[:to] = forwarded_params[:to] + ' 23:59:59'
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
-                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil), use_current_business_entity: 'true'}.merge(forwarded_params).compact
+                              {token: escaped_oauth_token, local_timezone: 'true', use_current_business_entity: 'true'}.merge(forwarded_params).compact
 
     resp = rescue_service_call 'Appointment Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
