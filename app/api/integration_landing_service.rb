@@ -48,6 +48,8 @@ class ApiService < Sinatra::Base
     content_type :html
 
     session = CCAuth::Session.find_by_token(params[:token])
+    urllogout = "#{CCAuth.endpoint}/logout"
+    RestClient.post("#{urllogout}?access_token=#{params[:token]}", nil)
 
     if params[:zocdoc]
       @copy = 'We sent your info to ZocDoc Service'
