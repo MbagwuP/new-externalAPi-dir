@@ -47,15 +47,17 @@ class ApiService < Sinatra::Base
     params.delete('error')
     content_type :html
 
+    session = CCAuth::Session.find_by_token(params[:token])
+
     if params[:zocdoc]
       @copy = 'We sent your info to ZocDoc Service'
       event = SalesforceEvent.new('IntegrationSignup.CarecloudZocdocJoint.Completed',
-        { practice_id: params[:practice_id], user_email: params[:user_email], token: params[:token] })
+        { practice_id: params[:practice_id], user_email: params[:user_email], first_name: session.user.first_name, last_name: session.user.last_name, full_name: session.user.full_name })
       event.push_to_sqs
     else
       @copy = 'We sent your info to ZocDoc Sales'
       event = SalesforceEvent.new('IntegrationSignup.ReferralToZocdoc.Completed',
-        { practice_id: params[:practice_id], user_email: params[:user_email], token: params[:token] })
+        { practice_id: params[:practice_id], user_email: params[:user_email], first_name: session.user.first_name, last_name: session.user.last_name, full_name: session.user.full_name })
       event.push_to_sqs
     end
 
