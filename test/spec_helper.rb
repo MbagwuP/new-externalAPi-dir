@@ -1,11 +1,17 @@
 ENV['RACK_ENV'] = 'test'
 
-require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
+require 'bundler'
+Bundler.require(:default, ENV['RACK_ENV'].to_sym)
+require_all 'app'
 
+require 'rack/test'
+require 'pry'
 require 'test/unit'
 require 'rack/test'
 require 'sinatra'
 require 'chronic'
+
+require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
 
 # setup test environment
 set :environment, :test
