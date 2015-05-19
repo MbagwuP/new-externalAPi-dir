@@ -801,6 +801,7 @@ describe "ApiService" do
          "diagnosis7_pointer": "",
          "diagnosis8_code": "",
          "diagnosis8_pointer": "",
+         "date_of_service": "2015-05-01",
          "modifier1_code": "",
          "modifier2_code": "",
          "modifier3_code": "",
