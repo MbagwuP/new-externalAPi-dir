@@ -273,6 +273,15 @@ class ApiService < Sinatra::Base
     end
   end
 
+  def validate_icd_indicator indicator_value
+    if indicator_value.blank?
+      indicator_value = '9'
+    elsif !['9','10'].include? indicator_value.to_s
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"icd_indicator must be \'9\' or \'10\'"}'
+    end
+    indicator_value.to_s
+  end
+
   def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
