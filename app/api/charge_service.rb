@@ -80,6 +80,7 @@ class ApiService < Sinatra::Base
     patient_id = get_internal_patient_id(patient_id , business_entity, pass_in_token)
     provider_ids = get_providers_by_business_entity(business_entity, pass_in_token)
     check_for_valid_provider(provider_ids, request_body['charge']['provider_id']) if request_body['charge']['provider_id']
+    request_body['charge']['icd_indicator'] = validate_icd_indicator(request_body['charge']['icd_indicator'])
 
     ## validate provider id
     #providerid = request_body['charge']['provider_id']
