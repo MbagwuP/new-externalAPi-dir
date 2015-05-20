@@ -727,8 +727,8 @@ class ApiService < Sinatra::Base
     @communication_methods
   end
 
-  def allowed_communication_method? communication_method_slug
-    ['phone','email','text_message','fax','other'].include? communication_method_slug
+  def visible_communication_method? communication_method_slug
+    ['phone','email','text_message','fax','other','none'].include? communication_method_slug
   end
 
   def communication_methods_from_webservices
@@ -743,7 +743,7 @@ class ApiService < Sinatra::Base
     resp.each do |cm|
       key = cm['communication_method']['name'].underscore.gsub(' ', '_')
       val = cm['communication_method']['id']
-      output[key] = val if allowed_communication_method?(key)
+      output[key] = val if visible_communication_method?(key)
     end
     output
   end
