@@ -435,9 +435,13 @@
   get:
     summary: Show Appointment
     description: |
-      Show an Appointment, including the Patient's preferred confirmation method
+      Show an Appointment, including the Patient's preferred_confirmation_method, with possible values of:
 
-      If an Appointment shows a preferred_confirmation_method of 'none', the Patient does not wish to be contacted at all, and no confirmation attempts should be made.
+      <i>null</i>, 'phone', 'email', 'text_message', 'fax', 'other', 'none'
+
+      Note that <i>null</i> and <i>"none"</i> are very different:
+        - A preferred_confirmation_method of <i>null</i> means there is no preference with regard to communication method.
+        - A preferred_confirmation_method of <i>'none'</i> means the Patient does not wish to be contacted at all.
     parameters:
       - name: appointment_id
         in: path
