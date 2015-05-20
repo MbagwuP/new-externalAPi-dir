@@ -436,6 +436,8 @@
     summary: Show Appointment
     description: |
       Show an Appointment, including the Patient's preferred confirmation method
+
+      If an Appointment shows a preferred_confirmation_method of 'none', the Patient does not wish to be contacted at all, and no confirmation attempts should be made.
     parameters:
       - name: appointment_id
         in: path
@@ -484,6 +486,8 @@
       &nbsp;
 
       When passing "confirmed" as the Confirmation Outcome, the Appointment will be marked as Confirmed.
+
+      Before calling this endpoint, <a href='#!/Appointments/get_appointments_appointment_id' target='_new'>Show Appointment</a> should be called to check the preferred_confirmation_method of the Appointment. For Appointments showing a preferred_confirmation_method of 'none', the Patient does not wish to be contacted at all, and no confirmation attempts should be made.
     parameters:
       - name: appointment_id
         in: path
