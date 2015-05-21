@@ -26,6 +26,8 @@ module Helpers
   def stub_memcached
     cache = Dalli::Client.new('localhost:999', :expires_in => 3600)
     app.stub(:cache) { cache }
+    app.cache.stub(:fetch) { nil }
+    app.cache.stub(:set) {|key,value| value }
   end
 
 end
