@@ -507,15 +507,21 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
   end
 
-  def rescue_service_call call_description
+  def rescue_service_call call_description, expose_ws_error=false
     begin
       yield
     rescue => e
       begin
-        errmsg = "#{call_description} Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
+        error_detail = if expose_ws_error
+                         ws_error = JSON.parse(e.http_body)['error']['message'] rescue nil
+                         ws_error || e.message
+                       else
+                         e.message
+                       end
+        error_msg = "#{call_description} Failed - #{error_detail}"
+        api_svc_halt e.http_code, error_msg
       rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        api_svc_halt HTTP_INTERNAL_ERROR, error_msg
       end
     end
   end
