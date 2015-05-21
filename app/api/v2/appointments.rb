@@ -246,7 +246,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 
-    response = rescue_service_call 'Appointment Cancellation' do
+    response = rescue_service_call 'Appointment Cancellation', true do
       RestClient.post(urlapptcancel, request_body.to_json, :api_key => APP_API_KEY, :content_type => :json)
     end
 
