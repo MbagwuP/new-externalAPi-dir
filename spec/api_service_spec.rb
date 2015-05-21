@@ -760,6 +760,10 @@ describe "ApiService" do
 
   describe "Charges API :: " do
 
+    before do
+      stub_memcached
+    end
+
     it "should return 201 if charges are created" do
       authorize 'interface@interface.com', 'welcome'
       post '/v1/service/authenticate'

@@ -20,7 +20,19 @@ def app
   ApiService
 end
 
+
+module Helpers
+
+  def stub_memcached
+    cache = Dalli::Client.new('localhost:999', :expires_in => 3600)
+    app.stub(:cache) { cache }
+  end
+
+end
+
+
 RSpec.configure do |config|
+  config.include Helpers
   config.include Rack::Test::Methods
   config.color = true
 end
