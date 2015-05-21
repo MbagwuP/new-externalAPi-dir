@@ -8,10 +8,10 @@ describe "ApiService" do
     last_response.body.should match(/Welcome the home page!/)
   end
 
-  it "should have caching" do
-    get '/testcache'
-    last_response.status.should == 200
-  end
+  # it "should have caching" do
+  #   get '/testcache'
+  #   last_response.status.should == 200
+  # end
 
   describe "Should authenticate correctly" do
 
