@@ -562,6 +562,8 @@
     summary: Cancel Appointment
     description: |
       Cancel an Appointment
+
+      An appointment_cancellation_reason_id can be obtained through the <a href='#!/Appointments/get_appointment_cancellation_reasons' target='_new'>List Appointment Cancellation Reasons</a> endpoint.
     parameters:
       - name: appointment_id
         in: path
