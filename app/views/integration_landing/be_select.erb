@@ -12,6 +12,13 @@
     <br/><br/>
     <center><h1>Integrate with ZocDoc</h1></center>
 
+    <% if params[:zocdoc] %>
+      <p>Please select the practice you would like to connect to ZocDoc below. Note: if you would like to integrate multiple practices, you will need to go through this request process for each practice individually.</p>
+    <% else %>
+      <p>Please select your practice below. Once you submit, we’ll forward your request to ZocDoc.</p>
+    <% end %>
+    <br/>
+
     <form action="/integration_landing/finish" method="post" style="width: 400px;margin-left: auto;margin-right: auto;">
 <% if params[:error] %>
   <div style='color:red; font-size:12px;'>
