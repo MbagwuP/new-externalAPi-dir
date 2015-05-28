@@ -599,6 +599,8 @@ class ApiService < Sinatra::Base
       Problems["problem"] = problem
       #LOG.debug(Problem)
 
+      Problems['problem']['icd_indicator'] = validate_icd_indicator(Problems['problem']['icd_indicator'])
+
       urlproblems = ''
       urlproblems << API_SVC_URL
       urlproblems << 'patient_assertions/'
