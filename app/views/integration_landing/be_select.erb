@@ -46,8 +46,13 @@
       <!-- Example row of columns -->
       <div class="row">
         <div class="col-md-8">
+          <% if params[:zocdoc] %>
           <h2>Request Integration with ZocDoc</h2>
           <p>Please select the practice you would like to connect to ZocDoc to the right. Note: if you would like to integrate multiple practices, you will need to go through this request process for each practice individually.</p>
+          <% else %>
+          <h2>Learn More About ZocDoc</h2>
+          <p>Please select your practice below. Once you submit, we'll forward your request to ZocDoc.</p>
+          <% end %>
         </div>
         <div class="col-md-4 side-form">
           <h3>Select Practice</h3>
