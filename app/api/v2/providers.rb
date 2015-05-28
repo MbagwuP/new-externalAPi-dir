@@ -15,7 +15,12 @@ class ApiService < Sinatra::Base
       RestClient.get(urlprovider, :api_key => APP_API_KEY)
     end
 
-    body(response.body)
+    providers = JSON.parse(response)['providers'].map{|provider|
+      status = provider.delete('status')
+      provider if status == Status::ACTIVE
+    }.compact
+
+    body({providers: providers}.to_json)
     status HTTP_OK
   end
 
