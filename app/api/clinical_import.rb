@@ -165,6 +165,7 @@ class ApiService < Sinatra::Base
       request_body['problem'].each do |newProb|
         Problems = Hash.new
         Problems['problem'] = newProb
+        Problems['problem']['icd_indicator'] = validate_icd_indicator(Problems['problem']['icd_indicator'])
 
         urlproblems = ''
         urlproblems << API_SVC_URL
