@@ -1589,6 +1589,7 @@ describe "ApiService" do
             {
                 "snomed_code": "161891005",
                 "icd9": "724.5",
+                "icd_indicator": 9,
                 "name": "Backache unspecified",
                 "description": "Backache (finding)",
                 "onset_at": "2011-01-28",
