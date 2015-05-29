@@ -145,7 +145,8 @@ class ApiService < Sinatra::Base
     request_body['communication_method_id'] = communication_methods[communication_method_slug]
     request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
     request_body.rename_key('communication_method_description', 'method_description') if request_body['communication_method_description'].present?
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
+
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil? || communication_outcome_slug == 'none'
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil?
 
     urlconf = webservices_uri "appointments/#{current_business_entity}/#{request_body['appointment_id']}/patient_confirmed.json",
@@ -245,7 +246,7 @@ class ApiService < Sinatra::Base
     request_body = get_request_JSON
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 
-    response = rescue_service_call 'Appointment Cancellation' do
+    response = rescue_service_call 'Appointment Cancellation', true do
       RestClient.post(urlapptcancel, request_body.to_json, :api_key => APP_API_KEY, :content_type => :json)
     end
 

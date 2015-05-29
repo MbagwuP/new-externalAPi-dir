@@ -273,6 +273,15 @@ class ApiService < Sinatra::Base
     end
   end
 
+  def validate_icd_indicator indicator_value
+    if indicator_value.blank?
+      indicator_value = 9
+    elsif ![9, 10].include? indicator_value.to_i
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"icd_indicator must be \'9\' or \'10\'"}'
+    end
+    indicator_value.to_i
+  end
+
   def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
@@ -498,15 +507,21 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_INTERNAL_ERROR, '{"error":"An error occured we cannot recover from. If this continues please contact support."}'
   end
 
-  def rescue_service_call call_description
+  def rescue_service_call call_description, expose_ws_error=false
     begin
       yield
     rescue => e
       begin
-        errmsg = "#{call_description} Failed - #{e.message}"
-        api_svc_halt e.http_code, errmsg
+        error_detail = if expose_ws_error
+                         ws_error = JSON.parse(e.http_body)['error']['message'] rescue nil
+                         ws_error || e.message
+                       else
+                         e.message
+                       end
+        error_msg = "#{call_description} Failed - #{error_detail}"
+        api_svc_halt e.http_code, error_msg
       rescue
-        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        api_svc_halt HTTP_INTERNAL_ERROR, error_msg
       end
     end
   end
@@ -718,8 +733,8 @@ class ApiService < Sinatra::Base
     @communication_methods
   end
 
-  def allowed_communication_method? communication_method_slug
-    ['phone','email','text_message','fax','other'].include? communication_method_slug
+  def visible_communication_method? communication_method_slug
+    ['phone','email','text_message','fax','other','none'].include? communication_method_slug
   end
 
   def communication_methods_from_webservices
@@ -734,7 +749,7 @@ class ApiService < Sinatra::Base
     resp.each do |cm|
       key = cm['communication_method']['name'].underscore.gsub(' ', '_')
       val = cm['communication_method']['id']
-      output[key] = val if allowed_communication_method?(key)
+      output[key] = val if visible_communication_method?(key)
     end
     output
   end

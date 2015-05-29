@@ -13,6 +13,7 @@ class ApiService < Sinatra::Base
     filtered.each do |x|
       x['resource']['business_entity_id'] = current_business_entity
     end
+    filtered = filtered.map{|x| x if x['resource']['status'] == Status::ACTIVE }.compact
 
     body(filtered.to_json)
     status HTTP_OK
@@ -29,6 +30,7 @@ class ApiService < Sinatra::Base
     filtered.each do |x|
       x['resource']['business_entity_id'] = current_business_entity
     end
+    filtered = filtered.map{|x| x if x['resource']['status'] == Status::ACTIVE }.compact
 
     body(filtered.to_json)
     status HTTP_OK
@@ -43,6 +45,7 @@ class ApiService < Sinatra::Base
     end
 
     resp = JSON.parse(resp.body)
+    api_svc_halt(HTTP_NOT_FOUND, '{"error": "Resource not found."}') if resp['resource']['status'] != Status::ACTIVE
     resp['resource']['business_entity_id'] = current_business_entity
     ['created_by', 'updated_by'].each {|key| resp['resource'].delete(key)}
 

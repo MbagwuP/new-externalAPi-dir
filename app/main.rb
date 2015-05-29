@@ -57,8 +57,6 @@ class ApiService < Sinatra::Base
     build_number.strip
   end
 
-  use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: ApiService.build_version}
-
   configure do
     set :protection, :except => [:remote_referrer, :json_csrf]
     set :public_folder, 'public'

@@ -17,8 +17,8 @@ class ApiService < Sinatra::Base
         filter_nov['id'] = x['nature_of_visit']['id']
         filter_nov['name'] = x['nature_of_visit']['name']
         filter_nov['description'] = x['nature_of_visit']['description']
-        data.push filter_nov
-      end
+        data.push filter_nov if x['nature_of_visit']['status'] == Status::ACTIVE
+    end
     body(data.to_json)
     status HTTP_OK
   end
@@ -38,8 +38,8 @@ class ApiService < Sinatra::Base
         filter_nov['id'] = x['nature_of_visit']['id']
         filter_nov['name'] = x['nature_of_visit']['name']
         filter_nov['description'] = x['nature_of_visit']['description']
-        data.push filter_nov
-      end
+        data.push filter_nov if x['nature_of_visit']['status'] == Status::ACTIVE
+    end
     body(data.to_json)
     status HTTP_OK
   end

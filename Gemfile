@@ -36,10 +36,14 @@ gem 'c_cloud_http_client', path: './vendor/gems'
 
 gem 'cc_auth'
 
-group :test, :development, :localhost do
-  gem 'rspec', '~> 2.14'
+group :development, :localhost do
   gem 'rack-test'
   gem 'tux'
   gem 'pry'
   gem 'shotgun'
+end
+
+group :test do
+  gem 'rspec', '~> 2.14'
+  gem "rspec_junit_formatter"
 end

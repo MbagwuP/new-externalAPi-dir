@@ -1,16 +1,16 @@
 class ApiService < Sinatra::Base
 
-  get '/integration_landing' do
+  get '/zocdoc' do
     content_type :html
     erb File.read('app/views/integration_landing/choice.erb')
   end
 
-  get '/integration_landing/login' do
+  get '/zocdoc/login' do
     content_type :html
     erb File.read('app/views/integration_landing/login.erb')
   end
 
-  post '/integration_landing/login' do
+  post '/zocdoc/login' do
     params.delete('error')
     content_type :html
 
@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
     begin
       login_response = RestClient.post(urllogin, {user_name: params[:user_email], password: params[:password], include_scope: true})
     rescue Exception => e
-      redirect_error_url = "/integration_landing/login?error=#{CGI.escape 'Login failed, please try again.'}"
+      redirect_error_url = "/zocdoc/login?error=#{CGI.escape 'Login failed, please try again.'}"
       redirect_error_url << '&zocdoc=true' if params[:zocdoc] == 'true'
       redirect redirect_error_url
     end
@@ -43,7 +43,7 @@ class ApiService < Sinatra::Base
 
   end
 
-  post '/integration_landing/finish' do
+  post '/zocdoc/finish' do
     params.delete('error')
     content_type :html
 

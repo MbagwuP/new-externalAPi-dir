@@ -1,0 +1,53 @@
+.jumbotron{ height:220px; background:#00aac6; text-align:center; padding:35px; color:#fff; }
+.jumbotron img{ border-bottom:2px solid #66ccdd; padding-bottom:30px; }
+.jumbotron h1{ font-size:24px; line-height:28px; font-weight:300; }
+h2{ color:#00aac6; }
+p, .integration-list, label{ color:#84888a; font-size:16px; font-weight:300; line-height:28px; }
+.side-form{ background:#f4f9f9; border:1px solid #c9c9cb; border-radius:8px; padding:0; overflow:hidden;}
+h3{ background-color:#00aac6; color:#fff; margin:0; padding:15px 20px; font-weight:200;}
+.btn-custom {
+  background-color: hsl(36, 100%, 40%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#fb8b54", endColorstr="#ec6a0c");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#fb8b54), to(#ec6a0c));
+  background-image: -moz-linear-gradient(top, #fb8b54, #ec6a0c);
+  background-image: -ms-linear-gradient(top, #fb8b54, #ec6a0c);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #fb8b54), color-stop(100%, #ec6a0c));
+  background-image: -webkit-linear-gradient(top, #fb8b54, #ec6a0c);
+  background-image: -o-linear-gradient(top, #fb8b54, #ec6a0c);
+  background-image: linear-gradient(#fb8b54, #ec6a0c);
+  border-color: #ec6a0c #ec6a0c hsl(36, 100%, 35%);
+  color: #fff !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.33);
+  -webkit-font-smoothing: antialiased;
+  padding:10px;
+  font-weight:500;
+  width:100%;
+  text-align:center;
+  font-size:18px;
+}
+.form-wrap{ padding:20px; }
+.form-wrap input{ margin-bottom:15px; }
+.panel {
+  margin-bottom: 20px;
+  margin-top: 60px;
+  background-color: #f4f9f9;
+  border: 1px solid #c9c9cb;
+  border-radius: 8px;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  padding:20px;
+}
+.panel p{ padding:0; margin:0; text-align:center; }
+a, strong{ color:#00aac6; }
+a:hover{ color:#00aac6; text-decoration:underline; }
+footer{ text-align:center; }
+.integration-list{ list-style:none; padding:0; }
+.integration-list li{ margin-bottom:10px; background:url(../images/check-sm.png) 0 5px no-repeat; padding-left:35px; min-height:35px;}
+strong{ font-size:20px; font-weight:400; }
+.request-connection{ text-align:center; margin-bottom:20px;}
+.request-connection p{ font-size:18px; }
+.request-connection img{ margin-bottom:15px; } 
+.zocdoc-illustration{ margin:15px; }
+.confirmation{ min-height:142px;}
+.confirmation p{ text-align:left; }
