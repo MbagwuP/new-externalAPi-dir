@@ -6,6 +6,9 @@ describe "RecurringTimespan" do
   let(:filter_dates_nodst) {['2015-01-01', '2015-02-10']}
   let(:filter_dates_overlap_into_dst) {['2015-02-03', '2015-03-20']}
   let(:filter_dates_overlap_outof_dst) {['2014-09-28', '2015-11-15']}
+
+  # with these, I'm just including the timezone_offset here in the test,
+  # they're not actually used in any of the logic and can be ignored
   let(:days_of_week_monday_and_wednesday) {{
     use_sunday: false,
     use_monday: true,
@@ -48,6 +51,7 @@ describe "RecurringTimespan" do
     timezone_name: "Pacific Time (US & Canada)"
   }}
   let(:recurring_timespan) { RecurringTimespan.new input_hash }
+  let(:eastern_to_practice_hour_difference) { recurring_timespan.send(:eastern_to_practice_hour_difference) }
   let(:occurences) { recurring_timespan.occurences_in_date_range(*filter_dates) }
 
   shared_examples 'general timespan behavior' do
@@ -74,31 +78,43 @@ describe "RecurringTimespan" do
       expect(same_end_hour).to be_true
     end
 
-    it "has occurences with hours that match the hours of the original start and end times" do
+
+    # it "has occurences with hours equal to the originally passed in hours with the difference between Eastern and Practice time applied" do
+    # it "has occurences with hours equal to the hours stored in the Practice's local time" do
+
+    it "has occurences with hours that are correct with regard to the difference between Eastern time and Practice time" do
       if input_hash[:start_hour]
         original_json_start_hour = input_hash[:start_hour].to_i
         original_json_end_hour = input_hash[:end_hour].to_i
       else
         original_json_start_hour = input_hash[:start_at][11..12].to_i
-        original_json_end_hour = input_hash[:start_at][11..12].to_i
+        original_json_end_hour = input_hash[:end_at][11..12].to_i
       end
 
-      original_parsed_start_hour = recurring_timespan.instance_variable_get(:@start_hour) || recurring_timespan.instance_variable_get(:@start_at).hour
-      original_parsed_end_hour = recurring_timespan.instance_variable_get(:@end_hour) || recurring_timespan.instance_variable_get(:@end_at).hour
+      original_parsed_start_hour_eastern = recurring_timespan.instance_variable_get(:@start_hour_eastern)
+      original_parsed_end_hour_eastern = recurring_timespan.instance_variable_get(:@end_hour_eastern)
+      original_parsed_start_hour = recurring_timespan.instance_variable_get(:@start_hour)
+      original_parsed_end_hour = recurring_timespan.instance_variable_get(:@end_hour)
 
       start_hour_first_occurence = occurences.map{|x| x[:start_at][11..12].to_i }.first
       start_hour_last_occurence = occurences.map{|x| x[:start_at][11..12].to_i }.last
       end_hour_first_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.first
       end_hour_last_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.last
 
-      original_json_start_hour.should == original_parsed_start_hour
-      original_json_end_hour.should == original_json_end_hour
+      original_json_start_hour.should == original_parsed_start_hour_eastern
+      original_json_end_hour.should == original_parsed_end_hour_eastern
+      original_parsed_start_hour.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+      original_parsed_end_hour.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
 
+      start_hour_first_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+      end_hour_first_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
       start_hour_first_occurence.should == original_parsed_start_hour
       end_hour_first_occurence.should == original_parsed_end_hour
 
-      start_hour_last_occurence.should == original_parsed_start_hour
-      end_hour_last_occurence.should == original_parsed_end_hour
+      start_hour_last_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+      end_hour_last_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
+      start_hour_first_occurence.should == original_parsed_start_hour
+      end_hour_first_occurence.should == original_parsed_end_hour
     end
 
     it "has correct timezone offsets depending on DST for that date" do
@@ -125,14 +141,25 @@ describe "RecurringTimespan" do
 
   context "with TIMESTAMP TIME FIELDS" do
     shared_examples 'timestamp timefields behavior' do
-      it "stores start_hours and end_hours derived from the timestamp fields" do
+      it "stores start and end hours in Eastern Time that are derived from the timestamp" do
+      # it "stores start_hours and end_hours derived from the timestamp fields with consideration for the difference between Eastern Time and Practice time applied" do
         original_start_hour = input_hash[:start_at][11..12]
         original_end_hour = input_hash[:end_at][11..12]
+        stored_start_hour_eastern = recurring_timespan.instance_variable_get(:@start_hour_eastern)
+        stored_end_hour_eastern = recurring_timespan.instance_variable_get(:@end_hour_eastern)
+
+        original_start_hour.to_i.should == stored_start_hour_eastern
+        original_end_hour.to_i.should == stored_end_hour_eastern
+      end
+
+      it "stores start and end hours in Practice Time by applying the difference between the Practice's timezone and Eastern Time" do
         stored_start_hour = recurring_timespan.instance_variable_get(:@start_hour)
         stored_end_hour = recurring_timespan.instance_variable_get(:@end_hour)
+        stored_start_hour_eastern = recurring_timespan.instance_variable_get(:@start_hour_eastern)
+        stored_end_hour_eastern = recurring_timespan.instance_variable_get(:@end_hour_eastern)
 
-        original_start_hour.to_i.should == stored_start_hour
-        original_end_hour.to_i.should == stored_end_hour
+        stored_start_hour.to_i.should == stored_start_hour_eastern + eastern_to_practice_hour_difference
+        stored_end_hour.to_i.should == stored_end_hour_eastern + eastern_to_practice_hour_difference
       end
     end
 
@@ -196,7 +223,7 @@ describe "RecurringTimespan" do
   context "with INTEGER TIME FIELDS" do
 
     shared_examples 'integer timefields behavior' do
-      it "has occurences with hours that match the integer hours that were passed in" do
+      it "has occurences with hours that correctly reflect the integer hours that were passed in, with the difference between Eastern time and Practice time applied" do
         original_start_hour = input_hash[:start_hour]
         original_end_hour = input_hash[:end_hour]
         start_hour_first_occurence = occurences.map{|x| x[:start_at][11..12].to_i }.first
@@ -205,11 +232,11 @@ describe "RecurringTimespan" do
         end_hour_first_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.first
         end_hour_last_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.last
 
-        start_hour_first_occurence.should == original_start_hour
-        start_hour_last_occurence.should == original_start_hour
+        start_hour_first_occurence.should == original_start_hour + eastern_to_practice_hour_difference
+        start_hour_last_occurence.should == original_start_hour + eastern_to_practice_hour_difference
 
-        end_hour_first_occurence.should == original_end_hour
-        end_hour_last_occurence.should == original_end_hour
+        end_hour_first_occurence.should == original_end_hour + eastern_to_practice_hour_difference
+        end_hour_last_occurence.should == original_end_hour + eastern_to_practice_hour_difference
       end
     end
 
