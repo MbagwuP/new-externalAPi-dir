@@ -1,7 +1,7 @@
 class RecurringTimespan
 
   def initialize options
-    options.symbolize_keys!
+    options = options.symbolize_keys
     @days_of_week = []
     @days_of_week << 0 if options[:use_sunday]
     @days_of_week << 1 if options[:use_monday]
@@ -14,21 +14,28 @@ class RecurringTimespan
     @timezone_offset = options[:timezone_offset]
     @timezone_name = options[:timezone_name]
 
+    # we need an integer for the hour portions of the start and end times
+    # this integer won't be affected by time zone parses
     if has_hour_and_minute_fields? options
       # it's a blockout
       @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
       @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
-      @start_hour = options[:start_hour]
-      @end_hour = options[:end_hour]
+      @start_hour_eastern = options[:start_hour]
+      @end_hour_eastern = options[:end_hour]
     else
       # it's a template, so extract the original hour from the timestamp
-      Time.use_zone(@timezone_name) do
+      practice_timezone do
         @start_at = Time.parse options[:start_at] rescue nil
         @end_at = Time.parse options[:end_at] rescue nil
       end
-      @start_hour = iso8601_get_hour(options[:start_at]).to_i
-      @end_hour = iso8601_get_hour(options[:end_at]).to_i
+      @start_hour_eastern = iso8601_get_hour(options[:start_at]).to_i
+      @end_hour_eastern = iso8601_get_hour(options[:end_at]).to_i
     end
+
+    # in Postgres, the start and end times for both templates and blockouts are saved in Eastern Time, ignoring DST
+    # now that we have an integer for the hours, adjust them from Eastern Time to the Practice's local time
+    @start_hour = @start_hour_eastern + eastern_to_practice_hour_difference
+    @end_hour = @end_hour_eastern + eastern_to_practice_hour_difference
 
     @effective_from = Date.parse options[:effective_from] rescue nil
     @effective_to = Date.parse options[:effective_to] rescue nil
@@ -42,6 +49,25 @@ class RecurringTimespan
     filtered.map{|x|
       start_and_end_for_occurence x
     }
+  end
+
+  # grab just the time portion of the full timestamp, using today's date for DST considerations
+  def practice_start_time
+    start_time_string = add_start_time_to_date(Date.today.iso8601)
+    iso8601_change_hour(start_time_string.iso8601, @start_hour)[11..24]
+  end
+
+  def practice_end_time
+    end_time_string = add_end_time_to_date(Date.today.iso8601)
+    iso8601_change_hour(end_time_string.iso8601, @end_hour)[11..24]
+  end
+
+  def effective_from_iso8601_date
+    @effective_from.iso8601 rescue nil
+  end
+
+  def effective_to_iso8601_date
+    @effective_to.iso8601 rescue nil
   end
 
   private
@@ -67,13 +93,13 @@ class RecurringTimespan
   end
 
   def add_start_time_to_date date
-    Time.use_zone(@timezone_name) do 
+    practice_timezone do 
       Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at)).in_time_zone
     end
   end
 
   def add_end_time_to_date date
-    Time.use_zone(@timezone_name) do
+    practice_timezone do
       Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at)).in_time_zone
     end
   end
@@ -94,7 +120,7 @@ class RecurringTimespan
   def hour_and_minute_to_time hour, minute
     hour   = number_with_preceding_zero(hour)
     minute = number_with_preceding_zero(minute)
-    time = Time.use_zone(@timezone_name){ Time.zone.parse("#{hour}:#{minute}") }
+    time = practice_timezone { Time.zone.parse("#{hour}:#{minute}") }
   end
 
   # these take an iso8601 string, for example:
@@ -112,8 +138,26 @@ class RecurringTimespan
     iso8601_str[-6..-4].to_i
   end
 
+  # used only for testing
   def timezone_offset_as_integer
     @timezone_offset[0..2].to_i
+  end
+
+  def eastern_timezone
+    Time.use_zone('Eastern Time (US & Canada)') { Time.zone }
+  end
+
+  def practice_timezone
+    if block_given?
+      Time.use_zone(@timezone_name){ yield }
+    else
+      Time.use_zone(@timezone_name) { Time.zone }
+    end
+  end
+
+  # find the integer difference in hours between Eastern Time and the Practice's local time
+  def eastern_to_practice_hour_difference
+    (practice_timezone.utc_offset - eastern_timezone.utc_offset) / 60 / 60
   end
 
 end
