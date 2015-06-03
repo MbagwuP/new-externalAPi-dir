@@ -21,29 +21,43 @@ class ApiService < Sinatra::Base
     response = JSON.parse(response)
 
     
-    if using_date_filter
-      # fetch the BE's details, we need its local timezone
-      urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
-                                     {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
-      busentity = rescue_service_call 'Practice Look Up' do
-        RestClient.get(urlbusentity)
-      end
-      busentity = JSON.parse(busentity)
+    # fetch the BE's details, we need its local timezone
+    urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
+                                   {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
+    busentity = rescue_service_call 'Practice Look Up' do
+      RestClient.get(urlbusentity)
+    end
+    busentity = JSON.parse(busentity)
 
-      response = response.map {|blockout|
-        blockout['appointment_blockout'].delete('created_by')
-        blockout['appointment_blockout'].delete('updated_by')
-        blockout['appointment_blockout']['business_entity_id'] = current_business_entity
-        blockout['appointment_blockout']['timezone_offset'] = busentity['business_entity']['timezone']['utc_delta']
-        blockout['appointment_blockout']['timezone_name'] = busentity['business_entity']['timezone']['name']
-        blockout['appointment_blockout'][:occurrences] = RecurringTimespan.new(blockout['appointment_blockout']).occurences_in_date_range(params[:start_date], params[:end_date])
+    response = response.map {|blockout|
+      blockout['appointment_blockout']['business_entity_id'] = current_business_entity
+      blockout['appointment_blockout']['timezone_name'] = busentity['business_entity']['timezone']['name']
+      recurring_timespan = RecurringTimespan.new(blockout['appointment_blockout'])
+
+      blockout['appointment_blockout'].delete('start_hour')
+      blockout['appointment_blockout'].delete('end_hour')
+      blockout['appointment_blockout'].delete('start_minutes')
+      blockout['appointment_blockout'].delete('end_minutes')
+      blockout['appointment_blockout'].delete('created_by')
+      blockout['appointment_blockout'].delete('updated_by')
+      blockout['appointment_blockout'].delete('start_hour_bak')
+      blockout['appointment_blockout'].delete('end_hour_bak')
+      blockout['appointment_blockout']['effective_from'] = recurring_timespan.effective_from_iso8601_date
+      blockout['appointment_blockout']['effective_to'] = recurring_timespan.effective_to_iso8601_date
+      blockout['appointment_blockout']['start_at'] = recurring_timespan.practice_start_time
+      blockout['appointment_blockout']['end_at'] = recurring_timespan.practice_end_time
+
+      if using_date_filter
+        blockout['appointment_blockout'][:occurrences] = recurring_timespan.occurences_in_date_range(params[:start_date], params[:end_date])
         if blockout['appointment_blockout'][:occurrences].any?
           blockout
         else
-          nil
+          nil # don't return blockouts that have no occurences in specified date range
         end
-      }.compact
-    end
+      else
+        blockout # no date range was specified, so return all blockouts
+      end
+    }.compact
 
     body(response.to_json)
     status HTTP_OK
