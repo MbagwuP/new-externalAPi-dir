@@ -132,20 +132,15 @@ AppointmentBlockouts_Response_appointment_blockout:
   properties:
     business_entity_id: integer
     created_at: string
-    created_by: integer
     description: string
     effective_from: string
     effective_to: string
-    end_hour: integer
-    end_hour_bak: string
     end_minutes: integer
     id: integer
     name: string
-    start_hour: integer
-    start_hour_bak: string
-    start_minutes: integer
+    start_at: integer
+    end_at: integer
     updated_at: string
-    updated_by: integer
     use_friday: boolean
     use_monday: boolean
     use_saturday: boolean
