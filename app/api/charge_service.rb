@@ -111,7 +111,7 @@ class ApiService < Sinatra::Base
         error = e.response.body
         error_json = JSON.parse(error)
         #used to prevent giving out too much data.
-        error_json["error"]["message"] = "Internal Server Error" if (error_json["error"]["message"].size > 40)
+        error_json["error"]["message"] = "Internal Server Error" if (error_json["error"]["message"].size > 80)
         errmsg = "Charge Creation Failed - #{error_json["error"]["error_code"]} - #{error_json["error"]["message"]}"
         api_svc_halt e.http_code, errmsg
       rescue

@@ -776,6 +776,7 @@ describe "ApiService" do
 
       var1 = '{"charge": {
          "provider_id": "9",
+         "icd_indicator": 9,
          "insurance_profile_id": "",
          "attending_provider_id": "",
          "referring_physician_id": "",
