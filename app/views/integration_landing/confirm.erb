@@ -49,7 +49,13 @@
             		<img src="images/check-lg.png">
                 </div>
                 <div class="col-md-8">
-            	<p>Thanks for your submission! We have forwarded your request to ZocDoc and a member of the ZocDoc team will reach out to you within 24 hours.</p>
+                <p>Thanks for your submission! We have forwarded your request to ZocDoc and a member of the ZocDoc team will reach out to you within 24 hours.</p>
+                <br/>
+                <% if params[:zocdoc] %>
+                <p>Too excited to wait? Call ZocDoc directly at (866) 962-3621.</p>
+                <% else %>
+                <p>Too excited to wait? Call ZocDoc directly at (866) 962-3622.</p>
+                <% end %>
                 </div>
             </div>
         </div>
