@@ -17,7 +17,7 @@ gem 'care_cloud-queue', '~> 0.0.2'
 gem 'dalli', '~> 2.6'
 
 # logging
-gem 'newrelic_rpm', '~> 3.6.3.111'
+gem 'newrelic_rpm', '~> 3.12.0.288'
 gem 'log4r'
 
 #requests
