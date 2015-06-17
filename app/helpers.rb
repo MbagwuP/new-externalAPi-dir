@@ -169,9 +169,9 @@ class ApiService < Sinatra::Base
 
   end
 
-  def business_entity_from_auth_service
-    session = CCAuth::OAuth2.new.authorization(oauth_token)
-    session[:business_entity_id].to_s
+  def current_session
+    return @current_session if defined?(@current_session) # caching
+    @current_session = CCAuth::OAuth2.new.authorization(oauth_token)
   end
 
   def current_business_entity
@@ -180,15 +180,32 @@ class ApiService < Sinatra::Base
 
     begin
       @current_business_entity = settings.cache.fetch(cache_key, 54000) do
-        business_entity_from_auth_service
+        current_session[:business_entity_id].to_s
       end
     rescue Dalli::DalliError
       LOG.warn("cannot reach cache store")
-      @current_business_entity = business_entity_from_auth_service
+      @current_business_entity = current_session[:business_entity_id].to_s
     rescue CCAuth::Error::ResponseError => e
       api_svc_halt e.code, e.message
     end
     @current_business_entity
+  end
+
+  def current_application
+    return @current_application if defined?(@current_application) # caching
+    cache_key = "application-" + oauth_token
+
+    begin
+      @current_application = settings.cache.fetch(cache_key, 54000) do
+        current_session[:application][:id]
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @current_application = current_session[:application][:id]
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @current_application
   end
 
   def get_providers_by_business_entity(business_entity_id, pass_in_token)
@@ -787,6 +804,16 @@ class ApiService < Sinatra::Base
       output[key] = val
     end
     output
+  end
+
+  before /\/v2\/*/ do
+    if request.env['HTTP_AUTHORIZATION']
+      ::NewRelic::Agent.add_custom_attributes({
+        business_entity_id: current_business_entity,
+        application_id:     current_application,
+        api_version:        'v2'
+      })
+    end
   end
 
 end
