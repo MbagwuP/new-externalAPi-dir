@@ -48,9 +48,10 @@ class ApiService < Sinatra::Base
     content_type :html
 
     session = CCAuth::Session.find_by_token(params[:token])
-    # commenting for now since we temporarily need this on the Salesforce Worker side to make calls to WS
-    # urllogout = "#{CCAuth.endpoint}/logout"
-    # RestClient.post("#{urllogout}?access_token=#{params[:token]}", nil)
+
+    # log out the user's session since we won't need it after initial authentication
+    urllogout = "#{CCAuth.endpoint}/logout"
+    RestClient.post("#{urllogout}?access_token=#{params[:token]}", nil)
 
     if params[:zocdoc]
       @copy = 'We sent your info to ZocDoc Service'
