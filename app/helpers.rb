@@ -807,7 +807,9 @@ class ApiService < Sinatra::Base
   end
 
   before /\/v2\/*/ do
-    if request.env['HTTP_AUTHORIZATION']
+    # only attempt to add attributes for New Relic Insights if the URL is v2
+    # AND there's no attempt to use Basic Auth
+    if request.env['HTTP_AUTHORIZATION'] && !request.env['HTTP_AUTHORIZATION'].include?('Basic')
       ::NewRelic::Agent.add_custom_attributes({
         business_entity_id: current_business_entity,
         application_id:     current_application,
