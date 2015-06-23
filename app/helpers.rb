@@ -806,8 +806,15 @@ class ApiService < Sinatra::Base
     output
   end
 
+  def oauth_request?
+    token = request.env['HTTP_AUTHORIZATION']
+    token && !token.include?('Basic') && token.length < 40
+  end
+
   before /\/v2\/*/ do
-    if request.env['HTTP_AUTHORIZATION']
+    # only attempt to add attributes for New Relic Insights if the URL is v2
+    # AND there's no attempt to use Basic Auth
+    if oauth_request?
       ::NewRelic::Agent.add_custom_attributes({
         business_entity_id: current_business_entity,
         application_id:     current_application,
