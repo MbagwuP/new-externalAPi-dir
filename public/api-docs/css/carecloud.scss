@@ -1,0 +1,68 @@
+.swagger-section {
+
+  #header {
+    background-color: #034693;
+    position: fixed;
+    top: 0;
+    width: 100%;
+
+    a#logo {
+      font-size: 1.5em;
+      font-weight: bold;
+      text-decoration: none;
+      background: transparent url(../images/carecloud_logo.png) no-repeat left center;
+      /* padding: 20px 0 20px 40px; */
+      /* padding: 36px 0 20px 120px; */
+      padding: 27px 0 20px 120px;
+      color: white;
+    }
+    form#api_selector .input input#input_accessToken {
+      width: 300px;
+    }
+  }
+}
+
+#swagger-ui-container {
+  margin-top: 40px;
+}
+
+.carecloud_swagger_button {
+  text-align: center;
+  color: white !important;
+  display: block;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 6px 8px;
+  font-size: 0.9em;
+  color: white;
+  background-color: #1D86BD;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -o-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -khtml-border-radius: 4px;
+  border-radius: 4px;
+}
+
+
+.release_notes {
+  padding-bottom: 30px;
+  code {
+    font-family: "Anonymous Pro", "Menlo", "Consolas", "Bitstream Vera Sans Mono", "Courier New", monospace;
+    font-size: 90%;
+  }
+
+  ul li {
+    list-style-position: inside;
+    list-style-type: disc;
+  }
+}
+
+
+.hide {
+  display: none !important;
+}
+
+.markdown i {
+  font-style: italic;
+}
