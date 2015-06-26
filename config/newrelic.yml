@@ -109,7 +109,7 @@ common: &default_settings
   # Java: create a config setting called "ignored_params" and set it to
   #     a comma separated list of HTTP parameter names.
   #     ex: ignored_params: credit_card, ssn, password
-  capture_params: false
+  capture_params: true
 
   # Transaction tracer captures deep information about slow
   # transactions and sends this to the New Relic service once a
@@ -219,6 +219,7 @@ test:
 production:
   <<: *default_settings
   monitor_mode: true
+  app_name: ExternalApi (Production)	
 
 # Many applications have a staging environment which behaves
 # identically to production. Support for that environment is provided
@@ -226,4 +227,4 @@ production:
 staging:
   <<: *default_settings
   monitor_mode: true
-  # app_name: My Application (Staging)
+  app_name: ExternalApi (Staging)

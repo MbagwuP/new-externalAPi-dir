@@ -27,7 +27,7 @@
 /* #simplemodal-overlay { background: white; } */
 .carecloud_simplemodal {
   /* width: 640px; height: 480px; background: #034693; */
-  font-family: "Droid Sans", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   /* border: 1px solid #c3d9ec */
 }
 
@@ -57,7 +57,7 @@
 
 .carecloud_simplemodal span {
   color: black;
-  font-family: "Droid Sans", sans-serif;
+  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
   padding-bottom: 12px;
 }
 
