@@ -26,6 +26,10 @@ class ApiService < Sinatra::Base
     erb File.read('api-docs/releases.erb'), layout: File.read('api-docs/layout.erb')
   end
 
+  get '/docs' do
+    redirect '/v2/api-docs'
+  end
+
   post '/v2/api-docs/demotoken' do 
     # Some thoughts on how this can work:
     # - create token authorization request with Demo Business Entity and API Docs Application, and all OAuth roles (needs user token to authorize)
