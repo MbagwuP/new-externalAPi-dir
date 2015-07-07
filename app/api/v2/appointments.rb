@@ -156,22 +156,27 @@ class ApiService < Sinatra::Base
       RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
     end
 
-    filtered = JSON.parse(resp)
-    filtered['appointment_confirmation']['appointment_id'] = params[:appointment_id]
-    filtered['appointment_confirmation'].delete('is_automated')
-    filtered['appointment_confirmation'].delete('redemption_code')
-    filtered['appointment_confirmation'].delete('redemption_code_expiration')
-    filtered['appointment_confirmation'].delete('created_by')
-    filtered['appointment_confirmation'].delete('updated_by')
-    communication_method_id = filtered['appointment_confirmation'].delete('communication_method_id')
-    communication_outcome_id = filtered['appointment_confirmation'].delete('communication_outcome_id')
-    filtered['appointment_confirmation'].rename_key('method_description', 'communication_method_description')
-    filtered['appointment_confirmation']['communication_method'] = communication_methods.invert[communication_method_id]
-    filtered['appointment_confirmation']['communication_outcome'] = communication_outcomes.invert[communication_outcome_id]
-
-    body(filtered.to_json)
+    @confirmation = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    
+    status HTTP_CREATED
+    jbuilder :_appointment_confirmation
   end
 
+  get '/v2/appointments/:appointment_id/confirmations' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' if !params[:appointment_id].is_guid?
+
+    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/confirmations.json",
+      token: escaped_oauth_token
+    resp = rescue_service_call 'Appointment Confirmations' do
+      RestClient.get(urlappt, :api_key => APP_API_KEY)
+    end
+    
+    @resp = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    status HTTP_OK
+    jbuilder :list_appointment_confirmations
+  end
 
   # /v2/appointments
   # /v2/appointment/create (legacy)
