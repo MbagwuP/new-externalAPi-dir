@@ -94,13 +94,13 @@ class RecurringTimespan
 
   def add_start_time_to_date date
     practice_timezone do 
-      Chronic.parse(date.to_s + ' ' + timestamp_segment(@start_at)).in_time_zone
+      DateTime.strptime(date.to_s + ' ' + timestamp_segment(@start_at), '%Y-%m-%d %H:%M:%S%z').in_time_zone
     end
   end
 
   def add_end_time_to_date date
     practice_timezone do
-      Chronic.parse(date.to_s + ' ' + timestamp_segment(@end_at)).in_time_zone
+      DateTime.strptime(date.to_s + ' ' + timestamp_segment(@end_at), '%Y-%m-%d %H:%M:%S%z').in_time_zone
     end
   end
 
@@ -120,7 +120,7 @@ class RecurringTimespan
   def hour_and_minute_to_time hour, minute
     hour   = number_with_preceding_zero(hour)
     minute = number_with_preceding_zero(minute)
-    time = practice_timezone { Time.zone.parse("#{hour}:#{minute}") }
+    time = practice_timezone { DateTime.strptime("#{hour}:#{minute}","%H:%M").in_time_zone }
   end
 
   # these take an iso8601 string, for example:
