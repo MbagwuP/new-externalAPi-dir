@@ -614,6 +614,25 @@
           type: array
           items:
             $ref: Provider
+/physicians/{npi}:
+  get:
+    summary: Show Physician
+    description: |
+      Show physician based on their National Provider Identifier (NPI).
+    parameters:
+      - name: npi
+        in: path
+        description: National Provider Identifier (NPI)
+        required: true
+        type: string
+        format: string
+    tags:
+      - Physicians
+    responses:
+      200:
+        description: details about a physician
+        schema:
+          $ref: Physician
 /appointments/{appointment_id}/cancel:
   put:
     summary: Cancel Appointment

@@ -435,12 +435,42 @@ Insurance:
       type: string
 Provider:
   properties:
-    id:
-      type: string
+    npi:
+      type: integer
     npi:
       type: string
     name:
       type: string
+Physician:
+  properties:
+    npi: string
+    prefix: string
+    first_name: string
+    middle_initial: string
+    last_name: string
+    suffix: string
+    email: string
+    gender_code: string
+    comments: string
+    deactivation_date: string
+    is_foreign: boolean
+    is organization: boolean
+    organization:
+      $ref: Organization
+    medical_school_graduation_year: integer
+    created_at: string
+    updated_ast: string
+Organization:
+  properties:
+    name: string
+    official_email: string
+    official_first_name: string
+    official_last_name: string
+    official_middle_initial: string
+    official_phone: string
+    official_prefix: string
+    official_suffix: string
+    offical_title: string
 Location:
   properties:
     id:
