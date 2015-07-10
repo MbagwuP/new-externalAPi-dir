@@ -15,6 +15,142 @@ DATE_MAX_LEN = 8
 
 class ApiService < Sinatra::Base
 
+  # convert fhir codes to CC postgres db code 
+  def code_to_cc_id(attribute, code)
+    begin
+      demographic_codes[attribute.to_s].each do |key, value|
+        return key.to_s if value['values'].map{ |e| e.to_s.downcase }.include?(code.to_s.downcase)
+      end
+      return ""
+    rescue
+      return ""
+    end
+  end
+
+  #convert CC id to FHIR/External code
+  def cc_id_to_code(attribute, id)
+    begin
+      return "" unless id.present?
+      return id unless demographic_codes[attribute][id].present?
+      return demographic_codes[attribute.to_s][id]['default']
+    rescue
+      return ""
+    end
+  end
+
+  def demographic_codes
+    return @demographic_codes if defined?(@demographic_codes) # caching
+    cache_key = "demographic-codes"
+
+    begin
+      @demographic_codes = settings.cache.fetch(cache_key, 54000) do
+        demographic_codes_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @demographic_codes = demographic_codes_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @demographic_codes
+  end
+
+  def demographic_codes_from_webservices
+    codes_assembly = {}
+    genders = rescue_service_call 'Gender Look Up' do
+      RestClient.get(webservices_uri "people/list_all_genders.json", :api_key => APP_API_KEY)
+    end
+    genders = JSON.parse genders
+    codes_assembly['gender'] = {}
+    genders.each do |gender|
+      gender['gender']['code'] = '' unless gender['gender']['code'].present?
+      codes_assembly['gender'][gender['gender']['id']] = get_fhir_codes['gender'][gender['gender']['code']]
+    end
+
+    races = rescue_service_call 'Race Look Up' do
+      RestClient.get(webservices_uri "people/list_all_races.json", :api_key => APP_API_KEY)
+    end
+    races = JSON.parse races
+    codes_assembly['race'] = {}
+    races.each do |race|
+      race['race']['code'] = '' unless race['race']['code'].present?
+      codes_assembly['race'][race['race']['id']] = get_fhir_codes['race'][race['race']['code']]
+    end
+
+    marital_statuses = rescue_service_call 'Marital Status Look Up' do
+      RestClient.get(webservices_uri "people/list_all_marital_statuses.json", :api_key => APP_API_KEY)
+    end
+    marital_statuses = JSON.parse marital_statuses
+    codes_assembly['marital_status'] = {}
+    marital_statuses.each do |marital_status|
+      marital_status['marital_status']['code'] = '' unless marital_status['marital_status']['code'].present?
+      codes_assembly['marital_status'][marital_status['marital_status']['id']] = get_fhir_codes['marital_status'][marital_status['marital_status']['code']]
+    end
+
+    languages = rescue_service_call 'Language Look Up' do
+      RestClient.get(webservices_uri "people/list_all_languages.json", :api_key => APP_API_KEY)
+    end
+    languages = JSON.parse languages
+    codes_assembly['language'] = {}
+    languages.each do |language|
+      language['language']['iso6392'] = '' unless language['language']['iso6392'].present?
+      lang_assembly = {}
+      lang_assembly['values'] = [language['language']['iso6392'], language['language']['id']]
+      lang_assembly['default'] = language['language']['iso6392']
+      lang_assembly['display'] = language['language']['name']
+      codes_assembly['language'][language['language']['id']] = lang_assembly
+    end
+
+    states = rescue_service_call 'State Look Up' do
+      RestClient.get(webservices_uri "addresses/list_all_states.json", :api_key => APP_API_KEY)
+    end
+    states = JSON.parse states
+    codes_assembly['state'] = {}
+    states['states'].each do |state|
+      state['name'] = '' unless state['name'].present?
+      state_assembly = {}
+      state_assembly['values'] = [state['name'], state['id']]
+      state_assembly['default'] = state['name']
+      state_assembly['display'] = state['name']
+      codes_assembly['state'][state['id']] = state_assembly
+    end
+
+    employment_statuses = rescue_service_call 'Employment Status Look Up' do
+      RestClient.get(webservices_uri "people/list_all_employment_statuses.json", :api_key => APP_API_KEY)
+    end
+    employment_statuses = JSON.parse employment_statuses
+    codes_assembly['employment_status'] = {}
+    employment_statuses.each do |employment_status|
+      employment_status['employment_status']['code'] = '' unless employment_status['employment_status']['code'].present?
+      employment_status_assembly = {}
+      employment_status_assembly['values'] = [employment_status['employment_status']['code'], employment_status['employment_status']['id']]
+      employment_status_assembly['default'] = employment_status['employment_status']['code']
+      employment_status_assembly['display'] = employment_status['employment_status']['name']
+      codes_assembly['employment_status'][employment_status['employment_status']['id']] = employment_status_assembly
+    end
+
+
+    student_statuses = rescue_service_call 'Student Status Look Up' do
+      RestClient.get(webservices_uri "people/list_all_student_statuses.json", :api_key => APP_API_KEY)
+    end
+    student_statuses = JSON.parse student_statuses
+    codes_assembly['student_status'] = {}
+    student_statuses.each do |student_status|
+      student_status['code'] = '' unless student_status['student_status']['code'].present?
+      student_status_assembly = {}
+      student_status_assembly['values'] = [student_status['student_status']['code'], student_status['student_status']['id']]
+      student_status_assembly['default'] = student_status['student_status']['code']
+      student_status_assembly['display'] = student_status['student_status']['name']
+      codes_assembly['student_status'][student_status['student_status']['id']] = student_status_assembly
+    end
+    codes_assembly
+  end
+
+  def get_fhir_codes
+    return @fhir if defined?(@fhir)
+    @fhir = YAML.load(File.open(Dir.pwd + '/config/fhir.yml'))
+  end
+
   # Convenience method for parsing the authorization token header
   def get_auth_token
     if env && env['HTTP_AUTHORIZATION']

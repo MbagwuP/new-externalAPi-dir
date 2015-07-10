@@ -26,6 +26,18 @@
     summary: Create Patient
     description: |
       Create a Patient
+
+       parameter                     |options                                                                                                                                             |
+      -------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+      gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
+      race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
+      marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html]))        |
+      language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php])                                    |
+      drivers_licensce_state_code    |Uses USPS 2-Letter State Abbreviations                                                                                                              |
+      employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
+      ethnicity_code                 |"U": Declined To Provide; "H": Hispanic or Latino; "N": Not Hispanic or Latino                                                                      |
+      student_status_code            |"F": Full Time; "P": Part Time; "N": Not A Student; "U": Unknown                                                                                    |
+
     parameters:
       - name: query
         in: body
@@ -555,7 +567,7 @@
     tags:
       - Appointments
     responses:
-      200:
+      201:
         description: appointment confirmation record
         schema:
           $ref: CreateAppointmentConfirmation_Response

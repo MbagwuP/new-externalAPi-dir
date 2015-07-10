@@ -1,0 +1,137 @@
+gender:
+  'U':
+    values:
+      - 'UNK'
+      - 3
+    default: 'UNK'
+    display: 'Unknown'
+  'F':
+    values:
+      - 'F'
+      - 2
+    default: 'F'
+    display: 'Female'
+  'M':
+    values:
+      - 'M'
+      - 1
+    default: 'M'
+    display: 'Male'
+
+marital_status:
+  'A':
+    values:
+      - 'A'
+      - 1
+    default: 'A'
+    display: 'Anulled'
+  'M':
+    values:
+      - 'M'
+      - 2
+    default: 'M'
+    display: 'Married'
+  'S':
+    values:
+      - 'S'
+      - 3
+    default: 'S'
+    display: 'Single'
+  'D':
+    values:
+      - 'D'
+      - 4
+    default: 'D'
+    display: 'Divorced'
+  'W':
+    values:
+      - 'W'
+      - 5
+    default: 'W'
+    display: 'Widowed'
+  'L':
+    values:
+      - 'L'
+      - 6
+    default: 'L'
+    display: 'Legally Separated'
+  'C':
+    values:
+      - 7
+    default: '7'
+    display: 'Cohabitation'
+  'I':
+    values:
+      - 'I'
+      - 8
+    default: 'I'
+    display: 'Interlocutory'
+  'P':
+    values:
+      - 'P'
+      - 9
+    default: 'P'
+    display: 'Polygamous'
+  'U':
+    values:
+      - 'UNK'
+      - 'U'
+      - 10
+    default: 'UNK'
+    display: 'Unknown'
+  'B':
+    values:
+      - 'T'
+      - 11
+    default: 'T'
+    display: 'Domestic Partner'
+
+race:
+  '2106-3':
+    values:
+      - '2106-3'
+      - 1
+    default: '2106-3'
+    display: 'White'
+  '2054-5':
+    values:
+      - '2054-5'
+      - 2
+    default: '2054-5'
+    display: 'Black or African American'
+  '1002-5':
+    values:
+      - '1002-5'
+      - 3
+    default: '1002-5'
+    display: 'American Indian or Alaskan Native'
+  '2028-9':
+    values:
+      - '2028-9'
+      - 4
+    default: '2028-9'
+    display: 'Asian'
+  '2076-8':
+    values:
+      - '2076-8'
+      - 5
+    default: '2076-8'
+    display: 'Native Hawaiian or Other Pacific Islander'
+  '2135-2':
+    values:
+      - '2135-2'
+      - 6
+    default: '2135-2'
+    display: 'Hispanic'
+  '2131-1':
+    values:
+      - '2131-1'
+      - 7
+    default: '2131-1'
+    display: 'Other'
+  '':
+    values:
+      - ''
+      - 9
+    default: ''
+    display: 'Declined to Specify'
