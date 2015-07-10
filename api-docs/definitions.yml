@@ -386,22 +386,22 @@ Patient:
     prefix: string
     suffix: string
     ssn: string
-    gender_id: string
+    gender_code: string
     date_of_birth: string
-    race_id: integer
-    marital_status_id: integer
-    language_id: integer
+    race_code: integer
+    marital_status_code: integer
+    language_code: integer
     chart_number: string
     drivers_license_number: string
-    drivers_license_state_id: string
-    employment_status_id: integer
+    drivers_license_state_code: string
+    employment_status_code: integer
     school_name: string
     employer_name: string
     account_number: string
     legacy_patient_id: string
     employer_phone_number: string
-    ethnicity_id: integer
-    student_status_id: integer
+    ethnicity_code: integer
+    student_status_code: integer
 PatientAddress: 
   properties:
     line1: string
