@@ -37,7 +37,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|x| x.rename_key('external_id', 'id') }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = cc_id_to_code('gender', patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
@@ -87,7 +87,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed['patient'].rename_key 'external_id', 'id'
     parsed['patient']['business_entity_id'] = current_business_entity
-    parsed['patient']['gender_code'] = cc_id_to_code('gender', parsed['patient']['gender_id'])
+    parsed['patient']['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, parsed['patient']['gender_id'])
     body(parsed.to_json); status HTTP_OK
   end
 
@@ -97,14 +97,14 @@ class ApiService < Sinatra::Base
   post /\/v2\/(patients\/create|patients)/ do
     begin
       request_body = get_request_JSON
-      request_body['patient']['gender_id'] = code_to_cc_id('gender', request_body['patient'].delete('gender_code')) unless request_body['patient']['gender_id'].present?
-      request_body['patient']['race_id'] = code_to_cc_id('race', request_body['patient'].delete('race_code')) unless request_body['patient']['race_id'].present?
-      request_body['patient']['marital_status_id'] = code_to_cc_id('marital_status', request_body['patient'].delete('marital_status_code')) unless request_body['patient']['marital_status_id'].present?
-      request_body['patient']['language_id'] = code_to_cc_id('language', request_body['patient'].delete('language_code')) unless request_body['patient']['language_id'].present? 
-      request_body['patient']['drivers_license_state_id'] = code_to_cc_id('state', request_body['patient'].delete('drivers_license_state_code')) unless request_body['patient']['drivers_license_state_id'].present?
-      request_body['patient']['employment_status_id'] = code_to_cc_id('employment_status', request_body['patient'].delete('employment_status_code')) unless request_body['patient']['employment_status_id'].present?
-      request_body['patient']['ethnicity_id'] = code_to_cc_id('ethnicity', request_body['patient'].delete('ethnicity_code')) unless request_body['patient']['ethnicity_id'].present?
-      request_body['patient']['student_status_id'] = code_to_cc_id('student_status', request_body['patient'].delete('student_status_code')) unless request_body['patient']['student_status_id'].present?
+      request_body['patient']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, request_body['patient'].delete('gender_code')) unless request_body['patient']['gender_id'].present?
+      request_body['patient']['race_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Race, request_body['patient'].delete('race_code')) unless request_body['patient']['race_id'].present?
+      request_body['patient']['marital_status_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::MaritalStatus, request_body['patient'].delete('marital_status_code')) unless request_body['patient']['marital_status_id'].present?
+      request_body['patient']['language_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Language, request_body['patient'].delete('language_code')) unless request_body['patient']['language_id'].present? 
+      request_body['patient']['drivers_license_state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, request_body['patient'].delete('drivers_license_state_code')) unless request_body['patient']['drivers_license_state_id'].present?
+      request_body['patient']['employment_status_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::EmploymentStatus, request_body['patient'].delete('employment_status_code')) unless request_body['patient']['employment_status_id'].present?
+      request_body['patient']['ethnicity_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Ethnicity, request_body['patient'].delete('ethnicity_code')) unless request_body['patient']['ethnicity_id'].present?
+      request_body['patient']['student_status_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::StudentStatus, request_body['patient'].delete('student_status_code')) unless request_body['patient']['student_status_id'].present?
 
       url          = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients.json?token=#{escaped_oauth_token}"
       response     = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
@@ -141,7 +141,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|patient| patient["id"] = patient["external_id"] }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = cc_id_to_code('gender', patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
