@@ -451,15 +451,9 @@ Physician:
     suffix: string
     email: string
     gender_code: string
-    comments: string
     deactivation_date: string
-    is_foreign: boolean
-    is organization: boolean
     organization:
       $ref: Organization
-    medical_school_graduation_year: integer
-    created_at: string
-    updated_ast: string
 Organization:
   properties:
     name: string

@@ -618,7 +618,8 @@
   get:
     summary: Show Physician
     description: |
-      Show physician based on their National Provider Identifier (NPI).
+      Show physician based on their National Provider Identifier (NPI). If the physician is an organization, 
+      then the ```organization``` object will be returned, otherwise it will be null. 
     parameters:
       - name: npi
         in: path
