@@ -104,7 +104,7 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointments/:appointment_id' do
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' if !params[:appointment_id].is_guid?
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
       token: escaped_oauth_token, include_confirmation_method: 'true'
@@ -137,6 +137,8 @@ class ApiService < Sinatra::Base
 
 
   post '/v2/appointments/:appointment_id/confirmation' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+
     request_body = get_request_JSON
     communication_method_slug = request_body.delete('communication_method')
     communication_outcome_slug = request_body.delete('communication_outcome')
@@ -164,7 +166,7 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/appointments/:appointment_id/confirmations' do
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' if !params[:appointment_id].is_guid?
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/confirmations.json",
       token: escaped_oauth_token
@@ -248,6 +250,8 @@ class ApiService < Sinatra::Base
   end
 
   put '/v2/appointments/:id/cancel' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
     request_body = get_request_JSON
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 
