@@ -420,43 +420,6 @@ class ApiService < Sinatra::Base
     return parsed["appointment"]["id"]
   end
 
-  # # Control the level of logging based on settings
-  before do
-    content_type 'application/json', :charset => 'utf-8'
-  #   @start_time = Time.now
-  # 
-  #   auditoptions = {
-  #       :ip => "#{request.ip}",
-  #       :request_method => "#{request.request_method}",
-  #       :path => "#{request.fullpath}"
-  #   }
-  #   
-  #   audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
-  # 
-  end
-
-   after do
-     #request_duration = ((Time.now - @start_time) * 1000.0).to_i
-     statuscode = @statuscode || response.status
-   
-     ## todo: get who the user is
-     #auditoptions = {
-     #    :ip => "#{request.ip}",
-     #    :statuscode => "#{statuscode}",
-     #    :duration => "#{request_duration} ms",
-     #    :request_method => "#{request.request_method}",
-     #    :request_path => "#{request.fullpath}"
-     #}
-   
-     #audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
-   
-     if statuscode >= HTTP_BAD_REQUEST
-       LOG.warn("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message}")
-     else
-       LOG.info("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message}")
-     end
-   end
-
   ## use AUDIT_TYPE and AUDIT_SEVERITY
   def audit_log(type, severity, options={})
     return if !settings.enable_auditing
@@ -809,18 +772,6 @@ class ApiService < Sinatra::Base
   def oauth_request?
     token = request.env['HTTP_AUTHORIZATION']
     token && !token.include?('Basic') && token.length < 40
-  end
-
-  before /\/v2\/*/ do
-    # only attempt to add attributes for New Relic Insights if the URL is v2
-    # AND there's no attempt to use Basic Auth
-    if oauth_request?
-      ::NewRelic::Agent.add_custom_attributes({
-        business_entity_id: current_business_entity,
-        application_id:     current_application,
-        api_version:        'v2'
-      })
-    end
   end
 
 end
