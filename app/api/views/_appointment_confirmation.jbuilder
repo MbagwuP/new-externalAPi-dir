@@ -6,6 +6,6 @@ json.appointment_confirmation do
     json.communication_outcome communication_outcomes.invert[@confirmation['appointment_confirmation']['communication_outcome_id']]
     json.created_at @confirmation['appointment_confirmation']['created_at']
     json.date_confirmed @confirmation['appointment_confirmation']['date_confirmed']
-    json.id @confirmation['appointment_confirmation']['id']
+    json.id @confirmation['appointment_confirmation']['guid'] || @confirmation['appointment_confirmation']['id']
     json.updated_at @confirmation['appointment_confirmation']['updated_at']
   end
