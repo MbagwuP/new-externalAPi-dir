@@ -133,6 +133,8 @@
     summary: Create Appointment
     description: |
       Create an Appointment
+
+      If no ```end_time``` is specified, the end_time will be calculated based on the duration specified in Nature of Visit.
     parameters:
       - name: appointment
         in: body
