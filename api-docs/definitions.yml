@@ -246,7 +246,7 @@ CreateAppointment_Request_appointment:
     provider_id: integer
     visit_reason_id: integer
     resource_id: integer
-    patients:
+    patient:
       type: array
       $ref: CreateAppointment_Request_appointment_patients
 CreateAppointment_Request_appointment_patients:
