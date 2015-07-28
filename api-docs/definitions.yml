@@ -473,6 +473,28 @@ Location:
       type: string
     is_visible_appointment_scheduler:
       type: string
+    address:
+      $ref: LocationAddress
+LocationAddress:
+  properties:
+    line1:
+      type: string
+    line2:
+      type: string
+    line3:
+      type: string
+    city:
+      type: string
+    zip_code:
+      type: string
+    county_name:
+      type: string
+    latitude:
+      type: float
+    longitude:
+      type: float
+    state_name:
+      type: string
 NatureOfVisit:
   properties:
     id:
