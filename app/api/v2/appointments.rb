@@ -40,28 +40,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  get '/v2/appointment/listbyresource/:resource_id' do
-    resource_id = params[:resource_id]
-    #LOG.debug(business_entity)
-    #
-    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{resource_id}/listbyresource.json",
-                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
-
-    response = rescue_service_call 'Appointment Look Up' do
-      RestClient.post(urlappt, nil, :api_key => APP_API_KEY)
-    end
-
-    parsed = JSON.parse(response.body)
-    parsed.each { |x|
-      x['appointment']['id'] = x['appointment']['external_id']
-    }
-
-    body(parsed.to_json)
-    status HTTP_OK
-  end
-
-
   get /\/v2\/(appointment\/statuses|appointment_statuses)/ do
     #http://localservices.carecloud.local:3000/appointments/1/statuses.json?token=
     urllocation = webservices_uri "appointments/#{current_business_entity}/statuses.json", token: escaped_oauth_token
