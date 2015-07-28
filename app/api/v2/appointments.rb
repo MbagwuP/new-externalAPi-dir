@@ -197,6 +197,10 @@ class ApiService < Sinatra::Base
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
     end
 
+    # accept "patient" or "patients", whose value can be either an object or an array containing one object
+    request_body['appointment'].rename_key('patient', 'patients') if request_body['appointment'].keys.include?('patient')
+    request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
+
     ## validate the provider
     providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
     ## validate the request based on token
