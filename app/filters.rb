@@ -71,20 +71,17 @@ module Sinatra
         end
       end
 
-      app.before /\/v2\/*/ do
-        # only attempt to add attributes for New Relic Insights if the URL is v2
-        # AND there's no attempt to use Basic Auth
-      if oauth_request?
+      app.before /\/(?<api_version>v1|v2)\/*/ do |version|
         ::NewRelic::Agent.add_custom_attributes({
-                                                  business_entity_id: current_business_entity,
-                                                  application_id:     current_application,
-                                                  api_version:        'v2'
-        })
+                                                  business_entity_id: oauth_request? ? current_business_entity : nil,
+                                                  application_id:     oauth_request? ? current_application : nil,
+                                                  api_version:        version,
+                                                  token:              params['authentication'] || env['HTTP_AUTHORIZATION']
+        }.compact)
       end
     end
+
   end
 
-end
-
-register ApplicationFilters
+  register ApplicationFilters
 end
