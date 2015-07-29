@@ -17,7 +17,7 @@ describe "ApiService" do
 
     it "should return 400 if request is bogus" do
       request_header = {}
-      request_header['HTTP_AUTHORIZATION'] = "PassAuthToken"
+      request_header['HTTP_AUTHORIZATION'] = "Basic PassAuthToken"
       post '/v1/service/authenticate', {}, request_header
       last_response.status.should == 400
     end
