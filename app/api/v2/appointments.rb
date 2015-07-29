@@ -32,6 +32,7 @@ class ApiService < Sinatra::Base
       x['patient']['id'] = x['patient']['external_id']
       x.rename_key 'nature_of_visit_name', 'visit_reason_name'
       x.rename_key 'nature_of_visit_flagged', 'visit_reason_flagged'
+      x.rename_key 'reason_for_visit', 'chief_complaint'
     }
 
     #LOG.debug(parsed)
@@ -96,7 +97,7 @@ class ApiService < Sinatra::Base
     filtered.rename_key 'nature_of_visit_id', 'visit_reason_id'
     filtered.delete('created_by')
     filtered.delete('updated_by')
-    filtered.delete('reason_for_visit')
+    filtered.rename_key('reason_for_visit', 'chief_complaint')
     filtered['business_entity_id'] = current_business_entity
 
     if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
@@ -178,6 +179,7 @@ class ApiService < Sinatra::Base
     # accept "patient" or "patients", whose value can be either an object or an array containing one object
     request_body['appointment'].rename_key('patient', 'patients') if request_body['appointment'].keys.include?('patient')
     request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
+    request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
     ## validate the provider
     providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
