@@ -71,7 +71,8 @@ module Sinatra
         end
       end
 
-      app.before /\/(?<api_version>v1|v2)\/*/ do |version|
+      # app.before /\/(?<api_version>v1|v2)\/*/ do |version|
+      app.before /\/(?<api_version>v2)\/*/ do |version|
         ::NewRelic::Agent.add_custom_attributes({
                                                   business_entity_id: oauth_request? ? current_business_entity : nil,
                                                   application_id:     oauth_request? ? current_application : nil,
