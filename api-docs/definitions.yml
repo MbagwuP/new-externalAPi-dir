@@ -197,6 +197,7 @@ AppointmentsByDateWithProvider_Response_appointments:
     reason_for_visit: string
     external_id: string
     referring_physician: string
+    chief_complaint: string
     resource:
       $ref: AppointmentsByDateWithProvider_Response_appointments_resource
     location:
@@ -246,6 +247,7 @@ CreateAppointment_Request_appointment:
     provider_id: integer
     visit_reason_id: integer
     resource_id: integer
+    chief_complaint: string
     patient:
       type: array
       $ref: CreateAppointment_Request_appointment_patients
@@ -690,6 +692,7 @@ ShowAppointment_Response_appointment:
     is_force_overbook: boolean
     visit_reason_id: integer
     preferred_confirmation_method: string
+    chief_complaint: string
 ListAppointments_Response:
   properties:
     appointment:
@@ -707,6 +710,7 @@ ListAppointments_Response_appointment:
       $ref: ListAppointments_Response_appointment_last_eligibility_outcome
     cancellation_details:
       $ref: ListAppointments_Response_appointment_cancellation_details
+    chief_complaint: string
     appointment_cancellation_reason_id: string
     arrived_at: string
     business_entity_id: integer
