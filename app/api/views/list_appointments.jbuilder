@@ -40,6 +40,7 @@ json.array! @resp do |appt|
       json.comments appt['appointment']['cancellation_comments']
     end
 
+    json.chief_complaint appt['appointment']['reason_for_visit']
     json.appointment_cancellation_reason_id appt['appointment']['appointment_cancellation_reason_id']
     json.arrived_at appt['appointment']['arrived_at']
     json.business_entity_id appt['appointment']['business_entity_id']

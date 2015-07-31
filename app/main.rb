@@ -51,6 +51,8 @@ SEVERITY_TYPE_WARN = "WARN"
 
 class ApiService < Sinatra::Base
 
+  register Sinatra::ApplicationFilters
+
   def self.build_version
     build_number = File.open(File.join(APP_ROOT, '.build'), 'rb').read rescue ''
     build_number = build_number.split(':')[1] unless build_number.empty?

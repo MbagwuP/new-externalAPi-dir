@@ -32,31 +32,10 @@ class ApiService < Sinatra::Base
       x['patient']['id'] = x['patient']['external_id']
       x.rename_key 'nature_of_visit_name', 'visit_reason_name'
       x.rename_key 'nature_of_visit_flagged', 'visit_reason_flagged'
+      x.rename_key 'reason_for_visit', 'chief_complaint'
     }
 
     #LOG.debug(parsed)
-    body(parsed.to_json)
-    status HTTP_OK
-  end
-
-
-  get '/v2/appointment/listbyresource/:resource_id' do
-    resource_id = params[:resource_id]
-    #LOG.debug(business_entity)
-    #
-    #http://devservices.carecloud.local/appointments/1/2/listbypatient.json?token=&date=20130424
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{resource_id}/listbyresource.json",
-                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
-
-    response = rescue_service_call 'Appointment Look Up' do
-      RestClient.post(urlappt, nil, :api_key => APP_API_KEY)
-    end
-
-    parsed = JSON.parse(response.body)
-    parsed.each { |x|
-      x['appointment']['id'] = x['appointment']['external_id']
-    }
-
     body(parsed.to_json)
     status HTTP_OK
   end
@@ -104,7 +83,7 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointments/:appointment_id' do
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' if !params[:appointment_id].is_guid?
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
       token: escaped_oauth_token, include_confirmation_method: 'true'
@@ -118,7 +97,7 @@ class ApiService < Sinatra::Base
     filtered.rename_key 'nature_of_visit_id', 'visit_reason_id'
     filtered.delete('created_by')
     filtered.delete('updated_by')
-    filtered.delete('reason_for_visit')
+    filtered.rename_key('reason_for_visit', 'chief_complaint')
     filtered['business_entity_id'] = current_business_entity
 
     if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
@@ -137,6 +116,8 @@ class ApiService < Sinatra::Base
 
 
   post '/v2/appointments/:appointment_id/confirmation' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+
     request_body = get_request_JSON
     communication_method_slug = request_body.delete('communication_method')
     communication_outcome_slug = request_body.delete('communication_outcome')
@@ -156,22 +137,27 @@ class ApiService < Sinatra::Base
       RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
     end
 
-    filtered = JSON.parse(resp)
-    filtered['appointment_confirmation']['appointment_id'] = params[:appointment_id]
-    filtered['appointment_confirmation'].delete('is_automated')
-    filtered['appointment_confirmation'].delete('redemption_code')
-    filtered['appointment_confirmation'].delete('redemption_code_expiration')
-    filtered['appointment_confirmation'].delete('created_by')
-    filtered['appointment_confirmation'].delete('updated_by')
-    communication_method_id = filtered['appointment_confirmation'].delete('communication_method_id')
-    communication_outcome_id = filtered['appointment_confirmation'].delete('communication_outcome_id')
-    filtered['appointment_confirmation'].rename_key('method_description', 'communication_method_description')
-    filtered['appointment_confirmation']['communication_method'] = communication_methods.invert[communication_method_id]
-    filtered['appointment_confirmation']['communication_outcome'] = communication_outcomes.invert[communication_outcome_id]
-
-    body(filtered.to_json)
+    @confirmation = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    
+    status HTTP_CREATED
+    jbuilder :_appointment_confirmation
   end
 
+  get '/v2/appointments/:appointment_id/confirmations' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+
+    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/confirmations.json",
+      token: escaped_oauth_token
+    resp = rescue_service_call 'Appointment Confirmations' do
+      RestClient.get(urlappt, :api_key => APP_API_KEY)
+    end
+    
+    @resp = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    status HTTP_OK
+    jbuilder :list_appointment_confirmations
+  end
 
   # /v2/appointments
   # /v2/appointment/create (legacy)
@@ -189,6 +175,11 @@ class ApiService < Sinatra::Base
     rescue
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
     end
+
+    # accept "patient" or "patients", whose value can be either an object or an array containing one object
+    request_body['appointment'].rename_key('patient', 'patients') if request_body['appointment'].keys.include?('patient')
+    request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
+    request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
     ## validate the provider
     providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
@@ -243,6 +234,8 @@ class ApiService < Sinatra::Base
   end
 
   put '/v2/appointments/:id/cancel' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
     request_body = get_request_JSON
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 

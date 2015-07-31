@@ -58,6 +58,7 @@ class ApiService < Sinatra::Base
 
     ## add business entity to the request
     request_body['appointment']['business_entity_id'] = business_entity
+    request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
     ## validate the provider
     providerids = get_providers_by_business_entity(business_entity, pass_in_token)
@@ -390,6 +391,7 @@ class ApiService < Sinatra::Base
     parsed["appointments"].each { |x|
       x['id'] = x['external_id']
       x['patient']['id'] = x['patient']['external_id']
+      x['chief_complaint'] = x.delete('reason_for_visit')
     }
 
     #LOG.debug(parsed)
@@ -436,7 +438,6 @@ class ApiService < Sinatra::Base
     urlappt << '/listbyexternalid.json?token='
     urlappt << CGI::escape(pass_in_token)
 
-
     begin
       response = RestClient.get(urlappt)
     rescue => e
@@ -450,7 +451,9 @@ class ApiService < Sinatra::Base
 
 
     parsed = JSON.parse(response.body)
-    parsed[0]['id'] = parsed[0]['external_id']
+    appt = parsed[0]
+    appt['id'] = appt['external_id']
+    appt['appointment']['chief_complaint'] = appt['appointment'].delete('reason_for_visit')
     body(parsed.to_json)
     status HTTP_OK
 
@@ -788,6 +791,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed.each { |x|
       x['appointment']['id'] = x['appointment']['external_id']
+      x['appointment']['chief_complaint'] = x['appointment'].delete('reason_for_visit')
     }
 
     body(parsed.to_json)

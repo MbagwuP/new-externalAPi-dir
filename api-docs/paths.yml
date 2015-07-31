@@ -21,11 +21,60 @@
           #  $ref: Patient
       404:
         description: patient not found for current practice
+  put:
+    summary: Update Patient
+    description: |
+      Update a Patient
+
+       parameter                     |options                                                                                                                                                                    |
+      -------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+      gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
+      race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
+      marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html)) |
+      language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |
+      drivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |
+      employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
+      ethnicity_code                 |"U": Declined To Provide; "H": Hispanic or Latino; "N": Not Hispanic or Latino                                                                      |
+      student_status_code            |"F": Full Time; "P": Part Time; "N": Not A Student; "U": Unknown                                                                                    |
+
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        description: patient update payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: PatientCreate
+    tags:
+      - Patients
+    responses:
+      204:
+        description: patient updated successfully
+      422:
+        description: validation error
 /patients:
   post:
     summary: Create Patient
     description: |
       Create a Patient
+
+       parameter                     |options                                                                                                                                             |
+      -------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+      gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
+      race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
+      marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html))        |
+      language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |
+      drivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |
+      employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
+      ethnicity_code                 |"U": Declined To Provide; "H": Hispanic or Latino; "N": Not Hispanic or Latino                                                                      |
+      student_status_code            |"F": Full Time; "P": Part Time; "N": Not A Student; "U": Unknown                                                                                    |
+
     parameters:
       - name: query
         in: body
@@ -121,6 +170,8 @@
     summary: Create Appointment
     description: |
       Create an Appointment
+
+      If no ```end_time``` is specified, the end_time will be calculated based on the duration specified in Nature of Visit.
     parameters:
       - name: appointment
         in: body
@@ -255,36 +306,6 @@
           #type: array
           #items:
           #  $ref: Patient
-/appointment/listbydate/{date}/provider-{provider_id}:
-  get:
-    summary: List Appointments
-    description: |
-      List Appointments for Provider by Date
-    parameters:
-      - name: date
-        in: path
-        description: Appointment Date
-        required: true
-        type: string
-        format: double
-      - name: provider_id
-        in: path
-        description: Provider ID
-        required: true
-        type: string
-        format: double
-    tags:
-      - Appointments
-    responses:
-      200:
-        description: list of appointments
-        schema:
-          $ref: AppointmentsByDateWithProvider_Response
-          #type: array
-          #items:
-          #  $ref: Patient
-      404:
-        description: provider not found for current practice
 /appointment_templates:
   get:
     summary: List Appointment Templates
@@ -459,6 +480,51 @@
           # type: array
           # items:
             # $ref: CHANGETHIS
+/appointments/{appointment_id}/confirmations:
+  get:
+    summary: List Appointment Confirmations
+    description: |
+      List confirmations for a particular appointment
+
+      The following Confirmation Methods will be used:
+      "other", "phone", "email", "text_message", "fax"
+
+      The following Confirmation Outcomes will be used:
+      "terminated", "undeliverable", "error", "responded", "processing", "message_sent", "left_message_to_reschedule", "incorrect_number", "confirmed", "line_busy", "no_answer", "left_message", "disconnected"
+
+      name                       |description                                   |
+      ---------------------------|----------------------------------------------|
+      terminated                 |Terminated by System                          |
+      undeliverable              |Undeliverable: Missing or Invalid Information |
+      error                      |Error Message                                 |
+      responded                  |Message Responded                             |
+      processing                 |Processing                                    |
+      message_sent               |Message Sent                                  |
+      left_message_to_reschedule |Left message to reschedule                    |
+      incorrect_number           |The phone number was not correct              |
+      confirmed                  |The patient confirmed the appointment         |
+      line_Busy                  |The line dialed was busy                      |
+      no_answer                  |No one answered the phone                     |
+      left_message               |Left a message                                |
+      disconnected               |Phone number disconnected                     |
+
+      &nbsp;
+    parameters:
+      - name: appointment_id
+        in: path
+        description: GUID of the appointment
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment
+        schema:
+          type: array
+          items:
+            $ref: CreateAppointmentConfirmation_Response
 /appointments/{appointment_id}/confirmation:
   post:
     summary: Confirm Appointment
@@ -510,7 +576,7 @@
     tags:
       - Appointments
     responses:
-      200:
+      201:
         description: appointment confirmation record
         schema:
           $ref: CreateAppointmentConfirmation_Response
@@ -557,6 +623,26 @@
           type: array
           items:
             $ref: Provider
+/physicians/{npi}:
+  get:
+    summary: Show Physician
+    description: |
+      Show physician based on their National Provider Identifier (NPI). If the physician is an organization, 
+      then the ```organization``` object will be returned, otherwise it will be null. 
+    parameters:
+      - name: npi
+        in: path
+        description: National Provider Identifier (NPI)
+        required: true
+        type: string
+        format: string
+    tags:
+      - Physicians
+    responses:
+      200:
+        description: details about a physician
+        schema:
+          $ref: Physician
 /appointments/{appointment_id}/cancel:
   put:
     summary: Cancel Appointment
