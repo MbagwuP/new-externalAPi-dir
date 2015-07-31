@@ -306,36 +306,6 @@
           #type: array
           #items:
           #  $ref: Patient
-/appointment/listbydate/{date}/provider-{provider_id}:
-  get:
-    summary: List Appointments
-    description: |
-      List Appointments for Provider by Date
-    parameters:
-      - name: date
-        in: path
-        description: Appointment Date
-        required: true
-        type: string
-        format: double
-      - name: provider_id
-        in: path
-        description: Provider ID
-        required: true
-        type: string
-        format: double
-    tags:
-      - Appointments
-    responses:
-      200:
-        description: list of appointments
-        schema:
-          $ref: AppointmentsByDateWithProvider_Response
-          #type: array
-          #items:
-          #  $ref: Patient
-      404:
-        description: provider not found for current practice
 /appointment_templates:
   get:
     summary: List Appointment Templates
