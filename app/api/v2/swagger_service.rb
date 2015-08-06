@@ -27,7 +27,7 @@ class ApiService < Sinatra::Base
   end
 
   get '/docs' do
-    redirect '/v2/api-docs'
+    redirect "https://#{request.host}/v2/api-docs"
   end
 
   post '/v2/api-docs/demotoken' do 
