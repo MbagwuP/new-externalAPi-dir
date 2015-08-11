@@ -47,7 +47,7 @@ class ApiService < Sinatra::Base
     params.delete('error')
     content_type :html
 
-    session = CCAuth::Session.find_by_token(params[:token])
+    session = CCAuth::SessionClient.find_by_token(params[:token])
 
     # log out the user's session since we won't need it after initial authentication
     urllogout = "#{CCAuth.endpoint}/logout"

@@ -118,7 +118,7 @@ class ApiService < Sinatra::Base
 
     # CCAuth
     set :cc_auth_config, File.open(File.dirname(__FILE__) + "/../config/cc_auth_service.yml") { |f| YAML.load(f) }[environment.to_s]
-   
+
     ## setup log level based on yml
     begin
       LOG.level = config["logging_level"]
