@@ -269,8 +269,68 @@ CreateAppointmentConfirmation_Response_appointment_confirmation:
     date_confirmed: string
     id: integer
     updated_at: string
-
-
+PatientInsuranceShow:
+  properties:
+    id: string
+    insurance_policies:
+      type: array
+      $ref: PatientInsurancePolicy
+PatientInsurancePolicy:
+  properties:
+    policy_priority: integer
+    member_number: string
+    policy_number: string
+    effective_from: string
+    effective_to: string
+    co_payment: string
+    type: string
+    insured:
+      $ref: PatientInsured
+    payer:
+      $ref: PatientInsurancePayer
+PatientInsured:
+  properties:
+    first_name: string
+    first_name: string
+    last_name: string
+    middle_initial: string
+    dob: string
+    gender: string
+    relation_to_patient: string
+    addresses:
+      type: array
+      $ref: PatientInsuranceAddress
+    phones:
+      type: array
+      $ref: PatientInsurancePhone
+PatientInsurancePayer:
+  properties:
+    id: integer
+    name: string
+    phones:
+      type: array
+      $ref: PatientInsurancePhone
+    address:
+      $ref: PatientInsuranceAddress
+PatientInsuranceAddress: 
+  properties:
+    line1: string
+    line2: string
+    line3: string
+    city: string
+    state: integer
+    zip: string
+    county_name: string
+    country_name: integer
+    is_primary: boolean
+    latitude: float
+    longitude: float
+PatientInsurancePhone: 
+  properties:
+    phone_number: string
+    phone_type: string
+    phone_ext: string
+    is_primary: string
 PatientShow: 
   properties:
     id: string

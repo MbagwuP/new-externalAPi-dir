@@ -64,6 +64,20 @@ class ApiService < Sinatra::Base
     body(response_hash.to_json); status HTTP_OK
   end
 
+  get '/v2/patients/:patient_id/insurances' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Patient ID must be a valid GUID."}' unless params[:patient_id].is_guid?
+    insurancesurl = webservices_uri "businesses/#{current_business_entity}/patients/#{params[:patient_id]}/insurance_policies.json",
+      token: escaped_oauth_token
+    resp = rescue_service_call 'Patient Insurance' do
+      RestClient.get(insurancesurl, :api_key => APP_API_KEY)
+    end
+    
+    @profiles = JSON.parse(resp)
+    @patient_id = params[:patient_id]
+
+    jbuilder :list_patient_insurance_profiles
+  end
+
 
   # /patients/{guid}
   # /v2/patients/{guid}
