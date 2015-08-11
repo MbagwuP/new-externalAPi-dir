@@ -171,7 +171,7 @@ class ApiService < Sinatra::Base
 
   def current_session
     return @current_session if defined?(@current_session) # caching
-    @current_session = CCAuth::OAuth2.new.authorization(oauth_token)
+    CCAuth::OAuth2Client.new.authorization(oauth_token)
   end
 
   def current_business_entity
