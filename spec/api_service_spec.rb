@@ -37,8 +37,8 @@ describe "ApiService" do
     it "should return 400 if authentication goes correctly - user assigned more then one business unit" do
       authorize 'jyeung@carecloud.com', 'welcome'
       post '/v1/service/authenticate'
-      last_response.status.should == 401
-      last_response.body.should == '{"error":"Authenticate Failed - 401 Unauthorized"}'
+      last_response.status.should == 400
+      last_response.body.should == '{"error":"User is assigned to more then one business entity"}'
     end
 
     it "should return 200 if authentication goes correctly" do
