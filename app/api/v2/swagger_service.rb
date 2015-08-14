@@ -1,11 +1,9 @@
 class ApiService < Sinatra::Base
 
   get '/v2/api-docs/swagger.json' do
-    base = YAML.load_file 'api-docs/base.yml'
-    base['paths'] = YAML.load_file 'api-docs/paths.yml'
-    base['definitions'] = YAML.load_file 'api-docs/definitions.yml'
-    body base.to_json
+    sw = SwaggerSchema.new(ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['environment_url'], 'api-docs', :amazon_import)
     status HTTP_OK
+    sw.to_json
   end
 
   get '/v2/api-docs' do
