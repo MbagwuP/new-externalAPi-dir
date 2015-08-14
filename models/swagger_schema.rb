@@ -161,7 +161,7 @@ class SwaggerSchema
 
   def request_parameters_section parameters, basePath
     entries = {}
-    entries['integration.request.header.Authorization'] = 'method.request.header.Authorization' if basePath == 'v2'
+    entries['integration.request.header.Authorization'] = 'method.request.header.Authorization' if basePath == '/v2'
 
     # make sure all path params get sent through in the Integration Request section so they will show up for the HTTP Proxy endpoint
     unless parameters.nil?
