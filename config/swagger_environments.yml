@@ -1,0 +1,17 @@
+development: &development
+  # environment_url: "https://external-api.development.carecloud.com"
+  # environment_url: "https://4c4ad952.ngrok.com"
+  # environment_url: "https://external-api-elb.development.carecloud.com"
+  environment_url: "https://external-api-elb-dev.carecloud.com"
+
+test:
+  <<: *development
+
+qa: 
+  environment_url: "https://api-qa.carecloud.com"
+
+staging: 
+  environment_url: "https://api-staging.carecloud.com"
+
+production: 
+  environment_url: "https://api.carecloud.com"
