@@ -1,3 +1,4 @@
+=begin
 require_relative 'spec_helper'
 
 describe "ApiService" do
@@ -1726,3 +1727,4 @@ describe "ApiService" do
   end
 
 end
+=end
