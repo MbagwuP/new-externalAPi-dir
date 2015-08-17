@@ -174,6 +174,11 @@ class SwaggerSchema
       query_params.each do |x|
         entries["integration.request.querystring.#{x}"] = "method.request.querystring.#{x}"
       end
+
+      header_params = parameters.map{|x| x['name'] if x['in'] == 'header'}.compact
+      header_params.each do |x|
+        entries["integration.request.header.#{x}"] = "method.request.header.#{x}"
+      end
     end
 
     entries

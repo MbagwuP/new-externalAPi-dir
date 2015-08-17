@@ -34,7 +34,7 @@ gem 'health_check', '0.3.3'
 gem 'c_cloud_dms_client', path: './vendor/gems'
 gem 'c_cloud_http_client', path: './vendor/gems'
 
-gem 'cc_auth', '~> 0.7.1'
+gem 'cc_auth', '~> 0.8.0'
 
 gem 'rake'
 
