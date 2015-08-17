@@ -42,13 +42,13 @@ describe "ApiService" do
     end
 
     it "should return 200 if authentication goes correctly" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       last_response.status.should == 200
     end
 
     it "should return 200 if logout goes correctly" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/service/logout?authentication='
@@ -59,7 +59,7 @@ describe "ApiService" do
 
 
     it "should return 500 if appointment id is not valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v2/appointment/listbyid/f6b89311-1213232-42b6-bd70-aeea1f4a4060?authentication='
@@ -70,7 +70,7 @@ describe "ApiService" do
 
 
     it "should return 200 if appointment id is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v2/appointment/listbyid/f091c75b-f509-42be-a8d0-130bac1759ff?authentication='
@@ -80,7 +80,7 @@ describe "ApiService" do
     end
 
     it "should return 403 error for invalid token" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication=2345'
       get url
@@ -89,7 +89,7 @@ describe "ApiService" do
 
 
     it "should return 403 for no token" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       url = '/v2/appointment/listbyid/2ae8b08d-5d41-40e5-b068-41803fc689c4?authentication='
       get url
@@ -98,7 +98,7 @@ describe "ApiService" do
 
 
     it "should return 200 if request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbyprovider/1234?'
@@ -111,7 +111,7 @@ describe "ApiService" do
 
   describe "Document API ::" do
     it "should return 200 if document sources are found" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/documentsources?authentication='
@@ -125,7 +125,7 @@ describe "ApiService" do
   describe "Util Resource API ::" do
 
     it "should return 200 if gender request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/genders?authentication='
@@ -135,7 +135,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if ethnicities request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/ethnicities?authentication='
@@ -145,7 +145,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if languges request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/languages?authentication='
@@ -155,7 +155,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if races request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/races?authentication='
@@ -165,7 +165,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if maritalstatuses request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/maritalstatuses?authentication='
@@ -175,7 +175,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if religions request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/person/religions?authentication='
@@ -202,7 +202,7 @@ describe "ApiService" do
 
     # setup accurate request of patient data
     it "should return 500 if request is not valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/patients/patient-1234?authentication='
@@ -221,7 +221,7 @@ describe "ApiService" do
     end_date = start_date + 10*60
 
     it "should return 200 if locations request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/locations?authentication='
@@ -232,7 +232,7 @@ describe "ApiService" do
 
 
     it "should return 200 if resources request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/resources?authentication='
@@ -242,7 +242,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if appt by date request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbydate/20130724/provider-3538?authentication='
@@ -252,7 +252,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if appt by provider request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbyprovider/provider-3538?authentication='
@@ -262,7 +262,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if appt by patient request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbypatient/patient-23d2fe12-3f54-487d-be78-b56d96694d82?authentication='
@@ -272,7 +272,7 @@ describe "ApiService" do
     end
 
     it "should return 200 if appt by resource request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/listbyresource/11?authentication='
@@ -283,7 +283,7 @@ describe "ApiService" do
 
 
     it "should return 400 if request is in invalid provider" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -311,7 +311,7 @@ describe "ApiService" do
     end
 
     it "should return 400 if request is in invalid location" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -339,7 +339,7 @@ describe "ApiService" do
 
 
     it "should return 400 if request is in invalid nature_of_visit" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -368,7 +368,7 @@ describe "ApiService" do
 
 
     it "should return 400 if request is in invalid resource" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -396,7 +396,7 @@ describe "ApiService" do
     end
 
     it "should return 400 if request is in invalid patient" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -428,7 +428,7 @@ describe "ApiService" do
 
 
     it "should return 400 if request is in invalid provider" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -455,7 +455,7 @@ describe "ApiService" do
     end
 
     it "should return 201 if request is in valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/create?authentication='
@@ -484,7 +484,7 @@ describe "ApiService" do
 
 
     it "should return 200 to delete appointment " do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/9/'
@@ -497,7 +497,7 @@ describe "ApiService" do
 
 
     it "should return 400 bad provider to delete appointment " do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment/22222222222222222/'
@@ -564,7 +564,7 @@ describe "ApiService" do
     end
 
     it "Should return appointment templates" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment_templates?authentication='
@@ -575,7 +575,7 @@ describe "ApiService" do
     end
 
     it "Should return appointment templates by a date" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/appointment_templates_by_dates/2014-08-11?authentication='
@@ -599,7 +599,7 @@ describe "ApiService" do
       end
 
       it "should return 400 if request is in valid" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = '/v1/patients/create?authentication='
@@ -611,7 +611,7 @@ describe "ApiService" do
       end
 
       it "should return 201 if request is in valid" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = '/v1/patients/create?authentication='
@@ -663,7 +663,7 @@ describe "ApiService" do
       end
 
       it "should update the patient" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = '/v1/patients/patient-'
@@ -713,7 +713,7 @@ describe "ApiService" do
       end
 
       it "should return delete the patient" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = '/v1/patients/patient-'
@@ -726,7 +726,7 @@ describe "ApiService" do
       end
 
       it "should return the patient data from search" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = 'v1/patients/search?authentication='
@@ -746,7 +746,7 @@ describe "ApiService" do
   describe "Providers API ::" do
 
     it "should return 200 if providers request is valid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = '/v1/provider/list?authentication='
@@ -765,7 +765,7 @@ describe "ApiService" do
     end
 
     it "should return 201 if charges are created" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -838,7 +838,7 @@ describe "ApiService" do
     end
 
     it "should return 500 if patient doesnt exist" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -910,7 +910,7 @@ describe "ApiService" do
     end
 
 #    it "should return 500 if clinical is invalid" do
-#      authorize 'interface@interface.com', 'welcome'
+#      authorize 'interface@interface.com', 'Welcome1#'
 #      post '/v1/service/authenticate'
 #      var1 = CGI::escape(JSON.parse(last_response.body)["token"])
 #      url = ''
@@ -982,7 +982,7 @@ describe "ApiService" do
 #    end
 
     it "should return 403 if charges token invalid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1054,7 +1054,7 @@ describe "ApiService" do
     end
 
     it "should return 400 if charges location is invalid" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1128,7 +1128,7 @@ describe "ApiService" do
 
     it "should return 400 if charges provider is invalid" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1202,7 +1202,7 @@ describe "ApiService" do
 
     it "should return 400 if authorization is invalid" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1278,7 +1278,7 @@ describe "ApiService" do
 
   describe "Simple Charge API ::" do
     it "should return 201 if a simple charge is created" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1328,7 +1328,7 @@ describe "ApiService" do
 
     it "should return 200 if charges are returned" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1344,7 +1344,7 @@ describe "ApiService" do
 
     it "should return 500 if invalid patient" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1360,7 +1360,7 @@ describe "ApiService" do
 
     it "should return 200 if no charges exist" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1377,7 +1377,7 @@ describe "ApiService" do
 
     it "should return 500 if patient is not in entity" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1393,7 +1393,7 @@ describe "ApiService" do
 
     it "should return 200 if simple charges are found" do
 
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1410,7 +1410,7 @@ describe "ApiService" do
 
   describe "Appointment Templates::" do
     it "should return appointment templates" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1421,7 +1421,7 @@ describe "ApiService" do
     end
 
     it "should return appointment templates" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1432,7 +1432,7 @@ describe "ApiService" do
     end
 
     it "should return 500 for appointment templates" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1443,7 +1443,7 @@ describe "ApiService" do
     end
 
     it "should return 200 for appointment templates by location" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1454,7 +1454,7 @@ describe "ApiService" do
     end
 
     it "should return 200 for appointment templates by resource" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1465,7 +1465,7 @@ describe "ApiService" do
     end
 
     it "should return 200 for find_nature_of_visit tied to a template" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1477,7 +1477,7 @@ describe "ApiService" do
 
 
     it "should return empty array for invalid template id" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1490,7 +1490,7 @@ describe "ApiService" do
     end
 
     it "should return empty array for template tied to another BE" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1504,7 +1504,7 @@ describe "ApiService" do
 
   describe "Appointment Blockouts::" do
      it "should return appointment blockouts by resource and date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1516,7 +1516,7 @@ describe "ApiService" do
      end
 
      it "should return 500 appointment blockouts by resource and invalid date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1529,7 +1529,7 @@ describe "ApiService" do
 
 
      it "should return appointment blockouts by location and date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1540,7 +1540,7 @@ describe "ApiService" do
      end
 
      it "should return 500 appointment blockouts by location and invalid date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1552,7 +1552,7 @@ describe "ApiService" do
      end
 
      it "should return appointment blockouts by location, resource, and date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1563,7 +1563,7 @@ describe "ApiService" do
      end
 
      it "should return 500 for appointment blockouts by location, resource, and date" do
-       authorize 'interface@interface.com', 'welcome'
+       authorize 'interface@interface.com', 'Welcome1#'
        post '/v1/service/authenticate'
        var1 = CGI::escape(JSON.parse(last_response.body)["token"])
        url = ''
@@ -1578,7 +1578,7 @@ describe "ApiService" do
 
   describe "Clinical API Services::" do
       it "should create problem set for patient" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = ''
@@ -1603,7 +1603,7 @@ describe "ApiService" do
       end
 
       it "should create allergies for patient" do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = ''
@@ -1633,7 +1633,7 @@ describe "ApiService" do
       end
 
       it "should create immunizations for patient"  do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = ''
@@ -1658,7 +1658,7 @@ describe "ApiService" do
       end
 
       it "should create medication for patient"  do
-        authorize 'interface@interface.com', 'welcome'
+        authorize 'interface@interface.com', 'Welcome1#'
         post '/v1/service/authenticate'
         var1 = CGI::escape(JSON.parse(last_response.body)["token"])
         url = ''
@@ -1688,7 +1688,7 @@ describe "ApiService" do
   describe "Util Helper API Methods ::" do
 
     it "should return 403 if bad authentication token" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1699,7 +1699,7 @@ describe "ApiService" do
     end
 
     it "should return 200 location list is found" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
@@ -1711,7 +1711,7 @@ describe "ApiService" do
     end
 
     it "should return 200 nature of visits found" do
-      authorize 'interface@interface.com', 'welcome'
+      authorize 'interface@interface.com', 'Welcome1#'
       post '/v1/service/authenticate'
       var1 = CGI::escape(JSON.parse(last_response.body)["token"])
       url = ''
