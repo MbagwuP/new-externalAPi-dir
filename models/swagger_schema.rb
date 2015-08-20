@@ -90,9 +90,9 @@ class SwaggerSchema
         if @include_authorization
           parameters = paths[path][method]["parameters"] || []
           if basePath == '/v1'
-            parameters << {name: "authentication", in: "query", required: true, type: "string"}
+            parameters << {'name' => "authentication", 'in' => "query", 'required' => true, 'type' => "string"}
           elsif basePath == '/v2'
-            parameters << {name: "Authorization", in: "header", required: true, type: "string"}
+            parameters << {'name' => "Authorization", 'in' => "header", 'required' => true, 'type' => "string"}
           end
           processed_paths[path][method]["parameters"] = parameters
         end
@@ -159,7 +159,7 @@ class SwaggerSchema
     end
   end
 
-  def request_parameters_section parameters, basePath
+  def request_parameters_section parameters, basePath, pry=nil
     entries = {}
     entries['integration.request.header.Authorization'] = 'method.request.header.Authorization' if basePath == '/v2'
 
@@ -170,6 +170,7 @@ class SwaggerSchema
         entries["integration.request.path.#{x}"] = "method.request.path.#{x}"
       end
 
+      # THIS DOESNT SEEM TO BE WORKING, IT DOESNT SHOW UP IN THE v1s
       query_params = parameters.map{|x| x['name'] if x['in'] == 'query'}.compact
       query_params.each do |x|
         entries["integration.request.querystring.#{x}"] = "method.request.querystring.#{x}"

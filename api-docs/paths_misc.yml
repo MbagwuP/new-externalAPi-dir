@@ -64,7 +64,30 @@
       200:
         description: test placeholder
 # AUTH_SERVICE PROXIES
+# /oauth2/authorize?client_id=#{client_id}&response_type=#{response_type}&practice_id=#{practice_id}&redirect_uri=#{redirect_uri_domain}
 /oauth2/access_token:
+  get:
+    parameters:
+      - name: client_id
+        in: query
+        required: true
+        type: string
+      - name: response_type
+        in: query
+        required: true
+        type: string
+      - name: practice_id
+        in: query
+        required: true
+        type: string
+      - name: redirect_uri
+        in: query
+        required: true
+        type: string
+      # probably need to put the ones with just the code or the emails from early on with Zocdoc here
+    responses:
+      200:
+        description: test placeholder
   post:
     parameters:
       - name: Authorization
