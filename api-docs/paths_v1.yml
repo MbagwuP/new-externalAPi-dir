@@ -430,7 +430,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/allergies/create:
+/patients/{patientid}/allergies/create:
   post:
     parameters:
       - name: body
@@ -439,7 +439,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -448,7 +448,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/immunizations/create:
+/patients/{patientid}/immunizations/create:
   post:
     parameters:
       - name: body
@@ -457,7 +457,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -466,7 +466,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/medications/create:
+/patients/{patientid}/medications/create:
   post:
     parameters:
       - name: body
@@ -475,7 +475,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -484,7 +484,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/vitals/create:
+/patients/{patientid}/vitals/create:
   post:
     parameters:
       - name: body
@@ -493,7 +493,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -502,7 +502,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/problems/create:
+/patients/{patientid}/problems/create:
   post:
     parameters:
       - name: body
@@ -511,7 +511,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
