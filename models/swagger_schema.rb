@@ -74,9 +74,6 @@ class SwaggerSchema
   end
 
   def process_paths paths_yml_file, basePath
-    require 'pry-rescue'
-    Pry.rescue do
-
     processed_paths = {}
 
     paths = yml_with_erb_to_hash "#{@docs_yml_path}/#{paths_yml_file}"
@@ -156,10 +153,9 @@ class SwaggerSchema
     end
 
     processed_paths
-    end
   end
 
-  def request_parameters_section parameters, basePath, pry=nil
+  def request_parameters_section parameters, basePath
     entries = {}
     entries['integration.request.header.Authorization'] = 'method.request.header.Authorization' if basePath == '/v2'
 
