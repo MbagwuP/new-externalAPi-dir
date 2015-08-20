@@ -166,7 +166,6 @@ class SwaggerSchema
         entries["integration.request.path.#{x}"] = "method.request.path.#{x}"
       end
 
-      # THIS DOESNT SEEM TO BE WORKING, IT DOESNT SHOW UP IN THE v1s
       query_params = parameters.map{|x| x['name'] if x['in'] == 'query'}.compact
       query_params.each do |x|
         entries["integration.request.querystring.#{x}"] = "method.request.querystring.#{x}"
