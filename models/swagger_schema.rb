@@ -74,9 +74,6 @@ class SwaggerSchema
   end
 
   def process_paths paths_yml_file, basePath
-    require 'pry-rescue'
-    Pry.rescue do
-
     processed_paths = {}
 
     paths = yml_with_erb_to_hash "#{@docs_yml_path}/#{paths_yml_file}"
@@ -90,9 +87,9 @@ class SwaggerSchema
         if @include_authorization
           parameters = paths[path][method]["parameters"] || []
           if basePath == '/v1'
-            parameters << {name: "authentication", in: "query", required: true, type: "string"}
+            parameters << {'name' => "authentication", 'in' => "query", 'required' => true, 'type' => "string"}
           elsif basePath == '/v2'
-            parameters << {name: "Authorization", in: "header", required: true, type: "string"}
+            parameters << {'name' => "Authorization", 'in' => "header", 'required' => true, 'type' => "string"}
           end
           processed_paths[path][method]["parameters"] = parameters
         end
@@ -156,7 +153,6 @@ class SwaggerSchema
     end
 
     processed_paths
-    end
   end
 
   def request_parameters_section parameters, basePath

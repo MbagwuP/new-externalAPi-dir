@@ -1,7 +1,9 @@
 namespace :swagger_schema do
 
   task :amazon_import => :environment do
-    sw = SwaggerSchema.new(ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['environment_url'], 'api-docs', :amazon_import)
+    environment_url = ENV['NGROK'] == 'true' ? ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['ngrok_url'] : ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['environment_url']
+    ENV['RACK_ENV'] = 'ngrok' if ENV['NGROK'] == 'true'
+    sw = SwaggerSchema.new(environment_url, 'api-docs', :amazon_import)
     puts JSON.pretty_generate(sw.to_h)
   end
 
