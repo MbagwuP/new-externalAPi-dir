@@ -1,0 +1,91 @@
+# A LOT OF THESE WONT WORK BECAUSE THEY NEED THE X-AMAZON-API-GATEWAY AUTHORIZATION PIECE FOR THE HEADERS
+#
+#
+# things that don't neatly fit as v1, v2, or redirect go here
+#
+# THIS ONE IS WEIRD AND IS V2 BUT NOT OAUTH
+/v2/appointment/listbyid/{appointmentid}:
+  get:
+    parameters:
+      - name: appointmentid
+        in: path
+        required: true
+        type: string
+      - name: authentication
+        in: query
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/v2/service/authenticate:
+  post:
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/v3/service/authenticate:
+  post:
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/v2/service/logout:
+  post:
+    parameters:
+      - name: authorization
+        in: query
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+# PUT THIS UNDER MISC, IT'S NOT V1
+/inbound_mail:
+  post:
+    parameters:
+      - name: ee
+        in: body
+        required: true
+        type: string
+      - name: authentication
+        in: query
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+# AUTH_SERVICE PROXIES
+/oauth2/access_token:
+  post:
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
+      - name: ee
+        in: body
+        required: true
+        type: string
+        # format: double
+      # - name: grant_type
+      #   in: formData
+      #   required: true
+      #   type: string
+      #   # format: double
+      # - name: refresh_token
+      #   in: formData
+      #   required: true
+      #   type: string
+      #   # format: double
+    responses:
+      200:
+        description: test placeholder

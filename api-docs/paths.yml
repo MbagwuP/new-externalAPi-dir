@@ -58,6 +58,26 @@
         description: patient updated successfully
       422:
         description: validation error
+/patients/{patient_id}/insurances:
+  get:
+    summary: Show Patient Insurances
+    description: |
+      Show Patient Insurances
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the patient
+        required: true
+        type: string
+    tags:
+      - Patients
+    responses:
+      200:
+        description: details about a patient
+        schema:
+          $ref: PatientInsuranceShow
+      404:
+        description: patient not found for current practice
 /patients:
   post:
     summary: Create Patient

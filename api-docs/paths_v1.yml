@@ -1,0 +1,1078 @@
+/provider/list:
+  get:
+    # summary: v1 List Providers
+    # description: |
+      # v1 List Providers for a Practice
+    # parameters:
+    # tags:
+      # - Providers
+    responses:
+      200:
+        description: list of providers for a practice
+/provider/npi/{npinumber}:
+  get:
+    parameters:
+      - name: npinumber
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/appointment/{id}/{appointmentid}:
+  delete:
+    parameters:
+      - name: id
+        in: path
+        description: Provider id
+        required: true
+        type: string
+      - name: appointmentid
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/{id}/checkin:
+  put:
+    parameters:
+      - name: id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/appointment/{id}/cancel_appointment:
+  post:
+    parameters:
+      - name: id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/appointment/listbydate/{date}/{providerid}:
+  get:
+    parameters:
+      - name: date
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: providerid
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/listbyid/{appointmentid}:
+  get:
+    parameters:
+      - name: appointmentid
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/listbyprovider/{providerid}:
+  get:
+    parameters:
+      - name: providerid
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/listbypatient/{patientid}:
+  get:
+    parameters:
+      - name: patientid
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/listbyresource/{resourceid}:
+  get:
+    parameters:
+      - name: resourceid
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointments/listbyresource/{resourceid}/date/{date}:
+  get:
+    parameters:
+      - name: resourceid
+        in: path
+        required: true
+        type: string
+      - name: date
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointmentblockouts/listbyresourceanddate/{resourceid}/date/{date}:
+  get:
+    parameters:
+      - name: resourceid
+        in: path
+        required: true
+        type: string
+      - name: date
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointmentblockouts/listbylocationanddate/{locationid}/date/{date}:
+  get:
+    parameters:
+      - name: locationid
+        in: path
+        required: true
+        type: string
+      - name: date
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment/locations:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment/statuses:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment/all_locations:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment/resources:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment/register:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+  delete:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/appointment/patientcontacted/{appointmentid}:
+  post:
+    parameters:
+      - name: appointmentid
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/appointment/patientconfirmed/{appointmentid}:
+  post:
+    parameters:
+      - name: appointmentid
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/schedule/{date}/getblockouts/{location_id}/{resource_id}:
+  get:
+    parameters:
+      - name: date
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: location_id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+      - name: resource_id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/notificationcallbacks:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment_templates:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/appointment_templates_by_dates/{date}:
+  get:
+    parameters:
+      - name: date
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment_templates/find_by_location/{location_id}:
+  get:
+    parameters:
+      - name: location_id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment_templates/find_by_resource/{resource_id}:
+  get:
+    parameters:
+      - name: resource_id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/appointment_templates/find_nature_of_visit/{appointment_template_id}:
+  get:
+    parameters:
+      - name: appointment_template_id
+        in: path
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/service/authenticate:
+  post:
+    parameters:
+      - name: Authorization
+        in: header
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/service/logout:
+  post:
+    parameters:
+      - name: authorization
+        in: query
+        # description: GUID of the patient
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/charge/{patient_id}/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/simple_charge/{patient_id}/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/simple_charge_types:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/charges/{patient_id}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patients/clinical/fullimport/{patient_id}/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/{patient_id}/allergies/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/{patient_id}/immunizations/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/{patient_id}/medications/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/{patient_id}/vitals/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/{patient_id}/problems/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/documents/patient/{patientid}/upload:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/documents/patient/{patientid}/batch_upload:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/documents/patient/legacy/{id}/upload:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/document/listbypatient/{patient_id}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/getdocument/{patient_id}/{doc_id}:
+  get:
+    parameters:
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: doc_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/documentsources:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/encounters/{patient_id}:
+  get:
+    parameters:
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}:
+  get:
+    parameters:
+      - name: notification_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: start_date
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: end_date
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: business_entity_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/reprocess/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}:
+  get:
+    parameters:
+      - name: notification_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: start_date
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: end_date
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: business_entity_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/notification_callbacks/{date}/{notification_id}:
+  get:
+    parameters:
+      - name: notification_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: date
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/internal/apt/outbound/{appointmentid}/{business_entity}:
+  get:
+    parameters:
+      - name: appointmentid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: business_entity
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/internal/charge/{patient_id}/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/lab/inbound:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/lab/outbound:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/lab/outbound/ack:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/get/locations:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/productiontest/patients/{patientid}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patients/legacy/{patientid}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patients/othermeans/{patientid}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patients/provider/{providerid}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/findallpatients:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patients/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/createfullpatient:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patients/getbatcherrors/{batch_id}:
+  get:
+    parameters:
+      - name: batch_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patients/business_entity/{business_entity_id}/createBatch:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: business_entity_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patients/createfullpatient:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patients/{patient_id}:
+  get:
+    responses:
+      200:
+        description: test placeholder
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+  delete:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patients/legacy/{patientid}:
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patients/search:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/person/genders:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/insuranceprofiles/{patient_id}:
+  get:
+    parameters:
+      - name: patient_id
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/person/ethnicities:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/languages:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/races:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/maritalstatuses:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/religions:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/states:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/person/employmentstatuses:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/patient/register:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/patient/register:
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patient/register:
+  delete:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/patientsextended/{patientid}:
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
+/tasks/{clinicianid}/{patientid}/create:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: clinicianid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/logevent:
+  post:
+    parameters:
+      - name: body
+        in: body
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      201:
+        description: test placeholder
+/nature_of_visits:
+  get:
+    responses:
+      200:
+        description: test placeholder

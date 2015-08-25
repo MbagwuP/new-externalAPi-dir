@@ -47,7 +47,7 @@ class ApiService < Sinatra::Base
     begin
       access_token, patient_id = get_oauth_token, params[:patient_id]
       request_body = get_request_JSON
-      data  = CCAuth::OAuth2.new.token_scope access_token
+      data  = CCAuth::OAuth2Client.new.authorization access_token
       url = "#{ApiService::API_SVC_URL}business_entity/#{data[:scope][:business_entity_id]}/patients/#{patient_id}/createextended.json?token=#{access_token}"
       response = RestClient.put url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
     rescue => e
@@ -62,6 +62,20 @@ class ApiService < Sinatra::Base
     returned_value = parsed["patient"]["external_id"]
     response_hash = { :patient => returned_value.to_s }
     body(response_hash.to_json); status HTTP_OK
+  end
+
+  get '/v2/patients/:patient_id/insurances' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Patient ID must be a valid GUID."}' unless params[:patient_id].is_guid?
+    insurancesurl = webservices_uri "businesses/#{current_business_entity}/patients/#{params[:patient_id]}/insurance_policies.json",
+      token: escaped_oauth_token
+    resp = rescue_service_call 'Patient Insurance' do
+      RestClient.get(insurancesurl, :api_key => APP_API_KEY)
+    end
+    
+    @profiles = JSON.parse(resp)
+    @patient_id = params[:patient_id]
+
+    jbuilder :list_patient_insurance_profiles
   end
 
 

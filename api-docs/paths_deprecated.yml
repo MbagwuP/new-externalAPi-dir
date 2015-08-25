@@ -1,0 +1,101 @@
+/schedule/{date}/getblockouts/{location_id}/{resource_id}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts by Date, Location and Resource
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: location_id
+        in: path
+        description: Location ID
+        required: true
+        type: string
+        format: double
+      - name: resource_id
+        in: path
+        description: Resource ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment blockouts
+        schema:
+          $ref: AppointmentBlockoutsByLocationResponsearray
+          # $ref: AppointmentBlockoutsByLocation_Response_appointment_blockout
+          type: array
+          #items:
+          #  $ref: Patient
+/appointment/listbydate/{date}/{provider_id}:
+# /appointment/listbydate/{date}/provider-{provider_id}:
+# this is the real endpoint, but it's a hack to get this working on Amazon API Gateway
+  get:
+    summary: List Appointments
+    description: |
+      List Appointments for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointments
+        schema:
+          $ref: AppointmentsByDateWithProviderResponse
+          #type: array
+          #items:
+          #  $ref: Patient
+      404:
+        description: provider not found for current practice
+/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
+  get:
+    summary: List Appointment Blockouts
+    description: |
+      List Appointment Blockouts for Provider by Date
+    parameters:
+      - name: date
+        in: path
+        description: Appointment Date
+        required: true
+        type: string
+        format: double
+      - name: provider_id
+        in: path
+        description: Provider ID
+        required: true
+        type: string
+        format: double
+      - name: include_appointments
+        in: query
+        description: Include Appointments for specified Date and Provider along with the Blockouts
+        required: false
+        type: boolean
+        format: double
+    tags:
+      - Appointment Blockouts
+    responses:
+      200:
+        description: list of appointment vlockouts
+        schema:
+          $ref: AppointmentBlockoutsResponse
+          #type: array
+          #items:
+          #  $ref: Patient
