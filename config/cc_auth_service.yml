@@ -1,5 +1,5 @@
 development: 
-  url: http://authdev.carecloud.local
+  url: http://auth.development.carecloud.local
 
 qa: 
   url: http://authdev.carecloud.local

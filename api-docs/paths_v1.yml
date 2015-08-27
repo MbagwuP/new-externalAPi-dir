@@ -529,7 +529,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true

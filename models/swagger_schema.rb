@@ -13,7 +13,8 @@ class SwaggerSchema
     include_redirect_paths:       false,
     remove_definition_references: false,
     remove_post_body_params:      false,
-    fill_in_allowed_responses:    false
+    fill_in_allowed_responses:    false,
+    specify_host:                 true
   }
   AMAZON_IMPORT_OPTIONS = {
     include_authorization:        true,
@@ -28,12 +29,14 @@ class SwaggerSchema
     include_redirect_paths:       true,
     remove_definition_references: true,
     remove_post_body_params:      true,
-    fill_in_allowed_responses:    true
+    fill_in_allowed_responses:    true,
+    specify_host:                 false
   }
   AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 400, 401, 403, 404, 422, 500, 502, 503]
+  AMAZON_CORS_ALLOWED_METHODS   = ['GET', 'POST', 'PUT', 'DELETE']
 
-  def initialize environment_url, docs_yml_path, options
-    @environment_url, @docs_yml_path = environment_url, docs_yml_path
+  def initialize environment_url, docs_yml_path, options, cors_url=nil
+    @environment_url, @docs_yml_path, @cors_url = environment_url, docs_yml_path, cors_url
     if options.is_a?(Symbol)
       options = (options == :amazon_import) ? AMAZON_IMPORT_OPTIONS : PUBLIC_DOCS_OPTIONS
     end
@@ -46,6 +49,8 @@ class SwaggerSchema
   def build
     base        = yml_with_erb_to_hash "#{@docs_yml_path}/base.yml"
     definitions = yml_with_erb_to_hash "#{@docs_yml_path}/definitions.yml"
+
+    base['host'] = @environment_url.gsub('https://','').gsub('http://','') if @specify_host
 
     processed_paths = {}
     processed_paths.merge! process_paths('paths.yml', '/v2')
@@ -93,13 +98,32 @@ class SwaggerSchema
           end
           processed_paths[path][method]["parameters"] = parameters
         end
+        if @fill_in_allowed_responses
+          AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
+            if !processed_paths[path][method]['responses'].keys.include?(code)
+              # if this code is a 2xx, check to see if there already is one for this path
+              # if it's not a 2xx, just add it
+              # AWS Swagger import tool blows up if there's more than one 2xx in a path
+              if [200, 201, 204].include?(code)
+                if !(processed_paths[path][method]['responses'].keys & [200, 201, 204]).any?
+                  processed_paths[path][method]['responses'][code] = {description: 'filled in automatically for passthrough'}
+                end
+              else
+                processed_paths[path][method]['responses'][code] = {description: 'filled in automatically for passthrough'}
+              end
+            end
+          end
+        end
         if @include_amazon_fields
+          # require 'pry'; binding.pry
+          response_codes = processed_paths[path][method]['responses'].keys
           processed_paths[path][method]['x-amazon-apigateway-integration'] = {
-            'type'              => 'http',
-            'uri'               => @environment_url + (@add_base_path_to_http_proxy ? basePath : nil) + path,
-            'httpMethod'        => method.upcase,
-            'responses'         => amazon_responses_section,
-            'requestParameters' => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
+            'type'               => 'http',
+            'uri'                => @environment_url + (@add_base_path_to_http_proxy ? basePath : nil) + path,
+            'httpMethod'         => method.upcase,
+            'responses'          => amazon_responses_section,
+            'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
+            # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
           }.compact
           # if basePath == '/v1'
             # processed_paths[path][method]['x-amazon-apigateway-integration'].delete('requestParameters')
@@ -127,22 +151,6 @@ class SwaggerSchema
           if processed_paths[path][method]['parameters'].any?
             (0..(processed_paths[path][method]['parameters'].length - 1)).each do |param_index|
               processed_paths[path][method]['parameters'].delete_at(param_index) if processed_paths[path][method]['parameters'][param_index]['in'] == 'body' rescue nil
-            end
-          end
-        end
-        if @fill_in_allowed_responses
-          AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
-            if !processed_paths[path][method]['responses'].keys.include?(code)
-              # if this code is a 2xx, check to see if there already is one for this path
-              # if it's not a 2xx, just add it
-              # AWS Swagger import tool blows up if there's more than one 2xx in a path
-              if [200, 201, 204].include?(code)
-                if !(processed_paths[path][method]['responses'].keys & [200, 201, 204]).any?
-                  processed_paths[path][method]['responses'][code] = {description: 'filled in automatically for passthrough'}
-                end
-              else
-                processed_paths[path][method]['responses'][code] = {description: 'filled in automatically for passthrough'}
-              end
             end
           end
         end
@@ -180,10 +188,31 @@ class SwaggerSchema
     entries
   end
 
+  # def response_parameters_section parameters, response_codes
+  #   # require 'pry'; binding.pry
+  #   entries = {}
+  #   response_codes.each do |c|
+  #     entries[c] = {}
+  #     entries[c]['method.response.header.Access-Control-Allow-Headers'] = 'integration.response.header.Access-Control-Allow-Headers'
+  #     entries[c]['method.response.header.Access-Control-Allow-Methods'] = AMAZON_CORS_ALLOWED_METHODS.join(',')
+  #     entries[c]['method.response.header.Access-Control-Allow-Origin']  = @cors_url
+  #   end
+  #   entries
+  # end
+
   def amazon_responses_section
     return @amazon_responses_section if defined?(@amazon_responses_section) # caching
     section = {}
-    AMAZON_ALLOWED_RESPONSE_CODES.each { |code| section[code.to_s] = {statusCode: code.to_s} }
+    AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
+      section[code.to_s] = {
+        'statusCode' => code.to_s,
+        'responseParameters' => {
+          'method.response.header.Access-Control-Allow-Headers' => 'integration.response.header.Access-Control-Allow-Headers',
+          'method.response.header.Access-Control-Allow-Methods' => wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
+          'method.response.header.Access-Control-Allow-Origin'  => wrap_in_single_quotes(@cors_url)
+        }
+      }
+    end
     @amazon_responses_section = section
   end
 
@@ -206,6 +235,10 @@ class SwaggerSchema
     # don't bother with ERB for now, looks like we may not need it
     # YAML.load(ERB.new(File.read(file_path)).result)
     YAML.load_file file_path
+  end
+
+  def wrap_in_single_quotes str
+    "'" + str + "'"
   end
 
 end
