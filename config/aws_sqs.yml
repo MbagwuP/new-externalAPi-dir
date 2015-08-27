@@ -1,10 +1,12 @@
 development: &development
-  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_dev"
+  # OLD DEV: salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_dev"
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/300834243045/salesforce_dev"
 
 test:
   <<: *development
 
 qa: 
+  # NEW QA: # salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/364462428386/salesforce_worker_qa"
   salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_qa"
 
 staging: 
