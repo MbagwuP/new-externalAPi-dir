@@ -17,13 +17,28 @@ class RecurringTimespan
     # we need an integer for the hour portions of the start and end times
     # this integer won't be affected by time zone parses
     if has_hour_and_minute_fields? options
-      # it's a blockout
-      @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
-      @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
-      @start_hour_eastern = options[:start_hour]
-      @end_hour_eastern = options[:end_hour]
+      # it's a BLOCKOUT
+      # for blockouts, there's some buggy behavior where the start_hour and end_hour fields
+      # can be saved as numbers higher than 23, which are not valid for creating a time out of them...
+      # in these cases, we will set the timestamp to be the end of the day (23:59:59)
+      if options[:start_hour] > 23
+        @start_at = end_of_day_time
+        @start_hour_eastern = 23
+        @start_at_end_of_day = true # if this is true, we will hard set the start timestamp to be 23:59:59 in the practice's local time
+      else
+        @start_at = hour_and_minute_to_time(options[:start_hour], options[:start_minutes])
+        @start_hour_eastern = options[:start_hour]
+      end
+      if options[:end_hour] > 23
+        @end_at = end_of_day_time
+        @end_hour_eastern = 23
+        @end_at_end_of_day = true # if this is true, we will hard set the end timestamp to be 23:59:59 in the practice's local time
+      else
+        @end_at = hour_and_minute_to_time(options[:end_hour], options[:end_minutes])
+        @end_hour_eastern = options[:end_hour]
+      end
     else
-      # it's a template, so extract the original hour from the timestamp
+      # it's a TEMPLATE, so extract the original hour from the timestamp
       practice_timezone do
         @start_at = Time.parse options[:start_at] rescue nil
         @end_at = Time.parse options[:end_at] rescue nil
@@ -87,8 +102,16 @@ class RecurringTimespan
     }
     # @start_at and @end_at are reliable for the offset with regards to DST, but not for the actual hour..
     # so, replace the hours in the occurences with the original hours from the input hash
-    output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_hour)
-    output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_hour)
+    if @start_at_end_of_day
+      output[:start_at] = iso8601_change_entire_time(output[:start_at].iso8601, end_of_day_time_string)
+    else
+      output[:start_at] = iso8601_change_hour(output[:start_at].iso8601, @start_hour)
+    end
+    if @end_at_end_of_day
+      output[:end_at] = iso8601_change_entire_time(output[:end_at].iso8601, end_of_day_time_string)
+    else
+      output[:end_at] = iso8601_change_hour(output[:end_at].iso8601, @end_hour)
+    end
     output
   end
 
@@ -118,15 +141,35 @@ class RecurringTimespan
   end
 
   def hour_and_minute_to_time hour, minute
+    # this bit with the hour > 23 stuff is more of a cosmetic thing, we're ultimately
+    # going to use iso8601_change_entire_time to change the final timestamp string...
+    # it's also to avoid 'Argument out of range' errors when trying to parse the time
+    if hour > 23
+      hour = 23
+      minute = 59
+    end
     hour   = number_with_preceding_zero(hour)
     minute = number_with_preceding_zero(minute)
     time = practice_timezone { DateTime.strptime("#{hour}:#{minute}","%H:%M").in_time_zone }
+  end
+
+  def end_of_day_time
+    practice_timezone { Time.zone.parse(end_of_day_time_string) }
+  end
+
+  def end_of_day_time_string
+    '23:59:59'
   end
 
   # these take an iso8601 string, for example:
   # "2014-09-24T14:00:00-04:00"
   def iso8601_change_hour iso8601_str, new_hour
     iso8601_str[11..12] = number_with_preceding_zero(new_hour)
+    iso8601_str
+  end
+
+  def iso8601_change_entire_time iso8601_str, new_time
+    iso8601_str[11..18] = new_time
     iso8601_str
   end
 

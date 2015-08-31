@@ -50,6 +50,38 @@ describe "RecurringTimespan" do
     timezone_offset: "-08:00:00",
     timezone_name: "Pacific Time (US & Canada)"
   }}
+  let(:times_blockouts_eastern_endofday_starthour) {{
+    effective_from: "2014-05-15T00:00:00-04:00",
+    effective_to: nil,
+    start_hour: 24,
+    end_hour: 29,
+    timezone_offset: "-05:00:00",
+    timezone_name: "Eastern Time (US & Canada)"
+  }}
+  let(:times_blockouts_eastern_endofday_endhour) {{
+    effective_from: "2014-05-15T00:00:00-04:00",
+    effective_to: nil,
+    start_hour: 0,
+    end_hour: 24,
+    timezone_offset: "-05:00:00",
+    timezone_name: "Eastern Time (US & Canada)"
+  }}
+  let(:times_blockouts_pacific_endofday_starthour) {{
+    effective_from: "2014-05-15T00:00:00-04:00",
+    effective_to: nil,
+    start_hour: 24,
+    end_hour: 29,
+    timezone_offset: "-08:00:00",
+    timezone_name: "Pacific Time (US & Canada)"
+  }}
+  let(:times_blockouts_pacific_endofday_endhour) {{
+    effective_from: "2014-05-15T00:00:00-04:00",
+    effective_to: nil,
+    start_hour: 0,
+    end_hour: 24,
+    timezone_offset: "-08:00:00",
+    timezone_name: "Pacific Time (US & Canada)"
+  }}
   let(:recurring_timespan) { RecurringTimespan.new input_hash }
   let(:eastern_to_practice_hour_difference) { recurring_timespan.send(:eastern_to_practice_hour_difference) }
   let(:occurences) { recurring_timespan.occurences_in_date_range(*filter_dates) }
@@ -82,7 +114,7 @@ describe "RecurringTimespan" do
     # it "has occurences with hours equal to the originally passed in hours with the difference between Eastern and Practice time applied" do
     # it "has occurences with hours equal to the hours stored in the Practice's local time" do
 
-    it "has occurences with hours that are correct with regard to the difference between Eastern time and Practice time" do
+    it "has occurences with hours that are correct with regard to the difference between Eastern time and Practice time OR end of day time" do
       if input_hash[:start_hour]
         original_json_start_hour = input_hash[:start_hour].to_i
         original_json_end_hour = input_hash[:end_hour].to_i
@@ -101,20 +133,48 @@ describe "RecurringTimespan" do
       end_hour_first_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.first
       end_hour_last_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.last
 
-      original_json_start_hour.should == original_parsed_start_hour_eastern
-      original_json_end_hour.should == original_parsed_end_hour_eastern
-      original_parsed_start_hour.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
-      original_parsed_end_hour.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
+      if original_json_start_hour <= 23
+        original_json_start_hour.should == original_parsed_start_hour_eastern
+        original_parsed_start_hour.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+      else
+        # we'll be ignoring these fields and hard setting it to 23:59:59, so just make sure that flag is set to true
+        recurring_timespan.instance_variable_get(:@start_at_end_of_day)
+      end
+      if original_json_end_hour <= 23
+        original_json_end_hour.should == original_parsed_end_hour_eastern
+        original_parsed_end_hour.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
+      else
+        # we'll be ignoring these fields and hard setting it to 23:59:59, so just make sure that flag is set to true
+        recurring_timespan.instance_variable_get(:@end_at_end_of_day)
+      end
 
-      start_hour_first_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
-      end_hour_first_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
-      start_hour_first_occurence.should == original_parsed_start_hour
-      end_hour_first_occurence.should == original_parsed_end_hour
+      if original_json_start_hour <= 23
+        start_hour_first_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+        start_hour_first_occurence.should == original_parsed_start_hour
+      else
+        start_hour_first_occurence.should == 23
+      end
 
-      start_hour_last_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
-      end_hour_last_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
-      start_hour_first_occurence.should == original_parsed_start_hour
-      end_hour_first_occurence.should == original_parsed_end_hour
+      if original_json_end_hour <= 23
+        end_hour_first_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
+        end_hour_first_occurence.should == original_parsed_end_hour
+      else
+        end_hour_first_occurence.should == 23
+      end
+
+      if original_json_start_hour <= 23
+        start_hour_last_occurence.should == original_parsed_start_hour_eastern + eastern_to_practice_hour_difference
+        start_hour_last_occurence.should == original_parsed_start_hour
+      else
+        start_hour_last_occurence.should == 23
+      end
+
+      if original_json_end_hour <= 23
+        end_hour_last_occurence.should == original_parsed_end_hour_eastern + eastern_to_practice_hour_difference
+        end_hour_last_occurence.should == original_parsed_end_hour
+      else
+        end_hour_last_occurence.should == 23
+      end
     end
 
     it "has correct timezone offsets depending on DST for that date" do
@@ -232,11 +292,73 @@ describe "RecurringTimespan" do
         end_hour_first_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.first
         end_hour_last_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.last
 
-        start_hour_first_occurence.should == original_start_hour + eastern_to_practice_hour_difference
-        start_hour_last_occurence.should == original_start_hour + eastern_to_practice_hour_difference
+        if original_start_hour <= 23
+          start_hour_first_occurence.should == original_start_hour + eastern_to_practice_hour_difference
+          start_hour_last_occurence.should == original_start_hour + eastern_to_practice_hour_difference
+        else
+          start_hour_first_occurence.should == 23
+          start_hour_last_occurence.should == 23
+        end
 
-        end_hour_first_occurence.should == original_end_hour + eastern_to_practice_hour_difference
-        end_hour_last_occurence.should == original_end_hour + eastern_to_practice_hour_difference
+        if original_end_hour <= 23
+          end_hour_first_occurence.should == original_end_hour + eastern_to_practice_hour_difference
+          end_hour_last_occurence.should == original_end_hour + eastern_to_practice_hour_difference
+        else
+          end_hour_first_occurence.should == 23
+          end_hour_last_occurence.should == 23
+        end
+      end
+    end
+
+    shared_examples 'end of day start hour behavior' do
+      it "has occurences with starting hours of 23" do
+        start_hour_first_occurence = occurences.map{|x| x[:start_at][11..12].to_i }.first
+        start_hour_last_occurence = occurences.map{|x| x[:start_at][11..12].to_i }.last
+
+        start_hour_first_occurence.should == 23
+        start_hour_last_occurence.should == 23
+      end
+
+      it "it has occurences with starting minutes of 59" do
+        start_minutes_first_occurence = occurences.map{|x| x[:start_at][14..15].to_i }.first
+        start_minutes_last_occurence = occurences.map{|x| x[:start_at][14..15].to_i }.last
+
+        start_minutes_first_occurence.should == 59
+        start_minutes_last_occurence.should == 59
+      end
+
+      it "it has occurences with starting seconds of 59" do
+        start_seconds_first_occurence = occurences.map{|x| x[:start_at][17..18].to_i }.first
+        start_seconds_last_occurence = occurences.map{|x| x[:start_at][17..18].to_i }.last
+
+        start_seconds_first_occurence.should == 59
+        start_seconds_last_occurence.should == 59
+      end
+    end
+
+    shared_examples 'end of day end hour behavior' do
+      it "has occurences with ending hours of 23" do
+        end_hour_first_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.first
+        end_hour_last_occurence = occurences.map{|x| x[:end_at][11..12].to_i }.last
+
+        end_hour_first_occurence.should == 23
+        end_hour_last_occurence.should == 23
+      end
+
+      it "it has occurences with ending minutes of 59" do
+        end_minutes_first_occurence = occurences.map{|x| x[:end_at][14..15].to_i }.first
+        end_minutes_last_occurence = occurences.map{|x| x[:end_at][14..15].to_i }.last
+
+        end_minutes_first_occurence.should == 59
+        end_minutes_last_occurence.should == 59
+      end
+
+      it "it has occurences with ending seconds of 59" do
+        end_seconds_first_occurence = occurences.map{|x| x[:end_at][17..18].to_i }.first
+        end_seconds_last_occurence = occurences.map{|x| x[:end_at][17..18].to_i }.last
+
+        end_seconds_first_occurence.should == 59
+        end_seconds_last_occurence.should == 59
       end
     end
 
@@ -293,6 +415,134 @@ describe "RecurringTimespan" do
         let(:filter_dates) { filter_dates_overlap_outof_dst }
         it_behaves_like 'general timespan behavior'
         it_behaves_like 'integer timefields behavior'
+      end
+    end
+
+    context 'Eastern Time with End Of Day start_hour (24)' do
+      let(:input_hash) { days_of_week_monday_and_wednesday.merge(times_blockouts_eastern_endofday_starthour) }
+
+      context 'DST' do
+        let(:filter_dates) { filter_dates_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'non DST' do
+        let(:filter_dates) { filter_dates_nodst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'overlapping nonDST into DST' do
+        let(:filter_dates) { filter_dates_overlap_into_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'overlapping DST into nonDST' do
+        let(:filter_dates) { filter_dates_overlap_outof_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+    end
+
+    context 'Eastern Time with End Of Day end_hour (24)' do
+      let(:input_hash) { days_of_week_monday_and_wednesday.merge(times_blockouts_eastern_endofday_endhour) }
+
+      context 'DST' do
+        let(:filter_dates) { filter_dates_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'non DST' do
+        let(:filter_dates) { filter_dates_nodst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'overlapping nonDST into DST' do
+        let(:filter_dates) { filter_dates_overlap_into_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'overlapping DST into nonDST' do
+        let(:filter_dates) { filter_dates_overlap_outof_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+    end
+
+    context 'Pacific Time with End Of Day start_hour (24)' do
+      let(:input_hash) { days_of_week_monday_and_wednesday.merge(times_blockouts_pacific_endofday_starthour) }
+
+      context 'DST' do
+        let(:filter_dates) { filter_dates_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'non DST' do
+        let(:filter_dates) { filter_dates_nodst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'overlapping nonDST into DST' do
+        let(:filter_dates) { filter_dates_overlap_into_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+
+      context 'overlapping DST into nonDST' do
+        let(:filter_dates) { filter_dates_overlap_outof_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day start hour behavior'
+      end
+    end
+
+    context 'Pacific Time with End Of Day end_hour (24)' do
+      let(:input_hash) { days_of_week_monday_and_wednesday.merge(times_blockouts_pacific_endofday_endhour) }
+
+      context 'DST' do
+        let(:filter_dates) { filter_dates_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'non DST' do
+        let(:filter_dates) { filter_dates_nodst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'overlapping nonDST into DST' do
+        let(:filter_dates) { filter_dates_overlap_into_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
+      end
+
+      context 'overlapping DST into nonDST' do
+        let(:filter_dates) { filter_dates_overlap_outof_dst }
+        it_behaves_like 'general timespan behavior'
+        it_behaves_like 'integer timefields behavior'
+        it_behaves_like 'end of day end hour behavior'
       end
     end
 
