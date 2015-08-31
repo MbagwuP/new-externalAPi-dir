@@ -30,7 +30,7 @@
         type: string
         format: double
     responses:
-      200:
+      201:
         description: test placeholder
 /appointment/{id}/{appointmentid}:
   delete:
@@ -430,7 +430,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/allergies/create:
+/patients/{patientid}/allergies/create:
   post:
     parameters:
       - name: body
@@ -439,7 +439,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -448,7 +448,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/immunizations/create:
+/patients/{patientid}/immunizations/create:
   post:
     parameters:
       - name: body
@@ -457,7 +457,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -466,7 +466,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/medications/create:
+/patients/{patientid}/medications/create:
   post:
     parameters:
       - name: body
@@ -475,7 +475,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -484,7 +484,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/vitals/create:
+/patients/{patientid}/vitals/create:
   post:
     parameters:
       - name: body
@@ -493,7 +493,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -502,7 +502,7 @@
     responses:
       201:
         description: test placeholder
-/patients/{patient_id}/problems/create:
+/patients/{patientid}/problems/create:
   post:
     parameters:
       - name: body
@@ -511,7 +511,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -529,7 +529,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -774,11 +774,6 @@
     responses:
       200:
         description: test placeholder
-/patients/legacy/{patientid}:
-  get:
-    responses:
-      200:
-        description: test placeholder
 /patients/othermeans/{patientid}:
   get:
     responses:
@@ -860,7 +855,7 @@
     responses:
       200:
         description: test placeholder
-/patients/{patient_id}:
+/patients/{patientid}:
   get:
     responses:
       200:
@@ -873,7 +868,7 @@
         required: true
         type: string
         format: double
-      - name: patient_id
+      - name: patientid
         in: path
         # description: patient update payload
         required: true
@@ -900,6 +895,17 @@
       200:
         description: test placeholder
 /patients/legacy/{patientid}:
+  get:
+    parameters:
+      - name: patientid
+        in: path
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
   put:
     parameters:
       - name: body
