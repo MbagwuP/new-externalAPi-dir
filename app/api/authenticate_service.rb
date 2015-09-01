@@ -214,6 +214,11 @@ class ApiService < Sinatra::Base
 
   # OAUTH2 endpoints
   get '/oauth2/authorize' do
+    if USE_AMAZON_API_GATEWAY
+      response.headers["Location"] = settings.platform_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      return 301
+    end
+
     content_type :html
     begin
       begin
