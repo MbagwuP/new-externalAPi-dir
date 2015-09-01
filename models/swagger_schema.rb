@@ -34,7 +34,7 @@ class SwaggerSchema
     specify_host:                 false,
     corsify_paths:                true
   }
-  AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 400, 401, 403, 404, 422, 500, 502, 503]
+  AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 301, 400, 401, 403, 404, 422, 500, 502, 503]
   AMAZON_CORS_ALLOWED_METHODS   = ['GET', 'POST', 'PUT', 'DELETE']
 
   def initialize environment_url, docs_yml_path, options, cors_url=nil
@@ -59,9 +59,9 @@ class SwaggerSchema
     processed_paths.merge! process_paths('paths_v1.yml', '/v1') if @include_v1_paths
     processed_paths.merge! process_paths('paths_misc.yml', '') if @include_misc_paths
     processed_paths.merge! process_paths('paths_deprecated.yml', '/v2') if @include_deprecated_paths
-    processed_paths.merge! process_paths('paths_redirect.yml', '') if @include_redirect_paths
+    processed_paths.merge! redirectify_paths('paths_redirect.yml') if @include_redirect_paths
 
-    processed_paths = corsify_paths(processed_paths)
+    processed_paths = corsify_paths(processed_paths) if @corsify_paths
 
     base['paths']       = processed_paths
     base['paths']       = Hash[processed_paths.sort]
@@ -198,6 +198,51 @@ class SwaggerSchema
       }
     end
     corsified_paths
+  end
+
+  def redirectify_paths paths_yml_file
+    # do response parameter forwarding here
+    # paths.keys.each do |path|
+    #   processed_paths[path] = paths[path]
+    #   paths[path].keys.each do |method|
+
+
+          # parameters = paths[path][method]["parameters"] || []
+          # parameters << {'name' => "authentication", 'in' => "query", 'required' => true, 'type' => "string"}
+          # end
+          # processed_paths[path][method]["parameters"] = parameters
+    # processed_paths = {}
+
+    paths = yml_with_erb_to_hash "#{@docs_yml_path}/#{paths_yml_file}"
+    return {} if !paths
+    redirectified_paths = {}
+
+    paths.keys.each do |path|
+      redirectified_paths[path] = paths[path]
+      redirectified_paths[path]['options'] = {
+        'responses' => {
+          '301' => { headers: {Location: {type: "string"}} }
+        },
+        'x-amazon-apigateway-integration' => {
+          'type'               => 'http',
+          'uri'                => @environment_url + path,
+          'httpMethod'         => 'GET',
+          'responses'          => {'301' => {
+            'statusCode' => '301',
+            'responseParameters' => {
+              'method.response.header.Location' => 'integration.response.header.Location'
+            }
+          }}
+          # 'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
+          # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
+        }.compact
+      }
+    end
+    redirectified_paths
+      # end
+    # end
+    # require 'pry'; binding.pry
+    # paths
   end
 
   def request_parameters_section parameters, basePath
