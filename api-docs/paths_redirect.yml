@@ -1,4 +1,71 @@
 # /oauth2/authorize:
 # /docs:
 # /v2/api-docs:
-# /zocdoc:
+/docs:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/v2/api-docs:
+  get:
+    responses:
+      200:
+        description: test placeholder
+/zocdoc:
+  get:
+    parameters:
+      - name: zocdoc
+        in: query
+        required: false
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/zocdoc/login:
+  get:
+    parameters:
+      - name: zocdoc
+        in: query
+        required: false
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/oauth2/authorize:
+  get:
+    parameters:
+      - name: client_id
+        in: query
+        required: false
+        type: string
+      - name: redirect_uri
+        in: query
+        required: false
+        type: string
+      - name: response_type
+        in: query
+        required: false
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/oauth2/auth_code/success:
+  get:
+    parameters:
+      - name: code
+        in: query
+        required: false
+        type: string
+    responses:
+      200:
+        description: test placeholder
+/oauth2/auth_code/email_success:
+  get:
+    parameters:
+      - name: code
+        in: query
+        required: false
+        type: string
+    responses:
+      200:
+        description: test placeholder

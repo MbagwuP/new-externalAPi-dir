@@ -24,6 +24,7 @@ development:
     version: 26.2
     ## log level 0 - 7
     logging_level: 0
+    platform_url: http://localhost:3898
 
 localhost:
     api_internal_svc_url: http://localservices.carecloud.local:3000/
