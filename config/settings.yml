@@ -12,8 +12,7 @@ test:
     logging_level: 4
 
 development:
-    # api_internal_svc_url: https://services.development.carecloud.com/
-    api_internal_svc_url: http://localhost:2999/
+    api_internal_svc_url: https://services.development.carecloud.com/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
     mirth_outbound_svc_url: http://mirth.development.carecloud.com:8088
     mirth_private_key: thisstringshouldbeprivate
