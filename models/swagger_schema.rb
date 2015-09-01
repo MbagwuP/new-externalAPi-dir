@@ -14,7 +14,8 @@ class SwaggerSchema
     remove_definition_references: false,
     remove_post_body_params:      false,
     fill_in_allowed_responses:    false,
-    specify_host:                 true
+    specify_host:                 true,
+    corsify_paths:                false
   }
   AMAZON_IMPORT_OPTIONS = {
     include_authorization:        true,
@@ -30,7 +31,8 @@ class SwaggerSchema
     remove_definition_references: true,
     remove_post_body_params:      true,
     fill_in_allowed_responses:    true,
-    specify_host:                 false
+    specify_host:                 false,
+    corsify_paths:                true
   }
   AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 400, 401, 403, 404, 422, 500, 502, 503]
   AMAZON_CORS_ALLOWED_METHODS   = ['GET', 'POST', 'PUT', 'DELETE']
@@ -59,6 +61,8 @@ class SwaggerSchema
     processed_paths.merge! process_paths('paths_deprecated.yml', '/v2') if @include_deprecated_paths
     processed_paths.merge! process_paths('paths_redirect.yml', '') if @include_redirect_paths
 
+    processed_paths = corsify_paths(processed_paths)
+
     base['paths']       = processed_paths
     base['paths']       = Hash[processed_paths.sort]
     if @remove_definition_references
@@ -68,7 +72,7 @@ class SwaggerSchema
     end
 
     if @name_by_environment
-      base['info']['title']       = 'External API ' + ENV['RACK_ENV']
+      base['info']['title']       = 'External API ' + ENV['RACK_ENV'] + ' ' + Time.now.to_s[0..-10]
       base['info']['description'] = 'External API ' + ENV['RACK_ENV']
     end
     if @remove_swagger_base_path
@@ -112,6 +116,7 @@ class SwaggerSchema
                 processed_paths[path][method]['responses'][code] = {description: 'filled in automatically for passthrough'}
               end
             end
+            processed_paths[path][method]['responses'][code][:headers] = cors_headers if processed_paths[path][method]['responses'][code]
           end
         end
         if @include_amazon_fields
@@ -163,6 +168,38 @@ class SwaggerSchema
     processed_paths
   end
 
+  def cors_headers
+    { 
+      'Access-Control-Allow-Headers' => {type: "string"}, #'integration.response.header.Access-Control-Allow-Headers',
+      'Access-Control-Allow-Methods' => {type: "string"}, #wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
+      'Access-Control-Allow-Origin'  => {type: "string"}
+    }
+  end
+
+  def corsify_paths paths
+    corsified_paths = {}
+    paths.keys.each do |path|
+      corsified_paths[path] = paths[path]
+      corsified_paths[path]['options'] = {
+        'responses' => {
+          '200' => { headers: cors_headers }
+        },
+        'x-amazon-apigateway-integration' => {
+          'type'               => 'http',
+          'uri'                => @environment_url + path,
+          'httpMethod'         => 'OPTIONS',
+          'responses'          => {'200' => {
+            'statusCode' => '200',
+            'responseParameters' => cors_response_parameters
+          }}
+          # 'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
+          # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
+        }.compact
+      }
+    end
+    corsified_paths
+  end
+
   def request_parameters_section parameters, basePath
     entries = {}
     entries['integration.request.header.Authorization'] = 'method.request.header.Authorization' if basePath == '/v2'
@@ -200,17 +237,29 @@ class SwaggerSchema
   #   entries
   # end
 
+  def cors_response_parameters
+    {
+      # 'method.response.header.Access-Control-Allow-Headers' => 'integration.response.header.Access-Control-Allow-Headers',
+      'method.response.header.Access-Control-Allow-Headers' => wrap_in_single_quotes("Content-Type, Authorization"),
+      'method.response.header.Access-Control-Allow-Methods' => wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
+      'method.response.header.Access-Control-Allow-Origin'  => wrap_in_single_quotes(@cors_url)
+    }
+  end
+
   def amazon_responses_section
     return @amazon_responses_section if defined?(@amazon_responses_section) # caching
     section = {}
     AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
       section[code.to_s] = {
         'statusCode' => code.to_s,
-        'responseParameters' => {
-          'method.response.header.Access-Control-Allow-Headers' => 'integration.response.header.Access-Control-Allow-Headers',
-          'method.response.header.Access-Control-Allow-Methods' => wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
-          'method.response.header.Access-Control-Allow-Origin'  => wrap_in_single_quotes(@cors_url)
-        }
+      #   'headers' => {
+      #     'Access-Control-Allow-Headers' => {type: "string"}, #'integration.response.header.Access-Control-Allow-Headers',
+      #     'Access-Control-Allow-Methods' => {type: "string"}, #wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
+      #     'Access-Control-Allow-Origin'  => {type: "string"}  #wrap_in_single_quotes(@cors_url)
+      #   }
+      # }
+        'responseParameters' => cors_response_parameters # we might only need to do this on OPTIONS requests
+      # }
       }
     end
     @amazon_responses_section = section
