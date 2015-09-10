@@ -46,6 +46,10 @@
         in: query
         required: false
         type: string
+      - name: practice_id
+        in: query
+        required: false
+        type: string
     responses:
       200:
         description: test placeholder
