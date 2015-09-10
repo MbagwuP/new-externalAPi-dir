@@ -56,6 +56,7 @@ class SwaggerSchema
 
     processed_paths = {}
     processed_paths.merge! process_paths('paths.yml', '/v2')
+    processed_paths.merge! process_paths('paths_duplicates.yml', '/v2') # old URLs that we were previously supporting via regexes
     processed_paths.merge! process_paths('paths_v1.yml', '/v1') if @include_v1_paths
     processed_paths.merge! process_paths('paths_misc.yml', '') if @include_misc_paths
     processed_paths.merge! process_paths('paths_deprecated.yml', '/v2') if @include_deprecated_paths
@@ -219,7 +220,8 @@ class SwaggerSchema
 
     paths.keys.each do |path|
       redirectified_paths[path] = paths[path]
-      redirectified_paths[path]['options'] = {
+      redirectified_paths[path]['get'] = {
+        'parameters' => paths[path]['get']['parameters'],
         'responses' => {
           '301' => { headers: {Location: {type: "string"}} }
         },
@@ -232,11 +234,11 @@ class SwaggerSchema
             'responseParameters' => {
               'method.response.header.Location' => 'integration.response.header.Location'
             }
-          }}
-          # 'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
+          }},
+          'requestParameters'  => request_parameters_section(paths[path]['get']['parameters'], nil)
           # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
+        }
         }.compact
-      }
     end
     redirectified_paths
       # end

@@ -15,6 +15,12 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/api-docs' do
+    if USE_AMAZON_API_GATEWAY
+      docs_url = ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['cors_url']
+      response.headers["Location"] = docs_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      return 301
+    end
+
     content_type :html
     erb File.read('api-docs/swagger.erb'), layout: File.read('api-docs/layout.erb')
   end
@@ -33,6 +39,12 @@ class ApiService < Sinatra::Base
   end
 
   get '/docs' do
+    if USE_AMAZON_API_GATEWAY
+      docs_url = ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['cors_url']
+      response.headers["Location"] = docs_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      return 301
+    end
+
     redirect "https://#{request.host}/v2/api-docs"
   end
 

@@ -36,6 +36,7 @@ module Sinatra
       
       # # Control the level of logging based on settings
       app.before do
+        # ensure all responses are JSON, unless specified otherwise on a per-endpoint basis
         content_type 'application/json', :charset => 'utf-8'
         #   @start_time = Time.now
         #

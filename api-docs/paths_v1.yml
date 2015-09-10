@@ -535,6 +535,18 @@
         required: true
         type: string
         format: double
+      - name: metadata
+        in: formData
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: payload
+        in: formData
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
     responses:
       201:
         description: test placeholder
@@ -857,6 +869,12 @@
         description: test placeholder
 /patients/{patientid}:
   get:
+    parameters:
+      - name: patientid
+        in: path
+        required: true
+        type: string
+        format: double
     responses:
       200:
         description: test placeholder

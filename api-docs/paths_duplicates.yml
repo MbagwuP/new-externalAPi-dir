@@ -1,0 +1,146 @@
+/appointment/statuses:
+  get:
+    summary: List Appointment Statuses
+    description: |
+      List Appointment Statuses for a Practice
+    parameters:
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment statuses
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: AppointmentStatus
+/appointment/create:
+  post:
+    summary: Create Appointment
+    description: |
+      Create an Appointment
+
+      If no ```end_time``` is specified, the end_time will be calculated based on the duration specified in Nature of Visit.
+    parameters:
+      - name: appointment
+        in: body
+        description: appointment information
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: CreateAppointment_Request
+    tags:
+      - Appointments
+    responses:
+      201:
+        description: appointment created successfully
+        schema:
+          $ref: CreateAppointment_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      422:
+        description: validation error
+/appointment/resources:
+  get:
+    summary: List Appointment Resources
+    description: |
+      List Appointment Resources for a Practice
+    parameters:
+    tags:
+      - Appointment Resources
+    responses:
+      200:
+        description: list of appointment resources for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: ListResources_Response
+/nature_of_visits:
+  get:
+    summary: List Visit Reasons
+    description: |
+      List Visit Reasons for a Practice
+    parameters:
+    tags:
+      - Visit Reasons
+    responses:
+      200:
+        description: list of visit reasons for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: NatureOfVisit
+/appointment/locations:
+  get:
+    summary: List Locations
+    description: |
+      List Locations for a Practice
+    parameters:
+    tags:
+      - Locations
+    responses:
+      200:
+        description: list of locations for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Location
+/patients/create:
+  post:
+    summary: Create Patient
+    description: |
+      Create a Patient
+
+       parameter                     |options                                                                                                                                             |
+      -------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+      gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
+      race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
+      marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html))        |
+      language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |
+      drivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |
+      employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
+      ethnicity_code                 |"U": Declined To Provide; "H": Hispanic or Latino; "N": Not Hispanic or Latino                                                                      |
+      student_status_code            |"F": Full Time; "P": Part Time; "N": Not A Student; "U": Unknown                                                                                    |
+
+    parameters:
+      - name: query
+        in: body
+        description: patient creation payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: PatientCreate
+    tags:
+      - Patients
+    responses:
+      201:
+        description: patient created successfully
+        schema:
+          $ref: PatientCreate_Response
+          #type: array
+          #items:
+          #  $ref: Patient
+      422:
+        description: validation error
+/provider/list:
+  get:
+    summary: List Providers
+    description: |
+      List Providers for a Practice
+    parameters:
+    tags:
+      - Providers
+    responses:
+      200:
+        description: list of providers for a practice
+        schema:
+          #$ref: NatureOfVisit
+          type: array
+          items:
+            $ref: Provider
