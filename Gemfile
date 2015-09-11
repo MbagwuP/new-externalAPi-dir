@@ -8,6 +8,7 @@ gem 'chronic'
 gem 'tzinfo'
 gem 'redcarpet'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
+gem 'oj'
 
 # AWS
 gem 'care_cloud-storage', '~> 0.0.9'
