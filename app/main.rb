@@ -71,6 +71,8 @@ class ApiService < Sinatra::Base
     LOG = Log4r::Logger.new('logger')
     LOG.add('console', 'logfile')
 
+    Oj.default_options = {mode: :compat}
+
     begin
       config_path = Dir.pwd + "/config/settings.yml"
       config = YAML.load(File.open(config_path))[settings.environment.to_s]

@@ -77,7 +77,7 @@ class ApiService < Sinatra::Base
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
 
-    @resp = JSON.parse(resp)['theAppointments']
+    @resp = Oj.load(resp)['theAppointments']
     jbuilder :list_appointments
   end
 
