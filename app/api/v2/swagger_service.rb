@@ -17,7 +17,7 @@ class ApiService < Sinatra::Base
   get '/v2/api-docs' do
     if USE_AMAZON_API_GATEWAY
       docs_url = ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['cors_url']
-      response.headers["Location"] = docs_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      response.headers["Location"] = docs_url
       return 301
     end
 
@@ -41,7 +41,7 @@ class ApiService < Sinatra::Base
   get '/docs' do
     if USE_AMAZON_API_GATEWAY
       docs_url = ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['cors_url']
-      response.headers["Location"] = docs_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      response.headers["Location"] = docs_url
       return 301
     end
 
