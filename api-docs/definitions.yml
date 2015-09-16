@@ -766,8 +766,6 @@ ListAppointments_Response_appointment:
       $ref: ListAppointments_Response_appointment_patient
     location:
       $ref: ListAppointments_Response_appointment_location
-    last_eligibility_outcome:
-      $ref: ListAppointments_Response_appointment_last_eligibility_outcome
     cancellation_details:
       $ref: ListAppointments_Response_appointment_cancellation_details
     chief_complaint: string
@@ -796,11 +794,6 @@ ListAppointments_Response_appointment_cancellation_details:
     id: string
     detail: string
     comments: string
-ListAppointments_Response_appointment_last_eligibility_outcome:
-  properties:
-    id: string
-    code: string
-    message: string
 ListAppointments_Response_appointment_location:
   properties:
     id: integer

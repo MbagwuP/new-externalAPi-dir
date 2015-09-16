@@ -27,12 +27,6 @@ json.array! @resp do |appt|
       json.name appt['appointment']['location_name']
     end
 
-    json.last_eligibility_outcome do
-      json.id appt['appointment']['last_eligibility_outcome_id']
-      json.code appt['appointment']['last_eligibility_outcome_code']
-      json.message appt['appointment']['last_eligibility_outcome_message']
-    end
-
     json.cancellation_details do
       json.id appt['appointment']['appointment_cancellation_reason_id']
       json.detail appt['appointment']['cancellation_details']
