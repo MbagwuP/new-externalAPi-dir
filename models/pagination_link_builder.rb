@@ -24,10 +24,11 @@ class PaginationLinkBuilder
 
     def to_s
       build_rel_hash
-      output =  "<#{@rel_hash['first']}>; rel=\"first\", "
-      output << "<#{@rel_hash['prev']}>; rel=\"prev\", "
-      output << "<#{@rel_hash['last']}>; rel=\"last\", "
-      output << "<#{@rel_hash['next']}>; rel=\"next\", "
+      output =  ""
+      output << "<#{@rel_hash['first']}>; rel=\"first\", " if @rel_hash['first']
+      output << "<#{@rel_hash['prev']}>; rel=\"prev\", "   if @rel_hash['prev']
+      output << "<#{@rel_hash['last']}>; rel=\"last\", "   if @rel_hash['last']
+      output << "<#{@rel_hash['next']}>; rel=\"next\", "   if @rel_hash['next']
       output
     end
 
