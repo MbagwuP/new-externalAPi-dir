@@ -816,7 +816,6 @@ ListAppointments_Response_appointment_patient:
     gender_id: string
     email: string
     patient_status: string
-    photo_handler: string
     primary_phone_number: string
 ListAppointments_Response_appointment_appointment_status:
   properties:

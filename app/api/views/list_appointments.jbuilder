@@ -19,7 +19,6 @@ json.array! @resp do |appt|
       json.gender_id appt['appointment']['gender_id']
       json.email appt['appointment']['email']
       json.patient_status appt['appointment']['patient_status']
-      json.photo_handler appt['appointment']['photo_handler']
       json.primary_phone_number appt['appointment']['primary_phone_number']
     end
 
