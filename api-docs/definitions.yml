@@ -781,7 +781,7 @@ ListAppointments_Response_appointment:
     patient_contacted: string
     recurrence_id: string
     recurrence_index: string
-    referring_physician_name: string
+    referring_physician_npi: string
     visit_reason_id: integer
     resource_id: integer
     provider_id: string

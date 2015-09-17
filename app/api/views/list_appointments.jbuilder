@@ -47,7 +47,7 @@ json.array! @resp do |appt|
     json.patient_contacted appt['appointment']['patient_contacted']
     json.recurrence_id appt['appointment']['recurrence_id']
     json.recurrence_index appt['appointment']['recurrence_index']
-    json.referring_physician_name appt['appointment']['referring_physician_name']
+    json.referring_physician_npi appt['appointment']['referring_physician_npi']
 
     json.visit_reason_id appt['appointment']['nature_of_visit_id']
     json.resource_id appt['appointment']['resource_id']
