@@ -80,7 +80,7 @@ class ApiService < Sinatra::Base
     end
 
     @resp = Oj.load(resp)['theAppointments']
-    if [1,'1',true,'true'].include? params[:use_pagination]
+    if [1,'1',true,'true'].include? params[:use_pagination] && !resp.headers[:link].nil?
       headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
     end
 
