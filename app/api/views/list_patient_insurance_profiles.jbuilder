@@ -1,5 +1,8 @@
 json.insurance_profiles @profiles do |profile|
   json.id profile['id']
+  json.name profile['name']
+  json.self_pay profile['is_self_pay']
+  json.default  profile['is_default']
   json.insurance_policies profile['policies'] do |policy|
     json.policy_priority policy['priority']
     json.member_number policy['member_number']
