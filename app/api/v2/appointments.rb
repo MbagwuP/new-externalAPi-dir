@@ -56,7 +56,9 @@ class ApiService < Sinatra::Base
 
   # /v2/appointments
   get '/v2/appointments' do
-    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date]}
+    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
+                        page: params[:page], use_pagination: params[:use_pagination]}
+
     blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
@@ -78,6 +80,10 @@ class ApiService < Sinatra::Base
     end
 
     @resp = Oj.load(resp)['theAppointments']
+    if [1,'1',true,'true'].include? params[:use_pagination] && !resp.headers[:link].nil?
+      headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
+    end
+
     jbuilder :list_appointments
   end
 

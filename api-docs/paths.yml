@@ -186,6 +186,10 @@
           type: array
           items:
            $ref: ListAppointments_Response
+        headers:
+          Link:
+            description: pagination links
+            type: string
   post:
     summary: Create Appointment
     description: |
@@ -292,6 +296,10 @@
           type: array
           items:
            $ref: AppointmentBlockouts_Response
+        headers:
+          Link:
+            description: pagination links
+            type: string
 /appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
   get:
     summary: List Appointment Blockouts
@@ -370,6 +378,10 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        headers:
+          Link:
+            description: pagination links
+            type: string
 /appointment_resources/{resource_id}/appointment_templates:
   get:
     summary: List Appointment Templates By Resource
@@ -410,6 +422,10 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        headers:
+          Link:
+            description: pagination links
+            type: string
 /appointment_resources/{resource_id}:
   get:
     summary: Show Appointment Resource
