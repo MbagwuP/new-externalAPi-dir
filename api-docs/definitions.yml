@@ -274,6 +274,9 @@ CreateAppointmentConfirmation_Response_appointment_confirmation:
 PatientInsuranceShow:
   properties:
     id: string
+    name: string
+    self_pay: boolean
+    default: boolean
     insurance_policies:
       type: array
       $ref: PatientInsurancePolicy
