@@ -774,10 +774,4 @@ class ApiService < Sinatra::Base
     token && !token.include?('Basic') && token.length < 40
   end
 
-  def validate_date_filters
-    if (Date.parse(params[:start_date]) - Date.parse(params[:end_date])).to_i > 93
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date ranges may not exceed 93 days in length."}'
-    end
-  end
-
 end
