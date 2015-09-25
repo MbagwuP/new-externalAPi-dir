@@ -9,6 +9,7 @@ class SwaggerSchema
     name_by_environment:          false,
     include_deprecated_paths:     false,
     include_v1_paths:             false,
+    include_duplicates_paths:     false,
     include_misc_paths:           false,
     include_redirect_paths:       false,
     remove_definition_references: false,
@@ -26,6 +27,7 @@ class SwaggerSchema
     name_by_environment:          true,
     include_deprecated_paths:     true,
     include_v1_paths:             true,
+    include_duplicates_paths:     true,
     include_misc_paths:           true,
     include_redirect_paths:       true,
     remove_definition_references: true,
@@ -56,7 +58,7 @@ class SwaggerSchema
 
     processed_paths = {}
     processed_paths.merge! process_paths('paths.yml', '/v2')
-    processed_paths.merge! process_paths('paths_duplicates.yml', '/v2') # old URLs that we were previously supporting via regexes
+    processed_paths.merge! process_paths('paths_duplicates.yml', '/v2') if @include_duplicates_paths # old URLs that we were previously supporting via regexes
     processed_paths.merge! process_paths('paths_v1.yml', '/v1') if @include_v1_paths
     processed_paths.merge! process_paths('paths_misc.yml', '') if @include_misc_paths
     processed_paths.merge! process_paths('paths_deprecated.yml', '/v2') if @include_deprecated_paths
@@ -127,9 +129,9 @@ class SwaggerSchema
             'type'               => 'http',
             'uri'                => @environment_url + (@add_base_path_to_http_proxy ? basePath : nil) + path,
             'httpMethod'         => method.upcase,
-            'responses'          => amazon_responses_section,
+            'responses'          => amazon_responses_section(processed_paths[path][method]['responses']),
             'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
-            # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
+            # 'responseParameters' => processed_paths[path][method]['parameters']
           }.compact
           # if basePath == '/v1'
             # processed_paths[path][method]['x-amazon-apigateway-integration'].delete('requestParameters')
@@ -186,12 +188,12 @@ class SwaggerSchema
           '200' => { headers: cors_headers }
         },
         'x-amazon-apigateway-integration' => {
-          'type'               => 'http',
+          'type'               => 'mock',
           'uri'                => @environment_url + path,
           'httpMethod'         => 'OPTIONS',
           'responses'          => {'200' => {
             'statusCode' => '200',
-            'responseParameters' => cors_response_parameters
+            'responseParameters' => cors_response_parameters.merge((paths[path]['responses']['200']['responseParameters'] rescue nil) || {}) # this stuff isn't necessary for Link, it's just for OPTIONS
           }}
           # 'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
           # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
@@ -293,23 +295,29 @@ class SwaggerSchema
     }
   end
 
-  def amazon_responses_section
-    return @amazon_responses_section if defined?(@amazon_responses_section) # caching
+  def amazon_responses_section upper_responses_section
+    # upper_responses_section.symbolize_keys!
     section = {}
     AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
+      responseParameters = (upper_responses_section[code]['responseParameters'] rescue nil) || {}
+      responseParameters.merge!(cors_response_parameters)
+
+      headers = (upper_responses_section[code][:headers] rescue nil) || {}
+      headers.merge!((upper_responses_section[code]['headers'] rescue nil) || {})
+
       section[code.to_s] = {
         'statusCode' => code.to_s,
-      #   'headers' => {
-      #     'Access-Control-Allow-Headers' => {type: "string"}, #'integration.response.header.Access-Control-Allow-Headers',
-      #     'Access-Control-Allow-Methods' => {type: "string"}, #wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
-      #     'Access-Control-Allow-Origin'  => {type: "string"}  #wrap_in_single_quotes(@cors_url)
-      #   }
+        'headers' => headers,
+          # 'Access-Control-Allow-Headers' => {type: "string"}, #'integration.response.header.Access-Control-Allow-Headers',
+          # 'Access-Control-Allow-Methods' => {type: "string"}, #wrap_in_single_quotes(AMAZON_CORS_ALLOWED_METHODS.join(',')),
+          # 'Access-Control-Allow-Origin'  => {type: "string"}  #wrap_in_single_quotes(@cors_url)
+        # },
       # }
-        'responseParameters' => cors_response_parameters # we might only need to do this on OPTIONS requests
+        'responseParameters' => responseParameters
       # }
       }
     end
-    @amazon_responses_section = section
+    section
   end
 
   def remove_blank_path_parameters_fields
