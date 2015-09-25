@@ -177,6 +177,18 @@
         required: false
         type: string
         format: double
+      - name: page
+        in: query
+        description: page number
+        required: false
+        type: string
+        format: double
+      - name: use_pagination
+        in: query
+        description: use pagination
+        required: false
+        type: boolean
+        format: double
     tags:
       - Appointments
     responses:
@@ -186,6 +198,8 @@
           type: array
           items:
            $ref: ListAppointments_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
