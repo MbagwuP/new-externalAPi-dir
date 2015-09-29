@@ -13,7 +13,7 @@ test:
 
 qa: 
   gateway_url: "https://external-api-gateway.qa.carecloud.com"
-  backend_url: "https://external-api-elb-qa.carecloud.com"
+  backend_url: "https://cc-qa-01-external-api-public-elb-1308089278.us-east-1.elb.amazonaws.com"
   cors_url:    "http://developer.development.carecloud.com"
   platform_url: "https://platform.qa.carecloud.com"
 
