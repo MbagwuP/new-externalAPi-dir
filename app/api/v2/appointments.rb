@@ -57,7 +57,7 @@ class ApiService < Sinatra::Base
   # /v2/appointments
   get '/v2/appointments' do
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
-                        page: params[:page], use_pagination: params[:use_pagination]}
+                        page: params[:page], use_pagination: 'true'}
 
     blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
     missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
