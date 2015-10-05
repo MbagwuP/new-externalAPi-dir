@@ -4,14 +4,12 @@ class ApiService < Sinatra::Base
   # /v2/appointment_resources/{resource_id}/appointment_templates
   get /\/v2\/appointment_templates|\/v2\/appointment_resources\/(?<resource_id>([0-9]*))\/appointment_templates/ do |resource_id|
 
-    # urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
-    # urlappt = webservices_uri "appointment_templates/list_by_business_entity_with_filtering",
     forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date], include_expanded_info: 'true'}
+
+    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+    api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
+
     using_date_filter = params[:start_date] && params[:end_date]
-    missing_one_date_filter_field = [params[:start_date], params[:end_date]].compact.length == 1
-    blank_date_field_passed = (params.keys.include?('start_date') && params[:start_date].blank?) || (params.keys.include?('end_date') && params[:end_date].blank?)
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Date filtering fields cannot be blank."}' if blank_date_field_passed
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Both start_date and end_date are required for date filtering."}' if missing_one_date_filter_field
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
