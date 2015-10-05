@@ -19,19 +19,12 @@ json.array! @resp do |appt|
       json.gender_id appt['appointment']['gender_id']
       json.email appt['appointment']['email']
       json.patient_status appt['appointment']['patient_status']
-      json.photo_handler appt['appointment']['photo_handler']
       json.primary_phone_number appt['appointment']['primary_phone_number']
     end
 
     json.location do
       json.id appt['appointment']['location_id']
       json.name appt['appointment']['location_name']
-    end
-
-    json.last_eligibility_outcome do
-      json.id appt['appointment']['last_eligibility_outcome_id']
-      json.code appt['appointment']['last_eligibility_outcome_code']
-      json.message appt['appointment']['last_eligibility_outcome_message']
     end
 
     json.cancellation_details do
@@ -54,7 +47,7 @@ json.array! @resp do |appt|
     json.patient_contacted appt['appointment']['patient_contacted']
     json.recurrence_id appt['appointment']['recurrence_id']
     json.recurrence_index appt['appointment']['recurrence_index']
-    json.referring_physician_name appt['appointment']['referring_physician_name']
+    json.referring_physician_npi appt['appointment']['referring_physician_npi']
 
     json.visit_reason_id appt['appointment']['nature_of_visit_id']
     json.resource_id appt['appointment']['resource_id']

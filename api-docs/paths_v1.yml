@@ -535,6 +535,18 @@
         required: true
         type: string
         format: double
+      - name: metadata
+        in: formData
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
+      - name: payload
+        in: formData
+        # description: patient update payload
+        required: true
+        type: string
+        format: double
     responses:
       201:
         description: test placeholder
@@ -737,8 +749,16 @@
         required: true
         type: string
         format: double
+      - name: key
+        in: query
+        required: false
+        type: string
+      - name: id
+        in: query
+        required: false
+        type: string
     responses:
-      201:
+      200:
         description: test placeholder
 /lab/outbound:
   post:
@@ -750,17 +770,24 @@
         type: string
         format: double
     responses:
-      201:
+      200:
         description: test placeholder
 /lab/outbound/ack:
   post:
     parameters:
       - name: body
         in: body
-        # description: patient update payload
         required: true
         type: string
         format: double
+      - name: key
+        in: query
+        required: false
+        type: string
+      - name: id
+        in: query
+        required: false
+        type: string
     responses:
       200:
         description: test placeholder
@@ -857,6 +884,12 @@
         description: test placeholder
 /patients/{patientid}:
   get:
+    parameters:
+      - name: patientid
+        in: path
+        required: true
+        type: string
+        format: double
     responses:
       200:
         description: test placeholder

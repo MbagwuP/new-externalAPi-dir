@@ -49,6 +49,8 @@ SEVERITY_TYPE_ERROR = "ERROR"
 SEVERITY_TYPE_FATAL = "FATAL"
 SEVERITY_TYPE_WARN = "WARN" 
 
+USE_AMAZON_API_GATEWAY = true
+
 class ApiService < Sinatra::Base
 
   register Sinatra::ApplicationFilters
@@ -68,6 +70,8 @@ class ApiService < Sinatra::Base
     Log4r::FileOutputter.new('logfile', :filename => 'log/external_api.log', :trunc => false)
     LOG = Log4r::Logger.new('logger')
     LOG.add('console', 'logfile')
+
+    Oj.default_options = {mode: :compat}
 
     begin
       config_path = Dir.pwd + "/config/settings.yml"
@@ -102,6 +106,7 @@ class ApiService < Sinatra::Base
 
     set :enable_auditing, false
     set :api_url, config["api_internal_svc_url"]
+    set :platform_url, config["platform_url"]
     set :memcached_server, config["memcache_servers"]
     set :mongo_server, config["mongo_server"]
     set :dms_server , config["api_internal_doc_srv_upld_url"]

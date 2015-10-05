@@ -769,8 +769,6 @@ ListAppointments_Response_appointment:
       $ref: ListAppointments_Response_appointment_patient
     location:
       $ref: ListAppointments_Response_appointment_location
-    last_eligibility_outcome:
-      $ref: ListAppointments_Response_appointment_last_eligibility_outcome
     cancellation_details:
       $ref: ListAppointments_Response_appointment_cancellation_details
     chief_complaint: string
@@ -786,7 +784,7 @@ ListAppointments_Response_appointment:
     patient_contacted: string
     recurrence_id: string
     recurrence_index: string
-    referring_physician_name: string
+    referring_physician_npi: string
     visit_reason_id: integer
     resource_id: integer
     provider_id: string
@@ -799,11 +797,6 @@ ListAppointments_Response_appointment_cancellation_details:
     id: string
     detail: string
     comments: string
-ListAppointments_Response_appointment_last_eligibility_outcome:
-  properties:
-    id: string
-    code: string
-    message: string
 ListAppointments_Response_appointment_location:
   properties:
     id: integer
@@ -819,7 +812,6 @@ ListAppointments_Response_appointment_patient:
     gender_id: string
     email: string
     patient_status: string
-    photo_handler: string
     primary_phone_number: string
 ListAppointments_Response_appointment_appointment_status:
   properties:

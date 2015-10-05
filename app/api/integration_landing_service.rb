@@ -1,11 +1,23 @@
 class ApiService < Sinatra::Base
 
   get '/zocdoc' do
+    if USE_AMAZON_API_GATEWAY
+      platform_url = settings.platform_url || ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['platform_url']
+      response.headers["Location"] = platform_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      return 301
+    end
+
     content_type :html
     erb File.read('app/views/integration_landing/choice.erb')
   end
 
   get '/zocdoc/login' do
+    if USE_AMAZON_API_GATEWAY
+      platform_url = settings.platform_url || ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['platform_url']
+      response.headers["Location"] = platform_url + request.env['PATH_INFO'] + '?' + request.env['QUERY_STRING']
+      return 301
+    end
+
     content_type :html
     erb File.read('app/views/integration_landing/login.erb')
   end
