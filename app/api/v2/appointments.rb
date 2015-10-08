@@ -59,7 +59,7 @@ class ApiService < Sinatra::Base
     params[:use_pagination] = 'true' # comment this out as a backout strategy for pagination
 
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
-                        page: params[:page], use_pagination: 'true', schedules: 'true'} # remove use_pagination here as a backout strategy for pagination
+                        page: params[:page], use_pagination: 'true'} # remove use_pagination here as a backout strategy for pagination
 
     params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
