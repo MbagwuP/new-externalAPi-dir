@@ -185,12 +185,12 @@
         required: false
         type: string
         format: double
-      - name: use_pagination
-        in: query
-        description: use pagination
-        required: false
-        type: boolean
-        format: double
+      # - name: use_pagination
+      #   in: query
+      #   description: use pagination
+      #   required: false
+      #   type: boolean
+      #   format: double
     tags:
       - Appointments
     responses:
