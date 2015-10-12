@@ -18,13 +18,13 @@ qa:
   platform_url: "https://platform.qa.carecloud.com"
 
 staging: 
-  gateway_url: "https://external-api-gateway.staging.carecloud.com"
-  backend_url: "https://api-staging.carecloud.com"
+  gateway_url: "https://api-staging.carecloud.com"
+  backend_url: "https://api-pub-stg.carecloud.com"
   cors_url:    "http://developer.development.carecloud.com"
   platform_url: "https://platform-staging.carecloud.com"
 
 production: 
   gateway_url: "https://api.carecloud.com"
-  backend_url: "https://external-api-elb-production-9x4tk1vp0r7co4y.carecloud.com"
+  backend_url: "https://api-atf0c1d2.carecloud.com"
   cors_url:    "http://developer.carecloud.com"
   platform_url: "https://platform.carecloud.com"
