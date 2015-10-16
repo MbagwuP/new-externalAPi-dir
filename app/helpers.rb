@@ -607,7 +607,7 @@ class ApiService < Sinatra::Base
     ## check IP addresses
     ipaddress = request.ip
     #LOG.debug(ipaddress)
-    api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
+    # api_svc_halt HTTP_FORBIDDEN if !settings.mirth_ip.include? ipaddress
 
     ## call for BE by patient
 
