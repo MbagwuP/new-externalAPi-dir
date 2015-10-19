@@ -99,16 +99,16 @@
         required: true
         type: string
         # format: double
-      # - name: grant_type
-      #   in: formData
-      #   required: true
-      #   type: string
-      #   # format: double
-      # - name: refresh_token
-      #   in: formData
-      #   required: true
-      #   type: string
-      #   # format: double
+      - name: grant_type
+        in: query
+        required: true
+        type: string
+        # format: double
+      - name: refresh_token
+        in: query
+        required: true
+        type: string
+        # format: double
     responses:
       200:
         description: test placeholder
