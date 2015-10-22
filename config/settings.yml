@@ -18,7 +18,7 @@ development:
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196,54.209.211.183
-    memcache_servers: cc-bl-mcache00-dev.carecloud.local:11211
+    memcache_servers: mcache.development.carecloud.local:11211
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
     version: 26.2
