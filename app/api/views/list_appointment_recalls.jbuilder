@@ -3,7 +3,6 @@ json.array! @resp do |rec|
 
     json.id rec['recall']['id']
     json.comments rec['recall']['comments']
-    json.patient_id rec['recall']['patient']['external_id']
     json.recall_at rec['recall']['recall_at']
 
     json.recall_type do
@@ -17,6 +16,11 @@ json.array! @resp do |rec|
       json.name rec['recall']['recall_status']['name']
       json.code rec['recall']['recall_status']['code']
       json.description rec['recall']['recall_status']['description']
+    end
+
+    json.patient do
+      json.id rec['recall']['patient']['external_id']
+      json.preferred_communication_method communication_methods.invert[rec['recall']['patient']['preferred_communication_method_id']]
     end
 
   end
