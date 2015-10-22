@@ -267,7 +267,7 @@ class ApiService < Sinatra::Base
     forwarded_params = {from: params[:start_date] || Date.today.to_s,
                         to: params[:end_date] || Date.parse(7.days.since.to_s).to_s, # default to the coming week's worth of recalls
                         use_pagination: 'true'}
-    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+    params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
 
     urlrecalls = webservices_uri "businesses/#{current_business_entity}/recalls/list_by_business_entity_and_date_range.json", {token: escaped_oauth_token}.merge(forwarded_params)
