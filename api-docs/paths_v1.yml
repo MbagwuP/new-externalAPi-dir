@@ -32,22 +32,6 @@
     responses:
       201:
         description: test placeholder
-/appointment/{id}/{appointmentid}:
-  delete:
-    parameters:
-      - name: id
-        in: path
-        description: Provider id
-        required: true
-        type: string
-      - name: appointmentid
-        in: path
-        # description: GUID of the patient
-        required: true
-        type: string
-    responses:
-      200:
-        description: test placeholder
 /appointment/{id}/checkin:
   put:
     parameters:
@@ -1032,7 +1016,6 @@
     responses:
       201:
         description: test placeholder
-/patient/register:
   put:
     parameters:
       - name: body
@@ -1044,7 +1027,6 @@
     responses:
       200:
         description: test placeholder
-/patient/register:
   delete:
     parameters:
       - name: body

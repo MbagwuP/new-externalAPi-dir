@@ -569,6 +569,47 @@ NatureOfVisit:
       type: string
     description:
       type: string
+AppointmentRecall_Response:
+  properties:
+    recall:
+      $ref: AppointmentRecall_Response_recall
+AppointmentRecall_Response_recall:
+  properties:
+    id: integer
+    comments: string
+    recall_at: string
+    recall_type:
+      $ref: AppointmentRecall_Response_recall_recall_type
+    recall_status:
+      $ref: AppointmentRecall_Response_recall_recall_status
+    patient:
+      $ref: AppointmentRecall_Response_recall_patient
+AppointmentRecall_Response_recall_patient:
+  properties:
+    id: string
+    preferred_communication_method: string
+AppointmentRecall_Response_recall_recall_status:
+  properties:
+    id: integer
+    name: string
+    code: string
+    description: string
+AppointmentRecall_Response_recall_recall_type:
+  properties:
+    id: integer
+    name: string
+    description: string
+AppointmentRecallType_Response:
+  properties:
+    recall_type:
+      $ref: AppointmentRecall_Response_recall_type
+AppointmentRecallType_Response_recall_type:
+  properties:
+    id: integer
+    description: string
+    name: string
+    created_at: string
+    updated_at: string
 Product:
   properties:
     product_id:
