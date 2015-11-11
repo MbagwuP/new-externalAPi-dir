@@ -4,7 +4,9 @@ class ApiService < Sinatra::Base
   # /v2/appointment_resources/{resource_id}/appointment_templates
   get /\/v2\/appointment_templates|\/v2\/appointment_resources\/(?<resource_id>([0-9]*))\/appointment_templates/ do |resource_id|
 
-    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date], include_expanded_info: 'true'}
+    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id],
+                        start_date: params[:start_date], end_date: params[:end_date], status: 'A',
+                        include_expanded_info: 'true', filter_by_effective_dates: params[:filter_by_effective_dates]}
 
     params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
