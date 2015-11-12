@@ -57,6 +57,10 @@ class ApiService < Sinatra::Base
       end
     }.compact
 
+    if !resp.headers[:link].nil?
+      headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
+    end
+
     body(response.to_json)
     status HTTP_OK
   end
