@@ -35,6 +35,14 @@ class ParamsValidator
     end
   end
 
+  def end_date_is_before_start_date
+    return nil if !@params[:end_date] || !@params[:start_date]
+
+    if Date.parse(@params[:end_date]) < Date.parse(@params[:start_date])
+      'end_date may not precede start_date.'
+    end
+  end
+
   def error
     validate
     '{"error":"' + @error + '"}' if @error
