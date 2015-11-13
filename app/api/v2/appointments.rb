@@ -262,9 +262,11 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/appointment_recalls' do
-    forwarded_params = {from: params[:start_date] || Date.today.to_s,
-                        to: params[:end_date] || Date.parse(7.days.since.to_s).to_s, # default to the coming week's worth of recalls
-                        use_pagination: 'true'}
+    forwarded_params = {from: params[:start_date], to: params[:end_date], use_pagination: 'true'}
+    if forwarded_params[:from].blank? && forwarded_params[:to].blank?
+      forwarded_params[:from] = Date.today.to_s
+      forwarded_params[:to]   = Date.parse(7.days.since.to_s).to_s # default to the coming week's worth of recalls
+    end
     params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
 
