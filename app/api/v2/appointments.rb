@@ -264,13 +264,20 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/appointment_recalls' do
-    forwarded_params = {from: params[:start_date], to: params[:end_date], use_pagination: 'true'}
-    if forwarded_params[:from].blank? && forwarded_params[:to].blank?
-      forwarded_params[:from] = Date.today.to_s
-      forwarded_params[:to]   = Date.parse(7.days.since.to_s).to_s # default to the coming week's worth of recalls
+    forwarded_params = {start_date: params[:start_date], end_date: params[:end_date], use_pagination: 'true'}
+    if forwarded_params[:start_date].blank? && forwarded_params[:end_date].blank?
+      forwarded_params[:start_date] = Date.today.to_s
+      forwarded_params[:end_date]   = Date.parse(7.days.since.to_s).to_s # default to the coming week's worth of recalls
+    elsif !forwarded_params[:start_date].blank? && forwarded_params[:end_date].blank?
+      forwarded_params[:end_date]   = (Date.parse(forwarded_params[:start_date]) + 7.days).to_s # default to one week from the start date
     end
-    params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+    
+    params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed,
+                                       :missing_one_date_filter_field, :date_filter_range_too_long, :end_date_is_before_start_date).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
+
+    forwarded_params.rename_key(:start_date, :from) if forwarded_params[:start_date]
+    forwarded_params.rename_key(:end_date, :to) if forwarded_params[:end_date]
 
     urlrecalls = webservices_uri "businesses/#{current_business_entity}/recalls/list_by_business_entity_and_date_range.json", {token: escaped_oauth_token}.merge(forwarded_params)
 
