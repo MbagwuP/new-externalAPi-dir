@@ -445,7 +445,7 @@ class ApiService < Sinatra::Base
     #LOG.debug "internal file name"
     #LOG.debug(internal_file_name)
     File.open(internal_file_name, "wb") do |file|
-      file.write(document_binary.read)
+      file.write(Base64.decode64(document_binary.read))
     end
     return internal_file_name
   end
