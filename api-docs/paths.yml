@@ -844,6 +844,35 @@
           type: array
           items:
             $ref: AppointmentRecall_Response
+/appointment_recalls/{id}:
+  put:
+    summary: Update Appointment Recall
+    description: |
+      Update an Appointment Recall
+    parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: string
+        format: double
+      - name: body
+        in: body
+        description: appointment recall update payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: AppointmentRecallUpdate_Request
+    tags:
+      - Appointments
+    responses:
+      204:
+        description: list of appointment recalls for a practice by date range
+        schema:
+          type: array
+          items:
+            $ref: AppointmentRecall_Response
 /appointment_recall_types:
   get:
     summary: List Appointment Recall Types
