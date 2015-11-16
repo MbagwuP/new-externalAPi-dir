@@ -785,6 +785,27 @@
           type: array
           items:
             $ref: NatureOfVisit
+/patients/{id}/balance:
+  get:
+    summary: Show Balance for Patient
+    description: |
+      Show Balance information for a Patient
+    parameters:
+      - name: id
+        in: path
+        description: ID of the Patient
+        required: true
+        type: string
+        format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: balances by type
+        schema:
+          type: array
+          items:
+            $ref: PatientBalance
 /locations:
   get:
     summary: List Locations
