@@ -82,7 +82,7 @@ class ApiService < Sinatra::Base
   # /patients/{guid}
   # /v2/patients/{guid}
   # /v2/patients/{integer_id}
-  get /\/v2\/patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})|[0-9]*)/ do |patient_id|
+  get /\/v2\/patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})|[0-9]*)$/ do |patient_id|
     pass if params[:patient_id] == "search" || params[:patient_id].blank?
     begin
       patient_id = params[:patient_id]
@@ -186,6 +186,19 @@ class ApiService < Sinatra::Base
       end
     end
     status HTTP_NO_CONTENT
+  end
+
+  get '/v2/patients/:patient_id/balance' do
+    patient_id = params[:patient_id]
+    urlbalance = webservices_uri "patient_id/#{patient_id}/accounts_receivables.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+
+    response = rescue_service_call 'Patient Balance' do
+      RestClient.get(urlbalance)
+    end
+
+    @resp = JSON.parse(response.body)
+    status HTTP_OK
+    jbuilder :patient_balance
   end
 
 end

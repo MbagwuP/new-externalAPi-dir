@@ -609,6 +609,9 @@ AppointmentRecallType_Response_recall_type:
     name: string
     created_at: string
     updated_at: string
+AppointmentRecallUpdate_Request:
+  properties:
+    recall_status: string
 Product:
   properties:
     product_id:
@@ -1063,3 +1066,14 @@ AppointmentCancellationReason_Response_appointment_cancellation_reason:
     name: string
     sort_code: integer
     updated_at: string
+PatientBalance:
+  properties:
+    balance_type: string
+    unapplied_credit: string
+    unbilled: string
+    current: string
+    greater_than_30: string
+    greater_than_60: string
+    greater_than_90: string
+    greater_than_120: string
+    total: string
