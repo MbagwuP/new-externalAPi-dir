@@ -609,6 +609,9 @@ AppointmentRecallType_Response_recall_type:
     name: string
     created_at: string
     updated_at: string
+AppointmentRecallUpdate_Request:
+  properties:
+    recall_status: string
 Product:
   properties:
     product_id:
