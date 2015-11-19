@@ -359,6 +359,8 @@
       Filtering params are optional.
       If date filtering is provided, occurences of each template within the given timespan will be included.
       Without date filtering, all templates for the Practice will be returned.
+
+      Results are paginated to 20 Appointment Templates per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
     parameters:
       - name: start_date
         in: query
@@ -375,6 +377,12 @@
       - name: location_id
         in: query
         description: Location ID
+        required: false
+        type: string
+        format: double
+      - name: page
+        in: query
+        description: page number
         required: false
         type: string
         format: double
@@ -402,7 +410,13 @@
   get:
     summary: List Appointment Templates By Resource
     description: |
-      List Appointment Templates for a Practice
+      List Appointment Templates for a Practice filtered by Resource
+
+      Filtering params are optional.
+      If date filtering is provided, occurences of each template within the given timespan will be included.
+      Without date filtering, all templates for the Practice will be returned.
+
+      Results are paginated to 20 Appointment Templates per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
     parameters:
       - name: start_date
         in: query
@@ -426,6 +440,12 @@
         in: path
         description: Resource ID
         required: true
+        type: string
+        format: double
+      - name: page
+        in: query
+        description: page number
+        required: false
         type: string
         format: double
     tags:
