@@ -23,7 +23,7 @@ class ApiService < Sinatra::Base
     end
 
     if !response.headers[:link].nil?
-      headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
+      headers['Link'] = PaginationLinkBuilder.new(response.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
     end
     response = JSON.parse(response)
 
