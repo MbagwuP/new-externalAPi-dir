@@ -56,10 +56,8 @@ class ApiService < Sinatra::Base
 
   # /v2/appointments
   get '/v2/appointments' do
-    params[:use_pagination] = 'true' # comment this out as a backout strategy for pagination
-
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
-                        page: params[:page], use_pagination: 'true'} # remove use_pagination here as a backout strategy for pagination
+                        page: params[:page], use_pagination: 'true'}
 
     params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
@@ -80,7 +78,7 @@ class ApiService < Sinatra::Base
     end
 
     @resp = Oj.load(resp)['theAppointments']
-    if [1,'1',true,'true'].include? params[:use_pagination] && !resp.headers[:link].nil?
+    if !resp.headers[:link].nil?
       headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
     end
 
