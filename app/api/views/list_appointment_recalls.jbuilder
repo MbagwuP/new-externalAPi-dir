@@ -1,7 +1,7 @@
 json.array! @resp do |rec|
   json.recall do
 
-    json.id rec['recall']['id']
+    json.id rec['recall']['guid']
     json.comments rec['recall']['comments']
     json.recall_at rec['recall']['recall_at']
 
