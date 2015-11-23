@@ -4,7 +4,7 @@ class ApiService < Sinatra::Base
   # /v2/appointment_resources/{resource_id}/appointment_templates
   get /\/v2\/appointment_templates|\/v2\/appointment_resources\/(?<resource_id>([0-9]*))\/appointment_templates/ do |resource_id|
 
-    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], include_occurrences: 'true',
+    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id],
                         start_date: params[:start_date], end_date: params[:end_date], status: 'A',
                         include_expanded_info: 'true', use_pagination: 'true', page: params[:page]}
 
@@ -12,6 +12,7 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
 
     using_date_filter = params[:start_date] && params[:end_date]
+    forwarded_params[:include_occurences] = 'true' if using_date_filter
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
