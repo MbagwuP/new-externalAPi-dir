@@ -312,6 +312,8 @@
           type: array
           items:
            $ref: AppointmentBlockouts_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
@@ -402,6 +404,8 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
@@ -458,6 +462,8 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
