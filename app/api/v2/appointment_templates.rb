@@ -12,7 +12,7 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
 
     using_date_filter = params[:start_date] && params[:end_date]
-    forwarded_params[:include_occurences] = 'true' if using_date_filter
+    forwarded_params[:include_occurrences] = 'true' if using_date_filter
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
