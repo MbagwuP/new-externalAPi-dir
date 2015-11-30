@@ -318,40 +318,6 @@
           Link:
             description: pagination links
             type: string
-/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
-  get:
-    summary: List Appointment Blockouts
-    description: |
-      List Appointment Blockouts for Provider by Date
-    parameters:
-      - name: date
-        in: path
-        description: Appointment Date
-        required: true
-        type: string
-        format: double
-      - name: provider_id
-        in: path
-        description: Provider ID
-        required: true
-        type: string
-        format: double
-      - name: include_appointments
-        in: query
-        description: Include Appointments for specified Date and Provider along with the Blockouts
-        required: false
-        type: boolean
-        format: double
-    tags:
-      - Appointment Blockouts
-    responses:
-      200:
-        description: list of appointment vlockouts
-        schema:
-          $ref: AppointmentBlockouts_Response
-          #type: array
-          #items:
-          #  $ref: Patient
 /appointment_templates:
   get:
     summary: List Appointment Templates
