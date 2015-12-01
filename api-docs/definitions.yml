@@ -467,6 +467,8 @@ Patient:
     employer_phone_number: string
     ethnicity_code: integer
     student_status_code: integer
+    primary_care_physician_id: string
+    primary_care_physician_npi: string
 PatientAddress: 
   properties:
     line1: string
