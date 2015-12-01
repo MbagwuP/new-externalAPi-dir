@@ -32,6 +32,21 @@
     responses:
       201:
         description: test placeholder
+# for this case "ID" is the provider_id
+/appointment/{id}/{appointment_id}:
+  delete:
+    parameters:
+      - name: id
+        in: path
+        required: true
+        type: string
+      - name: appointment_id
+        in: path
+        required: true
+        type: string
+    responses:
+      200:
+        description: test placeholder
 /appointment/{id}/checkin:
   put:
     parameters:
