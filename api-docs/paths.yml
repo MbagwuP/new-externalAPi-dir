@@ -911,6 +911,45 @@
       If date filtering is provided, occurences of each template within the given timespan will be included.
       Without date filtering, the past 30 days worth of posted transactions for the Patient will be returned.
       With just a start_date, transactions posted 30 days from the start_date will be returned.
+
+      The following transaction_types exist:
+
+      ```
+      simple_charge_reversal
+      charge_reversal
+      returned_insurance_check_reversal
+      returned_patient_check_reversal
+      simple_charge
+      charge
+      returned_insurance_check
+      returned_patient_check
+      insurance_adjustment
+      insurance_adjustment_refund
+      insurance_adjustment_refund_reversal
+      insurance_adjustment_reversal
+      insurance_payment
+      insurance_payment_refund
+      insurance_payment_refund_reversal
+      insurance_payment_reversal
+      patient_adjustment
+      patient_adjustment_reversal
+      patient_payment
+      patient_payment_refund
+      patient_payment_refund_reversal
+      patient_payment_reversal
+      withhold
+      withhold_refund
+      withhold_refund_reversal
+      withhold_reversal
+      ```
+
+      The following transaction_statuses exist:
+
+      ```
+      posted
+      not_posted
+      closed
+      ```
       #
       # Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
     parameters:
