@@ -721,7 +721,8 @@ class ApiService < Sinatra::Base
     urlcm = webservices_uri "recall_statuses/list_all.json"
 
     resp = rescue_service_call 'Recall Status Look Up' do
-      RestClient.get(urlcm, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlcm, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
@@ -760,7 +761,8 @@ class ApiService < Sinatra::Base
     urlcm = webservices_uri "communication_methods/list_all.json"
 
     resp = rescue_service_call 'Communication Method Look Up' do
-      RestClient.get(urlcm, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlcm, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
@@ -795,7 +797,8 @@ class ApiService < Sinatra::Base
     urlco = webservices_uri "communication_outcomes/list_all.json"
 
     resp = rescue_service_call 'Communication Outcome Look Up' do
-      RestClient.get(urlco, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
@@ -829,7 +832,8 @@ class ApiService < Sinatra::Base
     urlco = webservices_uri "debit_transactions/types/list_all.json"
 
     resp = rescue_service_call 'Debit Transaction Type Look Up' do
-      RestClient.get(urlco, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
@@ -863,7 +867,8 @@ class ApiService < Sinatra::Base
     urlco = webservices_uri "credit_transactions/types/list_all.json"
 
     resp = rescue_service_call 'Credit Transaction Type Look Up' do
-      RestClient.get(urlco, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
@@ -897,7 +902,8 @@ class ApiService < Sinatra::Base
     urlco = webservices_uri "transactions/statuses/list_all.json"
 
     resp = rescue_service_call 'Transaction Status Look Up' do
-      RestClient.get(urlco, :api_key => APP_API_KEY)
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
     end
 
     resp = JSON.parse resp
