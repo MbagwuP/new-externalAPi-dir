@@ -1067,6 +1067,19 @@ AppointmentCancellationReason_Response_appointment_cancellation_reason:
     name: string
     sort_code: integer
     updated_at: string
+Transaction_Response:
+  properties:
+    id: integer
+    amount: string
+    balance: string
+    unapplied_credit: integer
+    posting_date: string
+    transaction_type: string
+    transaction_status: string
+    location_id: integer
+    provider_id: integer
+    units: string
+    description: string
 PatientBalance:
   properties:
     balance_type: string
