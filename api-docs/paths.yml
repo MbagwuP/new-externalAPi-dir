@@ -952,7 +952,7 @@
       #
       # Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
     parameters:
-      - name: id
+      - name: patient_id
         in: path
         description: Patient ID
         required: true
