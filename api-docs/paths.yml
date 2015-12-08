@@ -901,14 +901,13 @@
           type: array
           items:
             $ref: AppointmentRecallType_Response
-/patients/{id}/transactions:
+/patients/{patient_id}/transactions:
   get:
     summary: List Patient Transactions
     description: |
       List Transactions for a Patient
 
       Filtering params are optional. Date filtering fields filter by posting_date.
-      If date filtering is provided, occurences of each template within the given timespan will be included.
       Without date filtering, the past 30 days worth of posted transactions for the Patient will be returned.
       With just a start_date, transactions posted 30 days from the start_date will be returned.
 
