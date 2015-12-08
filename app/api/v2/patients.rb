@@ -102,6 +102,7 @@ class ApiService < Sinatra::Base
     parsed['patient'].rename_key 'external_id', 'id'
     parsed['patient']['business_entity_id'] = current_business_entity
     parsed['patient']['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, parsed['patient']['gender_id'])
+    parsed['patient'].delete('primary_care_physician_id')
     body(parsed.to_json); status HTTP_OK
   end
 
@@ -119,6 +120,7 @@ class ApiService < Sinatra::Base
       request_body['patient']['employment_status_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::EmploymentStatus, request_body['patient'].delete('employment_status_code')) unless request_body['patient']['employment_status_id'].present?
       request_body['patient']['ethnicity_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Ethnicity, request_body['patient'].delete('ethnicity_code')) unless request_body['patient']['ethnicity_id'].present?
       request_body['patient']['student_status_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::StudentStatus, request_body['patient'].delete('student_status_code')) unless request_body['patient']['student_status_id'].present?
+      request_body['patient'].delete('primary_care_physician_id')
 
       url          = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients.json?token=#{escaped_oauth_token}"
       response     = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
@@ -172,6 +174,7 @@ class ApiService < Sinatra::Base
       request_body['patient']['employment_status_id'] = converter.code_to_cc_id(DemographicCodes::EmploymentStatus, request_body['patient'].delete('employment_status_code')) unless request_body['patient']['employment_status_id'].present?
       request_body['patient']['ethnicity_id'] = converter.code_to_cc_id(DemographicCodes::Ethnicity, request_body['patient'].delete('ethnicity_code')) unless request_body['patient']['ethnicity_id'].present?
       request_body['patient']['student_status_id'] = converter.code_to_cc_id(DemographicCodes::StudentStatus, request_body['patient'].delete('student_status_code')) unless request_body['patient']['student_status_id'].present?
+      request_body['patient'].delete('primary_care_physician_id')
 
       url = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients/#{params[:patient_id]}.json?token=#{escaped_oauth_token}"
       response = RestClient.put url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
