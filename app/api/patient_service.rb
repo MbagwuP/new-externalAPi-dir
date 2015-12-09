@@ -70,6 +70,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    parsed['patient'].delete('primary_care_physician_id')
 
     #LOG.debug(parsed)
 
