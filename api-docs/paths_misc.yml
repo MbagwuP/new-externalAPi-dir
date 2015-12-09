@@ -129,3 +129,13 @@
     responses:
       200:
         description: test placeholder
+/oauth2/token_info:
+  get:
+    summary: Token Details
+    description:
+      Show information about a token, such as the time remaining until it expires
+    tags:
+      - Authorization
+    responses:
+      200:
+        description: info about a token
