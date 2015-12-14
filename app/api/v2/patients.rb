@@ -284,7 +284,7 @@ class ApiService < Sinatra::Base
       x
     end
 
-    urlinsurance = webservices_uri "patient_id/#{patient_id}/insurance_profiles/create.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+    urlinsurance = webservices_uri "patients/#{patient_id}/insurance_profiles/create.json", token: escaped_oauth_token, business_entity_id: current_business_entity
 
     @resp = rescue_service_call 'Patient Insurance' do
       RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
