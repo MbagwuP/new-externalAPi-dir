@@ -109,7 +109,7 @@ class ApiService < Sinatra::Base
 
   # /v2/patients
   # /v2/patients/create (legacy)
-  post /\/v2\/(patients\/create|patients)/ do
+  post /\/v2\/(patients\/create|patients)$/ do
     begin
       request_body = get_request_JSON
       request_body['patient']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, request_body['patient'].delete('gender_code')) unless request_body['patient']['gender_id'].present?
@@ -202,6 +202,97 @@ class ApiService < Sinatra::Base
     @resp = JSON.parse(response.body)
     status HTTP_OK
     jbuilder :patient_balance
+  end
+
+  post '/v2/patients/:patient_id/insurances' do
+    request_body = get_request_JSON
+
+    insurance_policies = []
+    if request_body['insurance_profile']['primary_insurance_policy']
+      request_body['insurance_profile']['primary_insurance_policy']['priority'] = 1
+      insurance_policies << request_body['insurance_profile'].delete('primary_insurance_policy')
+    end
+    if request_body['insurance_profile']['secondary_insurance_policy']
+      request_body['insurance_profile']['secondary_insurance_policy']['priority'] = 2
+      insurance_policies << request_body['insurance_profile'].delete('secondary_insurance_policy')
+    end
+    if request_body['insurance_profile']['tertiary_insurance_policy']
+      request_body['insurance_profile']['tertiary_insurance_policy']['priority'] = 3
+      insurance_policies << request_body['insurance_profile'].delete('tertiary_insurance_policy')
+    end
+    if request_body['insurance_profile']['quaternary_insurance_policy']
+      request_body['insurance_profile']['quaternary_insurance_policy']['priority'] = 4
+      insurance_policies << request_body['insurance_profile'].delete('quaternary_insurance_policy')
+    end
+    request_body['insurance_profile']['insurance_policies'] = insurance_policies
+
+    responsible_party_relationship = request_body['insurance_profile'].delete('responsible_party_relationship')
+    patient_id = params[:patient_id]
+    request_body['insurance_profile']['responsible_party_relationship_type_id'] = person_relationship_types[responsible_party_relationship]
+
+    request_body['insurance_profile']['responsible_party']['phones'] = request_body['insurance_profile']['responsible_party']['phones'].map do |x|
+      phone_type = x.delete('phone_type')
+      x['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
+      x
+    end
+
+    request_body['insurance_profile']['responsible_party']['addresses'] = request_body['insurance_profile']['responsible_party']['addresses'].map do |x|
+      state = x.delete('state')
+      x['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+      country = x.delete('country')
+      x['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+      x
+    end
+
+    gender = request_body['insurance_profile']['responsible_party'].delete('gender')
+    request_body['insurance_profile']['responsible_party']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
+
+    request_body['insurance_profile']['insurance_policies'] = request_body['insurance_profile']['insurance_policies'].map do |x|
+
+      if x['payer'] && x['payer']['address'] && x['payer']['address']['state']
+        state = x['payer']['address'].delete('state')
+        x['payer']['address']['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+        country = x['payer']['address'].delete('country')
+        x['payer']['address']['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+      end
+
+      insured_person_relationship = x.delete('insured_person_relationship')
+      insurance_policy_type = x.delete('insurance_policy_type')
+      x.rename_key('group_number', 'policy_id') # the UI says "group number", but the DB column is "policy_id"
+
+      gender = x['insured'].delete('gender')
+      x['insured']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
+
+      x['insured_person_relationship_type'] = person_relationship_types[insured_person_relationship]
+      x['insurance_policy_type_id'] = insurance_policy_types[insurance_policy_type]
+      if x['insured']['phones']
+        x['insured']['phones'].each do |y|
+          phone_type = y.delete('phone_type')
+          y['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
+          y
+        end
+      end
+      if x['insured']['addresses']
+        x['insured']['addresses'].each do |y|
+          state = y.delete('state')
+          y['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+          country = y.delete('country')
+          y['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+          y
+        end
+      end
+      x
+    end
+
+    urlinsurance = webservices_uri "patient_id/#{patient_id}/insurance_profiles/create.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+
+    @resp = rescue_service_call 'Patient Insurance' do
+      RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
+    end
+
+    @resp = JSON.parse(@resp.body)
+    status HTTP_OK
+    jbuilder :create_insurance
   end
 
 end
