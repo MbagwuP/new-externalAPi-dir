@@ -916,6 +916,76 @@ class ApiService < Sinatra::Base
     output
   end
 
+  def person_relationship_types
+    return @person_relationship_types if defined?(@person_relationship_types) # caching
+    cache_key = "person-relationship-types"
+
+    begin
+      @person_relationship_types = settings.cache.fetch(cache_key, 54000) do
+        person_relationship_types_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @person_relationship_types = person_relationship_types_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @person_relationship_types
+  end
+
+  def person_relationship_types_from_webservices
+    urlco = webservices_uri "person_relationship_types/list_all.json"
+
+    resp = rescue_service_call 'Person Relationship Types Look Up' do
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
+    end
+
+    resp = JSON.parse resp
+    output = {}
+    resp.each do |co|
+      key = co['person_relationship_type']['name'].underscore.gsub(' ', '_')
+      val = co['person_relationship_type']['id']
+      output[key] = val
+    end
+    output
+  end
+
+  def insurance_policy_types
+    return @insurance_policy_types if defined?(@insurance_policy_types) # caching
+    cache_key = "insurance-policy-types"
+
+    begin
+      @insurance_policy_types = settings.cache.fetch(cache_key, 54000) do
+        insurance_policy_types_from_webservices
+      end
+    rescue Dalli::DalliError
+      LOG.warn("cannot reach cache store")
+      @insurance_policy_types = insurance_policy_types_from_webservices
+    rescue CCAuth::Error::ResponseError => e
+      api_svc_halt e.code, e.message
+    end
+    @insurance_policy_types
+  end
+
+  def insurance_policy_types_from_webservices
+    urlco = webservices_uri "insurance_policy_types/list_all.json"
+
+    resp = rescue_service_call 'Insurance Policy Types Look Up' do
+      request = RestClient::Request.new(url: urlco, method: :get, headers: {api_key: APP_API_KEY})
+      CCAuth::InternalService::Request.sign!(request).execute
+    end
+
+    resp = JSON.parse resp
+    output = {}
+    resp.each do |co|
+      key = co['insurance_policy_type']['name'].underscore.gsub(' ', '_')
+      val = co['insurance_policy_type']['id']
+      output[key] = val
+    end
+    output
+  end
+
   def oauth_request?
     token = request.env['HTTP_AUTHORIZATION']
     token && !token.include?('Basic') && token.length < 40

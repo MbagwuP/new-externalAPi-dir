@@ -78,6 +78,129 @@
           $ref: PatientInsuranceShow
       404:
         description: patient not found for current practice
+  post:
+    summary: Create Patient Insurance
+    description: |
+      Create Patient Insurance
+
+      One Insurance Profile contains multiple Insurance Policies. There can be up to four Policies, prioritized from primary through quaternary.
+
+      For `responsible_party_relationship` and `insured_person_relationship`, the following Patient Relationship Types are supported:
+
+      ```
+      unknown
+      organ_donor
+      cadaver_donor
+      life_partner
+      nephew
+      significant_other
+      dependant_of_a_minor_dependant
+      ward
+      stepchild
+      handicapped_dependent
+      emancipated_minor
+      injured_plaintiff
+      child_where_insured_has_no_financial_responsibility
+      father
+      grandparent
+      self
+      attorney
+      other
+      domestic_partner
+      paternal_grandparent
+      maternal_grandparent
+      aunt_uncle
+      sibling
+      niece
+      foster_child
+      sponsored_dependent
+      child
+      grandchild
+      spouse
+      mother
+      foster_parent
+      employee
+      ```
+
+      For `insurance_policy_type`, the following Insurance Types are available:
+
+      ```
+      choice_epo
+      capitation
+      open_access
+      attorney
+      auto_insurance
+      champus
+      flat_fee_arrangement
+      hmo
+      medicaid
+      medikids
+      medipass_or_psn
+      pos
+      workers_compensation
+      healthy_kids
+      ppo
+      exclusive_provider_organization_(epo)
+      blue_cross_blue_shield
+      medicare_hmo
+      medicare_supplement
+      commercial_insurance
+      other_federal_program
+      federal_employees_program
+      indemnity_insurance
+      medicare_ppo
+      medicaid_hmo
+      medicare_railroad
+      medicare_b
+      medicare_a
+      mutually_defined
+      champ_va
+      medicare_pos
+      medicaid_newborn
+      choice_plus
+      ```
+
+      The `phone_type` field can be filled in with one of the following codes:
+
+      code |description|
+      -----------------|
+      B    | Business |
+      M    | Main |
+      F    | Fax |
+      TF   | TollFree |
+      V    | VOIP |
+      S    | Skype |
+      P    | Pager |
+      C    | Cell |
+      H    | Home |
+      SMS  | SMS |
+      S800 | State 800 |
+      N800 | National 800 |
+      FA   | Fax Attachment Number |
+
+      The `country` field of an Address should be filled in using a <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">three-letter ISO3166 code</a>.
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        description: Insurance Profile with Policies
+        required: true
+        type: string
+        schema:
+          $ref: InsuranceProfile_Request
+    tags:
+      - Patients
+    responses:
+      201:
+        description: details about a patient
+        schema:
+          $ref: InsuranceProfile_Response
+      404:
+        description: patient not found for current practice
 /patients:
   post:
     summary: Create Patient
