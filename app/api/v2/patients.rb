@@ -291,7 +291,7 @@ class ApiService < Sinatra::Base
     end
 
     @resp = JSON.parse(@resp.body)
-    status HTTP_OK
+    status HTTP_CREATED
     jbuilder :create_insurance
   end
 
