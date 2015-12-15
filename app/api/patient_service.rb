@@ -70,6 +70,7 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     parsed["patient"]["id"] = parsed["patient"]["external_id"]
+    parsed['patient'].delete('primary_care_physician_id')
 
     #LOG.debug(parsed)
 
@@ -486,6 +487,7 @@ class ApiService < Sinatra::Base
     pass_in_token = CGI::unescape(params[:authentication])
 
     business_entity = get_business_entity(pass_in_token)
+    request_body['patient'].delete('primary_care_physician_id') if request_body['patient']
 
     urlpatient = ''
     urlpatient << API_SVC_URL
