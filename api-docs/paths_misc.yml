@@ -72,6 +72,10 @@
         in: query
         required: true
         type: false
+      - name: Authorization
+        in: header
+        required: true
+        type: false
     summary: Authorization Details
     description:
       Show information about an authorization grant, such as the Practice ID, OAuth scopes, and the User who allowed it
@@ -131,6 +135,11 @@
         description: test placeholder
 /oauth2/token_info:
   get:
+    parameters:
+      - name: Authorization
+        in: header
+        required: true
+        type: string
     summary: Token Details
     description:
       Show information about a token, such as the time remaining until it expires
