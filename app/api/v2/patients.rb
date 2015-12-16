@@ -193,7 +193,7 @@ class ApiService < Sinatra::Base
 
   get '/v2/patients/:patient_id/balance' do
     patient_id = params[:patient_id]
-    urlbalance = webservices_uri "patient_id/#{patient_id}/accounts_receivables.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+    urlbalance = webservices_uri "patients/#{patient_id}/accounts_receivables.json", token: escaped_oauth_token, business_entity_id: current_business_entity
 
     response = rescue_service_call 'Patient Balance' do
       RestClient.get(urlbalance)
