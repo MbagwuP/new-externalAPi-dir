@@ -837,6 +837,77 @@
           type: array
           items:
             $ref: NatureOfVisit
+/appointment_recalls:
+  get:
+    summary: List Appointment Recalls
+    description: |
+      List Appointment Recalls in a Date Range
+    parameters:
+      - name: start_date
+        in: query
+        description: start date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: end date
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment recalls for a practice by date range
+        schema:
+          type: array
+          items:
+            $ref: AppointmentRecall_Response
+/appointment_recalls/{id}:
+  put:
+    summary: Update Appointment Recall
+    description: |
+      Update an Appointment Recall
+    parameters:
+      - name: id
+        in: path
+        description: id
+        required: true
+        type: string
+        format: double
+      - name: body
+        in: body
+        description: appointment recall update payload
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: AppointmentRecallUpdate_Request
+    tags:
+      - Appointments
+    responses:
+      204:
+        description: list of appointment recalls for a practice by date range
+        schema:
+          type: array
+          items:
+            $ref: AppointmentRecall_Response
+/appointment_recall_types:
+  get:
+    summary: List Appointment Recall Types
+    description: |
+      List Appointment Recall Types for a Practice
+    parameters:
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment recall types for a practice
+        schema:
+          type: array
+          items:
+            $ref: AppointmentRecallType_Response
 /oauth2/authorization:
   get:
     summary: Authorization Details

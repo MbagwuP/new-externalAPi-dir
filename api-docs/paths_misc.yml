@@ -65,6 +65,23 @@
         description: test placeholder
 # AUTH_SERVICE PROXIES
 # /oauth2/authorize?client_id=#{client_id}&response_type=#{response_type}&practice_id=#{practice_id}&redirect_uri=#{redirect_uri_domain}
+/oauth2/authorization:
+  get:
+    parameters:
+      - name: access_token
+        in: query
+        required: true
+        type: false
+    summary: Authorization Details
+    description:
+      Show information about an authorization grant, such as the Practice ID, OAuth scopes, and the User who allowed it
+    tags:
+      - Authorization
+    responses:
+      200:
+        description: info about an authorization
+        schema:
+          $ref: OAuth2Authorization_Response
 /oauth2/access_token:
   get:
     parameters:
