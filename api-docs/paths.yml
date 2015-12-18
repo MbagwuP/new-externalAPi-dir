@@ -1115,6 +1115,77 @@
         #   Link:
         #     description: pagination links
         #     type: string
+
+
+
+/patients/{patient_id}/charges:
+  get:
+    summary: List Patient Charges
+    description: |
+      List Charges for a Patient
+
+      Filtering params are optional. Date filtering fields filter by posting_date.
+      Without date filtering, the past 30 days worth of posted charges for the Patient will be returned.
+      With just a start_date, charges posted 30 days from the start_date will be returned.
+
+      The following types of charges exist:
+
+      ```
+      simple_charge
+      charge
+      ```
+
+      The following transaction_statuses exist:
+
+      ```
+      posted
+      not_posted
+      closed
+      ```
+      #
+      # Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
+    parameters:
+      - name: patient_id
+        in: path
+        description: Patient ID
+        required: true
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      # - name: page
+      #   in: query
+      #   description: page number
+      #   required: false
+      #   type: string
+      #   format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: list of patient charges
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: Transaction_Response
+        # responseParameters:
+        #   method.response.header.Link: integration.response.header.Link
+        # headers:
+        #   Link:
+        #     description: pagination links
+        #     type: string
+
 /oauth2/authorization:
   get:
     summary: Authorization Details
