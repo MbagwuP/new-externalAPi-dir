@@ -32,7 +32,7 @@ class ApiService < Sinatra::Base
     end
 
     patient_id = params[:patient_id]
-    urltransactions = webservices_uri "patient_id/#{patient_id}/transactions.json", {token: escaped_oauth_token, business_entity_id: current_business_entity}.merge(forwarded_params)
+    urltransactions = webservices_uri "patients/#{patient_id}/transactions.json", {token: escaped_oauth_token, business_entity_id: current_business_entity}.merge(forwarded_params)
 
     @resp = rescue_service_call 'Patient Charges Look Up' do
       RestClient.get(urltransactions, :api_key => APP_API_KEY)
