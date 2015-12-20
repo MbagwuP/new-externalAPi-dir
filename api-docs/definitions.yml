@@ -1067,3 +1067,137 @@ AppointmentCancellationReason_Response_appointment_cancellation_reason:
     name: string
     sort_code: integer
     updated_at: string
+Transaction_Response:
+  properties:
+    id: integer
+    amount: string
+    balance: string
+    unapplied_credit: integer
+    posting_date: string
+    transaction_type: string
+    transaction_status: string
+    location_id: integer
+    provider_id: integer
+    units: string
+    description: string
+PatientBalance:
+  properties:
+    balance_type: string
+    unapplied_credit: string
+    unbilled: string
+    current: string
+    greater_than_30: string
+    greater_than_60: string
+    greater_than_90: string
+    greater_than_120: string
+    total: string
+InsuranceProfile_Request:
+  properties:
+    insurance_profile:
+      $ref: InsuranceProfile_Request_insurance_profile
+InsuranceProfile_Request_insurance_profile:
+  properties:
+    responsible_party_relationship: string
+    is_default: boolean
+    responsible_party:
+      $ref: InsuranceProfile_Request_insurance_profile_responsible_party
+    primary_insurance_policy:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy
+    secondary_insurance_policy:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy
+    tertiary_insurance_policy:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy
+    quaternary_insurance_policy:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy
+InsuranceProfile_Request_insurance_profile_insurance_policy:
+  properties:
+    insured_person_relationship: string
+    insurance_policy_type: string
+    member_number: string
+    group_number: string
+    group_name: string
+    effective_date: string
+    payer:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy_payer
+    insured:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy_insured
+InsuranceProfile_Request_insurance_profile_insurance_policy_insured:
+  properties:
+    first_name: string
+    last_name: string
+    date_of_birth: string
+    ssn: string
+    gender: string
+    email: string
+    addresses:
+      type: array
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy_insured_addresses
+    phones:
+      type: array
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy_insured_phones
+InsuranceProfile_Request_insurance_profile_insurance_policy_insured_phones:
+  properties:
+    phone_number: string
+    phone_type: string
+    extension: string
+    is_primary: boolean
+InsuranceProfile_Request_insurance_profile_insurance_policy_insured_addresses:
+  properties:
+    line1: string
+    city: string
+    state: string
+    zip_code: string
+    country: string
+    is_primary: boolean
+InsuranceProfile_Request_insurance_profile_insurance_policy_payer:
+  properties:
+    id: string
+    name: string
+    address:
+      $ref: InsuranceProfile_Request_insurance_profile_insurance_policy_payer_address
+    phone: string
+InsuranceProfile_Request_insurance_profile_insurance_policy_payer_address:
+  properties:
+    line1: string
+    line2: string
+    city: string
+    state: string
+    zip_code: string
+    country: string
+InsuranceProfile_Request_insurance_profile_responsible_party:
+  properties:
+    first_name: string
+    last_name: string
+    date_of_birth: string
+    ssn: string
+    gender: string
+    email: string
+    addresses:
+      type: array
+      $ref: InsuranceProfile_Request_insurance_profile_responsible_party_addresses
+    phones:
+      type: array
+      $ref: InsuranceProfile_Request_insurance_profile_responsible_party_phones
+InsuranceProfile_Request_insurance_profile_responsible_party_phones:
+  properties:
+    phone_number: string
+    phone_type: string
+    extension: string
+    is_primary: boolean
+InsuranceProfile_Request_insurance_profile_responsible_party_addresses:
+  properties:
+    line1: string
+    city: string
+    state: string
+    zip_code: string
+    country: string
+    is_primary: boolean
+InsuranceProfile_Response:
+  properties:
+    insurance_profile:
+      $ref: InsuranceProfile_Response_insurance_profile
+InsuranceProfile_Response_insurance_profile:
+  properties:
+    id: integer
+    is_default: boolean
+    name: string

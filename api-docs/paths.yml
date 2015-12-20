@@ -78,6 +78,129 @@
           $ref: PatientInsuranceShow
       404:
         description: patient not found for current practice
+  post:
+    summary: Create Patient Insurance
+    description: |
+      Create Patient Insurance
+
+      One Insurance Profile contains multiple Insurance Policies. There can be up to four Policies, prioritized from primary through quaternary.
+
+      For `responsible_party_relationship` and `insured_person_relationship`, the following Patient Relationship Types are supported:
+
+      ```
+      unknown
+      organ_donor
+      cadaver_donor
+      life_partner
+      nephew
+      significant_other
+      dependant_of_a_minor_dependant
+      ward
+      stepchild
+      handicapped_dependent
+      emancipated_minor
+      injured_plaintiff
+      child_where_insured_has_no_financial_responsibility
+      father
+      grandparent
+      self
+      attorney
+      other
+      domestic_partner
+      paternal_grandparent
+      maternal_grandparent
+      aunt_uncle
+      sibling
+      niece
+      foster_child
+      sponsored_dependent
+      child
+      grandchild
+      spouse
+      mother
+      foster_parent
+      employee
+      ```
+
+      For `insurance_policy_type`, the following Insurance Types are available:
+
+      ```
+      choice_epo
+      capitation
+      open_access
+      attorney
+      auto_insurance
+      champus
+      flat_fee_arrangement
+      hmo
+      medicaid
+      medikids
+      medipass_or_psn
+      pos
+      workers_compensation
+      healthy_kids
+      ppo
+      exclusive_provider_organization_(epo)
+      blue_cross_blue_shield
+      medicare_hmo
+      medicare_supplement
+      commercial_insurance
+      other_federal_program
+      federal_employees_program
+      indemnity_insurance
+      medicare_ppo
+      medicaid_hmo
+      medicare_railroad
+      medicare_b
+      medicare_a
+      mutually_defined
+      champ_va
+      medicare_pos
+      medicaid_newborn
+      choice_plus
+      ```
+
+      The `phone_type` field can be filled in with one of the following codes:
+
+      code |description|
+      -----------------|
+      B    | Business |
+      M    | Main |
+      F    | Fax |
+      TF   | TollFree |
+      V    | VOIP |
+      S    | Skype |
+      P    | Pager |
+      C    | Cell |
+      H    | Home |
+      SMS  | SMS |
+      S800 | State 800 |
+      N800 | National 800 |
+      FA   | Fax Attachment Number |
+
+      The `country` field of an Address should be filled in using a <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-3">three-letter ISO3166 code</a>.
+    parameters:
+      - name: patient_id
+        in: path
+        description: GUID of the patient
+        required: true
+        type: string
+      - name: body
+        in: body
+        description: Insurance Profile with Policies
+        required: true
+        type: string
+        schema:
+          $ref: InsuranceProfile_Request
+    tags:
+      - Patients
+    responses:
+      201:
+        description: details about a patient
+        schema:
+          $ref: InsuranceProfile_Response
+      404:
+        description: patient not found for current practice
 /patients:
   post:
     summary: Create Patient
@@ -312,44 +435,12 @@
           type: array
           items:
            $ref: AppointmentBlockouts_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
             type: string
-/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}:
-  get:
-    summary: List Appointment Blockouts
-    description: |
-      List Appointment Blockouts for Provider by Date
-    parameters:
-      - name: date
-        in: path
-        description: Appointment Date
-        required: true
-        type: string
-        format: double
-      - name: provider_id
-        in: path
-        description: Provider ID
-        required: true
-        type: string
-        format: double
-      - name: include_appointments
-        in: query
-        description: Include Appointments for specified Date and Provider along with the Blockouts
-        required: false
-        type: boolean
-        format: double
-    tags:
-      - Appointment Blockouts
-    responses:
-      200:
-        description: list of appointment vlockouts
-        schema:
-          $ref: AppointmentBlockouts_Response
-          #type: array
-          #items:
-          #  $ref: Patient
 /appointment_templates:
   get:
     summary: List Appointment Templates
@@ -402,6 +493,8 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
@@ -458,6 +551,8 @@
           type: array
           items:
             $ref: AppointmentTemplates_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
         headers:
           Link:
             description: pagination links
@@ -805,6 +900,27 @@
           type: array
           items:
             $ref: NatureOfVisit
+/patients/{patient_id}/balance:
+  get:
+    summary: Show Balance for Patient
+    description: |
+      Show Balance information for a Patient
+    parameters:
+      - name: patient_id
+        in: path
+        description: ID of the Patient
+        required: true
+        type: string
+        format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: balances by type
+        schema:
+          type: array
+          items:
+            $ref: PatientBalance
 /locations:
   get:
     summary: List Locations
@@ -908,6 +1024,168 @@
           type: array
           items:
             $ref: AppointmentRecallType_Response
+/patients/{patient_id}/transactions:
+  get:
+    summary: List Patient Transactions
+    description: |
+      List Transactions for a Patient
+
+      Filtering params are optional. Date filtering fields filter by posting_date.
+      Without date filtering, the past 30 days worth of posted transactions for the Patient will be returned.
+      With just a start_date, transactions posted 30 days from the start_date will be returned.
+
+      The following transaction_types exist:
+
+      ```
+      simple_charge_reversal
+      charge_reversal
+      returned_insurance_check_reversal
+      returned_patient_check_reversal
+      simple_charge
+      charge
+      returned_insurance_check
+      returned_patient_check
+      insurance_adjustment
+      insurance_adjustment_refund
+      insurance_adjustment_refund_reversal
+      insurance_adjustment_reversal
+      insurance_payment
+      insurance_payment_refund
+      insurance_payment_refund_reversal
+      insurance_payment_reversal
+      patient_adjustment
+      patient_adjustment_reversal
+      patient_payment
+      patient_payment_refund
+      patient_payment_refund_reversal
+      patient_payment_reversal
+      withhold
+      withhold_refund
+      withhold_refund_reversal
+      withhold_reversal
+      ```
+
+      The following transaction_statuses exist:
+
+      ```
+      posted
+      not_posted
+      closed
+      ```
+      #
+      # Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
+    parameters:
+      - name: patient_id
+        in: path
+        description: Patient ID
+        required: true
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      # - name: page
+      #   in: query
+      #   description: page number
+      #   required: false
+      #   type: string
+      #   format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: list of patient transactions
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: Transaction_Response
+        # responseParameters:
+        #   method.response.header.Link: integration.response.header.Link
+        # headers:
+        #   Link:
+        #     description: pagination links
+        #     type: string
+
+
+
+/patients/{patient_id}/charges:
+  get:
+    summary: List Patient Charges
+    description: |
+      List Charges for a Patient
+
+      Filtering params are optional. Date filtering fields filter by posting_date.
+      Without date filtering, the past 30 days worth of posted charges for the Patient will be returned.
+      With just a start_date, charges posted 30 days from the start_date will be returned.
+
+      The following types of charges exist:
+
+      ```
+      simple_charge
+      charge
+      ```
+
+      The following transaction_statuses exist:
+
+      ```
+      posted
+      not_posted
+      closed
+      ```
+      #
+      # Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
+    parameters:
+      - name: patient_id
+        in: path
+        description: Patient ID
+        required: true
+        type: string
+        format: double
+      - name: start_date
+        in: query
+        description: Start Date
+        required: false
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      # - name: page
+      #   in: query
+      #   description: page number
+      #   required: false
+      #   type: string
+      #   format: double
+    tags:
+      - Patients
+    responses:
+      200:
+        description: list of patient charges
+        schema:
+          #$ref: AppointmentStatus
+          type: array
+          items:
+            $ref: Transaction_Response
+        # responseParameters:
+        #   method.response.header.Link: integration.response.header.Link
+        # headers:
+        #   Link:
+        #     description: pagination links
+        #     type: string
+
 /oauth2/authorization:
   get:
     summary: Authorization Details

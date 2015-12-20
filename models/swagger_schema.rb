@@ -191,9 +191,11 @@ class SwaggerSchema
           'type'               => 'mock',
           'uri'                => @environment_url + path,
           'httpMethod'         => 'OPTIONS',
+          'requestTemplates' => {"application/json" => '{"statusCode": 200}'},
           'responses'          => {'200' => {
             'statusCode' => '200',
-            'responseParameters' => cors_response_parameters.merge((paths[path]['responses']['200']['responseParameters'] rescue nil) || {}) # this stuff isn't necessary for Link, it's just for OPTIONS
+            'responseParameters' => cors_response_parameters.merge((paths[path]['responses']['200']['responseParameters'] rescue nil) || {}), # this stuff isn't necessary for Link, it's just for OPTIONS,
+            # 'responseTemplates' => {"application/json" => '{"statusCode": 200}'} # this wasn't necessary, but refer to this format in case we ever need responseTemplates
           }}
           # 'requestParameters'  => request_parameters_section(processed_paths[path][method]['parameters'], basePath)
           # 'responseParameters' => response_parameters_section(processed_paths[path][method]['parameters'], response_codes)
