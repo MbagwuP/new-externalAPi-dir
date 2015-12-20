@@ -1112,3 +1112,22 @@
     responses:
       200:
         description: test placeholder
+
+/encounter_notes/{encounter_id}/merge_transcriptions:
+  put:
+    parameters:
+      - name: body
+        in: body
+        # description: encounter notes payload
+        required: true
+        type: string
+        format: double
+      - name: encounter_id
+        in: path
+        # description: encounter notes payload
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: test placeholder
