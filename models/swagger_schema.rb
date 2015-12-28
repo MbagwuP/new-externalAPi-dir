@@ -36,7 +36,7 @@ class SwaggerSchema
     specify_host:                 false,
     corsify_paths:                true
   }
-  AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 301, 400, 401, 403, 404, 422, 500, 502, 503]
+  AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 301, 400, 401, 403, 404, 409, 422, 423, 500, 502, 503, 513]
   AMAZON_CORS_ALLOWED_METHODS   = ['GET', 'POST', 'PUT', 'DELETE']
 
   def initialize environment_url, docs_yml_path, options, cors_url=nil
