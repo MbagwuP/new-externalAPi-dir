@@ -1,3 +1,16 @@
+# SwaggerSchema
+# This class programatically loads up all the YML files, makes appropriate modifications depending on circumstances that you define, 
+# and then generates a complete Swagger schema (swagger.json file)
+# For example, every endpoint defined in paths.yml will automatically have the Authorization header included, since they are all v2. 
+# Every endpoint defined in paths_v1.yml will automatically have the `authentication` query string parameter included, since they are all v1.
+
+# The generated Swagger schema file is then used for:
+# * swagger docs in the developer portal
+# * import into AWS API Gateway using AWS' swagger import tool: https://github.com/awslabs/aws-apigateway-importer
+
+# See Confluence for more documentation on this class:
+# http://confluence.carecloud.com/pages/viewpage.action?pageId=9797725
+
 class SwaggerSchema
 
   PUBLIC_DOCS_OPTIONS   = {
@@ -191,7 +204,7 @@ class SwaggerSchema
           'type'               => 'mock',
           'uri'                => @environment_url + path,
           'httpMethod'         => 'OPTIONS',
-          'requestTemplates' => {"application/json" => '{"statusCode": 200}'},
+          'requestTemplates' => {"application/json" => "{'statusCode': 200}"},
           'responses'          => {'200' => {
             'statusCode' => '200',
             'responseParameters' => cors_response_parameters.merge((paths[path]['responses']['200']['responseParameters'] rescue nil) || {}), # this stuff isn't necessary for Link, it's just for OPTIONS,
