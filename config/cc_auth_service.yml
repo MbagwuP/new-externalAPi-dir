@@ -11,4 +11,4 @@ production:
   url: http://authdev.carecloud.local
 
 test:
-  url: http://authdev.carecloud.local
+  url: http://auth.development.carecloud.local
