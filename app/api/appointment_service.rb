@@ -92,8 +92,10 @@ class ApiService < Sinatra::Base
     urlapptcrt << CGI::escape(pass_in_token)
 
     begin
+      p  urlapptcrt
       response = RestClient.post(urlapptcrt, request_body.to_json, :content_type => :json)
     rescue => e
+      #binding.pry 
       begin
         exception = error_handler_filter(e.response)
         errmsg = "Appointment Failed - #{exception}"

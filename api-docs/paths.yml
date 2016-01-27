@@ -971,6 +971,12 @@
         required: false
         type: string
         format: double
+      - name: recall_status
+        in: query
+        description: recall status
+        required: false
+        type: string
+        format: string
     tags:
       - Appointments
     responses:
