@@ -1,12 +1,15 @@
 ENV['RACK_ENV'] = 'test'
 
-require 'test/unit'
 require 'rack/test'
 require 'sinatra'
 
 require 'bundler'
 Bundler.require(:default, ENV['RACK_ENV'].to_sym)
 require_all 'app'
+
+INTERFACE_USER = 'interface2@interface.com'
+INTERFACE_PASS = 'Welcome1['
+
 
 require File.join(File.dirname(__FILE__), '..', 'app/main.rb')
 
