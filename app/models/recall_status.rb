@@ -20,8 +20,8 @@ class RecallStatus
   end
 
   def self.fetch
-    url = ApiService::API_SVC_URL + "recalls/list_all_recall_statuses.json"
-    request = RestClient::Request.new(url: url, method: :get, headers: {api_key: APP_API_KEY})
+    url = ApiService::API_SVC_URL + "recall_statuses/list_all.json"
+    request = RestClient::Request.new(url: url, method: :get, headers: {api_key: ApiService::APP_API_KEY})
     resp = CCAuth::InternalService::Request.sign!(request).execute
     Oj.load(resp).map {|js| 
       RecallStatus.new(js['recall_status']['id'],js['recall_status']['code'],js['recall_status']['name']) 
