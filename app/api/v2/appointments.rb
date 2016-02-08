@@ -276,8 +276,9 @@ class ApiService < Sinatra::Base
 
     forwarded_params.rename_key(:start_date, :from) if forwarded_params[:start_date]
     forwarded_params.rename_key(:end_date, :to) if forwarded_params[:end_date]
+    forwarded_params['recall_status_id'] = RecallStatus.parse_to_webservices(params['recall_status'])  if params['recall_status']
 
-    urlrecalls = webservices_uri "businesses/#{current_business_entity}/recalls/list_by_business_entity_and_date_range.json", {token: escaped_oauth_token}.merge(forwarded_params)
+    urlrecalls = webservices_uri "businesses/#{current_business_entity}/recalls.json", {token: escaped_oauth_token}.merge(forwarded_params)
 
     @resp = rescue_service_call 'Appointment Recall' do
       RestClient.get(urlrecalls, :api_key => APP_API_KEY)

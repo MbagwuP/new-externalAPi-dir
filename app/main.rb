@@ -13,7 +13,6 @@ require 'logger'
 require 'color'
 require 'yaml'
 require 'dalli'
-require 'redcarpet/compat'
 require 'rest-client'
 require 'mongo_mapper'
 require 'require_all'
@@ -146,8 +145,8 @@ class ApiService < Sinatra::Base
       #health check
       HealthCheck.config, HealthCheck.probes_path = hc_config, File.dirname(__FILE__) + "/../probes"
       HealthCheck.start_health_monitor
-      CCAuth.configure { |config| config.endpoint = settings.cc_auth_config['url'] }
     end
+    CCAuth.configure { |config| config.endpoint = settings.cc_auth_config['url'] }
 
     LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
     LOG.debug(config_path)

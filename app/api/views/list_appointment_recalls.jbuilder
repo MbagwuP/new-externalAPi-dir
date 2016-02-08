@@ -12,10 +12,8 @@ json.array! @resp do |rec|
     end
 
     json.recall_status do
-      json.id rec['recall']['recall_status']['id']
+      json.code RecallStatus.parse_name_to_code(rec['recall']['recall_status']['name'])
       json.name rec['recall']['recall_status']['name']
-      json.code rec['recall']['recall_status']['code']
-      json.description rec['recall']['recall_status']['description']
     end
 
     json.patient do
