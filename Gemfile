@@ -1,12 +1,11 @@
-source 'http://rubygems.org'
 source "http://gem.carecloud.com"
+source 'http://rubygems.org'
 
 gem 'sinatra', :require => 'sinatra/base'
 gem 'require_all'
 gem 'color'
 gem 'chronic'
 gem 'tzinfo'
-gem 'redcarpet'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 gem 'oj', '~> 2.10.0'
 
@@ -30,7 +29,7 @@ gem 'mongo_mapper'
 gem 'bson_ext'
 
 # health check
-gem 'health_check', '0.3.3'
+gem 'health_check', '0.3.3'#, :source => 'http://gem.carecloud.com/'
 
 gem 'c_cloud_dms_client', path: './vendor/gems'
 gem 'c_cloud_http_client', path: './vendor/gems'
@@ -39,13 +38,14 @@ gem 'cc_auth', '~> 0.8.0'
 
 gem 'rake'
 
-group :development, :localhost do
+group :development, :localhost, :test do
   gem 'rack-test'
   gem 'tux'
   gem 'pry'
   gem 'shotgun'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
+  gem 'awesome_print'
 end
 
 group :test do

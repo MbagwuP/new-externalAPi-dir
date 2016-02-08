@@ -590,10 +590,8 @@ AppointmentRecall_Response_recall_patient:
     preferred_communication_method: string
 AppointmentRecall_Response_recall_recall_status:
   properties:
-    id: integer
     name: string
     code: string
-    description: string
 AppointmentRecall_Response_recall_recall_type:
   properties:
     id: integer
