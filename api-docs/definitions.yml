@@ -939,9 +939,13 @@ PatientSearch_Request:
       $ref: PatientSearch_Request_fields
 PatientSearch_Request_fields:
   properties:
-    first_name: string
-    last_name: string
-    dob: string
+    first_name: 
+      type: string
+    last_name: 
+      type: string
+    dob: 
+      type: string
+      description: MMDDYYYY
 Activity:
   properties:
     uuid:
