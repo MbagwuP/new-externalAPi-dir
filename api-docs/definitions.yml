@@ -610,7 +610,11 @@ AppointmentRecallType_Response_recall_type:
     updated_at: string
 AppointmentRecallUpdate_Request:
   properties:
-    recall_status: string
+    recall_status: 
+      type: string
+      description: "'pending', 'assigned', 'completed', 'attempt_failed'"
+    comments:
+      type: string
 Product:
   properties:
     product_id:
