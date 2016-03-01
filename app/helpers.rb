@@ -700,42 +700,6 @@ class ApiService < Sinatra::Base
   end
 
 
-  def recall_statuses
-    return @recall_statuses if defined?(@recall_statuses) # caching
-    cache_key = "recall-statuses"
-
-    begin
-      @recall_statuses = settings.cache.fetch(cache_key, 54000) do
-        recall_statuses_from_webservices
-      end
-    rescue Dalli::DalliError
-      LOG.warn("cannot reach cache store")
-      @recall_statuses = recall_statuses_from_webservices
-    rescue CCAuth::Error::ResponseError => e
-      api_svc_halt e.code, e.message
-    end
-    @recall_statuses
-  end
-
-  def recall_statuses_from_webservices
-    urlcm = webservices_uri "recall_statuses/list_all.json"
-
-    resp = rescue_service_call 'Recall Status Look Up' do
-      request = RestClient::Request.new(url: urlcm, method: :get, headers: {api_key: APP_API_KEY})
-      CCAuth::InternalService::Request.sign!(request).execute
-    end
-
-    resp = JSON.parse resp
-    output = {}
-    resp.each do |rs|
-      key = rs['recall_status']['name'].underscore.gsub(' ', '_')
-      val = rs['recall_status']['id']
-      output[key] = val #if filter_here?
-    end
-    output
-  end
-
-
   def communication_methods
     return @communication_methods if defined?(@communication_methods) # caching
     cache_key = "communication-methods"

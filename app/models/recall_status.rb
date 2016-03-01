@@ -1,7 +1,6 @@
 class RecallStatus
   attr_reader :id,:code, :name
 
-
   def initialize(id,code,name=nil)
     @id = id
     @code = code
@@ -12,7 +11,6 @@ class RecallStatus
     webservices_map[name]
   end
 
-  private
   def self.webservices_map
     @webservices_map ||= fetch.each_with_object({}) do |recall_status,h|
       h[parse_name_to_code(recall_status.name)] = recall_status.id
@@ -32,8 +30,5 @@ class RecallStatus
     name.strip.underscore.gsub(' ', '_')
   end
 
-  def webservices_map
-    self.class.webservices_map
-  end
   
 end
