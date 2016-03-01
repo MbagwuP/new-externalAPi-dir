@@ -684,7 +684,7 @@
         type: string
         format: double
     tags:
-      - Appointments
+      - Appointment Confirmations
     responses:
       200:
         description: appointment
@@ -741,7 +741,7 @@
         schema:
           $ref: CreateAppointmentConfirmation_Request
     tags:
-      - Appointments
+      - Appointment Confirmations
     responses:
       201:
         description: appointment confirmation record
@@ -891,7 +891,7 @@
         type: string
         format: double
     tags:
-      - Visit Reasons
+      - Appointment Visit Reasons
     responses:
       200:
         description: filtered list of visit reasons for a practice
@@ -944,7 +944,7 @@
       List Visit Reasons for a Practice
     parameters:
     tags:
-      - Visit Reasons
+      - Appointment Visit Reasons
     responses:
       200:
         description: list of visit reasons for a practice
@@ -978,7 +978,7 @@
         type: string
         format: string
     tags:
-      - Appointments
+      - Appointment Recalls
     responses:
       200:
         description: list of appointment recalls for a practice by date range
@@ -1007,7 +1007,7 @@
         schema:
           $ref: AppointmentRecallUpdate_Request
     tags:
-      - Appointments
+      - Appointment Recalls
     responses:
       204:
         description: list of appointment recalls for a practice by date range
@@ -1022,7 +1022,7 @@
       List Appointment Recall Types for a Practice
     parameters:
     tags:
-      - Appointments
+      - Appointment Recalls
     responses:
       200:
         description: list of appointment recall types for a practice
@@ -1198,7 +1198,7 @@
     description:
       Show information about an authorization grant, such as the Practice ID, OAuth scopes, and the User who allowed it
     tags:
-      - Authorization
+      - OAuth
     responses:
       200:
         description: info about an authorization
@@ -1210,7 +1210,7 @@
     description:
       Show information about a token, such as the time remaining until it expires
     tags:
-      - Authorization
+      - OAuth
     responses:
       200:
         description: info about a token
