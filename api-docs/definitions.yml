@@ -600,7 +600,7 @@ AppointmentRecall_Response_recall_recall_type:
 AppointmentRecallType_Response:
   properties:
     recall_type:
-      $ref: AppointmentRecall_Response_recall_type
+      $ref: AppointmentRecallType_Response_recall_type
 AppointmentRecallType_Response_recall_type:
   properties:
     id: integer
@@ -610,7 +610,11 @@ AppointmentRecallType_Response_recall_type:
     updated_at: string
 AppointmentRecallUpdate_Request:
   properties:
-    recall_status: string
+    recall_status: 
+      type: string
+      description: "'pending', 'assigned', 'completed', 'attempt_failed'"
+    comments:
+      type: string
 Product:
   properties:
     product_id:
@@ -939,9 +943,13 @@ PatientSearch_Request:
       $ref: PatientSearch_Request_fields
 PatientSearch_Request_fields:
   properties:
-    first_name: string
-    last_name: string
-    dob: string
+    first_name: 
+      type: string
+    last_name: 
+      type: string
+    dob: 
+      type: string
+      description: MMDDYYYY
 Activity:
   properties:
     uuid:
