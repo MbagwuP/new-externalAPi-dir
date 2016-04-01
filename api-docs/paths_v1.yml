@@ -802,11 +802,23 @@
         description: test placeholder
 /patients/othermeans/{patientid}:
   get:
+    parameters:
+    - name: patientid
+      in: path
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
 /patients/provider/{providerid}:
   get:
+    parameters:
+    - name: providerid
+      in: path
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
