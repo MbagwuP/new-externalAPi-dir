@@ -802,6 +802,12 @@
         description: test placeholder
 /patients/othermeans/{patientid}:
   get:
+    parameters:
+    - name: patientid
+      in: query
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
