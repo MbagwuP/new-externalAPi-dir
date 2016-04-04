@@ -813,6 +813,12 @@
         description: test placeholder
 /patients/provider/{providerid}:
   get:
+    parameters:
+    - name: providerid
+      in: query
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
