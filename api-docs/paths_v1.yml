@@ -804,7 +804,7 @@
   get:
     parameters:
     - name: patientid
-      in: query
+      in: path
       required: true
       type: string
       format: double
@@ -815,7 +815,7 @@
   get:
     parameters:
     - name: providerid
-      in: query
+      in: path
       required: true
       type: string
       format: double
