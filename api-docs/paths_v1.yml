@@ -408,6 +408,12 @@
         description: test placeholder
 /charges/{patient_id}:
   get:
+    parameters:
+    - name: patient_id
+      in: path
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
@@ -587,6 +593,12 @@
         description: test placeholder
 /document/listbypatient/{patient_id}:
   get:
+    parameters:
+    - name: patient_id
+      in: path
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
@@ -795,8 +807,14 @@
     responses:
       200:
         description: test placeholder
-/productiontest/patients/{patientid}:
+/productiontest/patients/{patient_id}:
   get:
+    parameters:
+    - name: patient_id
+      in: path
+      required: true
+      type: string
+      format: double
     responses:
       200:
         description: test placeholder
