@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "External API development 2016-04-04 11:53",
+    "title": "External API development 2016-04-04 15:19",
     "description": "External API development",
     "version": "2.0.0"
   },
@@ -33039,7 +33039,7 @@
         "parameters": [
           {
             "name": "patientid",
-            "in": "query",
+            "in": "path",
             "required": true,
             "type": "string",
             "format": "double"
@@ -33509,7 +33509,7 @@
             }
           },
           "requestParameters": {
-            "integration.request.querystring.patientid": "method.request.querystring.patientid",
+            "integration.request.path.patientid": "method.request.path.patientid",
             "integration.request.querystring.authentication": "method.request.querystring.authentication"
           }
         }
@@ -33555,7 +33555,7 @@
         "parameters": [
           {
             "name": "providerid",
-            "in": "query",
+            "in": "path",
             "required": true,
             "type": "string",
             "format": "double"
@@ -34025,7 +34025,7 @@
             }
           },
           "requestParameters": {
-            "integration.request.querystring.providerid": "method.request.querystring.providerid",
+            "integration.request.path.providerid": "method.request.path.providerid",
             "integration.request.querystring.authentication": "method.request.querystring.authentication"
           }
         }
