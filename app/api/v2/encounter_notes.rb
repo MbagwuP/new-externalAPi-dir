@@ -2,7 +2,6 @@ class ApiService < Sinatra::Base
 
   put '/v2/encounter_notes/:encounter_id/merge_transcriptions' do
 
-    
     begin
       encounter_id = params[:encounter_id]
       request_body = get_request_JSON
