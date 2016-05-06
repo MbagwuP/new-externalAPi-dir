@@ -1216,3 +1216,17 @@
         description: info about a token
         schema:
           $ref: OAuth2TokenInfo_Response
+/encounter_notes/{encounter_id}/merge_transcriptions:
+  put:
+    summary: Merge Clinical Transcriptions
+    description: Update encounter note with clinical transcription
+    parameters:
+      - name: encounter_id
+        in: path
+        description: encounter_id
+        required: true
+        type: string
+        format: double
+    responses:
+      200:
+        description: Successfully updated encounter note

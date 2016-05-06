@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "External API development 2016-04-04 17:45",
+    "title": "External API development 2016-05-06 15:56",
     "description": "External API development",
     "version": "2.0.0"
   },
@@ -61132,6 +61132,525 @@
         "x-amazon-apigateway-integration": {
           "type": "mock",
           "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/confirmations",
+          "httpMethod": "OPTIONS",
+          "requestTemplates": {
+            "application/json": "{'statusCode': 200}"
+          },
+          "responses": {
+            "200": {
+              "statusCode": "200",
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v2/encounter_notes/{encounter_id}/merge_transcriptions": {
+      "put": {
+        "summary": "Merge Clinical Transcriptions",
+        "description": "Update encounter note with clinical transcription",
+        "parameters": [
+          {
+            "name": "encounter_id",
+            "in": "path",
+            "description": "encounter_id",
+            "required": true,
+            "type": "string",
+            "format": "double"
+          },
+          {
+            "name": "Authorization",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated encounter note",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "301": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "400": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "401": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "403": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "409": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "422": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "423": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "502": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "503": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          },
+          "513": {
+            "description": "filled in automatically for passthrough",
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "http",
+          "uri": "https://external-api-elb-dev.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
+          "httpMethod": "PUT",
+          "responses": {
+            "200": {
+              "statusCode": "200",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "201": {
+              "statusCode": "201",
+              "headers": {
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "204": {
+              "statusCode": "204",
+              "headers": {
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "301": {
+              "statusCode": "301",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "400": {
+              "statusCode": "400",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "401": {
+              "statusCode": "401",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "403": {
+              "statusCode": "403",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "404": {
+              "statusCode": "404",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "409": {
+              "statusCode": "409",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "422": {
+              "statusCode": "422",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "423": {
+              "statusCode": "423",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "500": {
+              "statusCode": "500",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "502": {
+              "statusCode": "502",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "503": {
+              "statusCode": "503",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            },
+            "513": {
+              "statusCode": "513",
+              "headers": {
+                "Access-Control-Allow-Headers": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Methods": {
+                  "type": "string"
+                },
+                "Access-Control-Allow-Origin": {
+                  "type": "string"
+                }
+              },
+              "responseParameters": {
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
+                "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
+                "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
+              }
+            }
+          },
+          "requestParameters": {
+            "integration.request.header.Authorization": "method.request.header.Authorization",
+            "integration.request.path.encounter_id": "method.request.path.encounter_id"
+          }
+        }
+      },
+      "options": {
+        "responses": {
+          "200": {
+            "headers": {
+              "Access-Control-Allow-Headers": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Methods": {
+                "type": "string"
+              },
+              "Access-Control-Allow-Origin": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "x-amazon-apigateway-integration": {
+          "type": "mock",
+          "uri": "https://external-api-elb-dev.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
