@@ -299,6 +299,19 @@ class ApiService < Sinatra::Base
     jbuilder :list_appointment_recall_types
   end
 
+  get '/v2/appointment_recalls/:id' do
+    urlrecall = webservices_uri "businesses/#{current_business_entity}/recalls/#{params[:id]}.json", token: escaped_oauth_token
+
+    @resp = rescue_service_call 'Appointment Recall' do
+      RestClient.get(urlrecall, :api_key => APP_API_KEY)
+    end
+
+    @resp = Oj.load(@resp)
+    @resp['recall']['business_entity_id'] = current_business_entity
+    status HTTP_OK
+    jbuilder :show_appointment_recall
+  end
+
   put '/v2/appointment_recalls/:id' do
     urlrecall = webservices_uri "businesses/#{current_business_entity}/recalls/#{params[:id]}/update.json", token: escaped_oauth_token
 
