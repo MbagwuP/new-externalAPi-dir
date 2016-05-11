@@ -97,12 +97,6 @@ class ApiService < Sinatra::Base
     end
 
     filtered = JSON.parse(resp)['appointment']
-    filtered.rename_key 'external_id', 'id'
-    filtered.rename_key 'nature_of_visit_id', 'visit_reason_id'
-    filtered.delete('created_by')
-    filtered.delete('updated_by')
-    filtered.rename_key('reason_for_visit', 'chief_complaint')
-    filtered['business_entity_id'] = current_business_entity
 
     if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
       # build new confirmation_method hash, and replace the old one
@@ -114,8 +108,8 @@ class ApiService < Sinatra::Base
     end
     filtered.delete('confirmation_method')
 
-    body({appointment: filtered}.to_json)
-    status HTTP_OK
+    @resp = {'appointment' => filtered}
+    jbuilder :show_appointment
   end
 
 
@@ -305,6 +299,19 @@ class ApiService < Sinatra::Base
     jbuilder :list_appointment_recall_types
   end
 
+  get '/v2/appointment_recalls/:id' do
+    urlrecall = webservices_uri "businesses/#{current_business_entity}/recalls/#{params[:id]}.json", token: escaped_oauth_token
+
+    @resp = rescue_service_call 'Appointment Recall' do
+      RestClient.get(urlrecall, :api_key => APP_API_KEY)
+    end
+
+    @resp = Oj.load(@resp)
+    @resp['recall']['business_entity_id'] = current_business_entity
+    status HTTP_OK
+    jbuilder :show_appointment_recall
+  end
+
   put '/v2/appointment_recalls/:id' do
     urlrecall = webservices_uri "businesses/#{current_business_entity}/recalls/#{params[:id]}/update.json", token: escaped_oauth_token
 
@@ -317,6 +324,17 @@ class ApiService < Sinatra::Base
 
     status HTTP_NO_CONTENT
     nil
+  end
+
+  get '/v2/waitlist' do
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", token: escaped_oauth_token
+
+    @resp = rescue_service_call 'Waitlist' do
+      RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
+    end
+
+    @resp = Oj.load(@resp)
+    status HTTP_OK
   end
 
 end
