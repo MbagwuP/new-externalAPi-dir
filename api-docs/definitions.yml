@@ -773,36 +773,44 @@ ShowAppointment_Response:
       $ref: ShowAppointment_Response_appointment
 ShowAppointment_Response_appointment:
   properties:
-    id: string
-    start_time: string
-    end_time: string
-    location_id: integer
-    appointment_status_id: integer
-    is_confirmed: boolean
-    appointment_cancellation_reason_id: string
-    cancellation_comments: string
-    admit_diagnosis_id: string
-    note_set_id: integer
-    document_set_id: integer
-    resource_id: integer
-    confirmation_details: string
-    cancellation_details: string
-    business_entity_id: string
-    contrast: string
-    laterality: string
-    recurrence_id: string
-    created_at: string
-    updated_at: string
-    arrived_at: string
-    recurrence_index: string
-    task_id: string
-    departed_at: string
-    exam_room_id: string
-    patient_contacted: string
-    is_force_overbook: boolean
-    visit_reason_id: integer
-    preferred_confirmation_method: string
-    chief_complaint: string
+      id: string
+      appointment_status:
+        $ref: ListAppointments_Response_appointment_appointment_status
+      patient:
+        $ref: ListAppointments_Response_appointment_patient
+      location:
+        $ref: ListAppointments_Response_appointment_location
+      cancellation_details:
+        $ref: ListAppointments_Response_appointment_cancellation_details
+      chief_complaint: string
+      appointment_cancellation_reason_id: string
+      arrived_at: string
+      business_entity_id: integer
+      comments: string
+      confirmation_details: string
+      departed_at: string
+      exam_room_id: string
+      is_confirmed: string
+      is_force_overbook: boolean
+      patient_contacted: string
+      recurrence_id: string
+      recurrence_index: string
+      referring_physician_npi: string
+      visit_reason_id: integer
+      resource_id: integer
+      provider_id: string
+      start_time: string
+      end_time: string
+      created_at: string
+      updated_at: string
+      admit_diagnosis_id: string
+      note_set_id: string
+      document_set_id: string
+      contrast: string
+      laterality: string
+      created_by_application: string
+      patient_instructions: string
+      preferred_confirmation_method: string
 ListAppointments_Response:
   properties:
     appointment:
@@ -993,7 +1001,8 @@ OAuth2Authorization_Response:
     type: string
     expires_in: integer
     scopes: array
-    business_entity_id: string
+    business_entity:
+      $ref: OAuth2Authorization_Response_business_entity
     application:
       $ref: OAuth2Authorization_Response_application
     user:
@@ -1003,6 +1012,10 @@ OAuth2Authorization_Response_user:
     id: string
     first_name: string
     last_name: string
+OAuth2Authorization_Response_business_entity:
+  properties:
+    id: string
+    name: string
 OAuth2Authorization_Response_application:
   properties:
     id: string
