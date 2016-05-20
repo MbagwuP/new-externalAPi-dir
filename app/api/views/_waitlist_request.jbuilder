@@ -5,7 +5,7 @@ json.priority waitlist_request['priority']
 json.created_at waitlist_request['created_at']
 json.updated_at waitlist_request['updated_at']
 json.appointment_request do
-  json.nature_of_visit_id waitlist_request['appointment_request']['nature_of_visit_id']
+  json.visit_reason_id waitlist_request['appointment_request']['nature_of_visit_id']
   json.show_alert waitlist_request['appointment_request']['show_alert']
 
   json.calendars(waitlist_request['appointment_request']['calendars'])  do |calendar|
