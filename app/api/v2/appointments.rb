@@ -351,14 +351,49 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/waitlist' do
-    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", token: escaped_oauth_token
+
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "Missing query parameters"}' unless params[:appointment_id]
+
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true}
 
     @resp = rescue_service_call 'Waitlist' do
       RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
     end
 
     @resp = Oj.load(@resp)
+    @resp.each { |waitlist_request| waitlist_request['business_entity_id'] = current_business_entity }
+
     status HTTP_OK
+    jbuilder :list_waitlist_requests
+  end
+
+  post '/v2/waitlist/book' do
+    request = get_request_JSON
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "Missing query parameters"}' unless request['appointment_id']
+
+    payload = {appointment_id: request['appointment_id'], waitlist_request_id: request['waitlist_request_id']}
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests/book.json", token: escaped_oauth_token
+
+    begin
+      @resp = rescue_service_call 'Book from waitlist' do
+        RestClient.post(urlwaitlist_requests, payload,  :api_key => APP_API_KEY)
+      end
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Booking Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    @appt = JSON.parse(@resp)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    status HTTP_OK
+    jbuilder :show_appointment
   end
 
 end
