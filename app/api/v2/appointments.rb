@@ -356,8 +356,18 @@ class ApiService < Sinatra::Base
 
     urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true}
 
-    @resp = rescue_service_call 'Waitlist' do
-      RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
+    begin
+      @resp = rescue_service_call 'Waitlist' do
+        RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
+      end
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Waitlist Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
     @resp = Oj.load(@resp)

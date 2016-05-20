@@ -1015,6 +1015,24 @@
           type: array
           items:
             $ref: AppointmentRecall_Response
+  get:
+      summary: Get Appointment Recall by ID
+      description: |
+        Get an Appointment Recall
+      parameters:
+        - name: id
+          in: path
+          description: id
+          required: true
+          type: string
+          format: double
+      tags:
+        - Appointment Recalls
+      responses:
+        200:
+          description: show appointment recall
+          schema:
+            $ref: AppointmentRecall_Response
 /appointment_recall_types:
   get:
     summary: List Appointment Recall Types
@@ -1230,3 +1248,39 @@
     responses:
       200:
         description: Successfully updated encounter note
+/waitlist
+  get:
+    summary: Read Waitlist
+    description: Show all waitlist requests for a cancelled appointment's time, location, and resource
+    parameters:
+      - name: appointment_id
+        in: query
+        description: cancelled appointment's id
+        required: true
+        type: string
+        format: double
+    tags:
+      - Waitlist
+    responses:
+      200:
+        description: Retrieved waitlist successfully
+      423:
+        description: Appointment slot has a hold placed, waitlist is locked
+/waitlist/book:
+  post:
+    summary: Book an appointment from the waitlist
+    description: Schedule an appointment from the waitlist on a cancelled appointment's slot
+    parameters:
+      - name: body
+        in: body
+        description: cancelled appointment ID and waitlist request ID
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: WaitlistBookPayload
+    tags:
+      - Waitlist
+    responses:
+      200:
+        description: Appointment successfully booked
