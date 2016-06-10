@@ -1248,7 +1248,7 @@
     responses:
       200:
         description: Successfully updated encounter note
-/waitlist
+/waitlist:
   get:
     summary: Read Waitlist
     description: Show all waitlist requests for a cancelled appointment's time, location, and resource
