@@ -955,4 +955,16 @@ class ApiService < Sinatra::Base
     token && !token.include?('Basic') && token.length < 40
   end
 
+  def set_preferred_confirmation_method(filtered)
+    if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
+      # build new confirmation_method hash, and replace the old one
+      confirmation_method_id = filtered['confirmation_method']['communication_method']['id']
+      confirmation_method = communication_methods.invert[confirmation_method_id]
+      filtered['preferred_confirmation_method'] = confirmation_method
+    else
+      filtered['preferred_confirmation_method'] = nil
+    end
+    filtered.delete('confirmation_method')
+  end
+
 end

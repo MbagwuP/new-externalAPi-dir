@@ -98,15 +98,7 @@ class ApiService < Sinatra::Base
 
     filtered = JSON.parse(resp)['appointment']
 
-    if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
-      # build new confirmation_method hash, and replace the old one
-      confirmation_method_id = filtered['confirmation_method']['communication_method']['id']
-      confirmation_method = communication_methods.invert[confirmation_method_id]
-      filtered['preferred_confirmation_method'] = confirmation_method
-    else
-      filtered['preferred_confirmation_method'] = nil
-    end
-    filtered.delete('confirmation_method')
+    set_preferred_confirmation_method(filtered)
 
     @resp = {'appointment' => filtered}
     jbuilder :show_appointment
@@ -255,6 +247,38 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+  put '/v2/appointments/:id/check_in' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
+    url_appt_check_in = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/checkin.json", token: escaped_oauth_token, v2: true
+
+    response = rescue_service_call 'Appointment Check In', true do
+      RestClient.put(url_appt_check_in, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    @appt = JSON.parse(response)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    jbuilder :show_appointment
+  end
+
+  put '/v2/appointments/:id/check_out' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
+    url_appt_check_out = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/checkout.json", token: escaped_oauth_token, v2: true
+
+    response = rescue_service_call 'Appointment Check In', true do
+      RestClient.put(url_appt_check_out, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    @appt = JSON.parse(response)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    jbuilder :show_appointment
+  end
+
   get '/v2/appointment_recalls' do
     forwarded_params = {start_date: params[:start_date], end_date: params[:end_date], use_pagination: 'true'}
     if forwarded_params[:start_date].blank? && forwarded_params[:end_date].blank?
@@ -327,14 +351,59 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/waitlist' do
-    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", token: escaped_oauth_token
 
-    @resp = rescue_service_call 'Waitlist' do
-      RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "Missing query parameters"}' unless params[:appointment_id]
+
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true}
+
+    begin
+      @resp = rescue_service_call 'Waitlist' do
+        RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
+      end
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Waitlist Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
 
     @resp = Oj.load(@resp)
+    @resp.each { |waitlist_request| waitlist_request['business_entity_id'] = current_business_entity }
+
     status HTTP_OK
+    jbuilder :list_waitlist_requests
+  end
+
+  post '/v2/waitlist/book' do
+    request = get_request_JSON
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "Missing query parameters"}' unless request['appointment_id']
+
+    payload = {appointment_id: request['appointment_id'], waitlist_request_id: request['waitlist_request_id']}
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests/book.json", token: escaped_oauth_token
+
+    begin
+      @resp = rescue_service_call 'Book from waitlist' do
+        RestClient.post(urlwaitlist_requests, payload,  :api_key => APP_API_KEY)
+      end
+    rescue => e
+      begin
+        exception = error_handler_filter(e.response)
+        errmsg = "Appointment Booking Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+
+    @appt = JSON.parse(@resp)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    status HTTP_OK
+    jbuilder :show_appointment
   end
 
 end
