@@ -1220,3 +1220,8 @@ InsuranceProfile_Response_insurance_profile:
     id: integer
     is_default: boolean
     name: string
+WaitlistBookPayload:
+  properties:
+    appointment_id: string
+    waitlist_request_id: string
+
