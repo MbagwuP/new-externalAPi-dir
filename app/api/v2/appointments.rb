@@ -98,15 +98,7 @@ class ApiService < Sinatra::Base
 
     filtered = JSON.parse(resp)['appointment']
 
-    if filtered['confirmation_method'] && filtered['confirmation_method']['communication_method']
-      # build new confirmation_method hash, and replace the old one
-      confirmation_method_id = filtered['confirmation_method']['communication_method']['id']
-      confirmation_method = communication_methods.invert[confirmation_method_id]
-      filtered['preferred_confirmation_method'] = confirmation_method
-    else
-      filtered['preferred_confirmation_method'] = nil
-    end
-    filtered.delete('confirmation_method')
+    set_preferred_confirmation_method(filtered)
 
     @resp = {'appointment' => filtered}
     jbuilder :show_appointment
@@ -253,6 +245,38 @@ class ApiService < Sinatra::Base
     body(filtered_data.to_json)
 
     status HTTP_OK
+  end
+
+  put '/v2/appointments/:id/check_in' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
+    url_appt_check_in = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/checkin.json", token: escaped_oauth_token, v2: true
+
+    response = rescue_service_call 'Appointment Check In', true do
+      RestClient.put(url_appt_check_in, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    @appt = JSON.parse(response)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    jbuilder :show_appointment
+  end
+
+  put '/v2/appointments/:id/check_out' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
+    url_appt_check_out = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/checkout.json", token: escaped_oauth_token, v2: true
+
+    response = rescue_service_call 'Appointment Check In', true do
+      RestClient.put(url_appt_check_out, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    @appt = JSON.parse(response)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    jbuilder :show_appointment
   end
 
   get '/v2/appointment_recalls' do
