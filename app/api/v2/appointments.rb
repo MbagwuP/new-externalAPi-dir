@@ -89,17 +89,21 @@ class ApiService < Sinatra::Base
   get '/v2/appointments/:appointment_id' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
 
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
-      token: escaped_oauth_token, include_confirmation_method: 'true'
+    base_path = "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json"
 
-    resp = rescue_service_call 'Appointment Look Up' do
-      RestClient.get(urlappt, :api_key => APP_API_KEY)
+    if (current_internal_request_header)
+      url = webservices_uri base_path, include_confirmation_method: 'true'
+      internal_signed_request = sign_internal_request(url: url, method: :get)
+      resp = internal_signed_request.execute
+    else
+      url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'
+      resp = rescue_service_call 'Appointment Look Up' do
+        RestClient.get(url, :api_key => APP_API_KEY)
+      end
     end
 
     filtered = JSON.parse(resp)['appointment']
-
     set_preferred_confirmation_method(filtered)
-
     @resp = {'appointment' => filtered}
     jbuilder :show_appointment
   end

@@ -88,8 +88,14 @@ class ApiService < Sinatra::Base
       patient_id = params[:patient_id]
       url   = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients/#{patient_id}"
       url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
-      url  += "?token=#{escaped_oauth_token}&do_full_export=true"
-      response = RestClient.get url, extapikey: ApiService::APP_API_KEY
+      url += "?do_full_export=true"
+      if (current_internal_request_header)
+        internal_signed_request = sign_internal_request(url: url, method: :get)
+        response = internal_signed_request.execute
+      else
+        url  += "&token=#{escaped_oauth_token}"
+        response = RestClient.get url, extapikey: ApiService::APP_API_KEY
+      end
     rescue => e
       begin
         errmsg = "Retrieving Patient Data Failed - #{e.message}"
