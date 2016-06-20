@@ -1,14 +1,19 @@
 development: 
   url: http://auth.development.carecloud.local
+  internal_api_key: <internal_api_key>
 
 qa: 
   url: http://authdev.carecloud.local
+  internal_api_key: <internal_api_key>
 
 staging: 
   url: http://authdev.carecloud.local
+  internal_api_key: <internal_api_key>
 
 production: 
   url: http://authdev.carecloud.local
+  internal_api_key:  <internal_api_key>
 
 test:
   url: http://auth.development.carecloud.local
+  internal_api_key:  <internal_api_key>
