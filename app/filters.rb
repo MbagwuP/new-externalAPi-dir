@@ -38,7 +38,11 @@ module Sinatra
       app.before do
         # ensure all responses are JSON, unless specified otherwise on a per-endpoint basis
         content_type 'application/json', :charset => 'utf-8'
-        authentication_filter
+
+        if current_internal_request_header
+          authentication_filter
+        end
+
         #   @start_time = Time.now
         #
         #   auditoptions = {
