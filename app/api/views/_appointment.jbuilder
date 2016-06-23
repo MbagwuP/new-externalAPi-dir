@@ -56,5 +56,6 @@ json.start_time appointment['start_time']
 json.end_time appointment['end_time']
 json.created_at appointment['created_at']
 json.updated_at appointment['updated_at']
+json.encounter_id appointment['encounter_id']
 
 
