@@ -774,6 +774,42 @@
 #             $ref: AppointmentsByResource
 #       404:
 #         description: resource not found for current practice
+/appointments/{appointment_id}/check_in:
+  put:
+    summary: Check in appointment
+    description: Returns the appointment object reflecting the change of state
+    parameters:
+      - name: appointment_id
+        in: path
+        description: appointment_id
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment json object
+        schema:
+          $ref: ShowAppointment_Response
+/appointments/{appointment_id}/check_out:
+  put:
+    summary: Check out appointment
+    description: Returns the appointment object reflecting the change of state
+    parameters:
+      - name: appointment_id
+        in: path
+        description: appointment_id
+        required: true
+        type: string
+        format: double
+    tags:
+     - Appointments
+    responses:
+      200:
+        description: appointment json object
+        schema:
+          $ref: ShowAppointment_Response
 /providers:
   get:
     summary: List Providers
@@ -1239,12 +1275,41 @@
     summary: Merge Clinical Transcriptions
     description: Update encounter note with clinical transcription
     parameters:
+      - name: transcription
+        in: body
+        description: |
+          Endpoint takes thirteen arrays, one for each field, with the transcription's paragraphs split into an array.
+
+          Possible fields are:
+
+          ```
+          chief_complaint
+          history_of_present_illness
+          therapy
+          surgical_history
+          social_history
+          past_medical_history
+          current_medications
+          allergies
+          family_history
+          review_of_systems
+          physical_examination
+          diagnostic_imaging
+          impression_plan
+          ```
+        required: true
+        type: string
+        format: double
+        schema:
+          $ref: EncounterNoteTranscription
       - name: encounter_id
         in: path
         description: encounter_id
         required: true
         type: string
         format: double
+    tags:
+      - Encounter Notes
     responses:
       200:
         description: Successfully updated encounter note
@@ -1260,7 +1325,7 @@
         type: string
         format: double
     tags:
-      - Waitlist
+      - Appointment Waitlist
     responses:
       200:
         description: Retrieved waitlist successfully
@@ -1280,7 +1345,7 @@
         schema:
           $ref: WaitlistBookPayload
     tags:
-      - Waitlist
+      - Appointment Waitlist
     responses:
       200:
         description: Appointment successfully booked
