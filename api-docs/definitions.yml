@@ -811,6 +811,7 @@ ShowAppointment_Response_appointment:
       created_by_application: string
       patient_instructions: string
       preferred_confirmation_method: string
+      encounter_id: string
 ListAppointments_Response:
   properties:
     appointment:
