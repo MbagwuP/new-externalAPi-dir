@@ -87,7 +87,12 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointments/:appointment_id' do
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+    appointments = params[:appointment_id].split(',').map(&:strip)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "exeeded maximum number of appointments per call"}' if appointments.length > 25
+
+    appointments.each do |appt|
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless appt.is_guid?
+    end
 
     base_path = "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json"
 
@@ -102,12 +107,22 @@ class ApiService < Sinatra::Base
       end
     end
 
-    filtered = JSON.parse(resp)['appointment']
-    set_preferred_confirmation_method(filtered)
-    @resp = {'appointment' => filtered}
-    jbuilder :show_appointment
-  end
+    @resp = JSON.parse(resp)
 
+    if @resp.length == 1
+      appt = @resp[0]['appointment']
+      set_preferred_confirmation_method(appt)
+      @resp = {'appointment' => appt}
+
+      jbuilder :show_appointment 
+    else
+      @resp.each do |appt|
+        set_preferred_confirmation_method(appt['appointment'])
+      end
+
+      jbuilder :show_appointments
+    end
+  end
 
   post '/v2/appointments/:appointment_id/confirmation' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
