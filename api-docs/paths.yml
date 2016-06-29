@@ -1278,7 +1278,7 @@
       - name: transcription
         in: body
         description: |
-          Endpoint takes thirteen arrays, one for each field, with the transcription's paragraphs split into an array.
+          Endpoint takes thirteen fields, with the transcription's paragraphs as items in an array:
 
           Possible fields are:
 
