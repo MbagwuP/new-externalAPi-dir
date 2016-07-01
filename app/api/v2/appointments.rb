@@ -109,18 +109,18 @@ class ApiService < Sinatra::Base
 
     @resp = JSON.parse(resp)
 
-    if @resp.length == 1
-      appt = @resp[0]['appointment']
+    if @resp.is_a?(Array)
+      @resp.each do |appt|
+        set_preferred_confirmation_method(appt['appointment'])
+      end
+      
+      jbuilder :show_appointments
+    else
+      appt = @resp['appointment']
       set_preferred_confirmation_method(appt)
       @resp = {'appointment' => appt}
 
       jbuilder :show_appointment 
-    else
-      @resp.each do |appt|
-        set_preferred_confirmation_method(appt['appointment'])
-      end
-
-      jbuilder :show_appointments
     end
   end
 
