@@ -975,4 +975,8 @@ class ApiService < Sinatra::Base
     filtered.delete('confirmation_method')
   end
 
+  def filter_request_body(params, permit:)
+    params.select { |param| permit.include?(param) }
+  end
+
 end

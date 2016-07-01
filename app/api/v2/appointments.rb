@@ -1,5 +1,6 @@
 class ApiService < Sinatra::Base
 
+  CREATE_PARAMS = %w(start_time end_time appointment_status_id location_id provider_id nature_of_visit_id reason_for_visit resource_id chief_complaint patients)
 
   get '/v2/appointment/listbydate/:date/:providerid?' do
     # Validate the input parameters
@@ -190,6 +191,7 @@ class ApiService < Sinatra::Base
     request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
     request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
+    request_body['appointment'] = filter_request_body(request_body['appointment'], permit: CREATE_PARAMS)
     ## validate the provider
     providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
     ## validate the request based on token
