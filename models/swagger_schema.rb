@@ -107,6 +107,7 @@ class SwaggerSchema
     paths.keys.each do |path|
       processed_paths[path] = paths[path]
       paths[path].keys.each do |method|
+
         # add a parameters field if there is none
         # add an Authorization header to each endpoint
         if @include_authorization
@@ -118,6 +119,34 @@ class SwaggerSchema
           end
           processed_paths[path][method]["parameters"] = parameters
         end
+
+        # allow internal request headers for event publishing
+
+        business_entity_guid_header = {
+          'name' => 'X-Business-Entity-GUID',
+          'in' => 'header',
+          'required' => false,
+          'type' => 'string'
+        }
+
+        content_type_header = {
+          'name' => 'Content-Type',
+          'in' => 'header',
+          'required' => false,
+          'type' => 'string'
+        }
+
+        date_stamp_header = {
+          'name' => 'Date',
+          'in' => 'header',
+          'required' => false,
+          'type' => 'string'
+        }
+
+        parameters << business_entity_guid_header
+        parameters << date_stamp_header
+        parameters << content_type_header
+
         if @fill_in_allowed_responses
           AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
             if !processed_paths[path][method]['responses'].keys.include?(code)

@@ -1,5 +1,6 @@
 class ApiService < Sinatra::Base
 
+  CREATE_PARAMS = %w(start_time end_time appointment_status_id location_id provider_id nature_of_visit_id reason_for_visit resource_id chief_complaint patients)
 
   get '/v2/appointment/listbydate/:date/:providerid?' do
     # Validate the input parameters
@@ -87,23 +88,42 @@ class ApiService < Sinatra::Base
 
 
   get '/v2/appointments/:appointment_id' do
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+    appointments = params[:appointment_id].split(',').map(&:strip)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error": "exeeded maximum number of appointments per call"}' if appointments.length > 25
 
-    urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json",
-      token: escaped_oauth_token, include_confirmation_method: 'true'
-
-    resp = rescue_service_call 'Appointment Look Up' do
-      RestClient.get(urlappt, :api_key => APP_API_KEY)
+    appointments.each do |appt|
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless appt.is_guid?
     end
 
-    filtered = JSON.parse(resp)['appointment']
+    base_path = "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json"
 
-    set_preferred_confirmation_method(filtered)
+    if (current_internal_request_header)
+      url = webservices_uri base_path, include_confirmation_method: 'true'
+      internal_signed_request = sign_internal_request(url: url, method: :get)
+      resp = internal_signed_request.execute
+    else
+      url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'
+      resp = rescue_service_call 'Appointment Look Up' do
+        RestClient.get(url, :api_key => APP_API_KEY)
+      end
+    end
 
-    @resp = {'appointment' => filtered}
-    jbuilder :show_appointment
+    @resp = JSON.parse(resp)
+
+    if @resp.is_a?(Array)
+      @resp.each do |appt|
+        set_preferred_confirmation_method(appt['appointment'])
+      end
+      
+      jbuilder :show_appointments
+    else
+      appt = @resp['appointment']
+      set_preferred_confirmation_method(appt)
+      @resp = {'appointment' => appt}
+
+      jbuilder :show_appointment 
+    end
   end
-
 
   post '/v2/appointments/:appointment_id/confirmation' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
@@ -171,6 +191,7 @@ class ApiService < Sinatra::Base
     request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
     request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
+    request_body['appointment'] = filter_request_body(request_body['appointment'], permit: CREATE_PARAMS)
     ## validate the provider
     providerids = get_providers_by_business_entity(current_business_entity, oauth_token)
     ## validate the request based on token

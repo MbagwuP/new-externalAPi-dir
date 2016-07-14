@@ -15,6 +15,11 @@ DATE_MAX_LEN = 8
 
 class ApiService < Sinatra::Base
 
+  def sign_internal_request(url:, method:)
+    request = RestClient::Request.new(:url => url, :method => method)
+    CCAuth::InternalService::Request.sign!(request)
+  end
+
   # Convenience method for parsing the authorization token header
   def get_auth_token
     if env && env['HTTP_AUTHORIZATION']
@@ -180,17 +185,20 @@ class ApiService < Sinatra::Base
 
   def current_business_entity
     return @current_business_entity if defined?(@current_business_entity) # caching
-    cache_key = "business-entity-guid-" + oauth_token
-
-    begin
-      @current_business_entity = settings.cache.fetch(cache_key, 54000) do
-        current_session[:business_entity][:id].to_s
+    if current_internal_request_header
+      @current_business_entity = request.env['HTTP_X_BUSINESS_ENTITY_GUID']
+    else
+      cache_key = "business-entity-guid-" + oauth_token
+      begin
+        @current_business_entity = settings.cache.fetch(cache_key, 54000) do
+          current_session[:business_entity][:id].to_s
+        end
+      rescue Dalli::DalliError
+        LOG.warn("cannot reach cache store")
+        @current_business_entity = current_session[:business_entity][:id].to_s
+      rescue CCAuth::Error::ResponseError => e
+        api_svc_halt e.code, e.message
       end
-    rescue Dalli::DalliError
-      LOG.warn("cannot reach cache store")
-      @current_business_entity = current_session[:business_entity][:id].to_s
-    rescue CCAuth::Error::ResponseError => e
-      api_svc_halt e.code, e.message
     end
     @current_business_entity
   end
@@ -965,6 +973,10 @@ class ApiService < Sinatra::Base
       filtered['preferred_confirmation_method'] = nil
     end
     filtered.delete('confirmation_method')
+  end
+
+  def filter_request_body(params, permit:)
+    params.select { |param| permit.include?(param) }
   end
 
 end
