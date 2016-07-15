@@ -46,7 +46,7 @@ AUDIT_TYPE_OUTSIDE = "outside-call"
 SEVERITY_TYPE_LOG = "LOG"
 SEVERITY_TYPE_ERROR = "ERROR"
 SEVERITY_TYPE_FATAL = "FATAL"
-SEVERITY_TYPE_WARN = "WARN" 
+SEVERITY_TYPE_WARN = "WARN"
 
 USE_AMAZON_API_GATEWAY = true
 
@@ -146,7 +146,11 @@ class ApiService < Sinatra::Base
       HealthCheck.config, HealthCheck.probes_path = hc_config, File.dirname(__FILE__) + "/../probes"
       HealthCheck.start_health_monitor
     end
-    CCAuth.configure { |config| config.endpoint = settings.cc_auth_config['url'] }
+
+    CCAuth.configure do |config|
+      config.endpoint         = settings.cc_auth_config['url']
+      config.internal_api_key = settings.cc_auth_config['internal_api_key']
+    end
 
     LOG.debug("+++++++++++ Loaded External API environment +++++++++++++++")
     LOG.debug(config_path)
@@ -262,7 +266,7 @@ class ApiService < Sinatra::Base
     "Application error. Please try again later. If the issue continues please contact customer support with: #{audit_id}"
 
   end
-  
+
   APP_API_KEY = 'GtPUILp5Yuz00-r0XSJuh5kuEQ1fT0BM'
 
 end

@@ -811,6 +811,7 @@ ShowAppointment_Response_appointment:
       created_by_application: string
       patient_instructions: string
       preferred_confirmation_method: string
+      encounter_id: string
 ListAppointments_Response:
   properties:
     appointment:
@@ -1224,4 +1225,18 @@ WaitlistBookPayload:
   properties:
     appointment_id: string
     waitlist_request_id: string
-
+EncounterNoteTranscription:
+  properties:
+    chief_complaint: array
+    history_of_present_illness: array
+    therapy: array
+    surgical_history: array
+    social_history: array
+    past_medical_history: array
+    current_medications: array
+    allergies: array
+    family_history: array
+    review_of_systems: array
+    physical_examination: array
+    diagnostic_imaging: array
+    impression_plan: array
