@@ -118,34 +118,33 @@ class SwaggerSchema
             parameters << {'name' => "Authorization", 'in' => "header", 'required' => true, 'type' => "string"}
           end
           processed_paths[path][method]["parameters"] = parameters
+        
+          # allow internal request headers for event publishing
+          business_entity_guid_header = {
+            'name' => 'X-Business-Entity-GUID',
+            'in' => 'header',
+            'required' => false,
+            'type' => 'string'
+          }
+  
+          content_type_header = {
+            'name' => 'Content-Type',
+            'in' => 'header',
+            'required' => false,
+            'type' => 'string'
+          }
+  
+          date_stamp_header = {
+            'name' => 'Date',
+            'in' => 'header',
+            'required' => false,
+            'type' => 'string'
+          }
+  
+          parameters << business_entity_guid_header
+          parameters << date_stamp_header
+          parameters << content_type_header
         end
-
-        # allow internal request headers for event publishing
-
-        business_entity_guid_header = {
-          'name' => 'X-Business-Entity-GUID',
-          'in' => 'header',
-          'required' => false,
-          'type' => 'string'
-        }
-
-        content_type_header = {
-          'name' => 'Content-Type',
-          'in' => 'header',
-          'required' => false,
-          'type' => 'string'
-        }
-
-        date_stamp_header = {
-          'name' => 'Date',
-          'in' => 'header',
-          'required' => false,
-          'type' => 'string'
-        }
-
-        parameters << business_entity_guid_header
-        parameters << date_stamp_header
-        parameters << content_type_header
 
         if @fill_in_allowed_responses
           AMAZON_ALLOWED_RESPONSE_CODES.each do |code|
