@@ -118,7 +118,7 @@ class ApiService < Sinatra::Base
     set :mirth_ip, config["mirth_ip_address"]
 
     # initialize the cache
-    set :cache, Dalli::Client.new(settings.memcached_server, :expires_in => 3600)
+    set :cache, Dalli::ElastiCache.new(settings.memcached_server, {expires_in: 3600, namespace: "XAPI::#{environment.to_s.upcase}"}).client
 
     # CCAuth
     set :cc_auth_config, File.open(File.dirname(__FILE__) + "/../config/cc_auth_service.yml") { |f| YAML.load(f) }[environment.to_s]

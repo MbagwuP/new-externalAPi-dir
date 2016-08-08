@@ -18,7 +18,7 @@ development:
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,127.0.0.1,72.46.253.196,54.209.211.183
-    memcache_servers: mcache.development.carecloud.local:11211
+    memcache_servers: cc-dev01-main-cache.urghyk.cfg.use1.cache.amazonaws.com:11211 # (using main Dev elasticache to conserve resources)
     lab_user: spectra_test
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
     version: 26.2
@@ -38,13 +38,13 @@ localhost:
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
 
 production:
-    api_internal_svc_url: https://services.carecloud.com/
+    api_internal_svc_url: http://services.carecloud.com/
     api_internal_doc_srv_upld_url: https://dms.carecloud.com
     mirth_outbound_svc_url: http://mirth-prod.carecloud.local:8088
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1F0RPR0DUCT10N3NV
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,172.20.0.10,10.0.1.42
-    memcache_servers: cc-tm01-mcache00.carecloud.local:11211
+    memcache_servers: cc-xapi-mcache-prod.1suifb.cfg.use1.cache.amazonaws.com:11211
     lab_user: spectra_prod
     lab_pass: mDYPQx1ompwLZN2TxWzOf8FOevkOlcdu
     version: 26.2
@@ -57,7 +57,7 @@ qa:
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196
-    memcache_servers: 192.168.123.61:11211
+    memcache_servers: cc-qa-01-mcache.kn35ys.cfg.use1.cache.amazonaws.com:11211 # (using main QA elasticache to conserve resources)
     lab_user: spectra_qa
     lab_pass: GUvBOevdOApyMDaryFsfKLPnGVeahtno
     version: 26.2
@@ -70,7 +70,7 @@ staging:
     mirth_private_key: thisstringshouldbeprivate
     mirth_edi_token: C4r3Cl0ud3D1
     mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,10.0.1.42
-    memcache_servers: 192.168.123.61:11211
+    memcache_servers: staging-auth-mcache.1suifb.cfg.use1.cache.amazonaws.com:11211 # (using Auth elasticache to conserve resources)
     lab_user: spectra_staging
     lab_pass: chgDkJDfm1CGJjlrh9lHKHqGExOSfTAe
     version: 26.2

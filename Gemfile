@@ -14,7 +14,7 @@ gem 'care_cloud-storage', '~> 0.0.9'
 gem 'care_cloud-queue', '~> 0.0.2'
 
 # cache
-gem 'dalli', '~> 2.6'
+gem 'dalli-elasticache', '~> 0.2.0'
 
 # logging
 gem 'newrelic_rpm', '~> 3.12.0.288'
