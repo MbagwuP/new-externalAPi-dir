@@ -38,7 +38,7 @@ localhost:
     lab_pass: MLhYSFoptX58EsSrdAX1iyb3cuPiJMud
 
 production:
-    api_internal_svc_url: https://services.carecloud.com/
+    api_internal_svc_url: http://services.carecloud.com/
     api_internal_doc_srv_upld_url: https://dms.carecloud.com
     mirth_outbound_svc_url: http://mirth-prod.carecloud.local:8088
     mirth_private_key: thisstringshouldbeprivate
