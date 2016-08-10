@@ -2,7 +2,7 @@ module XAPI
   class Cache
 
     # durations are measured in minutes
-    DEFAULT = 15
+    DEFAULT = 60
 
     class << self
       def get(key)
@@ -50,7 +50,7 @@ module XAPI
       end
 
       def cache 
-        Dalli::ElastiCache.new(ApiService.settings.memcached_servers, {expires_in: 3600, namespace: "XAPI::#{ ApiService.settings.environment.to_s.upcase}"}).client
+        Dalli::ElastiCache.new(ApiService.settings.memcached_servers, {expires_in: DEFAULT.minutes.to_i, namespace: "XAPI::#{ ApiService.settings.environment.to_s.upcase}"}).client
       end
 
       def cache_block_value(key, expires_in)
