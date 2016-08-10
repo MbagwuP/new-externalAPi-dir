@@ -8,7 +8,7 @@ module Probes
           cache.set("testvalue", "12346", 20)
           newvalue = cache.get("testvalue")
           cacheUp = true if (newvalue == "12346")
-        rescue Exception => e
+        rescue => e
           cacheUp = false
         end
         record(*["MemCache", cacheUp, cacheUp ? "MemCache is active." : "MemCache is down."])
