@@ -106,7 +106,7 @@ class ApiService < Sinatra::Base
     set :enable_auditing, false
     set :api_url, config["api_internal_svc_url"]
     set :platform_url, config["platform_url"]
-    set :memcached_server, config["memcache_servers"]
+    set :memcached_servers, config["memcache_servers"]
     set :mongo_server, config["mongo_server"]
     set :dms_server , config["api_internal_doc_srv_upld_url"]
     set :mongo_port, config["mongo_port"]
@@ -116,9 +116,6 @@ class ApiService < Sinatra::Base
 
     set :mirth_edi_token, config["mirth_edi_token"]
     set :mirth_ip, config["mirth_ip_address"]
-
-    # initialize the cache
-    set :cache, Dalli::ElastiCache.new(settings.memcached_server, {expires_in: 3600, namespace: "XAPI::#{environment.to_s.upcase}"}).client
 
     # CCAuth
     set :cc_auth_config, File.open(File.dirname(__FILE__) + "/../config/cc_auth_service.yml") { |f| YAML.load(f) }[environment.to_s]
@@ -218,14 +215,14 @@ class ApiService < Sinatra::Base
 
   get '/testcache' do
 
-    originalvalue = settings.cache.get("testvalue1")
+    originalvalue = XAPI::Cache.get("testvalue1")
 
     unless originalvalue.nil?
       return HTTP_BAD_REQUEST
     end
 
-    settings.cache.set("testvalue", "12346", 20)
-    newvalue = settings.cache.get("testvalue")
+    XAPI::Cache.set("testvalue", "12346", 20)
+    newvalue = XAPI::Cache.get("testvalue")
 
     if newvalue != "12346"
       return HTTP_BAD_REQUEST
