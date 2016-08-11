@@ -121,7 +121,7 @@ class ApiService < Sinatra::Base
       #LOG.debug("cache key: " + cache_key)
 
       begin
-        returned_business_entity_id = settings.cache.get(cache_key)
+        returned_business_entity_id = XAPI::Cache.get(cache_key)
       rescue => e
         returned_business_entity_id = ""
         LOG.warn("cannot reach cache store")
@@ -160,7 +160,7 @@ class ApiService < Sinatra::Base
 
         ## cache the result
         begin
-          settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+          XAPI::Cache.set(cache_key, returned_business_entity_id.to_s, 500000)
             #LOG.debug("++++++++++cache set")
         rescue => e
           LOG.warn("cannot reach cache store")
@@ -190,7 +190,7 @@ class ApiService < Sinatra::Base
     else
       cache_key = "business-entity-guid-" + oauth_token
       begin
-        @current_business_entity = settings.cache.fetch(cache_key, 54000) do
+        @current_business_entity = XAPI::Cache.fetch(cache_key, 54000) do
           current_session[:business_entity][:id].to_s
         end
       rescue Dalli::DalliError
@@ -208,7 +208,7 @@ class ApiService < Sinatra::Base
     cache_key = "application-" + oauth_token
 
     begin
-      @current_application = settings.cache.fetch(cache_key, 54000) do
+      @current_application = XAPI::Cache.fetch(cache_key, 54000) do
         current_session[:application][:id]
       end
     rescue Dalli::DalliError
@@ -231,7 +231,7 @@ class ApiService < Sinatra::Base
     #LOG.debug("cache key: " + cache_key)
 
     begin
-      returned_providers_by_business_entity = settings.cache.get(cache_key)
+      returned_providers_by_business_entity = XAPI::Cache.get(cache_key)
     rescue => e
       returned_providers_by_business_entity = ""
       LOG.warn("cannot reach cache store")
@@ -269,7 +269,7 @@ class ApiService < Sinatra::Base
 
       ## cache the result
       begin
-        settings.cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
+        XAPI::Cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
           #LOG.debug("++++++++++cache set")
       rescue => e
         LOG.warn("cannot reach cache store")
@@ -544,7 +544,7 @@ class ApiService < Sinatra::Base
     cache_key = "business-entity-" + pass_in_token
 
     begin
-      returned_business_entity_ids = settings.cache.get(cache_key)
+      returned_business_entity_ids = XAPI::Cache.get(cache_key)
     rescue => e
       returned_business_entity_ids = nil
       LOG.error("Cache error - #{e.message}")
@@ -571,7 +571,7 @@ class ApiService < Sinatra::Base
 
       ## cache the result
       begin
-        settings.cache.set(cache_key, returned_business_entity_ids.to_s, 500000)
+        XAPI::Cache.set(cache_key, returned_business_entity_ids.to_s, 500000)
       rescue => e
         LOG.error("Cache error - #{e.message}")
       end
@@ -629,7 +629,7 @@ class ApiService < Sinatra::Base
     #LOG.debug("cache key: " + cache_key)
 
     begin
-      returned_business_entity_id = settings.cache.get(cache_key)
+      returned_business_entity_id = XAPI::Cache.get(cache_key)
     rescue => e
       returned_business_entity_id = ""
       LOG.warn("cannot reach cache store")
@@ -669,7 +669,7 @@ class ApiService < Sinatra::Base
 
       ## cache the result
       begin
-        settings.cache.set(cache_key, returned_business_entity_id.to_s, 500000)
+        XAPI::Cache.set(cache_key, returned_business_entity_id.to_s, 500000)
           #LOG.debug("++++++++++cache set")
       rescue => e
         LOG.warn("cannot reach cache store")
@@ -713,7 +713,7 @@ class ApiService < Sinatra::Base
     cache_key = "communication-methods"
 
     begin
-      @communication_methods = settings.cache.fetch(cache_key, 54000) do
+      @communication_methods = XAPI::Cache.fetch(cache_key, 54000) do
         communication_methods_from_webservices
       end
     rescue Dalli::DalliError
@@ -753,7 +753,7 @@ class ApiService < Sinatra::Base
     cache_key = "communication-outcomes"
 
     begin
-      @communication_outcomes = settings.cache.fetch(cache_key, 54000) do
+      @communication_outcomes = XAPI::Cache.fetch(cache_key, 54000) do
         communication_outcomes_from_webservices
       end
     rescue Dalli::DalliError
@@ -788,7 +788,7 @@ class ApiService < Sinatra::Base
     cache_key = "debit-transaction-types"
 
     begin
-      @debit_transaction_types = settings.cache.fetch(cache_key, 54000) do
+      @debit_transaction_types = XAPI::Cache.fetch(cache_key, 54000) do
         debit_transaction_types_from_webservices
       end
     rescue Dalli::DalliError
@@ -823,7 +823,7 @@ class ApiService < Sinatra::Base
     cache_key = "credit-transaction-types"
 
     begin
-      @credit_transaction_types = settings.cache.fetch(cache_key, 54000) do
+      @credit_transaction_types = XAPI::Cache.fetch(cache_key, 54000) do
         credit_transaction_types_from_webservices
       end
     rescue Dalli::DalliError
@@ -858,7 +858,7 @@ class ApiService < Sinatra::Base
     cache_key = "transaction-statuses"
 
     begin
-      @transaction_statuses = settings.cache.fetch(cache_key, 54000) do
+      @transaction_statuses = XAPI::Cache.fetch(cache_key, 54000) do
         transaction_statuses_from_webservices
       end
     rescue Dalli::DalliError
@@ -893,7 +893,7 @@ class ApiService < Sinatra::Base
     cache_key = "person-relationship-types"
 
     begin
-      @person_relationship_types = settings.cache.fetch(cache_key, 54000) do
+      @person_relationship_types = XAPI::Cache.fetch(cache_key, 54000) do
         person_relationship_types_from_webservices
       end
     rescue Dalli::DalliError
@@ -928,7 +928,7 @@ class ApiService < Sinatra::Base
     cache_key = "insurance-policy-types"
 
     begin
-      @insurance_policy_types = settings.cache.fetch(cache_key, 54000) do
+      @insurance_policy_types = XAPI::Cache.fetch(cache_key, 54000) do
         insurance_policy_types_from_webservices
       end
     rescue Dalli::DalliError
