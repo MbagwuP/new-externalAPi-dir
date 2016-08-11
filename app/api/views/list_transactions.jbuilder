@@ -9,6 +9,8 @@ json.array! @resp do |txn|
   json.transaction_status txn['transaction_status_name'].underscore.gsub(' ', '_')
   json.location_id txn['location_id']
   json.provider_id txn['provider_id']
+  json.rendering_provider_id txn['rendering_provider_id']
+  json.attending_provider_id txn['attending_provider_id']
   json.units txn['units']
   json.description txn['description']
 
