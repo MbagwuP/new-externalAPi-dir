@@ -23,7 +23,7 @@ module DemographicCodes
     def self.cache_retrieval cache_key, webservices_method
        codes = nil
        begin
-        codes = ApiService.settings.cache.fetch(cache_key, 54000) do
+        codes = XAPI::Cache.fetch(cache_key, 54000) do
           self.send(webservices_method)
         end
       rescue Dalli::DalliError
