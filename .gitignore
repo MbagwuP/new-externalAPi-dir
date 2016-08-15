@@ -4,7 +4,7 @@
 .rbenv-gemsets
 .ruby-version
 *.sublime*
-Gemfile.lock
-.ruby-gemset
 .pryrc
 .env
+.*.sw[a-z]
+.build

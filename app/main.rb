@@ -3,7 +3,6 @@
 #
 # Version:    1.0
 
-
 require 'sinatra/base'
 require 'json'
 require 'log4r'
@@ -16,6 +15,14 @@ require 'dalli'
 require 'rest-client'
 require 'mongo_mapper'
 require 'require_all'
+require 'pry'
+
+begin
+  require "dotenv"
+  Dotenv.load
+rescue Exception::LoadError => e
+  puts "#{e.message}"
+end
 
 require_all 'app', 'lib'
 
@@ -56,10 +63,12 @@ class ApiService < Sinatra::Base
   register Sinatra::ApplicationFilters
 
   def self.build_version
-    build_number = File.open(File.join(APP_ROOT, '.build'), 'rb').read rescue ''
+    build_number = File.open(File.expand_path("../../.build", __FILE__), 'rb').read rescue ''
     build_number = build_number.split(':')[1] unless build_number.empty?
     build_number.strip
   end
+  
+  use HealthCheck::Middleware, description: { service: "External API", description: "External API Service", build: ApiService.build_version, commit: `git rev-parse --verify --short HEAD`.strip }
 
   configure do
     set :protection, :except => [:remote_referrer, :json_csrf]
@@ -74,19 +83,11 @@ class ApiService < Sinatra::Base
     Oj.default_options = {mode: :compat}
 
     begin
-      config_path = Dir.pwd + "/config/settings.yml"
-      config = YAML.load(File.open(config_path))[settings.environment.to_s]
-
-      # hc_path = Dir.pwd + "/config/vitals.yml"
-      # hc_config = YAML.load(File.open(hc_path))[settings.environment.to_s]
-      hc_config = File.open(File.dirname(__FILE__) + "/../config/vitals.yml") { |f| YAML.load(f) }[environment.to_s]
-
+      config_path = File.expand_path("../../config/settings.yml", __FILE__)
+      config = YAML.load(ERB.new(File.read(config_path)).result)
+      hc_config = YAML.load(File.open(File.expand_path("../../config/vitals.yml", __FILE__)))
       LOG.debug(config)
-
-        #LOG.debug("1")
-        #Dir.glob("/config/initializers/*.rb").each { |init| load init
-
-    rescue
+    rescue 
       LOG.error("Missing settings file!") if config == nil
       LOG.error("Missing vitals file!") if hc_config == nil
       exit
@@ -120,7 +121,7 @@ class ApiService < Sinatra::Base
     set :mirth_ip, config["mirth_ip_address"]
 
     # CCAuth
-    set :cc_auth_config, File.open(File.dirname(__FILE__) + "/../config/cc_auth_service.yml") { |f| YAML.load(f) }[environment.to_s]
+    set :cc_auth_config, YAML.load(ERB.new(File.read(File.expand_path("../../config/cc_auth_service.yml", __FILE__))).result)
 
     ## setup log level based on yml
     begin
@@ -141,8 +142,8 @@ class ApiService < Sinatra::Base
     #temp fix for rspec test
     if settings.environment.to_s != 'test'
       Dir.glob("config/initializers/**/*.rb").each { |init| load init }
-      #health check
-      HealthCheck.config, HealthCheck.probes_path = hc_config, File.dirname(__FILE__) + "/../probes"
+      HealthCheck.config      = hc_config 
+      HealthCheck.probes_path = File.dirname(__FILE__) + "/../probes"
       HealthCheck.start_health_monitor
     end
 

@@ -11,7 +11,6 @@ require './app/main'
 require 'dotenv'
 Dotenv.load
 
-use HealthCheck::Middleware, description: {service: "External API", description: "External API Service", version: ApiService.build_version}
 APP_ROOT = File.expand_path('.', File.dirname(__FILE__)) unless defined? APP_ROOT
 
 run ApiService

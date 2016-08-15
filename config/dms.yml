@@ -1,4 +1,1 @@
-development: "https://dms-dev.carecloud.com"
-qa: "https://dms-qa.carecloud.com"
-staging: "https://dms-staging.carecloud.com"
-production: "https://dms.carecloud.com"
+url: <%=ENV['CONFIG_DMS_URL']%>
