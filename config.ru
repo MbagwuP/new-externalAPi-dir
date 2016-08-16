@@ -13,5 +13,6 @@ Dotenv.load
 
 APP_ROOT = File.expand_path('.', File.dirname(__FILE__)) unless defined? APP_ROOT
 
-run ApiService
+require './app/main'
 
+run ApiService
