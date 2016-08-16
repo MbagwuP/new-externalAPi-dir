@@ -46,22 +46,16 @@ class ApiService < Sinatra::Base
        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Failed Parsing Request Body!"}' if request_body.blank?
     end
 
-
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]
+    patientid.slice!(/^patient-/)
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
 
-    ## muck with the request based on what internal needs
-    business_entity = get_business_entity(pass_in_token)
-
-    #format to what the devservice needs
-    patientid.slice!(/^patient-/)
-
-    ## if external id, lookup internal
+    # if it's an OAuth token get cbe from session, otherwise call webservices    
+    business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
-
     local_file = create_local_file(patientid, params)
 
     # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
