@@ -48,7 +48,7 @@ class ApiService < Sinatra::Base
 
     validate_param(params[:patientid], PATIENT_REGEX, PATIENT_MAX_LEN)
     patientid = params[:patientid]
-    patientid.slice!(/^patient-/)
+    patientid.slice!(/^patient-/) if /^patient-/ =~ patientid 
 
     ## token management. Need unencoded tokens!
     pass_in_token = CGI::unescape(params[:authentication])
