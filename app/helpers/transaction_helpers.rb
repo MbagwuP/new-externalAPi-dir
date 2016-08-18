@@ -5,7 +5,7 @@ class ApiService < Sinatra::Base
     cache_key = "debit-transaction-types"
 
     begin
-      @debit_transaction_types = settings.cache.fetch(cache_key, 54000) do
+      @debit_transaction_types =  XAPI::Cache.fetch(cache_key, 54000) do
         debit_transaction_types_from_webservices
       end
     rescue Dalli::DalliError
