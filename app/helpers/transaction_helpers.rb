@@ -40,7 +40,7 @@ class ApiService < Sinatra::Base
     cache_key = "credit-transaction-types"
 
     begin
-      @credit_transaction_types = settings.cache.fetch(cache_key, 54000) do
+      @credit_transaction_types = XAPI::Cache.fetch(cache_key, 54000) do
         credit_transaction_types_from_webservices
       end
     rescue Dalli::DalliError
@@ -75,7 +75,7 @@ class ApiService < Sinatra::Base
     cache_key = "transaction-statuses"
 
     begin
-      @transaction_statuses = settings.cache.fetch(cache_key, 54000) do
+      @transaction_statuses = XAPI::Cache.fetch(cache_key, 54000) do
         transaction_statuses_from_webservices
       end
     rescue Dalli::DalliError
@@ -110,7 +110,7 @@ class ApiService < Sinatra::Base
     cache_key = "person-relationship-types"
 
     begin
-      @person_relationship_types = settings.cache.fetch(cache_key, 54000) do
+      @person_relationship_types = XAPI::Cache.fetch(cache_key, 54000) do
         person_relationship_types_from_webservices
       end
     rescue Dalli::DalliError
@@ -145,7 +145,7 @@ class ApiService < Sinatra::Base
     cache_key = "insurance-policy-types"
 
     begin
-      @insurance_policy_types = settings.cache.fetch(cache_key, 54000) do
+      @insurance_policy_types = XAPI::Cache.fetch(cache_key, 54000) do
         insurance_policy_types_from_webservices
       end
     rescue Dalli::DalliError
