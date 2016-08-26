@@ -4,7 +4,7 @@
 #
 # Version:    1.0
 
-PATIENT_REGEX = '\Apatient-[a-zA-Z0-9._-]{1,75}\z'
+PATIENT_REGEX = '(\Apatient-[a-zA-Z0-9._-]{1,75}\z|\A[a-zA-Z0-9._-]{1,75}\z)'
 PATIENT_MAX_LEN = 75
 CASEMGR_REGEX = '\Auser-[a-zA-Z0-9._-]{1,15}\z'
 CASEMGR_MAX_LEN = 15
