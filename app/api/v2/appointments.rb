@@ -189,7 +189,6 @@ class ApiService < Sinatra::Base
     # support comments in the patient pbject for backwards compatibility
     # but give priority to comments in the appointment object to normalize
     # request with the appointment response payload
-    require 'pry'; binding.pry
     request_body['appointment']['patients'][0]['comments'] = request_body['appointment']['comments'] if request_body['appointment'].has_key?('comments')
 
     # accept "patient" or "patients", whose value can be either an object or an array containing one object

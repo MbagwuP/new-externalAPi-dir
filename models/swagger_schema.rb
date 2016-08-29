@@ -29,6 +29,7 @@ class SwaggerSchema
     remove_post_body_params:      false,
     fill_in_allowed_responses:    false,
     specify_host:                 true,
+    process_definitions:          true, 
     corsify_paths:                false
   }
   AMAZON_IMPORT_OPTIONS = {
@@ -47,6 +48,7 @@ class SwaggerSchema
     remove_post_body_params:      true,
     fill_in_allowed_responses:    true,
     specify_host:                 false,
+    process_definitions:          false, 
     corsify_paths:                true
   }
   AMAZON_ALLOWED_RESPONSE_CODES = [200, 201, 204, 301, 400, 401, 403, 404, 409, 422, 423, 500, 502, 503, 513]
@@ -84,7 +86,11 @@ class SwaggerSchema
     if @remove_definition_references
       base.delete('definitions')
     else
-      base['definitions'] = definitions
+      if @process_definitions
+        base['definitions'] = process_definitions(definitions)
+      else
+        base['definitions'] = definitions
+      end
     end
 
     if @name_by_environment
@@ -210,6 +216,49 @@ class SwaggerSchema
     end
 
     processed_paths
+  end
+
+  # Workaround for changing the yaml definitions FROM:
+  #
+  #     properties:
+  #       field1: array
+  #       field2:
+  #         type: array
+  #         $ref: Definition
+  # 
+  # TO:
+  #     properties:
+  #       field1:
+  #         type: array 
+  #         items:
+  #           string
+  #       field2:
+  #         type: array
+  #         items:
+  #           $ref: Definition
+  #
+  def process_definitions(definitions)
+    definitions.map do |model, hash|
+      hash['type'] = 'object'
+      next unless hash['properties']
+      # set all fields to required by default
+      hash['required'] = hash['properties'].keys
+      # format the definitions
+      hash['properties'].map do |k, v| 
+        if v.is_a?(String)
+          if v == 'array'
+            hash['properties'][k] = { 'type'=> 'array', 'items' => {'type' => 'string'} }
+          else
+            hash['properties'][k] =  { 'type' => v }
+          end
+        end
+
+        if v['$ref'] && v['type'] == 'array'
+          v['items'] =  { '$ref' => v.delete('$ref') }
+        end
+      end
+    end
+    definitions
   end
 
   def cors_headers
