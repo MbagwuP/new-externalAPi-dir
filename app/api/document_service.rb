@@ -399,7 +399,7 @@ class ApiService < Sinatra::Base
 
   get '/v1/documentsources' do
     pass_in_token = CGI::unescape(params[:authentication])
-    business_entity = get_business_entity(pass_in_token)
+    business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
     document_source = "#{API_SVC_URL}businesses/#{business_entity}/document_sources.json?token=#{CGI::escape(pass_in_token)}"
     begin
       response = RestClient.get(document_source)
