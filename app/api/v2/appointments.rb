@@ -306,7 +306,7 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/appointment_recalls' do
-    forwarded_params = {start_date: params[:start_date], end_date: params[:end_date], use_pagination: 'true'}
+    forwarded_params = {start_date: params[:start_date], end_date: params[:end_date], use_pagination: 'true',page: params[:page]}
     if forwarded_params[:start_date].blank? && forwarded_params[:end_date].blank?
       forwarded_params[:start_date] = Date.today.to_s
       forwarded_params[:end_date]   = Date.parse(7.days.since.to_s).to_s # default to the coming week's worth of recalls
@@ -328,7 +328,7 @@ class ApiService < Sinatra::Base
       RestClient.get(urlrecalls, :api_key => APP_API_KEY)
     end
     if !@resp.headers[:link].nil?
-      headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
+      headers['Link'] = PaginationLinkBuilder.new(@resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
     end
 
     @resp = Oj.load(@resp)
