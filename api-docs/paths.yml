@@ -1018,6 +1018,12 @@
         required: false
         type: string
         format: string
+      - name: page
+        in: query
+        description: page number
+        required: false
+        type: string
+        format: double
     tags:
       - Appointment Recalls
     responses:
@@ -1027,6 +1033,12 @@
           type: array
           items:
             $ref: AppointmentRecall_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
+        headers:
+          Link:
+            description: pagination links
+            type: string
 /appointment_recalls/{id}:
   put:
     summary: Update Appointment Recall
