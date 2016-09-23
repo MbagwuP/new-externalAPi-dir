@@ -58,7 +58,7 @@ class ApiService < Sinatra::Base
   # /v2/appointments
   get '/v2/appointments' do
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
-                        page: params[:page], use_pagination: 'true'}
+                        page: params[:page], use_pagination: 'true', nature_of_visit_ids: params[:visit_reason_ids]}
 
     params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
