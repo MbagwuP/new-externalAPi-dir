@@ -293,6 +293,9 @@ class ApiService < Sinatra::Base
   end
 
   post '/oauth2/access_token' do
+    # default to the params (x-www-form-urlencoded) but allowing 
+    # content-type application/json if the params are empty
+    request_data = params.empty? ? get_request_JSON : params
     begin
       auth = Rack::Auth::Basic::Request.new(request.env)
       begin
@@ -302,7 +305,7 @@ class ApiService < Sinatra::Base
       end
 
       begin
-        resp = CCAuth::OAuth2Client.new.access_token user_name, password, params
+        resp = CCAuth::OAuth2Client.new.access_token user_name, password, request_data
       rescue => e
         begin
           errmsg = e.message
