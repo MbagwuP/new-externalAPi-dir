@@ -1,5 +1,5 @@
 development: 
-  url: http://auth.development.carecloud.local
+  url: https://auth.development.carecloud.com
   internal_api_key: <internal_api_key>
 
 qa: 

@@ -37,11 +37,13 @@ gem 'c_cloud_http_client', path: './vendor/gems'
 gem 'cc_auth', '~> 0.8.0'
 
 gem 'rake'
+gem 'dotenv'
 
 group :development, :localhost, :test do
   gem 'rack-test'
   gem 'tux'
   gem 'pry'
+  gem 'pry-byebug'
   gem 'shotgun'
   gem 'pry-rescue'
   gem 'pry-stack_explorer'

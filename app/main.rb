@@ -22,6 +22,7 @@ require_all 'app', 'lib'
 # Sinatra's way of splitting up a large project
 # include other endpoints
 Dir.glob("models/*.rb").each { |r| require_relative "../#{r}" }
+Dir.glob("modules/*.rb").each { |r| require_relative "../#{r}" }
 Dir.glob("app/api/*.rb").each { |r| require_relative "../#{r}" }
 
 require 'newrelic_rpm'
