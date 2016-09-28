@@ -155,7 +155,7 @@ DEPENDENCIES
   color
   dalli-elasticache (~> 0.2.0)
   dotenv
-  health_check (= 0.3.3)
+  health_check (= 0.3.3)!
   json
   log4r
   mongo_mapper
