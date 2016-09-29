@@ -1,0 +1,7 @@
+json.name = document['name']
+json.id = document['id']
+json.document_handler = document['document_handler']
+json.document_format = document['document_format']
+json.document_id = document['document_id']
+json.document_set_id = document['document_set_id']
+json.document_source_id = document['document_source_id']
