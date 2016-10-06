@@ -103,6 +103,7 @@ class ApiService < Sinatra::Base
     MIRTH_PRIVATE_KEY = config["mirth_private_key"]
     DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
     SOFTWARE_VERSION = config["version"]
+    CLINICAL_DATA_API = config["clinical_data_api"]
 
     set :enable_auditing, false
     set :api_url, config["api_internal_svc_url"]
