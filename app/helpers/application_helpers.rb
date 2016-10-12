@@ -41,6 +41,15 @@ class ApiService < Sinatra::Base
     end
   end
 
+  def date_filter_params?
+    params[:start_date].present? || params[:end_date].present?
+  end
+
+  def validate_date_filter_params!
+    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+    api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
+  end
+
   # Generate a URI for a Webservices call - query_params can be a hash or a string
   def webservices_uri path, query_params=nil
     uri = URI.parse(API_SVC_URL + path)
