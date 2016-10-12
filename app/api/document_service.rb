@@ -104,7 +104,12 @@ class ApiService < Sinatra::Base
     request_body['document']['source'] = 1 if request_body['document']['source'].blank?
     request_body['document']['format'] = file_type_name
 
-    create_document(patientid, pass_in_token, request_body)
+    #LOG.debug "Request body "
+    #LOG.debug(request_body.to_s)
+
+    response = create_document(patientid, pass_in_token, request_body)
+    @resp = JSON.parse(response)
+    jbuilder :show_document
   end
 
   # Upload document to patient
@@ -470,8 +475,8 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    @resp = JSON.parse(response)
-    jbuilder :show_document
+
+    response
   end
 
   ## upload the document to the DMS server
