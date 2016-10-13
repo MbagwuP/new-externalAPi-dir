@@ -1,8 +1,8 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "External API development 2016-09-15 14:33",
-    "description": "External API development",
+    "title": "External API qa 2016-07-14 14:09",
+    "description": "External API qa",
     "version": "2.0.0"
   },
   "schemes": [
@@ -25,7 +25,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/docs",
+          "uri": "https://external-api-elb-qa.carecloud.com/docs",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -57,7 +57,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/docs",
+          "uri": "https://external-api-elb-qa.carecloud.com/docs",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -289,7 +289,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/inbound_mail",
+          "uri": "https://external-api-elb-qa.carecloud.com/inbound_mail",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -586,7 +586,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/inbound_mail",
+          "uri": "https://external-api-elb-qa.carecloud.com/inbound_mail",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -836,7 +836,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/access_token",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/access_token",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -1343,7 +1343,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/access_token",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/access_token",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -1642,7 +1642,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/access_token",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/access_token",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -1681,7 +1681,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/auth_code/email_success",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/auth_code/email_success",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -1714,7 +1714,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/auth_code/email_success",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/auth_code/email_success",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -1753,7 +1753,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/auth_code/success",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/auth_code/success",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -1786,7 +1786,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/auth_code/success",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/auth_code/success",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -2029,7 +2029,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/authorization",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/authorization",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -2327,7 +2327,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/authorization",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/authorization",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -2384,7 +2384,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/authorize",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/authorize",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -2420,7 +2420,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/authorize",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/authorize",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -2657,7 +2657,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/token_info",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/token_info",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -2954,7 +2954,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/oauth2/token_info",
+          "uri": "https://external-api-elb-qa.carecloud.com/oauth2/token_info",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -3186,7 +3186,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/all_locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/all_locations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -3483,7 +3483,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/all_locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/all_locations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -3715,7 +3715,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -4012,7 +4012,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -4256,7 +4256,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbydate/{date}/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbydate/{date}/{providerid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -4555,7 +4555,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbydate/{date}/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbydate/{date}/{providerid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -4793,7 +4793,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyid/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyid/{appointmentid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -5091,7 +5091,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyid/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyid/{appointmentid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -5329,7 +5329,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbypatient/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbypatient/{patientid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -5627,7 +5627,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbypatient/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbypatient/{patientid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -5865,7 +5865,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyprovider/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyprovider/{providerid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -6163,7 +6163,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyprovider/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyprovider/{providerid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -6401,7 +6401,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyresource/{resourceid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyresource/{resourceid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -6699,7 +6699,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/listbyresource/{resourceid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/listbyresource/{resourceid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -6931,7 +6931,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/locations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -7228,7 +7228,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/locations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -7466,7 +7466,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/patientconfirmed/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/patientconfirmed/{appointmentid}",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -7764,7 +7764,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/patientconfirmed/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/patientconfirmed/{appointmentid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -8002,7 +8002,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/patientcontacted/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/patientcontacted/{appointmentid}",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -8300,7 +8300,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/patientcontacted/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/patientcontacted/{appointmentid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -8532,7 +8532,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/register",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -9024,7 +9024,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/register",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -9516,7 +9516,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/register",
           "httpMethod": "DELETE",
           "responses": {
             "200": {
@@ -9813,7 +9813,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/register",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -10045,7 +10045,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/resources",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -10342,7 +10342,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/resources",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -10574,7 +10574,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/statuses",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -10871,7 +10871,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/statuses",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -11109,7 +11109,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/cancel_appointment",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/cancel_appointment",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -11407,7 +11407,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/cancel_appointment",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/cancel_appointment",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -11645,7 +11645,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/checkin",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/checkin",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -11943,7 +11943,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/checkin",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/checkin",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -12187,7 +12187,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/{appointment_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/{appointment_id}",
           "httpMethod": "DELETE",
           "responses": {
             "200": {
@@ -12486,7 +12486,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment/{id}/{appointment_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment/{id}/{appointment_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -12718,7 +12718,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -13015,7 +13015,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -13253,7 +13253,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_by_location/{location_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_by_location/{location_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -13551,7 +13551,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_by_location/{location_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_by_location/{location_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -13789,7 +13789,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_by_resource/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_by_resource/{resource_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -14087,7 +14087,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_by_resource/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_by_resource/{resource_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -14325,7 +14325,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_nature_of_visit/{appointment_template_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_nature_of_visit/{appointment_template_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -14623,7 +14623,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates/find_nature_of_visit/{appointment_template_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates/find_nature_of_visit/{appointment_template_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -14861,7 +14861,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates_by_dates/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates_by_dates/{date}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -15159,7 +15159,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointment_templates_by_dates/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointment_templates_by_dates/{date}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -15403,7 +15403,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointmentblockouts/listbylocationanddate/{locationid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointmentblockouts/listbylocationanddate/{locationid}/date/{date}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -15702,7 +15702,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointmentblockouts/listbylocationanddate/{locationid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointmentblockouts/listbylocationanddate/{locationid}/date/{date}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -15946,7 +15946,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointmentblockouts/listbyresourceanddate/{resourceid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointmentblockouts/listbyresourceanddate/{resourceid}/date/{date}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -16245,7 +16245,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointmentblockouts/listbyresourceanddate/{resourceid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointmentblockouts/listbyresourceanddate/{resourceid}/date/{date}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -16489,7 +16489,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointments/listbyresource/{resourceid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointments/listbyresource/{resourceid}/date/{date}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -16788,7 +16788,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/appointments/listbyresource/{resourceid}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/appointments/listbyresource/{resourceid}/date/{date}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -17027,7 +17027,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/charge/{patient_id}/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -17325,7 +17325,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/charge/{patient_id}/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -17564,7 +17564,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/charges/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/charges/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -17862,7 +17862,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/charges/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/charges/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -18101,7 +18101,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/document/listbypatient/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/document/listbypatient/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -18399,7 +18399,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/document/listbypatient/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/document/listbypatient/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -18638,7 +18638,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/legacy/{id}/upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/legacy/{id}/upload",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -18936,7 +18936,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/legacy/{id}/upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/legacy/{id}/upload",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -19175,7 +19175,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/{patientid}/batch_upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/{patientid}/batch_upload",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -19473,7 +19473,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/{patientid}/batch_upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/{patientid}/batch_upload",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -19726,7 +19726,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/{patientid}/upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/{patientid}/upload",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -20024,7 +20024,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documents/patient/{patientid}/upload",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documents/patient/{patientid}/upload",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -20256,7 +20256,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documentsources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documentsources",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -20553,7 +20553,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/documentsources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/documentsources",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -20792,7 +20792,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/encounter_notes/{encounter_id}/merge_transcriptions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/encounter_notes/{encounter_id}/merge_transcriptions",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -21090,7 +21090,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/encounter_notes/{encounter_id}/merge_transcriptions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/encounter_notes/{encounter_id}/merge_transcriptions",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -21329,7 +21329,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/encounters/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/encounters/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -21627,7 +21627,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/encounters/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/encounters/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -21859,7 +21859,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/findallpatients",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/findallpatients",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -22156,7 +22156,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/findallpatients",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/findallpatients",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -22388,7 +22388,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/get/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/get/locations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -22685,7 +22685,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/get/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/get/locations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -22931,7 +22931,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/getdocument/{patient_id}/{doc_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/getdocument/{patient_id}/{doc_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -23230,7 +23230,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/getdocument/{patient_id}/{doc_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/getdocument/{patient_id}/{doc_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -23469,7 +23469,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/insuranceprofiles/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/insuranceprofiles/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -23767,7 +23767,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/insuranceprofiles/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/insuranceprofiles/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -24013,7 +24013,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/internal/apt/outbound/{appointmentid}/{business_entity}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/internal/apt/outbound/{appointmentid}/{business_entity}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -24312,7 +24312,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/internal/apt/outbound/{appointmentid}/{business_entity}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/internal/apt/outbound/{appointmentid}/{business_entity}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -24551,7 +24551,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/internal/charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/internal/charge/{patient_id}/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -24849,7 +24849,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/internal/charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/internal/charge/{patient_id}/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -25093,7 +25093,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/inbound",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/inbound",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -25392,7 +25392,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/inbound",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/inbound",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -25624,7 +25624,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/outbound",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/outbound",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -25921,7 +25921,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/outbound",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/outbound",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -26165,7 +26165,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/outbound/ack",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/outbound/ack",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -26464,7 +26464,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/lab/outbound/ack",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/lab/outbound/ack",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -26696,7 +26696,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/logevent",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/logevent",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -26993,7 +26993,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/logevent",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/logevent",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -27225,7 +27225,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/nature_of_visits",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/nature_of_visits",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -27522,7 +27522,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/nature_of_visits",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/nature_of_visits",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -27768,7 +27768,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notification_callbacks/{date}/{notification_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notification_callbacks/{date}/{notification_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -28067,7 +28067,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notification_callbacks/{date}/{notification_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notification_callbacks/{date}/{notification_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -28299,7 +28299,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notificationcallbacks",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notificationcallbacks",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -28596,7 +28596,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notificationcallbacks",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notificationcallbacks",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -28856,7 +28856,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -29157,7 +29157,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -29389,7 +29389,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patient/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patient/register",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -29881,7 +29881,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patient/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patient/register",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -30373,7 +30373,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patient/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patient/register",
           "httpMethod": "DELETE",
           "responses": {
             "200": {
@@ -30670,7 +30670,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patient/register",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patient/register",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -30909,7 +30909,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/business_entity/{business_entity_id}/createBatch",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/business_entity/{business_entity_id}/createBatch",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -31207,7 +31207,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/business_entity/{business_entity_id}/createBatch",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/business_entity/{business_entity_id}/createBatch",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -31446,7 +31446,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/clinical/fullimport/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/clinical/fullimport/{patient_id}/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -31744,7 +31744,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/clinical/fullimport/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/clinical/fullimport/{patient_id}/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -31976,7 +31976,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -32273,7 +32273,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -32505,7 +32505,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/createfullpatient",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/createfullpatient",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -32802,7 +32802,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/createfullpatient",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/createfullpatient",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -33041,7 +33041,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/getbatcherrors/{batch_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/getbatcherrors/{batch_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -33339,7 +33339,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/getbatcherrors/{batch_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/getbatcherrors/{batch_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -33578,7 +33578,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/legacy/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/legacy/{patientid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -34078,7 +34078,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/legacy/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/legacy/{patientid}",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -34376,7 +34376,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/legacy/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/legacy/{patientid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -34615,7 +34615,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/othermeans/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/othermeans/{patientid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -34913,7 +34913,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/othermeans/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/othermeans/{patientid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -35152,7 +35152,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/provider/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/provider/{providerid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -35450,7 +35450,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/provider/{providerid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/provider/{providerid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -35682,7 +35682,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/search",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/search",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -35979,7 +35979,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/search",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/search",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -36218,7 +36218,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -36718,7 +36718,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -37218,7 +37218,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}",
           "httpMethod": "DELETE",
           "responses": {
             "200": {
@@ -37516,7 +37516,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -37755,7 +37755,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/allergies/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/allergies/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -38053,7 +38053,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/allergies/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/allergies/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -38292,7 +38292,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/immunizations/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/immunizations/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -38590,7 +38590,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/immunizations/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/immunizations/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -38829,7 +38829,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/medications/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/medications/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -39127,7 +39127,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/medications/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/medications/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -39366,7 +39366,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/problems/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/problems/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -39664,7 +39664,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/problems/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/problems/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -39903,7 +39903,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/vitals/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/vitals/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -40201,7 +40201,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patients/{patientid}/vitals/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patients/{patientid}/vitals/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -40440,7 +40440,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patientsextended/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patientsextended/{patientid}",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -40738,7 +40738,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/patientsextended/{patientid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/patientsextended/{patientid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -40970,7 +40970,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/employmentstatuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/employmentstatuses",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -41267,7 +41267,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/employmentstatuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/employmentstatuses",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -41499,7 +41499,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/ethnicities",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/ethnicities",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -41796,7 +41796,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/ethnicities",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/ethnicities",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -42028,7 +42028,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/genders",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/genders",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -42325,7 +42325,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/genders",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/genders",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -42557,7 +42557,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/languages",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/languages",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -42854,7 +42854,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/languages",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/languages",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -43086,7 +43086,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/maritalstatuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/maritalstatuses",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -43383,7 +43383,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/maritalstatuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/maritalstatuses",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -43615,7 +43615,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/races",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/races",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -43912,7 +43912,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/races",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/races",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -44144,7 +44144,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/religions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/religions",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -44441,7 +44441,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/religions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/religions",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -44673,7 +44673,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/states",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/states",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -44970,7 +44970,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/person/states",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/person/states",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -45209,7 +45209,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/productiontest/patients/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/productiontest/patients/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -45507,7 +45507,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/productiontest/patients/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/productiontest/patients/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -45739,7 +45739,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/provider/list",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/provider/list",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -46036,7 +46036,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/provider/list",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/provider/list",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -46274,7 +46274,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/provider/npi/{npinumber}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/provider/npi/{npinumber}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -46572,7 +46572,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/provider/npi/{npinumber}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/provider/npi/{npinumber}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -46832,7 +46832,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/reprocess/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/reprocess/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -47133,7 +47133,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/reprocess/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/reprocess/notifications/{notification_id}/{start_date}/{end_date}/{business_entity_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -47383,7 +47383,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/schedule/{date}/getblockouts/{location_id}/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/schedule/{date}/getblockouts/{location_id}/{resource_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -47683,7 +47683,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/schedule/{date}/getblockouts/{location_id}/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/schedule/{date}/getblockouts/{location_id}/{resource_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -47921,7 +47921,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/service/authenticate",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -48219,7 +48219,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/service/authenticate",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -48457,7 +48457,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/service/logout",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/service/logout",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -48755,7 +48755,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/service/logout",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/service/logout",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -48994,7 +48994,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/simple_charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/simple_charge/{patient_id}/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -49292,7 +49292,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/simple_charge/{patient_id}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/simple_charge/{patient_id}/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -49524,7 +49524,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/simple_charge_types",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/simple_charge_types",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -49821,7 +49821,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/simple_charge_types",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/simple_charge_types",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -50067,7 +50067,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/tasks/{clinicianid}/{patientid}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/tasks/{clinicianid}/{patientid}/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -50366,7 +50366,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v1/tasks/{clinicianid}/{patientid}/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v1/tasks/{clinicianid}/{patientid}/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -50397,7 +50397,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/api-docs",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/api-docs",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -50429,7 +50429,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/api-docs",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/api-docs",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -50666,7 +50666,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -50963,7 +50963,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -51216,7 +51216,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/listbydate/{date}/{provider_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/listbydate/{date}/{provider_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -51515,7 +51515,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/listbydate/{date}/{provider_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/listbydate/{date}/{provider_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -51753,7 +51753,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/listbyid/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/listbyid/{appointmentid}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -52051,7 +52051,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/listbyid/{appointmentid}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/listbyid/{appointmentid}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -52288,7 +52288,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/locations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -52585,7 +52585,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/locations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -52822,7 +52822,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/resources",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -53119,7 +53119,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/resources",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -53356,7 +53356,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/statuses",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -53653,7 +53653,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment/statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment/statuses",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -53938,7 +53938,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_blockouts",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_blockouts",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -54244,7 +54244,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_blockouts",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_blockouts",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -54489,7 +54489,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_cancellation_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_cancellation_reasons",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -54787,7 +54787,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_cancellation_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_cancellation_reasons",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -55024,7 +55024,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recall_types",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recall_types",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -55321,7 +55321,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recall_types",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recall_types",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -55342,7 +55342,7 @@
     "/v2/appointment_recalls": {
       "get": {
         "summary": "List Appointment Recalls",
-        "description": "List Appointment Recalls in a Date Range\n\nResults are paginated to 100 Appointment Recalls per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href=\"https://tools.ietf.org/html/rfc5988#section-5\">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href=\"/v2/#pagination\">Pagination</a>.\n",
+        "description": "List Appointment Recalls in a Date Range\n",
         "parameters": [
           {
             "name": "start_date",
@@ -55367,14 +55367,6 @@
             "required": false,
             "type": "string",
             "format": "string"
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "page number",
-            "required": false,
-            "type": "string",
-            "format": "double"
           },
           {
             "name": "Authorization",
@@ -55407,18 +55399,6 @@
         "responses": {
           "200": {
             "description": "list of appointment recalls for a practice by date range",
-            "responseParameters": {
-              "method.response.header.Link": "integration.response.header.Link",
-              "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
-              "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
-              "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
-            },
-            "headers": {
-              "Link": {
-                "description": "pagination links",
-                "type": "string"
-              }
-            },
             "headers": {
               "Access-Control-Allow-Headers": {
                 "type": "string"
@@ -55427,10 +55407,6 @@
                 "type": "string"
               },
               "Access-Control-Allow-Origin": {
-                "type": "string"
-              },
-              "Link": {
-                "description": "pagination links",
                 "type": "string"
               }
             }
@@ -55606,7 +55582,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recalls",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recalls",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -55620,14 +55596,9 @@
                 },
                 "Access-Control-Allow-Origin": {
                   "type": "string"
-                },
-                "Link": {
-                  "description": "pagination links",
-                  "type": "string"
                 }
               },
               "responseParameters": {
-                "method.response.header.Link": "integration.response.header.Link",
                 "method.response.header.Access-Control-Allow-Headers": "'Content-Type, Authorization'",
                 "method.response.header.Access-Control-Allow-Methods": "'GET,POST,PUT,DELETE'",
                 "method.response.header.Access-Control-Allow-Origin": "'http://developer.development.carecloud.com'"
@@ -55887,7 +55858,6 @@
             "integration.request.querystring.start_date": "method.request.querystring.start_date",
             "integration.request.querystring.end_date": "method.request.querystring.end_date",
             "integration.request.querystring.recall_status": "method.request.querystring.recall_status",
-            "integration.request.querystring.page": "method.request.querystring.page",
             "integration.request.header.X-Business-Entity-GUID": "method.request.header.X-Business-Entity-GUID",
             "integration.request.header.Date": "method.request.header.Date",
             "integration.request.header.Content-Type": "method.request.header.Content-Type"
@@ -55912,7 +55882,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recalls",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recalls",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -56157,7 +56127,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recalls/{id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recalls/{id}",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -56663,7 +56633,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recalls/{id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recalls/{id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -56961,7 +56931,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_recalls/{id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_recalls/{id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -57198,7 +57168,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -57495,7 +57465,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -57740,7 +57710,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -58038,7 +58008,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -58331,7 +58301,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}/appointment_templates",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -58638,7 +58608,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}/appointment_templates",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -58883,7 +58853,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}/visit_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}/visit_reasons",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -59181,7 +59151,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_resources/{resource_id}/visit_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_resources/{resource_id}/visit_reasons",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -59418,7 +59388,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_statuses",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -59715,7 +59685,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_statuses",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_statuses",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -60008,7 +59978,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_templates",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -60315,7 +60285,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointment_templates",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointment_templates",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -60576,7 +60546,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -60876,7 +60846,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointmentblockouts/listbyresourceanddate/{provider_id}/date/{date}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -61169,7 +61139,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -61676,7 +61646,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -61973,7 +61943,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -62218,7 +62188,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -62516,7 +62486,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -62761,7 +62731,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/cancel",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/cancel",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -63059,7 +63029,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/cancel",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/cancel",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -63304,7 +63274,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/check_in",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/check_in",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -63602,7 +63572,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/check_in",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/check_in",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -63847,7 +63817,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/check_out",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/check_out",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -64145,7 +64115,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/check_out",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/check_out",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -64390,7 +64360,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/confirmation",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/confirmation",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -64688,7 +64658,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/confirmation",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/confirmation",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -64933,7 +64903,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/confirmations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/confirmations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -65231,7 +65201,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/appointments/{appointment_id}/confirmations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/appointments/{appointment_id}/confirmations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -65476,7 +65446,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -65774,7 +65744,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/encounter_notes/{encounter_id}/merge_transcriptions",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -66011,7 +65981,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/locations",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -66308,7 +66278,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/locations",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/locations",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -66545,7 +66515,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/nature_of_visits",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/nature_of_visits",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -66842,7 +66812,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/nature_of_visits",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/nature_of_visits",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -67079,7 +67049,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/oauth2/authorization",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/oauth2/authorization",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -67376,7 +67346,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/oauth2/authorization",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/oauth2/authorization",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -67613,7 +67583,7 @@
         ],
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/oauth2/token_info",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/oauth2/token_info",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -67910,7 +67880,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/oauth2/token_info",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/oauth2/token_info",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -67931,7 +67901,7 @@
     "/v2/patients": {
       "post": {
         "summary": "Create Patient",
-        "description": "Create a Patient\n\n parameter                     |options                                                                                                                                             |\n-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|\ngender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |\nrace_code                      |Uses HL7 Race Codes with \"\" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |\nmarital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html))        |\nstate_code                     |Uses FIPS 2 letter state abbreviations ([FIPS code listing](https://www.mcc.co.mercer.pa.us/dps/state_fips_code_listing.htm))                       |\nlanguage_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |\ndrivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |\nemployment_status_code         |\"E\": Employed; \"D\": Disabled; \"R\": Retired; \"P\": Part Time; \"U\": Unknown; \"S\": Student'; \"N\": Not Employed                                          |\nethnicity_code                 |\"U\": Declined To Provide; \"H\": Hispanic or Latino; \"N\": Not Hispanic or Latino                                                                      |\nstudent_status_code            |\"F\": Full Time; \"P\": Part Time; \"N\": Not A Student; \"U\": Unknown                                                                                    |\n",
+        "description": "Create a Patient\n\n parameter                     |options                                                                                                                                             |\n-------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|\ngender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |\nrace_code                      |Uses HL7 Race Codes with \"\" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |\nmarital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html))        |\nlanguage_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |\ndrivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |\nemployment_status_code         |\"E\": Employed; \"D\": Disabled; \"R\": Retired; \"P\": Part Time; \"U\": Unknown; \"S\": Student'; \"N\": Not Employed                                          |\nethnicity_code                 |\"U\": Declined To Provide; \"H\": Hispanic or Latino; \"N\": Not Hispanic or Latino                                                                      |\nstudent_status_code            |\"F\": Full Time; \"P\": Part Time; \"N\": Not A Student; \"U\": Unknown                                                                                    |\n",
         "parameters": [
           {
             "name": "Authorization",
@@ -68147,7 +68117,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -68444,7 +68414,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -68681,7 +68651,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/create",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -68978,7 +68948,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/create",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/create",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -69215,7 +69185,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/search",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/search",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -69512,7 +69482,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/search",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/search",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -69756,7 +69726,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -70038,7 +70008,7 @@
       },
       "put": {
         "summary": "Update Patient",
-        "description": "Update a Patient\n\n parameter                     |options                                                                                                                                                                    |\n-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\ngender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |\nrace_code                      |Uses HL7 Race Codes with \"\" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |\nmarital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html)) |\nstate_code                     |Uses FIPS 2 letter state abbreviations ([FIPS code listing](https://www.mcc.co.mercer.pa.us/dps/state_fips_code_listing.htm))                       |\nlanguage_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |\ndrivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |\nemployment_status_code         |\"E\": Employed; \"D\": Disabled; \"R\": Retired; \"P\": Part Time; \"U\": Unknown; \"S\": Student'; \"N\": Not Employed                                          |\nethnicity_code                 |\"U\": Declined To Provide; \"H\": Hispanic or Latino; \"N\": Not Hispanic or Latino                                                                      |\nstudent_status_code            |\"F\": Full Time; \"P\": Part Time; \"N\": Not A Student; \"U\": Unknown                                                                                    |\n",
+        "description": "Update a Patient\n\n parameter                     |options                                                                                                                                                                    |\n-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|\ngender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |\nrace_code                      |Uses HL7 Race Codes with \"\" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |\nmarital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html)) |\nlanguage_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |\ndrivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |\nemployment_status_code         |\"E\": Employed; \"D\": Disabled; \"R\": Retired; \"P\": Part Time; \"U\": Unknown; \"S\": Student'; \"N\": Not Employed                                          |\nethnicity_code                 |\"U\": Declined To Provide; \"H\": Hispanic or Latino; \"N\": Not Hispanic or Latino                                                                      |\nstudent_status_code            |\"F\": Full Time; \"P\": Part Time; \"N\": Not A Student; \"U\": Unknown                                                                                    |\n",
         "parameters": [
           {
             "name": "patient_id",
@@ -70261,7 +70231,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}",
           "httpMethod": "PUT",
           "responses": {
             "200": {
@@ -70559,7 +70529,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -70804,7 +70774,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/balance",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/balance",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -71102,7 +71072,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/balance",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/balance",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -71123,7 +71093,7 @@
     "/v2/patients/{patient_id}/charges": {
       "get": {
         "summary": "List Patient Charges",
-        "description": "List Charges for a Patient\n\nFiltering params are optional. Date filtering fields filter by posting_date.\nWithout date filtering, the past 30 days worth of posted charges for the Patient will be returned.\nWith just a start_date, charges posted 30 days from the start_date will be returned.\n\nThe following types of charges exist:\n\n```\nsimple_charge\ncharge\n```\n\nThe following transaction_statuses exist:\n\n```\nposted\nnot_posted\nclosed\n```\n\nResults are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href=\"https://tools.ietf.org/html/rfc5988#section-5\">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href=\"/v2/#pagination\">Pagination</a>.\n",
+        "description": "List Charges for a Patient\n\nFiltering params are optional. Date filtering fields filter by posting_date.\nWithout date filtering, the past 30 days worth of posted charges for the Patient will be returned.\nWith just a start_date, charges posted 30 days from the start_date will be returned.\n\nThe following types of charges exist:\n\n```\nsimple_charge\ncharge\n```\n\nThe following transaction_statuses exist:\n\n```\nposted\nnot_posted\nclosed\n```\n#\n# Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href=\"https://tools.ietf.org/html/rfc5988#section-5\">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href=\"/v2/#pagination\">Pagination</a>.\n",
         "parameters": [
           {
             "name": "patient_id",
@@ -71363,7 +71333,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/charges",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/charges",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -71663,7 +71633,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/charges",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/charges",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -71907,7 +71877,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/insurances",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/insurances",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -72412,7 +72382,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/insurances",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/insurances",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -72710,7 +72680,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/insurances",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/insurances",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -72731,7 +72701,7 @@
     "/v2/patients/{patient_id}/transactions": {
       "get": {
         "summary": "List Patient Transactions",
-        "description": "List Transactions for a Patient\n\nFiltering params are optional. Date filtering fields filter by posting_date.\nWithout date filtering, the past 30 days worth of posted transactions for the Patient will be returned.\nWith just a start_date, transactions posted 30 days from the start_date will be returned.\n\nThe following transaction_types exist:\n\n```\nsimple_charge_reversal\ncharge_reversal\nreturned_insurance_check_reversal\nreturned_patient_check_reversal\nsimple_charge\ncharge\nreturned_insurance_check\nreturned_patient_check\ninsurance_adjustment\ninsurance_adjustment_refund\ninsurance_adjustment_refund_reversal\ninsurance_adjustment_reversal\ninsurance_payment\ninsurance_payment_refund\ninsurance_payment_refund_reversal\ninsurance_payment_reversal\npatient_adjustment\npatient_adjustment_reversal\npatient_payment\npatient_payment_refund\npatient_payment_refund_reversal\npatient_payment_reversal\nwithhold\nwithhold_refund\nwithhold_refund_reversal\nwithhold_reversal\n```\n\nThe following transaction_statuses exist:\n\n```\nposted\nnot_posted\nclosed\n```\n\nResults are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href=\"https://tools.ietf.org/html/rfc5988#section-5\">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href=\"/v2/#pagination\">Pagination</a>.\n",
+        "description": "List Transactions for a Patient\n\nFiltering params are optional. Date filtering fields filter by posting_date.\nWithout date filtering, the past 30 days worth of posted transactions for the Patient will be returned.\nWith just a start_date, transactions posted 30 days from the start_date will be returned.\n\nThe following transaction_types exist:\n\n```\nsimple_charge_reversal\ncharge_reversal\nreturned_insurance_check_reversal\nreturned_patient_check_reversal\nsimple_charge\ncharge\nreturned_insurance_check\nreturned_patient_check\ninsurance_adjustment\ninsurance_adjustment_refund\ninsurance_adjustment_refund_reversal\ninsurance_adjustment_reversal\ninsurance_payment\ninsurance_payment_refund\ninsurance_payment_refund_reversal\ninsurance_payment_reversal\npatient_adjustment\npatient_adjustment_reversal\npatient_payment\npatient_payment_refund\npatient_payment_refund_reversal\npatient_payment_reversal\nwithhold\nwithhold_refund\nwithhold_refund_reversal\nwithhold_reversal\n```\n\nThe following transaction_statuses exist:\n\n```\nposted\nnot_posted\nclosed\n```\n#\n# Results are paginated to 50 Transactions per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href=\"https://tools.ietf.org/html/rfc5988#section-5\">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href=\"/v2/#pagination\">Pagination</a>.\n",
         "parameters": [
           {
             "name": "patient_id",
@@ -72971,7 +72941,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/transactions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/transactions",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -73271,7 +73241,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/patients/{patient_id}/transactions",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/patients/{patient_id}/transactions",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -73516,7 +73486,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/physicians/{npi}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/physicians/{npi}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -73814,7 +73784,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/physicians/{npi}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/physicians/{npi}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -74051,7 +74021,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/provider/list",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/provider/list",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -74348,7 +74318,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/provider/list",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/provider/list",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -74585,7 +74555,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/providers",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/providers",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -74882,7 +74852,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/providers",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/providers",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -75143,7 +75113,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/schedule/{date}/getblockouts/{location_id}/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/schedule/{date}/getblockouts/{location_id}/{resource_id}",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -75443,7 +75413,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/schedule/{date}/getblockouts/{location_id}/{resource_id}",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/schedule/{date}/getblockouts/{location_id}/{resource_id}",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -75675,7 +75645,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/service/authenticate",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -75972,7 +75942,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/service/authenticate",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -76204,7 +76174,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/service/logout",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/service/logout",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -76501,7 +76471,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/service/logout",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/service/logout",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -76738,7 +76708,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/visit_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/visit_reasons",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -77035,7 +77005,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/visit_reasons",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/visit_reasons",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -77280,7 +77250,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/visit_reasons/{visit_reason_id}/appointment_resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/visit_reasons/{visit_reason_id}/appointment_resources",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -77578,7 +77548,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/visit_reasons/{visit_reason_id}/appointment_resources",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/visit_reasons/{visit_reason_id}/appointment_resources",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -77823,7 +77793,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/waitlist",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/waitlist",
           "httpMethod": "GET",
           "responses": {
             "200": {
@@ -78121,7 +78091,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/waitlist",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/waitlist",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -78358,7 +78328,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/waitlist/book",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/waitlist/book",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -78655,7 +78625,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v2/waitlist/book",
+          "uri": "https://external-api-elb-qa.carecloud.com/v2/waitlist/book",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -78887,7 +78857,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/v3/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v3/service/authenticate",
           "httpMethod": "POST",
           "responses": {
             "200": {
@@ -79184,7 +79154,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/v3/service/authenticate",
+          "uri": "https://external-api-elb-qa.carecloud.com/v3/service/authenticate",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -79223,7 +79193,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/zocdoc",
+          "uri": "https://external-api-elb-qa.carecloud.com/zocdoc",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -79256,7 +79226,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/zocdoc",
+          "uri": "https://external-api-elb-qa.carecloud.com/zocdoc",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"
@@ -79295,7 +79265,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "http",
-          "uri": "https://external-api-elb-dev.carecloud.com/zocdoc/login",
+          "uri": "https://external-api-elb-qa.carecloud.com/zocdoc/login",
           "httpMethod": "GET",
           "responses": {
             "301": {
@@ -79328,7 +79298,7 @@
         },
         "x-amazon-apigateway-integration": {
           "type": "mock",
-          "uri": "https://external-api-elb-dev.carecloud.com/zocdoc/login",
+          "uri": "https://external-api-elb-qa.carecloud.com/zocdoc/login",
           "httpMethod": "OPTIONS",
           "requestTemplates": {
             "application/json": "{'statusCode': 200}"

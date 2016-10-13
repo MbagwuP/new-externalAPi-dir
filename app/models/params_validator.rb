@@ -7,8 +7,8 @@ class ParamsValidator
 
   def invalid_date_passed
     begin
-      Date.parse(@params[:start_date]) if @params[:start_date]
-      Date.parse(@params[:end_date])   if @params[:end_date]
+      Date.parse(@params[:start_date]) if @params[:start_date].present?
+      Date.parse(@params[:end_date])   if @params[:end_date].present?
       nil
     rescue
       'Dates must be valid dates in the format YYYY-MM-DD.'

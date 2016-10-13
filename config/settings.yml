@@ -1,4 +1,5 @@
 test:
+    clinical_data_api: http://clinical-data-api.development.carecloud.com/
     api_internal_svc_url: http://myservices.carecloud.local:3001/
     api_internal_doc_srv_upld_url: https://dms-dev.carecloud.com
     mirth_outbound_svc_url: http://mirth.development.carecloud.com:8088
@@ -12,6 +13,7 @@ test:
     logging_level: 4
 
 development:
+    clinical_data_api: http://clinical-data-api.development.carecloud.com/
     api_internal_svc_url: https://services.development.carecloud.com/
     api_internal_doc_srv_upld_url: https://documents.development.carecloud.com
     mirth_outbound_svc_url: http://mirth.development.carecloud.com:8088
@@ -27,6 +29,7 @@ development:
     platform_url: http://localhost:3898
 
 localhost:
+    clinical_data_api: http://clinical-data-api.development.carecloud.com/
     api_internal_svc_url: http://localservices.carecloud.local:3000/
     api_internal_doc_srv_upld_url: https://documents.development.carecloud.com
     mirth_outbound_svc_url: http://localhost:8088

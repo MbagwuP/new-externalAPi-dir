@@ -31,6 +31,7 @@
       gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
       race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
       marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html)) |
+      state_code                     |Uses FIPS 2 letter state abbreviations ([FIPS code listing](https://www.mcc.co.mercer.pa.us/dps/state_fips_code_listing.htm))                       |
       language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |
       drivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |
       employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
@@ -212,6 +213,7 @@
       gender_code                    |Uses FHIR DSTU 1 (v0.0.82) administrative gender codes ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-administrative-gender.html))          |
       race_code                      |Uses HL7 Race Codes with "" as Declined to Specify. ([HL7 List](http://phinvads.cdc.gov/vads/ViewValueSet.action?oid=2.16.840.1.114222.4.11.6065))  |
       marital_status_code            |Uses FHIR DSTU 1 (v0.0.82) administrative marital status codes. A, I and P are not supported. ([FHIR Documentation](http://www.hl7.org/FHIR/valueset-marital-status.html))        |
+      state_code                     |Uses FIPS 2 letter state abbreviations ([FIPS code listing](https://www.mcc.co.mercer.pa.us/dps/state_fips_code_listing.htm))                       |
       language_code                  |Uses ISO639.2 Language Codes ([ISO639.2 Language list](http://www.loc.gov/standards/iso639-2/php/code_list.php))                                    |
       drivers_license_state_code     |Uses USPS 2-Letter State Abbreviations                                                                                                              |
       employment_status_code         |"E": Employed; "D": Disabled; "R": Retired; "P": Part Time; "U": Unknown; "S": Student'; "N": Not Employed                                          |
@@ -994,6 +996,9 @@
     summary: List Appointment Recalls
     description: |
       List Appointment Recalls in a Date Range
+
+      Results are paginated to 100 Appointment Recalls per page. The `page` parameter sets the page number to return, the default being `1`. Pagination state is indicated by the Link header, in accordance with <a href="https://tools.ietf.org/html/rfc5988#section-5">RFC5988</a>. The `Link` header contains URIs to the first, next, previous, and last pages in the result set. For an example see <a href="/v2/#pagination">Pagination</a>.
+    
     parameters:
       - name: start_date
         in: query
@@ -1013,6 +1018,12 @@
         required: false
         type: string
         format: string
+      - name: page
+        in: query
+        description: page number
+        required: false
+        type: string
+        format: double
     tags:
       - Appointment Recalls
     responses:
@@ -1022,6 +1033,12 @@
           type: array
           items:
             $ref: AppointmentRecall_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
+        headers:
+          Link:
+            description: pagination links
+            type: string
 /appointment_recalls/{id}:
   put:
     summary: Update Appointment Recall

@@ -6,7 +6,6 @@
 
 class ApiService < Sinatra::Base
 
-
   #  lab inbound - pass through to transmit JSON from Mirth to Rails app
   #
   # POST /v1/lab/inbound
@@ -114,6 +113,12 @@ class ApiService < Sinatra::Base
     # Validate the input parameters
     request_body = get_request_JSON
 
+    begin
+      CircuLab::Clinical.new(request_body).send_circulab_test_results
+    rescue => e
+      LOG.debug { "CircuLab Submission Failed: #{e}" }
+    end
+
     ## generate key for post
     current_date = DateTime.now()
     random_id = Random.rand(50).to_s
@@ -138,7 +143,7 @@ class ApiService < Sinatra::Base
     urllaboutbound << '&key='
     urllaboutbound << h.to_s
 
-    LOG.debug("Outbound request body: #{request_body}")
+    LOG.debug("\nOutbound request body: #{request_body.to_json} \n")
 
     begin
       resp = RestClient.post(urllaboutbound, request_body.to_json, :content_type => :json)
