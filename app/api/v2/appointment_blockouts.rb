@@ -1,16 +1,12 @@
 class ApiService < Sinatra::Base
 
   get '/v2/appointment_blockouts' do
-    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id], start_date: params[:start_date], end_date: params[:end_date]}
+    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id]}
+    validate_date_filter_params! if date_filter_params?
+    today = Date.today.to_s
+    forwarded_params[:from] = params.fetch(:start_date,today)
+    forwarded_params[:to]   = params.fetch(:end_date,today)
 
-    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
-    api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
-
-    using_date_filter = params[:start_date] && params[:end_date]
-    if !using_date_filter
-      forwarded_params[:from] = Date.today.to_s
-      forwarded_params[:to] = Date.today.to_s
-    end
 
     urlappt = webservices_uri "appointment_blockouts/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
@@ -47,7 +43,7 @@ class ApiService < Sinatra::Base
       blockout['appointment_blockout']['start_at'] = recurring_timespan.practice_start_time
       blockout['appointment_blockout']['end_at'] = recurring_timespan.practice_end_time
 
-      if using_date_filter
+      if date_filter_params?
         blockout['appointment_blockout'][:occurrences] = recurring_timespan.occurences_in_date_range(params[:start_date], params[:end_date])
         if blockout['appointment_blockout'][:occurrences].any?
           blockout

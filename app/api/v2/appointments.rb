@@ -57,19 +57,13 @@ class ApiService < Sinatra::Base
 
   # /v2/appointments
   get '/v2/appointments' do
-    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], from: params[:start_date], to: params[:end_date],
-                        page: params[:page], use_pagination: 'true'}
+    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], page: params[:page], 
+                        use_pagination: 'true', nature_of_visit_ids: params[:visit_reason_ids]}
 
-    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
-    api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
-
-    using_date_filter = params[:start_date] && params[:end_date]
-    if !using_date_filter
-      forwarded_params[:from] = Date.today.to_s
-      forwarded_params[:to] = Date.today.to_s
-    end
-    forwarded_params[:from] = forwarded_params[:from] + ' 00:00:00'
-    forwarded_params[:to] = forwarded_params[:to] + ' 23:59:59'
+    validate_date_filter_params! if date_filter_params?
+    today = Date.today.to_s
+    forwarded_params[:from] = params.fetch(:start_date, today + ' 00:00:00')
+    forwarded_params[:to]   = params.fetch(:end_date, today + ' 23:59:59')
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
                               {token: escaped_oauth_token, local_timezone: 'true', use_current_business_entity: 'true'}.merge(forwarded_params).compact
@@ -77,7 +71,6 @@ class ApiService < Sinatra::Base
     resp = rescue_service_call 'Appointment Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
-
     @resp = Oj.load(resp)['theAppointments']
     if !resp.headers[:link].nil?
       headers['Link'] = PaginationLinkBuilder.new(resp.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s

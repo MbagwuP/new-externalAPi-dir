@@ -248,14 +248,13 @@ CreateAppointment_Request_appointment:
     visit_reason_id: integer
     resource_id: integer
     chief_complaint: string
+    comments: string
     patient:
       type: array
       $ref: CreateAppointment_Request_appointment_patients
 CreateAppointment_Request_appointment_patients:
   properties:
     id: string
-    comments: string
-
 CreateAppointmentConfirmation_Response:
   properties:
     appointment_confirmation:
@@ -467,14 +466,14 @@ Patient:
     employer_phone_number: string
     ethnicity_code: integer
     student_status_code: integer
-    primary_care_physician_npi: string
-    referring_physician_npi: string
+    primary_care_physician_npi: integer
+    referring_physician_npi: integer
 PatientAddress: 
   properties:
     line1: string
     line2: string
     city: string
-    state_id: integer
+    state_code: string
     zip_code: string
     country_id: integer
     is_primary: string

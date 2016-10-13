@@ -8,7 +8,7 @@
 class ApiService < Sinatra::Base
 
 
-    # Upload document to patient
+  # Upload document to patient
   #
   # POST /v1/documents/<patientid>/upload?authentication=<authenticationToken>
   #
@@ -38,10 +38,20 @@ class ApiService < Sinatra::Base
     #LOG.debug(params[:metadata])
     #LOG.debug(params[:payload])
 
-    # Validate the input parameters
+    # See Rack's magic parameter handling
+    # http://blog.yetanotherjosh.com/post/33685107221/racks-magic-parameter-handling-explained-and
+
+    # Get metadata params from the request
     begin
+       # support passing metadata as json
+       # example: curl -F 'metadata={"document":{"name":"test","format":"pdf","description":"test","source":"19"}}'
        request_body = JSON.parse(params[:metadata])
     rescue
+       # support passing metadata as key/value pairs (ex. html input form)
+       # curl -F 'metadata[document][name]=test' \
+       #      -F 'metadata[document][description]=test' \
+       #      -F 'metadata[document][format]=pdf' \
+       #      -F 'metadata[document][source]=19' \
        request_body = params[:metadata] if params[:metadata].kind_of?(Hash)
        api_svc_halt HTTP_BAD_REQUEST, '{"error":"Failed Parsing Request Body!"}' if request_body.blank?
     end
@@ -50,8 +60,9 @@ class ApiService < Sinatra::Base
     patientid = params[:patientid]
     patientid.slice!(/^patient-/) if /^patient-/ =~ patientid 
 
-    ## token management. Need unencoded tokens!
-    pass_in_token = CGI::unescape(params[:authentication])
+    # Get access_token
+    # access_token can be sent in header (when oauth) or query params (v1, user token).
+    pass_in_token = oauth_request? ? escaped_oauth_token : CGI::unescape(params[:authentication] || "")
 
     # if it's an OAuth token get cbe from session, otherwise call webservices    
     business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
@@ -96,7 +107,9 @@ class ApiService < Sinatra::Base
     #LOG.debug "Request body "
     #LOG.debug(request_body.to_s)
 
-    create_document(patientid, pass_in_token, request_body)
+    response = create_document(patientid, pass_in_token, request_body)
+    @resp = JSON.parse(response)
+    jbuilder :show_document
   end
 
   # Upload document to patient
@@ -398,7 +411,7 @@ class ApiService < Sinatra::Base
    end
 
   get '/v1/documentsources' do
-    pass_in_token = CGI::unescape(params[:authentication])
+    pass_in_token = oauth_request? ? escaped_oauth_token : CGI::unescape(params[:authentication] || "")
     business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
     document_source = "#{API_SVC_URL}businesses/#{business_entity}/document_sources.json?token=#{CGI::escape(pass_in_token)}"
     begin
@@ -453,7 +466,7 @@ class ApiService < Sinatra::Base
     urldoccrt << CGI::escape(pass_in_token)
 
     begin
-    response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
+      response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
     rescue => e
       begin
         errmsg = "Document Creation Failed - #{e.message}"
@@ -463,7 +476,7 @@ class ApiService < Sinatra::Base
       end
     end
 
-    status HTTP_CREATED
+    response
   end
 
   ## upload the document to the DMS server
