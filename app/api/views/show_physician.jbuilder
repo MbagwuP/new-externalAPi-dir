@@ -18,7 +18,7 @@ json.physician do
 			json.official_phone @physician['organization_official_phone']
 			json.official_prefix @physician['organization_official_prefix']
 			json.official_suffix @physician['organization_official_suffix']
-			json.offical_title @physician['organization_official_title']
+			json.official_title @physician['organization_official_title']
 		end
 	else
 		json.organiziation nil
