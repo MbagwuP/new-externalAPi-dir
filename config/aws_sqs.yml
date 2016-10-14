@@ -1,1 +1,2 @@
-salesforce_queue_url: <%=ENV['CONFIG_SALESFORCE_QUEUE_URL']%>
+<%=ENV['RACK_ENV']%>:
+  salesforce_queue_url: <%=ENV['CONFIG_SALESFORCE_QUEUE_URL']%>

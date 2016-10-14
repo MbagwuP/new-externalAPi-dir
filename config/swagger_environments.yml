@@ -1,5 +1,6 @@
-gateway_url: <%=ENV['CONFIG_SWAGGER_GATEWAY_URL']%>
-backend_url: <%=ENV['CONFIG_SWAGGER_BACKEND_URL']%>
-ngrok_url:   <%=ENV['CONFIG_SWAGGER_NGROK_URL']%>
-cors_url:    <%=ENV['CONFIG_SWAGGER_CORS_URL']%>
-platform_url: <%=ENV['CONFIG_SWAGGER_PLATFORM_URL']%>
+<%=ENV['RACK_ENV']%>:
+  gateway_url: <%=ENV['CONFIG_SWAGGER_GATEWAY_URL']%>
+  backend_url: <%=ENV['CONFIG_SWAGGER_BACKEND_URL']%>
+  ngrok_url:   <%=ENV['CONFIG_SWAGGER_NGROK_URL']%>
+  cors_url:    <%=ENV['CONFIG_SWAGGER_CORS_URL']%>
+  platform_url: <%=ENV['CONFIG_SWAGGER_PLATFORM_URL']%>

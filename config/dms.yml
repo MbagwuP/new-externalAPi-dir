@@ -1,1 +1,2 @@
-url: <%=ENV['CONFIG_DMS_URL']%>
+<%=ENV['RACK_ENV']%>:
+  url: <%=ENV['CONFIG_DMS_URL']%>

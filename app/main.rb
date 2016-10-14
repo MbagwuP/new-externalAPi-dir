@@ -84,7 +84,7 @@ class ApiService < Sinatra::Base
 
     begin
       config_path = File.expand_path("../../config/settings.yml", __FILE__)
-      config = YAML.load(ERB.new(File.read(config_path)).result)
+      config = YAML.load(ERB.new(File.read(config_path)).result)[environment.to_s]
       hc_config = YAML.load(File.open(File.expand_path("../../config/vitals.yml", __FILE__)))
       LOG.debug(config)
     rescue 
@@ -121,7 +121,7 @@ class ApiService < Sinatra::Base
     set :mirth_ip, config["mirth_ip_address"]
 
     # CCAuth
-    set :cc_auth_config, YAML.load(ERB.new(File.read(File.expand_path("../../config/cc_auth_service.yml", __FILE__))).result)
+    set :cc_auth_config, YAML.load(ERB.new(File.read(File.expand_path("../../config/cc_auth_service.yml", __FILE__))).result)[settings.environment.to_s]
 
     ## setup log level based on yml
     begin
@@ -133,7 +133,7 @@ class ApiService < Sinatra::Base
     ## connect to Mongo
     begin
       set :mongo, {options: {pool_size: 25, pool_timeout: 10, slave_ok: true},
-          config: File.open(File.dirname(__FILE__) + "/../config/mongodb.yml") { |f| YAML.load(f) }[environment.to_s]}
+          config: File.open(File.dirname(__FILE__) + "/../config/mongodb.yml") { |f| YAML.load(f)[settings.environment.to_s] } }
     rescue => e
       set :mongo, {options: {pool_size: 25, pool_timeout: 10, slave_ok: true},
           config: {}}
