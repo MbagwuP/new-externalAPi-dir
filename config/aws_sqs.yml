@@ -1,2 +1,14 @@
-<%=ENV['RACK_ENV']%>:
+development: &development
   salesforce_queue_url: <%=ENV['CONFIG_SALESFORCE_QUEUE_URL']%>
+
+test:
+  <<: *development
+
+qa: 
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_qa"
+
+staging: 
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_staging"
+
+production: 
+  salesforce_queue_url: "https://sqs.us-east-1.amazonaws.com/489152718636/salesforce_prod"
