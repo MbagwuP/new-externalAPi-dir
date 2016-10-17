@@ -23,7 +23,7 @@ json.physician do
 	else
 		json.organiziation nil
 	end
-	json.specialties (@physician_specialties) do |specialty|
+	json.specialties ( @physician_specialties ) do |specialty|
 		json.name specialty['name']
 		json.taxonomy_code specialty['taxonomy_code']
 	end
