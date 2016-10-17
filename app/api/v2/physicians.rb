@@ -11,7 +11,8 @@ class ApiService < Sinatra::Base
       status HTTP_NOT_FOUND
       body({error: "Physician Not Found"}.to_json)
     else
-      @physician = JSON.parse(response)['physician']
+      @physician = JSON.parse(response)
+      @physician_specialties = @physician['specialties']
       status HTTP_OK
       jbuilder :show_physician
     end

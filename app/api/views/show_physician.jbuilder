@@ -1,5 +1,5 @@
 json.physician do
-	json.npi @physician['npi']	
+	json.npi @physician['npi']		
 	json.prefix @physician['prefix']
 	json.first_name @physician['first_name']
 	json.middle_initial @physician['middle_initial']
@@ -18,9 +18,13 @@ json.physician do
 			json.official_phone @physician['organization_official_phone']
 			json.official_prefix @physician['organization_official_prefix']
 			json.official_suffix @physician['organization_official_suffix']
-			json.offical_title @physician['organization_official_title']
+			json.official_title @physician['organization_official_title']
 		end
 	else
 		json.organiziation nil
+	end
+	json.specialties ( @physician_specialties ) do |specialty|
+		json.name specialty['name']
+		json.taxonomy_code specialty['taxonomy_code']
 	end
 end
