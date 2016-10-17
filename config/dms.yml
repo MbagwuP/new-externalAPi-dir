@@ -1,2 +1,8 @@
-<%=ENV['RACK_ENV']%>:
+development: 
   url: <%=ENV['CONFIG_DMS_URL']%>
+qa: 
+  url: "https://dms-qa.carecloud.com"
+staging: 
+  url: "https://dms-staging.carecloud.com"
+production: 
+  url: "https://dms.carecloud.com"
