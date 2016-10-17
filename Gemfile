@@ -1,4 +1,3 @@
-source "http://gem.carecloud.com"
 source 'http://rubygems.org'
 
 gem 'sinatra', :require => 'sinatra/base'
@@ -9,9 +8,6 @@ gem 'tzinfo'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 gem 'oj', '~> 2.10.0'
 
-# AWS
-gem 'care_cloud-storage', '~> 0.0.9'
-gem 'care_cloud-queue', '~> 0.0.2'
 
 # cache
 gem 'dalli-elasticache', '~> 0.2.0'
@@ -28,11 +24,14 @@ gem 'json'
 gem 'mongo_mapper'
 gem 'bson_ext'
 
-# health check
-gem 'health_check', '0.3.3'#, :source => 'http://gem.carecloud.com/'
-
 gem 'c_cloud_dms_client', path: './vendor/gems'
 gem 'c_cloud_http_client', path: './vendor/gems'
+
+source "http://gem.carecloud.com" do
+  gem 'health_check', '0.3.3'
+  gem 'care_cloud-storage', '~> 0.0.9'
+  gem 'care_cloud-queue', '~> 0.0.2'
+end
 
 gem 'cc_auth', '~> 0.8.0'
 
@@ -48,6 +47,7 @@ group :development, :localhost, :test do
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
   gem 'awesome_print'
+  gem 'dotenv'
 end
 
 group :test do
