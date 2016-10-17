@@ -1,5 +1,5 @@
 json.physician do
-	json.npi @physician['npi']
+	json.npi @physician['npi']		
 	json.prefix @physician['prefix']
 	json.first_name @physician['first_name']
 	json.middle_initial @physician['middle_initial']
@@ -9,7 +9,7 @@ json.physician do
 	json.gender_code DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, @physician['gender_id'])
 	json.deactivation_date @physician['deactivation_date']
 	if @physician['is_organization']
-		json.organiziation do
+		json.organiziation do 
 			json.name @physician['organiziation_name']
 			json.official_email @physician['organization_official_email']
 			json.official_first_name @physician['organization_official_first_name']
