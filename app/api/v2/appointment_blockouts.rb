@@ -4,8 +4,8 @@ class ApiService < Sinatra::Base
     forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id]}
     validate_date_filter_params! if date_filter_params?
     today = Date.today.to_s
-    forwarded_params[:from] = params.fetch(:start_date,today)
-    forwarded_params[:to]   = params.fetch(:end_date,today)
+    forwarded_params[:from] = params.fetch('start_date',today)
+    forwarded_params[:to]   = params.fetch('end_date',today)
 
 
     urlappt = webservices_uri "appointment_blockouts/#{current_business_entity}.json",
