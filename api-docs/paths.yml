@@ -310,6 +310,12 @@
         required: false
         type: string
         format: double
+      - name: visit_reason_ids
+        in: query
+        description: Visit Reason Id or Ids
+        required: false
+        type: string
+        format: double
       # - name: use_pagination
       #   in: query
       #   description: use pagination
