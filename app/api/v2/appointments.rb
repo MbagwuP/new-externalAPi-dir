@@ -59,12 +59,10 @@ class ApiService < Sinatra::Base
   get '/v2/appointments' do
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], page: params[:page], 
                         use_pagination: 'true', nature_of_visit_ids: params[:visit_reason_ids]}
-
     validate_date_filter_params! if date_filter_params?
     today = Date.today.to_s
-    forwarded_params[:from] = params.fetch(:start_date, today + ' 00:00:00')
-    forwarded_params[:to]   = params.fetch(:end_date, today + ' 23:59:59')
-
+    forwarded_params[:from] = params.fetch('start_date', today + ' 00:00:00')
+    forwarded_params[:to]   = params.fetch('end_date', today + ' 23:59:59')
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
                               {token: escaped_oauth_token, local_timezone: 'true', use_current_business_entity: 'true'}.merge(forwarded_params).compact
 
