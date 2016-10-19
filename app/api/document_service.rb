@@ -449,10 +449,17 @@ class ApiService < Sinatra::Base
     internal_file_name << '-'
     internal_file_name << document_name
 
-    #LOG.debug "internal file name"
-    #LOG.debug(internal_file_name)
+    # Handle Content-Transfer-Encoding scheme
+    ##  https://tools.ietf.org/html/rfc2045#section-6
+    ##  transfer encodings: http://www.iana.org/assignments/transfer-encodings/transfer-encodings.xhtml
+    encoding = request.env['HTTP_CONTENT_TRANSFER_ENCODING']
+    # Note: for backwards compatability, when no encoding is specified we need to treat the file as 'base64' encoded.
+    ##   v2 of our documents api should do away with this and default to 'binary' which is a more sensible expectation.  
+    ##   Any clients that wish to encode their docs in base64 should specify this in the 
+    ##   Content-Transfer-Encoding header so we can decode accordingly.
+    base64_encoded = encoding.nil? || (encoding == 'base64')
     File.open(internal_file_name, "wb") do |file|
-      file.write(Base64.decode64(document_binary.read))
+      file.write(base64_encoded ? Base64.decode64(document_binary.read) : document_binary.read)
     end
     return internal_file_name
   end
