@@ -8,6 +8,11 @@ json.physician do
 	json.email @physician['email']
 	json.gender_code DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, @physician['gender_id'])
 	json.deactivation_date @physician['deactivation_date']
+	if (@physician['primary_phone'].present? && @physician['primary_phone']['phone'].present?)
+		json.phone_number @physician['primary_phone']['phone']['phone_number']
+	else
+		json.phone_number nil
+	end
 	if @physician['is_organization']
 		json.organiziation do 
 			json.name @physician['organiziation_name']
@@ -23,7 +28,7 @@ json.physician do
 	else
 		json.organiziation nil
 	end
-	json.specialties ( @physician_specialties ) do |specialty|
+	json.specialties ( @physician['physician_specialties'] ) do |specialty|
 		json.name specialty['name']
 		json.taxonomy_code specialty['taxonomy_code']
 	end
