@@ -22,6 +22,6 @@ class ApiService < Sinatra::Base
     end
     @providers.compact!
     status HTTP_OK
-    jbuilder :show_provider
+    jbuilder :show_providers
   end
 end
