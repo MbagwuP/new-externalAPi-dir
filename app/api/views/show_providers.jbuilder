@@ -1,3 +1,3 @@
-json.array! @providers do |provider|
+json.providers @providers do |provider|
 	json.partial! :provider, provider: provider 
 end
