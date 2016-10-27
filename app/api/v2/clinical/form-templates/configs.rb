@@ -1,7 +1,7 @@
 class ApiService < Sinatra::Base
 
   get '/v2/business-entity/:entityId/clinical/form-templates/configs' do
-    response = RestClient.get(build_config_url(entity_id), api_key: APP_API_KEY)
+    response = RestClient.get(build_config_url(entity_id), {params: query_string, api_key: APP_API_KEY, accept: :json})
     
     body(response)
     status HTTP_OK
@@ -10,14 +10,14 @@ class ApiService < Sinatra::Base
   post '/v2/business-entity/:entityId/clinical/form-templates/configs' do
     request_body = get_request_JSON
 
-    response = RestClient.post(build_config_url(entity_id), request_body.to_json, api_key: APP_API_KEY)
+    response = RestClient.post(build_config_url(entity_id), request_body.to_json, {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK
   end
 
   get '/v2/business-entity/:entityId/clinical/form-templates/configs/:id' do
-    response = RestClient.get(build_config_url(entity_id,id), api_key: APP_API_KEY)
+    response = RestClient.get(build_config_url(entity_id,id), {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK
@@ -26,7 +26,7 @@ class ApiService < Sinatra::Base
   put '/v2/business-entity/:entityId/clinical/form-templates/configs/:id' do
     request_body = get_request_JSON
 
-    response = RestClient.put(build_config_url(entity_id,id), request_body.to_json, api_key: APP_API_KEY)
+    response = RestClient.put(build_config_url(entity_id,id), request_body.to_json, {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK

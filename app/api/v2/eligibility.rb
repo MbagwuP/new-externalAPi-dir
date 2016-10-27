@@ -6,7 +6,7 @@ class ApiService < Sinatra::Base
 
     payload['eligibility_date'] ||= DateTime.now.to_s
     url = build_eligibility_url(patient_id)
-    response = RestClient.post(url, payload, {accept: :json})
+    response = RestClient.post(url, payload, {params: query_string, accept: :json})
 
     body(response)
     status HTTP_OK
@@ -17,7 +17,7 @@ class ApiService < Sinatra::Base
     id = params[:id]
 
     url = build_eligibility_url(patient_id, id)
-    response = RestClient.get(url, {accept: :json})
+    response = RestClient.get(url, {params: query_string, accept: :json})
 
     body(response)
     status HTTP_OK
