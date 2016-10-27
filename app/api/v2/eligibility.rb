@@ -5,7 +5,7 @@ class ApiService < Sinatra::Base
     payload = get_request_JSON
 
     payload['eligibility_date'] ||= DateTime.now.to_s
-    url = build_url(patient_id)
+    url = build_eligibility_url(patient_id)
     response = RestClient.post(url, payload, {accept: :json})
 
     body(response)
@@ -16,18 +16,18 @@ class ApiService < Sinatra::Base
     patient_id = params[:patient_id]
     id = params[:id]
 
-    url = build_url(patient_id, id)
+    url = build_eligibility_url(patient_id, id)
     response = RestClient.get(url, {accept: :json})
 
     body(response)
     status HTTP_OK
   end 
  
-  def build_url(patient_id, request_id=nil)
-    webservices_uri(path(patient_id, request_id), token: escaped_oauth_token)
+  def build_eligibility_url(patient_id, request_id=nil)
+    webservices_uri(eligibility_path(patient_id, request_id), token: escaped_oauth_token)
   end
 
-  def path(patient_id, request_id=nil)
+  def eligibility_path(patient_id, request_id=nil)
     path = "patients/#{patient_id}/eligibility_request"
     path << "/#{request_id}" if request_id
     path
