@@ -5,7 +5,7 @@ class ApiService < Sinatra::Base
     form_uuid = params[:form_uuid]
     url = build_url(patient_id, form_uuid)
 
-    response = RestClient.get(url, api_key: APP_API_KEY)
+    response = RestClient.get(url, {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK
@@ -17,7 +17,7 @@ class ApiService < Sinatra::Base
     form_uuid = params[:form_uuid]
     url = build_url(patient_id, form_uuid)
 
-    response = RestClient.put(url, request_body.to_json, api_key: APP_API_KEY)
+    response = RestClient.put(url, request_body.to_json, {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK
@@ -38,7 +38,7 @@ class ApiService < Sinatra::Base
     patient_id = params[:patient_id]
     url = build_url(patient_id)
     
-    response = RestClient.post(url, request_body.to_json, api_key: APP_API_KEY)
+    response = RestClient.post(url, request_body.to_json, {params: query_string, api_key: APP_API_KEY, accept: :json})
 
     body(response)
     status HTTP_OK

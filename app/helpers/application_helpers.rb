@@ -24,6 +24,10 @@ class ApiService < Sinatra::Base
     @base_url ||= "https://#{request.env['HTTP_HOST']}"
   end
 
+  def query_string
+    @query_string ||= Rack::Utils.parse_nested_query(request.query_string)
+  end
+
   # http://mentalized.net/journal/2011/04/14/ruby_how_to_check_if_a_string_is_numeric/
   def is_this_numeric(param)
     Float(param) != nil rescue false
