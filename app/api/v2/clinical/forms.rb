@@ -50,7 +50,7 @@ class ApiService < Sinatra::Base
 
   def path(patient_id, form_uuid=nil)
     path = "/clinical-data-api/patients/#{patient_id}/clinical-forms"
-    "#{path}/#{form_uuid}"if form_uuid
+    path = "#{path}/#{form_uuid}"if form_uuid
     path
   end
 end

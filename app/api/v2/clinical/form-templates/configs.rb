@@ -45,8 +45,8 @@ class ApiService < Sinatra::Base
   end
 
   def config_path(entityId,id=nil)
-    path = "/clinical-data-api/form-template-configs/#{entityId}"
-    "#{path}/#{id}" if id
+    path = "/clinical-data-api/business-entities/#{entityId}/form-template-configs"
+    path = "#{path}/#{id}" if id
     path
   end
 
