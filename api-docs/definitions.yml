@@ -501,13 +501,21 @@ Insurance:
       type: string
 Provider:
   properties:
-    npi:
-      type: integer
+    id:
+      type: string
     npi:
       type: string
     name:
       type: string
+    phone_number:
+      type: string
+    specialty:
+      $ref: Specialty
 Physician:
+  properties:
+    physician:
+      $ref: PhysicianShow
+PhysicianShow:
   properties:
     npi: string
     prefix: string
@@ -520,6 +528,14 @@ Physician:
     deactivation_date: string
     organization:
       $ref: Organization
+    specialties:
+      type: array
+      items:
+        $ref: Specialty
+Specialty:
+  properties:
+    name: string
+    taxonomy_code: string
 Organization:
   properties:
     name: string
@@ -530,7 +546,7 @@ Organization:
     official_phone: string
     official_prefix: string
     official_suffix: string
-    offical_title: string
+    official_title: string
 Location:
   properties:
     id:
