@@ -1,20 +1,33 @@
-class ApiService < Sinatra::Base
+module Sinatra
+  module V2
+    module Clinical
+      module Payers
+        module Helpers
+          def build_url()
+            webservices_uri(path, token: escaped_oauth_token)
+          end
 
-  get '/v2/payers' do
-    search_criteria = params[:query]
-    url = build_payers_url
+          def path()
+            "payers"
+          end
+        end
 
-    response = RestClient.get(url, {params: {search: search_criteria}, accept: :json})
+        def self.registered(app)
+          app.helpers Payers::Helpers
 
-    body(response)
-    status HTTP_OK
+          app.get '/v2/payers' do
+            search_criteria = params[:query]
+            url = build_url
+
+            response = RestClient.get(url, {params: {search: search_criteria}, accept: :json})
+
+            body(response)
+            status HTTP_OK
+          end
+        end
+      end
+    end
   end
- 
-  def build_payers_url()
-    webservices_uri(payers_path)
-  end
 
-  def payers_path()
-    "payers"
-  end
+  register V2::Clinical::Payers
 end
