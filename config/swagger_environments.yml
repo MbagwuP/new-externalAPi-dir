@@ -1,7 +1,4 @@
 development: &development
-  # environment_url: "https://external-api.development.carecloud.com"
-  # environment_url: "https://4c4ad952.ngrok.com"
-  # environment_url: "https://external-api-elb.development.carecloud.com"
   gateway_url: "https://external.development.carecloud.com"
   backend_url: "https://external.development.carecloud.com"
   ngrok_url:   "http://791b33a7.ngrok.com"
