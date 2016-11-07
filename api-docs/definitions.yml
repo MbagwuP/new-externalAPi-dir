@@ -507,6 +507,8 @@ Provider:
       type: string
     name:
       type: string
+    phone_number:
+      type: string
     specialty:
       $ref: Specialty
 Physician:
