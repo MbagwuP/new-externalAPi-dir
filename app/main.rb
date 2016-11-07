@@ -61,6 +61,12 @@ USE_AMAZON_API_GATEWAY = true
 class ApiService < Sinatra::Base
 
   register Sinatra::ApplicationFilters
+  register Sinatra::V2::Clinical::Payers
+  register Sinatra::V2::Clinical::Payers::Plans
+  register Sinatra::V2::Clinical::Payers::Policies
+  register Sinatra::V2::Clinical::Forms
+  register Sinatra::V2::Clinical::FormTemplates
+  register Sinatra::V2::Clinical::FormTemplates::Configs
 
   def self.build_version
     build_number = File.open(File.expand_path("../../.build", __FILE__), 'rb').read rescue ''

@@ -1,20 +1,35 @@
-class ApiService < Sinatra::Base
+module Sinatra
+  module V2
+    module Clinical
+      module Payers
+        module Policies
+          module Helpers
+            def build_url(payer_id)
+              webservices_uri(path(payer_id), token: escaped_oauth_token)
+            end
 
-  get '/v2/payers/:payer_id/policies' do
-    payer_id = params[:payer_id]
-    url = build_payer_policy_url(payer_id)
+            def path(payer_id)
+              "payers/#{payer_id}/policy_types"
+            end
+          end
 
-    response = RestClient.get(url, {accept: :json})
+          def self.registered(app)
+            app.helpers Policies::Helpers
 
-    body(response)
-    status HTTP_OK
+            app.get '/v2/payers/:payer_id/policies' do
+              payer_id = params[:payer_id]
+              url = build_url(payer_id)
+
+              response = RestClient.get(url, {accept: :json})
+
+              body(response)
+              status HTTP_OK
+            end
+          end
+        end
+      end
+    end
   end
- 
-  def build_payer_policy_url(payer_id)
-    webservices_uri(payer_policy_path(payer_id), token: escaped_oauth_token)
-  end
 
-  def payer_policy_path(payer_id)
-    "payers/#{payer_id}/policy_types"
-  end
+  register V2::Clinical::Payers::Policies
 end

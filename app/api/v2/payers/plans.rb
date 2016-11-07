@@ -1,20 +1,35 @@
-class ApiService < Sinatra::Base
+module Sinatra
+  module V2
+    module Clinical
+      module Payers
+        module Plans
+          module Helpers
 
-  get '/v2/payers/:payer_id/plans' do
-    payer_id = params[:payer_id]
-    url = build_payer_plans_url(payer_id)
+            def build_url(payer_id)
+              webservices_uri(path(payer_id), token: escaped_oauth_token)
+            end
 
-    response = RestClient.get(url, {accept: :json})
+            def path(payer_id)
+              "payers/#{payer_id}/plans"
+            end
+          end
 
-    body(response)
-    status HTTP_OK
+          def self.registered(app)
+            app.helpers Plans::Helpers
+
+            app.get '/v2/payers/:payer_id/plans' do
+              payer_id = params[:payer_id]
+              url = build_url(payer_id)
+
+              response = RestClient.get(url, {accept: :json})
+
+              body(response)
+              status HTTP_OK
+            end
+          end
+        end
+      end
+    end
   end
- 
-  def build_payer_plans_url(payer_id)
-    webservices_uri(payer_plans_path(payer_id), token: escaped_oauth_token)
-  end
-
-  def payer_plans_path(payer_id)
-    "payers/#{payer_id}/plans"
-  end
+  register V2::Clinical::Payers::Plans
 end
