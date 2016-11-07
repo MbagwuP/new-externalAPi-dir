@@ -508,9 +508,7 @@ Provider:
     name:
       type: string
     specialty:
-      type: array
-      items:
-        $ref: Specialty
+      $ref: Specialty
 Physician:
   properties:
     physician:
