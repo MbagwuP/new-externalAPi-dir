@@ -7,11 +7,8 @@ require 'bundler/setup'
 # require all gems from Gemfile (:default namespace)
 Bundler.require(:default)
 
-require './app/main'
 require 'dotenv'
 Dotenv.load
-
-APP_ROOT = File.expand_path('.', File.dirname(__FILE__)) unless defined? APP_ROOT
 
 require './app/main'
 

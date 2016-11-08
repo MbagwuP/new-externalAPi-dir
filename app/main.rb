@@ -34,6 +34,8 @@ Dir.glob("app/api/*.rb").each { |r| require_relative "../#{r}" }
 
 require 'newrelic_rpm'
 
+APP_ROOT = File.expand_path('..', File.dirname(__FILE__)) unless defined? APP_ROOT
+
 # Define http response codes
 HTTP_OK = 200
 HTTP_CREATED = 201
