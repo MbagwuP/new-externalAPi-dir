@@ -2,22 +2,20 @@ module Sinatra
   module V2
     module Clinical
       module Payers
-        module Helpers
-          def build_url()
-            webservices_uri(path, token: escaped_oauth_token)
-          end
 
-          def path()
-            "payers"
-          end
+        def self.build_url()
+          webservices_uri(Payers.path, token: escaped_oauth_token)
+        end
+
+        def self.path()
+          "payers"
         end
 
         def self.registered(app)
-          app.helpers Payers::Helpers
 
           app.get '/v2/payers' do
             search_criteria = params[:query]
-            url = build_url
+            url = Payers.build_url
 
             response = RestClient.get(url, {params: {search: search_criteria}, accept: :json})
 
