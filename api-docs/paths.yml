@@ -248,8 +248,26 @@
       Search for a Patient
 
       You must choose between searching by "terms" or by "fields".
-      When providing an array of terms, results will match provided terms against any field.
-      When providing a fields object, results must match the provided values for the specific fields given.
+
+      When providing an array of "terms", the following patient attributes will be interrogated for a match:
+
+      - first name
+      - last name
+      - ssn
+      - patient number
+      - chart number
+      - driver's license
+      - email
+      - date_of_birth (*term must be in the format of MM/DD/YYYY, MM-DD-YYYY, MMDDYYYY, MMDDYY, MM/DD/YY, or MM-DD-YY*)
+      - insurance policy numbers
+      - insurance member numbers
+
+      When providing a "fields" object, results will match the provided values for the specific fields given.  Supported fields are:
+
+      - first_name
+      - last_name
+      - dob (*value must be in the format of MM/DD/YYYY, MM-DD-YYYY, MMDDYYYY, MMDDYY, MM/DD/YY, or MM-DD-YY*)
+
     parameters:
       - name: query
         in: body
