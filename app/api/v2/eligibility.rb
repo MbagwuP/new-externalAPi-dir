@@ -17,12 +17,17 @@ class ApiService < Sinatra::Base
     id = params[:id]
 
     url = build_eligibility_url(patient_id, id)
-    response = RestClient.get(url, {params: query_string, accept: :json})
+    if (current_internal_request_header)
+      internal_signed_request = sign_internal_request(url: url, method: :get)
+      response = internal_signed_request.execute
+    else
+      response = RestClient.get(url, {params: query_string, accept: :json})
+    end
 
     body(response)
     status HTTP_OK
-  end 
- 
+  end
+
   def build_eligibility_url(patient_id, request_id=nil)
     webservices_uri(eligibility_path(patient_id, request_id), token: escaped_oauth_token)
   end
