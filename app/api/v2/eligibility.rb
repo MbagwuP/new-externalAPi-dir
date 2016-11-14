@@ -28,8 +28,12 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
-  def build_eligibility_url(patient_id, request_id=nil)
-    webservices_uri(eligibility_path(patient_id, request_id), token: escaped_oauth_token)
+  def build_eligibility_url(patient_id:, request_id: nil)
+    if (current_internal_request_header)
+      webservices_uri(eligibility_path(patient_id, request_id))
+    else
+      webservices_uri(eligibility_path(patient_id, request_id), token: escaped_oauth_token)
+    end
   end
 
   def eligibility_path(patient_id, request_id=nil)
