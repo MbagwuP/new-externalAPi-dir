@@ -20,5 +20,17 @@ module DemographicCodes
         return ""
       end
     end
+
+    def self.display_by_code(attribute, code)
+      begin
+        attribute.values.each do |key, value|
+          return value['display'] if value['values'].map{ |e| e.to_s.downcase }.include?(code.to_s.downcase)
+        end
+        return ""
+      rescue
+        return ""
+      end
+    end
+
   end
 end

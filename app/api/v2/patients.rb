@@ -109,10 +109,11 @@ class ApiService < Sinatra::Base
     parsed['patient']['business_entity_id'] = current_business_entity
     parsed['patient']['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, parsed['patient']['gender_id'])
     parsed['patient'].delete('primary_care_physician_id')
+    parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
   end
 
-
+ 
   # /v2/patients
   # /v2/patients/create (legacy)
   post /\/v2\/(patients\/create|patients)$/ do
@@ -124,12 +125,12 @@ class ApiService < Sinatra::Base
       response     = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
     rescue => e
       begin
-          exception = error_handler_filter(e.response)
-          errmsg = "Patient Creation Failed - #{exception}"
-          api_svc_halt e.http_code, errmsg
+        exception = error_handler_filter(e.response)
+        errmsg = "Patient Creation Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
       rescue
-          errmsg = "#{e.message}"
-          api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+        errmsg = "#{e.message}"
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
     returnedBody  = JSON.parse response.body
