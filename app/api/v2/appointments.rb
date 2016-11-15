@@ -91,7 +91,7 @@ class ApiService < Sinatra::Base
 
     if (current_internal_request_header)
       url = webservices_uri base_path, include_confirmation_method: 'true'
-      internal_signed_request = sign_internal_request(url: url, method: :get)
+      internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
       resp = internal_signed_request.execute
     else
       url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'

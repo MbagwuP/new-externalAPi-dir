@@ -16,9 +16,9 @@ class ApiService < Sinatra::Base
     patient_id = params[:patient_id]
     id = params[:id]
 
-    url = build_eligibility_url(patient_id, id)
+    url = build_eligibility_url(patient_id: patient_id, request_id: id)
     if (current_internal_request_header)
-      internal_signed_request = sign_internal_request(url: url, method: :get)
+      internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
       response = internal_signed_request.execute
     else
       response = RestClient.get(url, {params: query_string, accept: :json})

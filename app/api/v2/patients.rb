@@ -90,7 +90,7 @@ class ApiService < Sinatra::Base
       url  += is_this_numeric(patient_id) ? ".json" : "/externalid.json"
       url += "?do_full_export=true"
       if (current_internal_request_header)
-        internal_signed_request = sign_internal_request(url: url, method: :get)
+        internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
         response = internal_signed_request.execute
       else
         url  += "&token=#{escaped_oauth_token}"

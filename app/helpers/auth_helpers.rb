@@ -1,7 +1,7 @@
 class ApiService < Sinatra::Base
 
-  def sign_internal_request(url:, method:)
-    request = RestClient::Request.new(:url => url, :method => method)
+  def sign_internal_request(url:, method:, headers: {})
+    request = RestClient::Request.new(:url => url, :method => method, :headers => headers)
     CCAuth::InternalService::Request.sign!(request)
   end
 
