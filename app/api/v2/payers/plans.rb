@@ -3,10 +3,6 @@ module Sinatra
     module Clinical
       module Payers
         module Plans
-            
-          def self.build_url(payer_id)
-            webservices_uri(Plans.path(payer_id), token: escaped_oauth_token)
-          end
 
           def self.path(payer_id)
             "payers/#{payer_id}/plans"
@@ -16,7 +12,7 @@ module Sinatra
 
             app.get '/v2/payers/:payer_id/plans' do
               payer_id = params[:payer_id]
-              url = Plans.build_url(payer_id)
+              url = webservices_uri(Plans.path(payer_id), token: escaped_oauth_token)
 
               response = RestClient.get(url, {accept: :json})
 

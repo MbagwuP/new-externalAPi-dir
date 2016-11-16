@@ -2,11 +2,6 @@ module Sinatra
   module V2
     module Clinical
       module Payers
-
-        def self.build_url()
-          webservices_uri(Payers.path, token: escaped_oauth_token)
-        end
-
         def self.path()
           "payers"
         end
@@ -15,9 +10,9 @@ module Sinatra
 
           app.get '/v2/payers' do
             search_criteria = params[:query]
-            url = Payers.build_url
+            url = webservices_uri(Payers.path)
 
-            response = RestClient.get(url, {params: {search: search_criteria}, accept: :json})
+            response = RestClient.get(url, {params: {search: search_criteria, token: escaped_oauth_token}, accept: :json})
 
             body(response)
             status HTTP_OK
