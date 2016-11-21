@@ -1,3 +1,4 @@
+require 'json'
 class ApiService < Sinatra::Base
 
   CREATE_PARAMS = %w(start_time end_time appointment_status_id location_id provider_id nature_of_visit_id reason_for_visit resource_id chief_complaint patients)
@@ -422,6 +423,29 @@ class ApiService < Sinatra::Base
     @resp = {'appointment' => @appt}
     status HTTP_OK
     jbuilder :show_appointment
+  end
+  
+  get '/v2/appointment_availability' do
+        
+    begin
+      request_body = AppointmentAvailability.new({'business_entity_id' => current_business_entity, 'token' => escaped_oauth_token}.merge(params).with_indifferent_access).structure_request_body
+      appt_avail_url = webservices_uri "/appointment_availability.json", request_body
+      @resp = rescue_service_call 'Appointment Availability Look Up' do
+        { 'availabilities' => JSON.parse(RestClient.get(appt_avail_url)) }
+      end
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Appointment Availability Finder Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_BAD_REQUEST, errmsg
+      end
+    end
+    
+    @resp.to_json
+    
+    # jbuilder :appointment_availability
   end
 
 end
