@@ -150,6 +150,7 @@ class ApiService < Sinatra::Base
 
   def current_session
     return @current_session if defined?(@current_session) # caching
+    api_svc_halt HTTP_NOT_AUTHORIZED, '{"error": "Missing access token in Authorization header"}' if oauth_token.empty?
     begin
       CCAuth::OAuth2Client.new.authorization(oauth_token)
     rescue CCAuth::Error::ResponseError => e
