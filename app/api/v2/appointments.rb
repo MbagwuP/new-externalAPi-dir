@@ -1,4 +1,3 @@
-require 'json'
 class ApiService < Sinatra::Base
 
   CREATE_PARAMS = %w(start_time end_time appointment_status_id location_id provider_id nature_of_visit_id reason_for_visit resource_id chief_complaint patients)
@@ -426,12 +425,11 @@ class ApiService < Sinatra::Base
   end
   
   get '/v2/appointment_availability' do
-        
     begin
-      request_body = AppointmentAvailability.new({'business_entity_id' => current_business_entity, 'token' => escaped_oauth_token}.merge(params).with_indifferent_access).structure_request_body
-      appt_avail_url = webservices_uri "/appointment_availability.json", request_body
+      search_criteria = AppointmentAvailabilitySearchCriteria.new(params.merge('token' => escaped_oauth_token, 'business_entity_id' => current_business_entity)).query_params
+      appt_avail_url = webservices_uri "/appointment_availability.json", search_criteria
       @resp = rescue_service_call 'Appointment Availability Look Up' do
-        { 'availabilities' => JSON.parse(RestClient.get(appt_avail_url)) }
+        JSON.parse(RestClient.get(appt_avail_url))
       end
     rescue => e
       begin
@@ -444,8 +442,6 @@ class ApiService < Sinatra::Base
     end
     
     @resp.to_json
-    
-    # jbuilder :appointment_availability
   end
 
 end
