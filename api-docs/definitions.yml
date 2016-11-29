@@ -1256,3 +1256,22 @@ EncounterNoteTranscription:
     physical_examination: array
     diagnostic_imaging: array
     impression_plan: array
+ListAppointmentAvailabilities_Response:
+  properties:
+    location:
+      $ref: IdNameHash
+    visit_reason: 
+      $ref: IdNameHash
+    resource:
+      $ref: IdNameHash
+    slots:
+      type: array
+      $ref: StartEndTimeHash
+IdNameHash:
+  properties:
+    id: integer
+    name: string
+StartEndTimeHash:
+  properties:
+    start_time: string
+    end_time: string
