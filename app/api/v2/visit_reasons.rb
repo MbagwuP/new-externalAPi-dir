@@ -3,8 +3,7 @@ class ApiService < Sinatra::Base
   # /v2/visit_reasons
   # /v2/nature_of_visits (legacy)
   get /\/v2\/(nature_of_visits|visit_reasons)/ do
-    nature_of_visit_url = webservices_uri "nature_of_visits/list_by_business_entity/#{current_business_entity}.json",
-                                           token: escaped_oauth_token, for_requests: true
+    nature_of_visit_url = webservices_uri "nature_of_visits/list_by_business_entity/#{current_business_entity}.json", token: escaped_oauth_token
     data = get_nature_of_visits(nature_of_visit_url)
     body(data.to_json)
     status HTTP_OK
@@ -12,7 +11,7 @@ class ApiService < Sinatra::Base
 
   get '/v2/appointment_resources/:resource_id/visit_reasons' do
     nature_of_visit_url = webservices_uri "nature_of_visits/list_by_business_entity/#{current_business_entity}.json",
-                                           token: escaped_oauth_token, filter_resource_id: params[:resource_id], for_requests: true
+                                           token: escaped_oauth_token, filter_resource_id: params[:resource_id]
     data = get_nature_of_visits(nature_of_visit_url)
     body(data.to_json)
     status HTTP_OK
