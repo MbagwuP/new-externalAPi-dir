@@ -287,6 +287,80 @@
           type: array
           items:
             $ref: PatientSearch
+/appointment_availabilities:
+  get:
+    summary: List Available Appointment Time Slots
+    description: |
+      List Available Appointment Time Slots
+      
+      Requires at least one location_id, at least one resource_id, one visit_reason_id, and a start_date. Optionally, you can search by the day of the week, or time of day, or between two dates. Appointment durations can be supplied as well.
+      
+      The days of the week (```dow```) parameter needs to be formatted as a string of binary numbers, from Sunday to Saturday.
+      Example: ```dow=0101100``` represents Monday, Wednesday, and Thursday.
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: true
+        type: string
+        format: double
+      - name: visit_reason_id
+        in: query
+        description: Visit Reason ID
+        required: true
+        type: string
+        format: double
+      - name: location_ids
+        in: query
+        description: Location IDs
+        required: true
+        type: string
+        format: double
+      - name: resource_ids
+        in: query
+        description: Resource IDs
+        required: true
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: meridian
+        in: query
+        description: Meridian (AM or PM)
+        required: false
+        type: string
+        format: double
+      - name: dow
+        in: query
+        description: Day of the Week
+        required: false
+        type: string
+        format: double
+      - name: duration
+        in: query
+        description: Appointment Duration
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: list of appointment availabilities
+        schema:
+          type: array
+          items:
+           $ref: ListAppointmentAvailabilities_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
+        headers:
+          Link:
+            description: pagination links
+            type: string      
 /appointments:
   get:
     summary: List Appointments
