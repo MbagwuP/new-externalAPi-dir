@@ -293,10 +293,20 @@
     description: |
       List Available Appointment Time Slots
       
-      Requires at least one location_id, at least one resource_id, one visit_reason_id, and a start_date. Optionally, you can search by the day of the week, or time of day, or between two dates. Appointment durations can be supplied as well.
-      
-      The days of the week (```dow```) parameter needs to be formatted as a string of binary numbers, from Sunday to Saturday.
-      Example: ```dow=0101100``` represents Monday, Wednesday, and Thursday.
+      Parameter               | Required? | Type    | Instruction
+      ------------------------|-----------|---------|-------------------------------------
+      start_date              | Required  | String  | Format as YYYY-MM-DD
+      visit_reason_id         | Required  | Integer |
+      location_ids            | Required  | Integer | Can be a comma-separated list, ex: ```location_ids=100,101,105```
+      resource_ids            | Required  | Integer | Can be a comma-separated list, ex: ```resource_ids=200,201,205```
+      end_date                | Optional  | String  | Format as YYYY-MM-DD
+      meridian                | Optional  | String  | Pass in 'am' or 'pm', or both as a comma-separated list, ex: ```meridian=am,pm```. Defaults to include AM and PM.
+      dow (Days of the Week)  | Optional  | String  | Format as a string of binary numbers, from Sunday to Saturday, ex: ```dow=0101100``` represents Monday, Wednesday, and Thursday; ```dow=0111110``` represents all weekdays; ```dow=1000000``` represents only Sundays. Defaults to "0111110" (weekdays).
+      duration                | Optional  | Integer | Dictates the length of the returned appointment time slots. Integer represents a number of minutes. Defaults to visit_reason's default duration.
+
+      - For performance reasons, the result is restricted to 100 time slots. If no end_date is given, it will return the first 100 available slots.
+      - Visit Reasons have a default appointment duration attached to them. If no duration is given, that visit reasons's default duration will be used.
+
     parameters:
       - name: start_date
         in: query
@@ -347,7 +357,7 @@
         type: string
         format: double
     tags:
-      - Appointments
+      - Appointment Availability
     responses:
       200:
         description: list of appointment availabilities
