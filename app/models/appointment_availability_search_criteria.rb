@@ -4,60 +4,61 @@ class AppointmentAvailabilitySearchCriteria
   
   class InvalidParameterError < StandardError; end
   
-  REQUIRED_PARAMS = ['start_date', 'visit_reason_id', 'location_ids', 'resource_ids', 'token', 'business_entity_id']
+  REQUIRED_PARAMS = ['start_date', 'visit_reason_id', 'location_ids', 'resource_ids', 'token', 'business_entity_id'].freeze
   
   OPTIONAL_PARAMS = [
                       'end_date', # defaults to start_date
                       'meridian', # defaults to afternoon:true and morning:true
                       'dow', # defaults to '0111110' (weekdays)
-                      'duration', # defaults to nil; back-end has handling so that it will use the visit_reason_id's default duration
-                      'is_any_resource',
-                      'is_any_location',
-                      'is_location_read_only'
-                    ]
+                      'duration' # defaults to nil; back-end has handling so that it will use the visit_reason_id's default duration
+                    ].freeze
                     
-  VALID_PARAMS = REQUIRED_PARAMS + OPTIONAL_PARAMS
+  VALID_PARAMS = (REQUIRED_PARAMS + OPTIONAL_PARAMS).freeze
+  VALID_MERIDIANS = ['am', 'pm', nil].freeze
+  VALID_DOW_CHARS = ['0', '1'].freeze
   
-  DAYS_OF_WEEK = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
+  DAYS_OF_WEEK = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'].freeze
   
-  DEFAULT_DOW = "0111110"
+  DEFAULT_DOW = "0111110".freeze
+  
+  INTEGER_REGEX = /^[1-9]+$/.freeze
     
   def initialize(params)
     validate_params(params)
-    @valid_params = params.select{ |k, v| VALID_PARAMS.include?(k) }.with_indifferent_access
-    build_required_query_params
-    build_optional_query_params
+    valid_params = params.select{ |k, v| VALID_PARAMS.include?(k) }.with_indifferent_access
+    @query_params = build_query_params(valid_params)
   end
   
   private
   
-  attr_reader :valid_params
-    
-  def build_required_query_params
-    @query_params = {
-      date_range_start: valid_params[:start_date],
-      morning: meridian_matches?(valid_params, 'am'),
-      afternoon: meridian_matches?(valid_params, 'pm'),
-      business_entity_id: valid_params[:business_entity_id],
-      original_business_entity_id: valid_params[:business_entity_id].to_i,
-      sequential: true,
-      token: valid_params[:token],
-      search_criterias: [
-        {
-          nature_of_visit_id: valid_params[:visit_reason_id].to_i,
-          resource_ids: resource_ids(valid_params).map(&:to_i),
-          location_ids: location_ids(valid_params).map(&:to_i)
-        }
-      ]
-    }.merge(dow_to_wday_hash(valid_params))
+  def build_query_params(params)
+    qp = build_required_query_params(params)
+    qp[:search_criterias] = build_search_criterias(params)
+    qp[:date_range_end] = params[:end_date] if params[:end_date]
+    qp
   end
   
-  def build_optional_query_params
-    @query_params.merge!(date_range_end: valid_params[:end_date]) if valid_params[:end_date]
-    @query_params[:search_criterias].first.merge!(duration: valid_params[:duration].to_i) if valid_params[:duration]
-    @query_params[:search_criterias].first.merge!(is_any_resource: valid_params[:is_any_resource]) if valid_params[:is_any_resource]
-    @query_params[:search_criterias].first.merge!(is_any_location: valid_params[:is_any_location]) if valid_params[:is_any_location]
-    @query_params[:search_criterias].first.merge!(is_location_read_only: valid_params[:is_location_read_only]) if valid_params[:is_location_read_only]
+  def build_required_query_params(params)
+    {
+      date_range_start: params[:start_date],
+      morning: meridian_matches?(params, 'am'),
+      afternoon: meridian_matches?(params, 'pm'),
+      business_entity_id: params[:business_entity_id],
+      original_business_entity_id: params[:business_entity_id],
+      sequential: true,
+      token: params[:token]
+    }.merge(dow_to_wday_hash(params))
+  end
+  
+  def build_search_criterias(params)
+    scp =
+      {
+        nature_of_visit_id: params[:visit_reason_id].to_i,
+        resource_ids: resource_ids(params).map(&:to_i),
+        location_ids: location_ids(params).map(&:to_i)
+      }
+    scp[:duration] = params[:duration].to_i if params[:duration]
+    [scp]
   end
   
 ###################### Build Query Params Helpers ##############################
@@ -88,71 +89,58 @@ class AppointmentAvailabilitySearchCriteria
     
   def validate_params(params)
     all_required_params(params)
-    validate_meridian(params)
-    validate_duration(params)
-    validate_dow(params)
-    validate_dates(params)
-    validate_integers(params)
-    validate_arrs_of_integers(params)
+    validate_meridian(params['meridian'])
+    validate_duration(params['duration'])
+    validate_dow(dow(params))
+    validate_dates(params.slice('start_date', 'end_date'))
+    validate_integers(params.slice('visit_reason_id', 'duration', 'resource_ids', 'location_ids'))
   end
   
   def all_required_params(params)
     error_msg = if (params.keys & REQUIRED_PARAMS).sort != REQUIRED_PARAMS.sort
       'Missing Required Parameter'
     end
-    raise InvalidParameterError, error(error_msg) if error_msg
+    raise InvalidParameterError, error_msg if error_msg
   end
   
-  def validate_meridian(params)
-    error_msg = if !['am', 'pm', nil].include?(params['meridian'].try(:downcase))
+  def validate_meridian(meridian)
+    error_msg = if !VALID_MERIDIANS.include?(meridian.try :downcase)
       'Invalid Meridian'
     end
-    raise InvalidParameterError, error(error_msg) if error_msg
+    raise InvalidParameterError, error_msg if error_msg
   end
   
-  def validate_duration(params)
-    error_msg = if params['duration'] && params['duration'].respond_to?(:to_i) && params['duration'].to_i <= 0
+  def validate_duration(duration)
+    error_msg = if duration && duration.respond_to?(:to_i) && duration.to_i <= 0
       'Invalid Duration'
     end
-    raise InvalidParameterError, error(error_msg) if error_msg
+    raise InvalidParameterError, error_msg if error_msg
   end
   
-  def validate_dow(params)
-    error_msg = if dow(params).length != 7
+  def validate_dow(dow)
+    error_msg = if dow.length != 7
       'Invalid Length For Days of Week'
-    elsif dow(params).chars.sort & ['0', '1'] != dow(params).chars.uniq.sort
+    elsif dow.chars.sort & VALID_DOW_CHARS != dow.chars.uniq.sort
       'Invalid Characters in Days of Week'
     end
-    raise InvalidParameterError, error(error_msg) if error_msg
+    raise InvalidParameterError, error_msg if error_msg
   end
   
-  def validate_dates(params)
-    error = ParamsValidator.new(params, :end_date_is_before_start_date, :invalid_date_passed, :blank_date_field_passed, :date_filter_range_too_long).error
-    raise InvalidParameterError, error if error
+  def validate_dates(dates_hash)
+    error = ParamsValidator.new(dates_hash, :end_date_is_before_start_date, :invalid_date_passed, :blank_date_field_passed, :date_filter_range_too_long).error
+    pretty_error = JSON.parse(error)['error'].gsub('_', ' ').split(' ').map(&:capitalize).join(' ') if error
+    raise InvalidParameterError, pretty_error if error
   end
   
-  def validate_integers(params)
-    keys = ['visit_reason_id', 'duration'] & params.keys
-    keys.each do |k|
-      if params[k].to_i <= 0 || params[k].to_i.to_s != params[k]
-        raise InvalidParameterError, "Invalid #{k.split('_').map(&:capitalize).join(' ')}"
+  # clean these two methods up so that they do only what their defs say
+  def validate_integers(ints_hash)
+    invalid_ints = ints_hash.select do |k, v|
+      v.split(',').any? do |int|
+        !INTEGER_REGEX.match(int)
       end
     end
+    error_msg = "Invalid #{invalid_ints.first.keys.first.split('_').map(&:capitalize).join(' ')}" if !invalid_ints.empty?
+    raise InvalidParameterError, error_msg if error_msg
   end
-  
-  def validate_arrs_of_integers(params)
-    keys = ['resource_ids', 'location_ids'] & params.keys
-    keys.each do |k|
-      params[k].gsub(' ', '').split(',').each do |x|
-        if x.to_i <= 0 || x.to_i.to_s != x
-          raise InvalidParameterError, "Invalid #{k.split('_').map(&:capitalize).join(' ')}"
-        end
-      end
-    end
-  end
-  
-  def error(msg)
-    '{"error":"' + msg + '"}' if msg
-  end
-  
+    
 end
