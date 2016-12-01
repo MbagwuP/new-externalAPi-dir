@@ -21,7 +21,7 @@ class AppointmentAvailabilitySearchCriteria
   
   DEFAULT_DOW = "0111110".freeze
   
-  INTEGER_REGEX = /^[1-9]+$/.freeze
+  INTEGER_REGEX = /^[0-9]+$/.freeze
     
   def initialize(params)
     validate_params(params)
