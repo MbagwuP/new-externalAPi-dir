@@ -1,22 +1,19 @@
 require 'sinatra'
 
 module CircuLab
+  # CircuLab Module contains the logic to immediately return mock LabCorb lab results in our 
+  # non-Production environments. We only return lab results for the labs defined in the 
+  # lab_test_results/orders directory. It's designed to return unique lab results every time.
+  # 
+  # Only requests that contain one or more matching labs will be processsed. All others will be ignored
+  # 
 
-  class Clinical
+  class Clinical < CircuLab::LabRequest
+    # Clinical class just contains core methods to process the incoming request and send
+    # the mocked response to Clincal API
 
     def initialize(request_body)
-      @request      = request_body
-      @lab_tests    = @request["lab_tests"]
-      @environment  = ENV['RACK_ENV'].downcase || Sinatra::Application.settings.environment.to_s.downcase
-    end
-
-    def clinical_observation_message_url
-      "#{ENV['CONFIG_CLINICAL_API_URL']}/v1/clinical/observation-messages/?key=#{ENV['CONFIG_CIRCULAB_MIRTH_KEY']}&id=#{ENV['CONFIG_CIRCULAB_MIRTH_ID']}"
-    end
-
-    def is_production?
-      # CircuLab results should NOT be triggered in production
-      @environment == 'production'
+      super(request_body)
     end
 
     def is_approved_provider?
@@ -27,92 +24,43 @@ module CircuLab
       is_business_entity && is_approved_provider && is_provider_npi
     end
 
-    def has_approved_amount_of_labs?
-      # For now we want to limit the amount of labs tests to 1 lab per order.
-      # We will revisit this limitation in the future.
-      @lab_tests.size == 1
-    end
+    def process_lab_request
+      # Calls the build process to mock a response back from Mirth with a collection of lab order results
+      # This will either return an object with all the relevant key => values expected from a Mirth lab result
+      # or nil.  
 
-    def has_approved_lab?
-      # Check if lab order has an approved lab which we will send back back to Clinical API
-      # with a mock result.
-      get_lab_test_result.any?
-    end
-
-    def lab_file_name
-      # The Circulab test results are stored in json files in the lab_results directory
-      # The naming pattern for these mock labs are as follows: 
-      # universal-service-identifier_universal-service-description.json
-      # Example: 123456_some_test.json
-      lab_identifier  = @lab_tests.first["universal_service_identifier"]
-      test_name       = @lab_tests.first["universal_service_description"].downcase
-      "#{lab_identifier}_#{test_name}.json"
-    end
-
-    def get_lab_test_result
-      # Globs the lab_test_results directory and filters files that match the 
-      # lab_file_name of the lab tests. Should return an array with a single file name
-      # or an empty collection
-      Dir.glob("app/modules/circulab/lab_test_results/*.json").select { |file| file.include?(lab_file_name)}
-    end
-
-    def lab_interpolation
-      lab_test_result = get_lab_test_result.first.to_s
+      return nil unless meets_circulab_response_criteria?
       begin
-        lab_file        = File.open(lab_test_result, "r")
-        lab_test        = @lab_tests.first
-        now             = DateTime.now.strftime("%Y%m%d%H%M")
-        patient_dob_raw = DateTime.strptime(@request["guarantor_dob"], '%m/%d/%Y').strftime("%Y%m%d")
-        lab_file.read % {lab_tracer_number: @request["lab_tracer_number"],
-                          sending_application_identifier: @request["sending_application_identifier"],
-                          sending_facility_identifier: @request["sending_facility_identifier"],
-                          receiving_application_identifier: @request["receiving_application_identifier"],
-                          receiving_facility_identifier: @request["receiving_facility_identifier"],
-                          message_created_at: now,
-                          patient_external_identifier: @request["patient_external_identifier"],
-                          patient_last_name: @request["patient_last_name"],
-                          patient_first_name: @request["patient_first_name"],
-                          patient_dob_raw: patient_dob_raw,
-                          patient_gender: @request["patient_gender"],
-                          patient_account_number: @request["patient_account_number"],
-                          placer_order_identifier: lab_test["placer_order_identifier"],
-                          filler_order_identifier: lab_test["placer_order_identifier"],
-                          ordering_provider_last_name: lab_test["ordering_provider_last_name"],
-                          ordering_provider_first_name: lab_test["ordering_provider_first_name"],
-                          ordering_provider_npi: lab_test["ordering_provider_npi"],
-                          observation_text: lab_test["universal_service_description"],
-                          observation_code_type: lab_test["universal_service_coding_system"],
-                          observation_at: "#{now}T093000-0400",
-                          observation_date: now,
-                          universal_service_identifier: lab_test["universal_service_identifier"],
-                          universal_service_description: lab_test["universal_service_description"],
-                          specimen_received_at: "#{now}T093000-0400",
-                          specimen_received_date: now,
-                          order_effective_date: "#{now}T093000-0400",
-                          resulted_or_updated_at: "#{now}T093000-0400",
-                          status_change_or_result_date: now}
+        build_lab_request_response
       rescue => e
-        ApiService::LOG.debug { "Lab interoplation failed: #{e}" }
+        ApiService::LOG.debug { "Failed to build CircuLab response: #{e}" }
         return nil
       end
     end
 
     def send_circulab_test_results
+      # This method will get the processed CircuLab payload and post it to Clinical API.
+      # We check which environment first and then check if we have a proper lab result.
+      #
+      # If this is running in production, we exit immediately.
+      #
+
       return if is_production?
-      return unless is_approved_provider? && has_approved_amount_of_labs? && has_approved_lab?
-       ApiService::LOG.debug { "CircuLab Detected" }
-      payload = lab_interpolation
+
+      payload = process_lab_request
       return if payload.nil?
 
+      ApiService::LOG.debug { "CircuLab Detected" }
       begin
-        resp = RestClient.post(clinical_observation_message_url, payload, :content_type => :json)
+        ApiService::LOG.debug { "CircuLab: \nEndpoint: #{clinical_observation_message_url}\n Request Body: #{payload.to_json}" }
+        resp = RestClient.post(clinical_observation_message_url, payload.to_json, :content_type => :json)
       rescue => e
-        ApiService::LOG.debug { "Sending CircuLab to Clinical API Failed: #{e}: #{e.response}" }
+        ApiService::LOG.debug { "CircuLab: Request to Clinical API Failed:\n#{e}: #{e.response}" }
       else
         if (200..299).member?(resp.code)
-          ApiService::LOG.debug { "Sending CircuLab to Clinical API Succesful" }
+          ApiService::LOG.debug { "CircuLab: Request to Clinical API Succesful" }
         else
-          ApiService::LOG.debug { "Sending CircuLab to Clinical API Failed: #{resp.code}: #{resp.body}" }
+          ApiService::LOG.debug { "CircuLab: Request to Clinical API Failed (Non 200 Range Response)\n#{resp.code}: #{resp.body}" }
         end
       end
     end
