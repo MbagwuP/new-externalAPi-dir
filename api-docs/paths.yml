@@ -1438,6 +1438,14 @@
     responses:
       200:
         description: Successfully updated encounter note
+      400:
+        description: Bad Request, JSON is malformed OR one or more of the sections is not supported
+      404:
+        description: Not Found, Encounter ID passed in URL does not have a Encounter Note associated to it.
+      423:
+        description: Locked, Encounter note is being updated
+      409:
+        description: Conflict, Cannot update encounter note because it's not in an updatable state (namely, created or amended)
 /waitlist:
   get:
     summary: Read Waitlist
