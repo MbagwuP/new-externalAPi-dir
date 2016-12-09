@@ -8,3 +8,5 @@
 .env
 .*.sw[a-z]
 .build
+.ruby-gemset
+*.orig

@@ -1,0 +1,26 @@
+{
+      "is_circulab": true,  
+      "lab_tracer_number": "%{lab_tracer_number}",
+      "edi_message_id": 23147,
+      "json_version": 1,
+      "vendor": "LABCORP",
+      "lab_request": {
+        "sending_application_identifier": "%{sending_application_identifier}",
+        "sending_facility_identifier": "%{sending_facility_identifier}",
+        "receiving_application_identifier": "%{receiving_application_identifier}",
+        "receiving_facility_identifier": "%{sending_facility_identifier}",
+        "placer_account_number":"%{sending_facility_identifier}",
+        "message_created_at": "%{message_created_at}",
+        "patient_external_identifier": "%{patient_external_identifier}",
+        "patient_internal_identifier": "ABC",
+        "patient_last_name": "%{patient_first_name}",
+        "patient_first_name": "%{patient_last_name}",
+        "patient_middle_name": "",
+        "patient_dob": "%{patient_dob_raw}",
+        "patient_dob_raw": "%{patient_dob_raw}",
+        "patient_gender": "%{patient_gender}",
+        "account_number": "%{patient_account_number}",
+        "notes": [],
+        "orders": []
+      }
+}

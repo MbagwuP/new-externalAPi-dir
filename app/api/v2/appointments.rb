@@ -91,7 +91,7 @@ class ApiService < Sinatra::Base
 
     if (current_internal_request_header)
       url = webservices_uri base_path, include_confirmation_method: 'true'
-      internal_signed_request = sign_internal_request(url: url, method: :get)
+      internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
       resp = internal_signed_request.execute
     else
       url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'
@@ -422,6 +422,26 @@ class ApiService < Sinatra::Base
     @resp = {'appointment' => @appt}
     status HTTP_OK
     jbuilder :show_appointment
+  end
+  
+  get '/v2/appointment_availability' do
+    begin
+      search_criteria = AppointmentAvailabilitySearchCriteria.new(params.merge('token' => escaped_oauth_token, 'business_entity_id' => current_business_entity)).query_params
+      appt_avail_url = webservices_uri "/appointment_availability.json", search_criteria
+      @resp = rescue_service_call 'Appointment Availability Look Up' do
+        JSON.parse(RestClient.get(appt_avail_url))
+      end
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Appointment Availability Finder Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_BAD_REQUEST, errmsg
+      end
+    end
+    
+    @resp.to_json
   end
 
 end
