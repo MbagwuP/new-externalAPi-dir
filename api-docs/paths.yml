@@ -248,8 +248,26 @@
       Search for a Patient
 
       You must choose between searching by "terms" or by "fields".
-      When providing an array of terms, results will match provided terms against any field.
-      When providing a fields object, results must match the provided values for the specific fields given.
+
+      When providing an array of "terms", the following patient attributes will be interrogated for a match:
+
+      - first name
+      - last name
+      - ssn
+      - patient number
+      - chart number
+      - driver's license
+      - email
+      - date_of_birth (*term must be in the format of MM/DD/YYYY, MM-DD-YYYY, MMDDYYYY, MMDDYY, MM/DD/YY, or MM-DD-YY*)
+      - insurance policy numbers
+      - insurance member numbers
+
+      When providing a "fields" object, results will match the provided values for the specific fields given.  Supported fields are:
+
+      - first_name
+      - last_name
+      - dob (*value must be in the format of MM/DD/YYYY, MM-DD-YYYY, MMDDYYYY, MMDDYY, MM/DD/YY, or MM-DD-YY*)
+
     parameters:
       - name: query
         in: body
@@ -269,6 +287,90 @@
           type: array
           items:
             $ref: PatientSearch
+/appointment_availabilities:
+  get:
+    summary: List Available Appointment Time Slots
+    description: |
+      List Available Appointment Time Slots
+      
+      Parameter               | Required? | Type    | Instruction
+      ------------------------|-----------|---------|-------------------------------------
+      start_date              | Required  | String  | Format as YYYY-MM-DD
+      visit_reason_id         | Required  | Integer |
+      location_ids            | Required  | Integer | Can be a comma-separated list, ex: ```location_ids=100,101,105```
+      resource_ids            | Required  | Integer | Can be a comma-separated list, ex: ```resource_ids=200,201,205```
+      end_date                | Optional  | String  | Format as YYYY-MM-DD
+      meridian                | Optional  | String  | Pass in 'am' or 'pm', or both as a comma-separated list, ex: ```meridian=am,pm```. Defaults to include AM and PM.
+      dow (Days of the Week)  | Optional  | String  | Format as a string of binary numbers, from Sunday to Saturday, ex: ```dow=0101100``` represents Monday, Wednesday, and Thursday; ```dow=0111110``` represents all weekdays; ```dow=1000000``` represents only Sundays. Defaults to "0111110" (weekdays).
+      duration                | Optional  | Integer | Dictates the length of the returned appointment time slots. Integer represents a number of minutes. Defaults to visit_reason's default duration.
+
+      - For performance reasons, the result is restricted to 100 time slots. If no end_date is given, it will return the first 100 available slots.
+      - Visit Reasons have a default appointment duration attached to them. If no duration is given, that visit reasons's default duration will be used.
+
+    parameters:
+      - name: start_date
+        in: query
+        description: Start Date
+        required: true
+        type: string
+        format: double
+      - name: visit_reason_id
+        in: query
+        description: Visit Reason ID
+        required: true
+        type: string
+        format: double
+      - name: location_ids
+        in: query
+        description: Location IDs
+        required: true
+        type: string
+        format: double
+      - name: resource_ids
+        in: query
+        description: Resource IDs
+        required: true
+        type: string
+        format: double
+      - name: end_date
+        in: query
+        description: End Date
+        required: false
+        type: string
+        format: double
+      - name: meridian
+        in: query
+        description: Meridian (AM or PM)
+        required: false
+        type: string
+        format: double
+      - name: dow
+        in: query
+        description: Day of the Week
+        required: false
+        type: string
+        format: double
+      - name: duration
+        in: query
+        description: Appointment Duration
+        required: false
+        type: string
+        format: double
+    tags:
+      - Appointment Availability
+    responses:
+      200:
+        description: list of appointment availabilities
+        schema:
+          type: array
+          items:
+           $ref: ListAppointmentAvailabilities_Response
+        responseParameters:
+          method.response.header.Link: integration.response.header.Link
+        headers:
+          Link:
+            description: pagination links
+            type: string      
 /appointments:
   get:
     summary: List Appointments
@@ -1336,6 +1438,14 @@
     responses:
       200:
         description: Successfully updated encounter note
+      400:
+        description: Bad Request, JSON is malformed OR one or more of the sections is not supported
+      404:
+        description: Not Found, Encounter ID passed in URL does not have a Encounter Note associated to it.
+      423:
+        description: Locked, Encounter note is being updated
+      409:
+        description: Conflict, Cannot update encounter note because it's not in an updatable state (namely, created or amended)
 /waitlist:
   get:
     summary: Read Waitlist

@@ -3,7 +3,6 @@
 #
 #
 # Version:    1.0
-
 class ApiService < Sinatra::Base
 
   #  lab inbound - pass through to transmit JSON from Mirth to Rails app
