@@ -5,7 +5,7 @@
 .ruby-version
 *.sublime*
 .pryrc
-.env
+.env*
 .*.sw[a-z]
 .build
 .ruby-gemset
