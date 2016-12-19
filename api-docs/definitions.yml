@@ -250,7 +250,6 @@ CreateAppointment_Request_appointment:
     chief_complaint: string
     comments: string
     patient:
-      type: array
       $ref: CreateAppointment_Request_appointment_patients
 CreateAppointment_Request_appointment_patients:
   properties:
