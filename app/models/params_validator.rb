@@ -26,6 +26,12 @@ class ParamsValidator
       'Both start_date and end_date are required for date filtering.'
     end
   end
+  
+  def missing_end_date_filter_field
+    if @params[:end_date].blank?
+      'end_date is required for date filtering.'
+    end
+  end
 
   def date_filter_range_too_long
     return nil if !@params[:end_date] || !@params[:start_date]
