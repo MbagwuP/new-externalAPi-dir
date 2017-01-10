@@ -1,0 +1,7 @@
+development: &development
+  enabled: false
+  system: carecloud
+  version: v1_3
+  base_url: https://api.fdbcloudconnector.com/CC/api
+  client_id: 1183
+  password: 2Gf5wjzSFY3Nhkyoo5A0sOKYhV3YHj4nyv9GkuQCu9s=
