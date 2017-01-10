@@ -3,14 +3,10 @@ module Sinatra
     module Drugs
       def self.registered(app)
         app.get '/v2/drugs/search' do
-          query     = { token: escaped_oauth_token, search: params[:search] }
-          uri       = webservices_uri("drugs/search.json", query)
+          results = FDBClient::CoreDrug::DispensableDrug.search(params[:search])
+          drugs = results.items.map{ |x| FDBClient::CoreDrug::LiteDispensableDrug.new(x) if x.has_packaged_drugs}.compact.to_json
 
-          response  = rescue_service_call 'Drugs Rx Lookup' do 
-            RestClient.get(uri)
-          end
-
-          body(response)
+          body(drugs)
           status HTTP_OK
         end
       end
