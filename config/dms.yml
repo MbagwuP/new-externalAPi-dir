@@ -3,7 +3,7 @@ development: &development
 localhost: 
   *development
 qa: 
-  url: "https://dms-qa.carecloud.com"
+  url: <%=ENV['CONFIG_DMS_URL']%>
 staging: 
   url: "https://dms-staging.carecloud.com"
 production: 
