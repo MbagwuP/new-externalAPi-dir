@@ -11,6 +11,7 @@ development: &development
   version: <%=ENV['CONFIG_API_VERSION']%>
   logging_level: <%=ENV['CONFIG_LOGGING_LEVEL']%>
   clinical_data_api: <%=ENV['CONFIG_CLINICAL_DATA_API']%>
+  enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
 
 localhost:
   *development
@@ -27,6 +28,7 @@ production:
   lab_pass: mDYPQx1ompwLZN2TxWzOf8FOevkOlcdu
   version: 26.2
   logging_level: 5
+  enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
 
 qa:
   api_internal_svc_url: <%=ENV['CONFIG_API_INTERNAL_SVC_URL']%>
@@ -41,6 +43,7 @@ qa:
   version: <%=ENV['CONFIG_API_VERSION']%>
   logging_level: <%=ENV['CONFIG_LOGGING_LEVEL']%>
   clinical_data_api: <%=ENV['CONFIG_CLINICAL_DATA_API']%>
+  enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
 
 staging:
   api_internal_svc_url: https://services-staging.carecloud.com/
@@ -54,3 +57,4 @@ staging:
   lab_pass: chgDkJDfm1CGJjlrh9lHKHqGExOSfTAe
   version: 26.2
   logging_level: 4
+  enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
