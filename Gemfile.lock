@@ -56,7 +56,7 @@ GEM
     facets (3.1.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
-    fdb_client (0.1.0)
+    fdb_client (0.2.1)
       activesupport (~> 3.2.17)
       facets
       rest-client (~> 1.6)
@@ -164,7 +164,7 @@ DEPENDENCIES
   color
   dalli-elasticache (~> 0.2.0)
   dotenv
-  fdb_client (~> 0.1.0)!
+  fdb_client (~> 0.2)!
   health_check (= 0.3.3)!
   json
   log4r
@@ -189,4 +189,4 @@ DEPENDENCIES
   tzinfo
 
 BUNDLED WITH
-   1.12.5
+   1.13.1

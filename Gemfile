@@ -29,7 +29,7 @@ gem 'c_cloud_dms_client', path: './vendor/gems'
 gem 'c_cloud_http_client', path: './vendor/gems'
 
 source "http://gem.carecloud.com" do
-  gem 'fdb_client', "~> 0.1.0"
+  gem 'fdb_client', "~> 0.2"
   gem 'health_check', '0.3.3'
   gem 'care_cloud-storage', '~> 0.0.9'
   gem 'care_cloud-queue', '~> 0.0.2'
