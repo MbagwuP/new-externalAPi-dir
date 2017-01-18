@@ -71,6 +71,7 @@ class ApiService < Sinatra::Base
   register Sinatra::V2::Clinical::FormTemplates::Configs
   register Sinatra::V2::Drugs
   register Sinatra::V2::Allergens
+  register Sinatra::V2::AllergenTypes
 
   def self.build_version
     build_number = File.open(File.expand_path("../../.build", __FILE__), 'rb').read rescue ''
@@ -115,6 +116,7 @@ class ApiService < Sinatra::Base
     DOC_SERVICE_URL = config["api_internal_doc_srv_upld_url"]
     SOFTWARE_VERSION = config["version"]
     CLINICAL_DATA_API = config["clinical_data_api"]
+    ENABLE_FDB = config["enable_fdb"]
 
     set :enable_auditing, false
     set :api_url, config["api_internal_svc_url"]
