@@ -56,7 +56,7 @@ GEM
     facets (3.1.0)
     faraday (0.9.1)
       multipart-post (>= 1.2, < 3)
-    fdb_client (0.2.1)
+    fdb_client (0.2.2)
       activesupport (~> 3.2.17)
       facets
       rest-client (~> 1.6)
