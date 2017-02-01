@@ -7,6 +7,7 @@ gem 'chronic'
 gem 'tzinfo'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 gem 'oj', '~> 2.10.0'
+gem 'stoplight', '~> 1.1'
 
 
 # cache
@@ -28,6 +29,7 @@ gem 'c_cloud_dms_client', path: './vendor/gems'
 gem 'c_cloud_http_client', path: './vendor/gems'
 
 source "http://gem.carecloud.com" do
+  gem 'fdb_client', "~> 0.2"
   gem 'health_check', '0.3.3'
   gem 'care_cloud-storage', '~> 0.0.9'
   gem 'care_cloud-queue', '~> 0.0.2'
