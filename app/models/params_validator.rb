@@ -16,7 +16,7 @@ class ParamsValidator
   end
 
   def blank_date_field_passed
-    if (@params.keys.include?(:start_date) && @params[:start_date].blank?) || (@params.keys.include?(:end_date) && @params[:end_date].blank?)
+    if (@params[:start_date].blank?) || (@params[:end_date].blank?)
       'Date filtering fields cannot be blank.'
     end
   end
