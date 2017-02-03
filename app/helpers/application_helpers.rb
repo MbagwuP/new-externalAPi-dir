@@ -49,8 +49,12 @@ class ApiService < Sinatra::Base
     params[:start_date].present? || params[:end_date].present?
   end
 
-  def validate_date_filter_params!
-    params_error = ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+  def validate_date_filter_params! options={}
+    params_error =  if options[:require_only_end] 
+                      ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_end_date_filter_field, :date_filter_range_too_long).error
+                    else
+                      ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+                    end
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
   end
 

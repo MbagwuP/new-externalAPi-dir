@@ -1,4 +1,4 @@
-development:
+development: &development
   api_internal_svc_url: <%=ENV['CONFIG_API_INTERNAL_SVC_URL']%>
   api_internal_doc_srv_upld_url: <%=ENV['CONFIG_API_INTERNAL_DOC_SRV_UPLD_URL']%>
   mirth_outbound_svc_url: <%=ENV['CONFIG_MIRTH_OUTBOUND_SVC_URL']%>
@@ -12,6 +12,9 @@ development:
   logging_level: <%=ENV['CONFIG_LOGGING_LEVEL']%>
   clinical_data_api: <%=ENV['CONFIG_CLINICAL_DATA_API']%>
   enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
+
+localhost:
+  *development
 
 production:
   api_internal_svc_url: http://services.carecloud.com/

@@ -3,6 +3,15 @@
 #
 # Version:    1.0
 
+# Dotenv
+# support loading environment specific override files (ex. .env.localhost)
+# load the base/global .env file last.  sequence matters.  vars set in previously loaded .env.<env> files take precedence.
+rack_env = (ENV['RACK_ENV'] || 'development')
+envs = []
+envs << ".env.#{rack_env}" if %{localhost}.include?(rack_env)
+envs << ".env"
+Dotenv.load(*envs)
+
 require 'sinatra/base'
 require 'json'
 require 'log4r'
@@ -16,13 +25,6 @@ require 'rest-client'
 require 'mongo_mapper'
 require 'require_all'
 require 'pry'
-
-begin
-  require "dotenv"
-  Dotenv.load
-rescue Exception::LoadError => e
-  puts "#{e.message}"
-end
 
 require_all 'app', 'lib'
 

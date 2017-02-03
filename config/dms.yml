@@ -1,5 +1,7 @@
-development: 
+development: &development
   url: <%=ENV['CONFIG_DMS_URL']%>
+localhost: 
+  *development
 qa: 
   url: <%=ENV['CONFIG_DMS_URL']%>
 staging: 

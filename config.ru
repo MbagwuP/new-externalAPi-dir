@@ -7,9 +7,6 @@ require 'bundler/setup'
 # require all gems from Gemfile (:default namespace)
 Bundler.require(:default)
 
-require 'dotenv'
-Dotenv.load
-
 require './app/main'
 
 run ApiService

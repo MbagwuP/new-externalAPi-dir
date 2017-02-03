@@ -1,62 +1,30 @@
 class ApiService < Sinatra::Base
 
   get '/v2/appointment_blockouts' do
-    forwarded_params = {resource_id: params[:resource_id], location_id: params[:location_id]}
-    validate_date_filter_params! if date_filter_params?
-    today = Date.today.to_s
-    forwarded_params[:from] = params.fetch('start_date',today)
-    forwarded_params[:to]   = params.fetch('end_date',today)
-
-
+    # mandatory params
+    forwarded_params = {
+      resource_id: params[:resource_id],
+      location_id: params[:location_id]
+    }
+    
+    # end_date is mandatory for date filtering; start date is not
+    if date_filter_params?
+      params[:start_date] = Date.today.to_s if params[:start_date].blank?
+      validate_date_filter_params!(require_only_end: true)
+      forwarded_params[:from] = params[:start_date]
+      forwarded_params[:to] = params[:end_date]
+    end
+    
+    # in Webservices: AppointmentBlockoutsController#list_by_business_entity
     urlappt = webservices_uri "appointment_blockouts/#{current_business_entity}.json",
                               {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
-
-    response = rescue_service_call 'Appointment Blockout Look Up' do
+    @blockouts = rescue_service_call 'Appointment Blockout Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
-    response = JSON.parse(response)
-
+    @blockouts = JSON.parse(@blockouts)
     
-    # fetch the BE's details, we need its local timezone
-    urlbusentity = webservices_uri "businesses/#{current_business_entity}.json",
-                                   {token: escaped_oauth_token, include_timezone: 'true', business_entity_id: current_business_entity}
-    busentity = rescue_service_call 'Practice Look Up' do
-      RestClient.get(urlbusentity)
-    end
-    busentity = JSON.parse(busentity)
-
-    response = response.map {|blockout|
-      blockout['appointment_blockout']['business_entity_id'] = current_business_entity
-      blockout['appointment_blockout']['timezone_name'] = busentity['business_entity']['timezone']['name']
-      recurring_timespan = RecurringTimespan.new(blockout['appointment_blockout'])
-
-      blockout['appointment_blockout'].delete('start_hour')
-      blockout['appointment_blockout'].delete('end_hour')
-      blockout['appointment_blockout'].delete('start_minutes')
-      blockout['appointment_blockout'].delete('end_minutes')
-      blockout['appointment_blockout'].delete('created_by')
-      blockout['appointment_blockout'].delete('updated_by')
-      blockout['appointment_blockout'].delete('start_hour_bak')
-      blockout['appointment_blockout'].delete('end_hour_bak')
-      blockout['appointment_blockout']['effective_from'] = recurring_timespan.effective_from_iso8601_date
-      blockout['appointment_blockout']['effective_to'] = recurring_timespan.effective_to_iso8601_date
-      blockout['appointment_blockout']['start_at'] = recurring_timespan.practice_start_time
-      blockout['appointment_blockout']['end_at'] = recurring_timespan.practice_end_time
-
-      if date_filter_params?
-        blockout['appointment_blockout'][:occurrences] = recurring_timespan.occurences_in_date_range(params[:start_date], params[:end_date])
-        if blockout['appointment_blockout'][:occurrences].any?
-          blockout
-        else
-          nil # don't return blockouts that have no occurences in specified date range
-        end
-      else
-        blockout # no date range was specified, so return all blockouts
-      end
-    }.compact
-
-    body(response.to_json)
     status HTTP_OK
+    body jbuilder :list_appointment_blockouts
   end
 
   get '/v2/appointmentblockouts/listbyresourceanddate/:resourceid/date/:date?' do

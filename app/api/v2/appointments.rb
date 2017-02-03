@@ -178,16 +178,15 @@ class ApiService < Sinatra::Base
       end
     rescue
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
-    end
-
-    # support comments in the patient pbject for backwards compatibility
-    # but give priority to comments in the appointment object to normalize
-    # request with the appointment response payload
-    request_body['appointment']['patients'][0]['comments'] = request_body['appointment']['comments'] if request_body['appointment'].has_key?('comments')
-
-    # accept "patient" or "patients", whose value can be either an object or an array containing one object
+    end    
+    
+    # accept "patient" or "patients", whose value can be either an object or an array containing one object (backwards compatibility support)
     request_body['appointment'].rename_key('patient', 'patients') if request_body['appointment'].keys.include?('patient')
-    request_body['appointment']['patients'] = [request_body['appointment']['patients']] if request_body['appointment']['patients'].is_a?(Hash)
+    # normalize patient data into an Array to meet internal service's api contract
+    request_body['appointment']['patients'] = Array.wrap(request_body['appointment']['patients']) # if request_body['appointment']['patients'].is_a?(Hash)
+    # normalize comments on patient object.  This allows for comments to be specified on the patient object for backwards compatibility
+    # but gives priority to comments in the appointment object
+    request_body['appointment']['patients'].first['comments'] = request_body['appointment']['comments'] if request_body['appointment'].has_key?('comments')
     request_body['appointment']['reason_for_visit'] = request_body['appointment'].delete('chief_complaint')
 
     request_body['appointment'] = filter_request_body(request_body['appointment'], permit: CREATE_PARAMS)
