@@ -12,13 +12,14 @@ class ApiService < Sinatra::Base
       RestClient.get(urllocation, :api_key => APP_API_KEY)
     end
 
-    parsed = JSON.parse(response.body)
-    parsed["locations"].each do |location| 
+    @locations = JSON.parse(response.body)
+    @locations["locations"].each do |location| 
       if location['address'].present? && location['address']['zip_code'].length == 9 
         location['address']['zip_code'].insert(5, '-')
       end
     end
-    body(parsed.to_json)
+    
+    body jbuilder :list_locations
     status HTTP_OK
   end
 
