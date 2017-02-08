@@ -556,6 +556,19 @@ Location:
       type: string
     address:
       $ref: LocationAddress
+    phones: 
+      type: array
+      $ref: LocationPhone
+LocationPhone:
+  properties:
+    phone_number: 
+      type: string
+    phone_type: 
+      type: string
+    phone_ext:
+      type: string
+    is_primary:
+      type: boolean
 LocationAddress:
   properties:
     line1:
