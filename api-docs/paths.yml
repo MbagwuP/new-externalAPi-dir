@@ -890,6 +890,24 @@
 #             $ref: AppointmentsByResource
 #       404:
 #         description: resource not found for current practice
+/appointments/{appointment_id}/pending:
+  put:
+    summary: Change appointment status to pending
+    description: Returns the appointment object reflecting the change of state
+    parameters:
+      - name: appointment_id
+        in: path
+        description: appointment_id
+        required: true
+        type: string
+        format: double
+    tags:
+      - Appointments
+    responses:
+      200:
+        description: appointment json object
+        schema:
+          $ref: ShowAppointment_Response
 /appointments/{appointment_id}/check_in:
   put:
     summary: Check in appointment
