@@ -297,6 +297,22 @@ class ApiService < Sinatra::Base
     @resp = {'appointment' => @appt}
     jbuilder :show_appointment
   end
+  
+  put '/v2/appointments/:id/pending' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
+
+    url_appt_pending = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/pending.json", token: escaped_oauth_token, v2: true
+
+    response = rescue_service_call 'Appointment Check In', true do
+      RestClient.put(url_appt_pending, :api_key => APP_API_KEY, :content_type => :json)
+    end
+
+    @appt = JSON.parse(response)['appointment']
+    set_preferred_confirmation_method(@appt)
+
+    @resp = {'appointment' => @appt}
+    jbuilder :show_appointment
+  end
 
   get '/v2/appointment_recalls' do
     forwarded_params = {start_date: params[:start_date], end_date: params[:end_date], use_pagination: 'true',page: params[:page]}
