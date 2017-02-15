@@ -987,6 +987,10 @@ PatientSearch_Request_fields:
     dob: 
       type: string
       description: MMDDYYYY
+    gender:
+      type: string
+    phone_number:
+      type: string
 Activity:
   properties:
     uuid:
