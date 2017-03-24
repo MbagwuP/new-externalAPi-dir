@@ -148,6 +148,8 @@ AppointmentBlockouts_Response_appointment_blockout:
     use_thursday: boolean
     use_tuesday: boolean
     use_wednesday: boolean
+    timezone: string
+    recurrence_id: integer
     occurrences:
       $ref: AppointmentBlockouts_Response_appointment_blockout_occurrences
       type: array
