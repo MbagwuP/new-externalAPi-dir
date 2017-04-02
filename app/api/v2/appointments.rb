@@ -254,13 +254,12 @@ class ApiService < Sinatra::Base
 
     parsed = JSON.parse(response.body)
     filtered_data = {}
-    filtered_data["appointment_id"] = parsed["external_id"]
-    filtered_data["start_time"] = parsed["start_time"]
-    filtered_data["appointment_cancellation_reason_id"] = parsed["appointment_cancellation_reason_id"]
-    filtered_data["cancellation_details"] = parsed["cancellation_details"]
-    filtered_data["cancellation_comments"] = parsed["cancellation_comments"]
-    filtered_data["updated_at"] = parsed["updated_at"]
-
+    filtered_data["appointment_id"] = parsed["appointment"]["external_id"]
+    filtered_data["start_time"] = parsed["appointment"]["start_time"]
+    filtered_data["appointment_cancellation_reason_id"] = parsed["appointment"]["appointment_cancellation_reason_id"]
+    filtered_data["cancellation_details"] = parsed["appointment"]["cancellation_details"]
+    filtered_data["cancellation_comments"] = parsed["appointment"]["cancellation_comments"]
+    filtered_data["updated_at"] = parsed["appointment"]["updated_at"]
     body(filtered_data.to_json)
 
     status HTTP_OK
