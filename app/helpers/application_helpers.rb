@@ -248,7 +248,7 @@ class ApiService < Sinatra::Base
 
       ## cache the result
       begin
-        XAPI::Cache.set(cache_key, returned_providers_by_business_entity.to_s, 500000)
+        XAPI::Cache.set(cache_key, String.new(returned_providers_by_business_entity), 500000)
           #LOG.debug("++++++++++cache set")
       rescue => e
         LOG.warn("cannot reach cache store")
