@@ -6,7 +6,11 @@ if (provider['primary_phone'].present? && provider['primary_phone']['phone'].pre
 else
   json.phone_number nil
 end
-json.specialty do
-  json.name provider['primary_specialty']['specialty']['name']
-  json.taxonomy provider['primary_specialty']['specialty']['taxonomy_code']
-end
+  if (provider['primary_specialty'].present? && provider['primary_specialty']['specialty'].present?)
+    json.specialty do
+      json.name provider['primary_specialty']['specialty']['name']
+      json.taxonomy provider['primary_specialty']['specialty']['taxonomy_code']
+    end
+  else 
+      json.specialty nil
+  end
