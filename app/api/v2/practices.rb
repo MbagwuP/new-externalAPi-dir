@@ -25,7 +25,7 @@ class ApiService < Sinatra::Base
     rescue => e
       begin
         exception = error_handler_filter(e.response)
-        errmsg = "Business Creation Failed - #{exception}"
+        errmsg = "Business Entity Creation Failed - #{exception}"
         api_svc_halt e.http_code, errmsg
       rescue
         errmsg = "#{e.message}"
