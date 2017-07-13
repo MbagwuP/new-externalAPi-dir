@@ -1,37 +1,38 @@
 module XAPI
   class Cache
+    @client = false # Shared Dalli ElasticCache client for instance
 
     # durations are measured in minutes
     DEFAULT = 60
 
     class << self
       def get(key)
-        cache.get key   
+        cache.get key
       rescue Dalli::DalliError, SocketError
         nil
       end
 
       def set(key, value, expires_in=DEFAULT)
-        cache.set key, value, expires_in.minutes.to_i   
+        cache.set key, value, expires_in.minutes.to_i
       rescue Dalli::DalliError, SocketError
         nil
       end
       alias_method(:add, :set)
 
       def delete(key)
-        cache.delete key 
+        cache.delete key
       rescue Dalli::DalliError, SocketError
         nil
       end
 
       def invalidate(key)
-        cache.delete key 
+        cache.delete key
       rescue Dalli::DalliError, SocketError
         nil
       end
 
       def valid?(key)
-        cache.get(key) ? true : false 
+        cache.get(key) ? true : false
       rescue Dalli::DalliError, SocketError
         nil
       end
@@ -49,8 +50,16 @@ module XAPI
         end
       end
 
-      def cache 
-        Dalli::ElastiCache.new(ApiService.settings.memcached_servers, {expires_in: DEFAULT.minutes.to_i, namespace: "XAPI::#{ ApiService.settings.environment.to_s.upcase}"}).client
+      def cache
+        unless @client
+          endpoint = ApiService.settings.memcached_servers
+          options = {
+            expires_in: DEFAULT.minutes.to_i,
+            namespace: "XAPI::#{ApiService.settings.environment.to_s.upcase}"
+          }
+          @client = Dalli::ElastiCache.new(endpoint,options).client
+        end
+        @client
       end
 
       def cache_block_value(key, expires_in)
