@@ -12,6 +12,7 @@ PROVIDER_REGEX = '\Aprovider-[a-zA-Z0-9._-]{1,15}\z'
 PROVIDER_MAX_LEN = 15
 DATE_REGEX = '\d{8}\z'
 DATE_MAX_LEN = 8
+TRUE_PARAM_VALUES = [1, '1', true, 'true'].freeze
 
 class ApiService < Sinatra::Base
   
@@ -618,6 +619,10 @@ class ApiService < Sinatra::Base
 
   def filter_request_body(params, permit:)
     params.select { |param| permit.include?(param) }
+  end
+
+  def true_param?(param)
+    TRUE_PARAM_VALUES.include?(param)
   end
 
 end

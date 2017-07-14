@@ -34,6 +34,19 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body).first
     return parsed["appointment"]["id"]
   end
-
+  
+  def transform_communication_params(request_body)
+    communication_method_slug = request_body.delete('communication_method')
+    request_body['communication_method_id'] = communication_methods[communication_method_slug]
+    if request_body['communication_outcome']
+      communication_outcome_slug = request_body.delete('communication_outcome')
+      request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
+    else
+      # communication_outcome 6 is "confirmed"
+      request_body['communication_outcome_id'] = 6
+    end
+    request_body.rename_key('communication_method_description', 'method_description') if request_body['communication_method_description'].present?
+    request_body
+  end
 
 end
