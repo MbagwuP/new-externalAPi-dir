@@ -38,15 +38,21 @@ class ApiService < Sinatra::Base
   def transform_communication_params(request_body)
     communication_method_slug = request_body.delete('communication_method')
     request_body['communication_method_id'] = communication_methods[communication_method_slug]
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
     if request_body['communication_outcome']
       communication_outcome_slug = request_body.delete('communication_outcome')
       request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
+      api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil? 
     else
-      # communication_outcome 6 is "confirmed"
+      # communication_outcome 6 is "confirmed" for /confirm
       request_body['communication_outcome_id'] = 6
     end
     request_body.rename_key('communication_method_description', 'method_description') if request_body['communication_method_description'].present?
     request_body
   end
-
+  
+  def appointment_guid_check(id)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless id.is_guid?
+  end
+  
 end
