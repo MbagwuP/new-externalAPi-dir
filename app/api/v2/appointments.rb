@@ -373,6 +373,8 @@ class ApiService < Sinatra::Base
       forwarded_params[:end_date]   = Date.parse(7.days.since.to_s).to_s # default to the coming week's worth of recalls
     elsif !forwarded_params[:start_date].blank? && forwarded_params[:end_date].blank?
       forwarded_params[:end_date]   = (Date.parse(forwarded_params[:start_date]) + 7.days).to_s # default to one week from the start date
+    elsif forwarded_params[:start_date].blank? && !forwarded_params[:end_date].blank?
+      api_svc_halt HTTP_BAD_REQUEST, "If you include the end_date parameter then a start_date parameter must be included."
     end
     
     params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed,
