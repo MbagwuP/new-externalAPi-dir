@@ -119,19 +119,15 @@ class ApiService < Sinatra::Base
     end
   end
 
+  # will be depracated over time. POST appointments/:id/confirm will replace
   post '/v2/appointments/:appointment_id/confirmation' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
 
     request_body = get_request_JSON
-    communication_method_slug = request_body.delete('communication_method')
-    communication_outcome_slug = request_body.delete('communication_outcome')
-
     request_body['appointment_id'] = params[:appointment_id]
-    request_body['communication_method_id'] = communication_methods[communication_method_slug]
-    request_body['communication_outcome_id'] = communication_outcomes[communication_outcome_slug]
-    request_body.rename_key('communication_method_description', 'method_description') if request_body['communication_method_description'].present?
+    transform_communication_params(request_body)
 
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil? || communication_outcome_slug == 'none'
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil?
 
     urlconf = webservices_uri "appointments/#{current_business_entity}/#{request_body['appointment_id']}/patient_confirmed.json",
@@ -147,6 +143,30 @@ class ApiService < Sinatra::Base
     status HTTP_CREATED
     jbuilder :_appointment_confirmation
   end
+  
+  post '/v2/appointments/:appointment_id/confirm' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+    
+    request_body = get_request_JSON
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Parameter- communication_outcome"}' if request_body.has_key?("communication_outcome")
+
+    request_body['appointment_id'] = params[:appointment_id]
+    transform_communication_params(request_body)
+
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
+
+    urlconf = webservices_uri "appointments/#{current_business_entity}/#{request_body['appointment_id']}/patient_confirmed.json",
+      token: escaped_oauth_token
+    resp = rescue_service_call 'Confirmation Creation' do
+      RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
+    end
+
+    @confirmation = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    
+    status HTTP_CREATED
+    jbuilder :_appointment_confirm
+  end
 
   get '/v2/appointments/:appointment_id/confirmations' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
@@ -161,6 +181,34 @@ class ApiService < Sinatra::Base
     @appointment_id = params[:appointment_id]
     status HTTP_OK
     jbuilder :list_appointment_confirmations
+  end
+  
+  # used to create an appointment communication (i.e reminder) but WILL NOT confirm an appointment. An appointment communication creates an appointment_confirmation instance. 
+  post '/v2/appointments/:appointment_id/communication' do
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:appointment_id].is_guid?
+    
+    request_body = get_request_JSON
+    # If a communication_outcome value of CONFIRMED is passed in then an error is thrown to use the POST /confirm endpoint.  (POST /confirmation endpoint is being depracted)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"This endpoint does not confirm an appointment. Use POST /confirm endpoint."}' if request_body["communication_outcome"] == "confirmed"
+
+    request_body['appointment_id'] = params[:appointment_id]
+    transform_communication_params(request_body)
+    
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication method."}' if request_body['communication_method_id'].nil?
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Missing or invalid communication outcome."}' if request_body['communication_outcome_id'].nil? 
+
+    urlconf = webservices_uri "appointments/#{current_business_entity}/#{request_body['appointment_id']}/patient_confirmed.json",
+      token: escaped_oauth_token
+
+    resp = rescue_service_call 'Appointment Communication Creation' do
+      RestClient.post(urlconf, request_body, :api_key => APP_API_KEY)
+    end
+
+    @apt_communication = JSON.parse(resp)
+    @appointment_id = params[:appointment_id]
+    
+    status HTTP_CREATED
+    jbuilder :_appointment_communication
   end
 
   # /v2/appointments
@@ -246,6 +294,11 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
 
     request_body = get_request_JSON
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid communication method."}' if !visible_communication_method?(request_body['communication_method']) && !request_body['communication_method'].nil?
+    
+    communication_method_slug = request_body.delete('communication_method')
+    request_body['communication_method_id'] = communication_methods[communication_method_slug]
+    
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 
     response = rescue_service_call 'Appointment Cancellation', true do
