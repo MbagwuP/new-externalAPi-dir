@@ -497,6 +497,13 @@ class ApiService < Sinatra::Base
   
   get '/v2/appointment_availability' do
     begin
+      if params["start_date"].blank? && params["end_date"].blank?
+        today = Date.today.to_s
+        params["start_date"] = today
+        params["end_date"]   = today
+      elsif !params["start_date"].blank? && params["end_date"].blank?
+        params["end_date"]   = params["start_date"]
+      end
       search_criteria = AppointmentAvailabilitySearchCriteria.new(params.merge('token' => escaped_oauth_token, 'business_entity_id' => current_business_entity)).query_params
       appt_avail_url = webservices_uri "/appointment_availability.json", search_criteria
       @resp = rescue_service_call 'Appointment Availability Look Up' do
