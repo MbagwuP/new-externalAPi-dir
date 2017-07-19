@@ -127,14 +127,6 @@ class AppointmentAvailabilitySearchCriteria
   end
   
   def validate_dates(dates_hash)
-    today = Date.today.to_s
-    if dates_hash["start_date"].blank? && dates_hash["end_date"].blank?
-      dates_hash["start_date"] = today + ' 00:00:00'
-      dates_hash["end_date"]   = today + ' 23:59:59'
-    elsif !dates_hash["start_date"].blank? && dates_hash["end_date"].blank?
-      dates_hash["end_date"]   = dates_hash["start_date"] + ' 23:59:59'
-      dates_hash["start_date"] = dates_hash["start_date"] + ' 00:00:00'
-    end
     error = ParamsValidator.new(dates_hash, :end_date_is_before_start_date, :invalid_date_passed, :blank_date_field_passed, :date_filter_range_too_long).error
     pretty_error = JSON.parse(error)['error'].gsub('_', ' ').split(' ').map(&:capitalize).join(' ') if error
     raise InvalidParameterError, pretty_error if error
