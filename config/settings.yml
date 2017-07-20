@@ -58,3 +58,11 @@ staging:
   version: 26.2
   logging_level: 4
   enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>
+
+demo:
+  api_internal_svc_url: http://services.careclouddemo.com/
+  api_internal_doc_srv_upld_url: http://documents.careclouddemo.com
+  memcache_servers: mem-main-ext-cluster.ulcevi.0001.use1.cache.amazonaws.com
+  version: 26.2
+  logging_level: 5
+  enable_fdb: <%=ENV['CONFIG_ENABLE_FDB']%>

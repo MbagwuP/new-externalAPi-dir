@@ -8,3 +8,5 @@ staging:
   url: "https://dms-staging.carecloud.com"
 production: 
   url: "https://dms.carecloud.com"
+demo:
+  url: "http://documents.careclouddemo.com"
