@@ -17,5 +17,21 @@ module WebserviceResources
       end
       gender_assembly
     end
+    
+    def self.map_fhir_to_cc_gender_codes(gender_code)
+      code = gender_code.try(:upcase)
+      return code if code.match(/^(M|F|U)$/)
+      case code
+      when 'MALE'
+          'M'
+        when 'FEMALE'
+          'F' 
+        when 'UNKNOWN'
+          'U'
+        else
+         code
+      end
+    end
+    
   end
 end
