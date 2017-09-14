@@ -21,5 +21,14 @@ json.array! @blockouts do |blockout|
     json.updated_at blockout['appointment_blockout']['updated_at']
     # json.frequency_description blockout['appointment_blockout']['frequency_description']
     json.occurrences blockout['appointment_blockout']['occurrences']
+    json.resources blockout['appointment_blockout']['resources'] do |resource|
+      json.id resource['resource']['id']
+      json.name resource['resource']['name']
+    end
+    json.locations blockout['appointment_blockout']['locations'] do |location|
+      json.id location['location']['id']
+      json.name location['location']['name']
+    end
+    
   end
 end
