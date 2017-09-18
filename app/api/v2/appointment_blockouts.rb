@@ -1,7 +1,7 @@
 class ApiService < Sinatra::Base
 
   get '/v2/appointment_blockouts' do
-    # mandatory params
+
     forwarded_params = {
       resource_id: params[:resource_id],
       location_id: params[:location_id]
