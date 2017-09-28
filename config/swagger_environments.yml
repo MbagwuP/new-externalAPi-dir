@@ -19,6 +19,12 @@ staging:
   backend_url: "https://api-pub-stg.carecloud.com"
   cors_url:    "http://developer.development.carecloud.com"
   platform_url: "https://platform-staging.carecloud.com"
+  
+demo: 
+  gateway_url: "https://api.careclouddemo.com"
+  backend_url: "https://api.careclouddemo.com"
+  cors_url:    "http://developer.carecloud.com"
+  platform_url: "https://platform.careclouddemo.com"
 
 production: 
   gateway_url: "https://api.carecloud.com"
