@@ -1,5 +1,5 @@
-module DemographicCodes
-  class Gender < DemographicCode
+module WebserviceResources
+  class Gender < WebserviceClient
     def self.values
       cache_key = "gender-codes"
       return cache_retrieval(cache_key, :gender_codes_from_webservices)

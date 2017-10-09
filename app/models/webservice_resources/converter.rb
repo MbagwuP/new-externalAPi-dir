@@ -1,4 +1,4 @@
-module DemographicCodes
+module WebserviceResources
   class Converter
     def self.code_to_cc_id(attribute, code)
       begin

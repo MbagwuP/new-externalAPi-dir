@@ -1,5 +1,5 @@
-module DemographicCodes
-  class Country < DemographicCode
+module WebserviceResources
+  class Country < WebserviceClient
     def self.values
       cache_key = "country-codes"
       return cache_retrieval(cache_key, :country_codes_from_webservices)

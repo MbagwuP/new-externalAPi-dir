@@ -1,5 +1,5 @@
-module DemographicCodes
-  class PhoneType < DemographicCode
+module WebserviceResources
+  class PhoneType < WebserviceClient
     def self.values
       cache_key = "phone-types"
       return cache_retrieval(cache_key, :phone_types_from_webservices)

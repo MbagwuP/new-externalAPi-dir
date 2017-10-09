@@ -34,7 +34,7 @@ module Fhir
         resource['line'] = [address['line1']]
         resource['line'] << address['line2'] if address['line2'].present?
         resource['city'] = address['city']
-        resource['state'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::State, address['state_id'])
+        resource['state'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::State, address['state_id'])
         resource['postalCode'] = address['zip'] || address['zip_code']
         resource['country'] = (address['country_name'] || '')
         addrs << resource
@@ -43,7 +43,7 @@ module Fhir
     end
 
     def generate_marital_status(marital_status_code)
-      display = DemographicCodes::Converter.display_by_code(DemographicCodes::MaritalStatus, marital_status_code)
+      display = WebserviceResources::Converter.display_by_code(WebserviceResources::MaritalStatus, marital_status_code)
       marital_status = {coding: Array.new}
       marital_status[:coding] << {system: 'http://hl7.org/fhir/v3/MaritalStatus', code: marital_status_code, display: display}
       marital_status
@@ -61,8 +61,8 @@ module Fhir
 
     def generate_communication(language_id)
       #FIX ME: Should actually be a ISO6391 code. . .
-      lang = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Language, language_id)
-      disp = DemographicCodes::Converter.display_by_code(DemographicCodes::Language, lang)
+      lang = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Language, language_id)
+      disp = WebserviceResources::Converter.display_by_code(WebserviceResources::Language, lang)
       coding = { system: 'urn:ietf:rfc:6392',
                  code: lang,
                  display: disp }
