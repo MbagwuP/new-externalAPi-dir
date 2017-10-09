@@ -2,7 +2,7 @@ module WebserviceResources
   class Race < WebserviceClient
     def self.values
       cache_key = "race-codes"
-      return cache_retrieval(cache_key, :race_codes_from_webservices)
+      cache_retrieval(cache_key, :race_codes_from_webservices)
     end
 
     def self.race_codes_from_webservices
@@ -15,7 +15,7 @@ module WebserviceResources
         race['race']['code'] = '' unless race['race']['code'].present?
         race_assembly[race['race']['id']] = get_fhir_codes['race'][race['race']['code']]
       end
-      return race_assembly
+      race_assembly
     end
   end
 end

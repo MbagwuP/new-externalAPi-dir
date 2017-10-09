@@ -2,7 +2,7 @@ module WebserviceResources
   class EmploymentStatus < WebserviceClient
     def self.values
       cache_key = "employment-status"
-      return cache_retrieval(cache_key, :employment_status_codes_from_webservices)
+      cache_retrieval(cache_key, :employment_status_codes_from_webservices)
     end
 
     def self.employment_status_codes_from_webservices
@@ -19,7 +19,7 @@ module WebserviceResources
         employment_status_assembly['display'] = employment_status['employment_status']['name']
         employment_statuses_assembly[employment_status['employment_status']['id']] = employment_status_assembly
       end
-      return employment_statuses_assembly
+      employment_statuses_assembly
     end
   end
 end

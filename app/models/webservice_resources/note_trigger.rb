@@ -2,7 +2,7 @@ module WebserviceResources
   class NoteTrigger < WebserviceClient
     def self.values
       cache_key = "note_triggers"
-      return cache_retrieval(cache_key, :list_all)
+      cache_retrieval(cache_key, :list_all)
     end
   
     def self.list_all
@@ -20,7 +20,7 @@ module WebserviceResources
         note_trigger_assembly['display'] = nt['note_trigger']['code']
         note_triggers_assembly[nt['note_trigger']['id']] = note_trigger_assembly
       end
-      return note_triggers_assembly
+      note_triggers_assembly
     end
   end
 end

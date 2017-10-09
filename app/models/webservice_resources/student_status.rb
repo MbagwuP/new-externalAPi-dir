@@ -2,7 +2,7 @@ module WebserviceResources
   class StudentStatus < WebserviceClient
     def self.values
       cache_key = "student-status-codes"
-      return cache_retrieval(cache_key, :student_status_codes_from_webservices)
+      cache_retrieval(cache_key, :student_status_codes_from_webservices)
     end
 
     def self.student_status_codes_from_webservices
@@ -19,7 +19,7 @@ module WebserviceResources
         student_status_assembly['display'] = student_status['student_status']['name']
         student_statuses_assembly[student_status['student_status']['id']] = student_status_assembly
       end
-      return student_statuses_assembly
+      student_statuses_assembly
     end
   end
 end

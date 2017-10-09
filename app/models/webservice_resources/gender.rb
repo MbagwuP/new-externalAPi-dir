@@ -2,7 +2,7 @@ module WebserviceResources
   class Gender < WebserviceClient
     def self.values
       cache_key = "gender-codes"
-      return cache_retrieval(cache_key, :gender_codes_from_webservices)
+      cache_retrieval(cache_key, :gender_codes_from_webservices)
     end
 
     def self.gender_codes_from_webservices
@@ -15,7 +15,7 @@ module WebserviceResources
         gender['gender']['code'] = '' unless gender['gender']['code'].present?
         gender_assembly[gender['gender']['id']] = get_fhir_codes['gender'][gender['gender']['code']]
       end
-      return gender_assembly
+      gender_assembly
     end
   end
 end
