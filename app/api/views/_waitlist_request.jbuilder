@@ -33,10 +33,10 @@ json.appointment_request do
     json.start_time waitlist_request['appointment']['start_time']
     json.end_time waitlist_request['appointment']['end_time']
     json.nature_of_visit_id waitlist_request['appointment']['nature_of_visit_id']
-    json.first_name waitlist_request['appointment']['first_name']
-    json.middle_initial waitlist_request['appointment']['middle_initial']
-    json.last_name waitlist_request['appointment']['last_name']
-    json.date_of_birth_string waitlist_request['appointment']['date_of_birth_string']
-    json.primary_payer_id waitlist_request['appointment']['primary_payer_id']
+    json.first_name waitlist_request['appointment']['patient_appointment_details'][0]['first_name']
+    json.middle_initial waitlist_request['appointment']['patient_appointment_details'][0]['middle_initial']
+    json.last_name waitlist_request['appointment']['patient_appointment_details'][0]['last_name']
+    json.date_of_birth_string waitlist_request['appointment']['patient_appointment_details'][0]['date_of_birth_string']
+    json.primary_payer_id waitlist_request['appointment']['patient_appointment_details'][0]['primary_payer_id']
   end
 end
