@@ -218,7 +218,7 @@ class ApiService < Sinatra::Base
 
     responsible_party_relationship = request_body['insurance_profile'].delete('responsible_party_relationship')
     patient_id = params[:patient_id]
-    request_body['insurance_profile']['responsible_party_relationship_type_id'] = person_relationship_types[responsible_party_relationship]
+    request_body['insurance_profile']['responsible_party_relationship_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,responsible_party_relationship)
 
     request_body['insurance_profile']['responsible_party']['phones'] = request_body['insurance_profile']['responsible_party']['phones'].map do |x|
       phone_type = x.delete('phone_type')
