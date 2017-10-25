@@ -1,5 +1,5 @@
-module DemographicCodes
-  class MaritalStatus < DemographicCode
+module WebserviceResources
+  class MaritalStatus < WebserviceClient
     def self.values
       cache_key = "marital-status-codes"
       return cache_retrieval(cache_key, :marital_status_codes_from_webservices)

@@ -37,7 +37,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|x| x.rename_key('external_id', 'id') }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
@@ -107,7 +107,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed['patient'].rename_key 'external_id', 'id'
     parsed['patient']['business_entity_id'] = current_business_entity
-    parsed['patient']['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, parsed['patient']['gender_id'])
+    parsed['patient']['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, parsed['patient']['gender_id'])
     parsed['patient'].delete('primary_care_physician_id')
     parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
@@ -156,7 +156,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|patient| patient["id"] = patient["external_id"] }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
@@ -222,28 +222,28 @@ class ApiService < Sinatra::Base
 
     request_body['insurance_profile']['responsible_party']['phones'] = request_body['insurance_profile']['responsible_party']['phones'].map do |x|
       phone_type = x.delete('phone_type')
-      x['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
+      x['phone_type_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, phone_type)
       x
     end
 
     request_body['insurance_profile']['responsible_party']['addresses'] = request_body['insurance_profile']['responsible_party']['addresses'].map do |x|
       state = x.delete('state')
-      x['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+      x['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
       country = x.delete('country')
-      x['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+      x['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
       x
     end
 
     gender = request_body['insurance_profile']['responsible_party'].delete('gender')
-    request_body['insurance_profile']['responsible_party']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
+    request_body['insurance_profile']['responsible_party']['gender_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Gender, gender)
 
     request_body['insurance_profile']['insurance_policies'] = request_body['insurance_profile']['insurance_policies'].map do |x|
 
       if x['payer'] && x['payer']['address'] && x['payer']['address']['state']
         state = x['payer']['address'].delete('state')
-        x['payer']['address']['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+        x['payer']['address']['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
         country = x['payer']['address'].delete('country')
-        x['payer']['address']['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+        x['payer']['address']['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
       end
 
       insured_person_relationship = x.delete('insured_person_relationship')
@@ -251,23 +251,23 @@ class ApiService < Sinatra::Base
       x.rename_key('group_number', 'policy_id') # the UI says "group number", but the DB column is "policy_id"
 
       gender = x['insured'].delete('gender')
-      x['insured']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
+      x['insured']['gender_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Gender, gender)
 
       x['insured_person_relationship_type'] = person_relationship_types[insured_person_relationship]
       x['insurance_policy_type_id'] = insurance_policy_types[insurance_policy_type]
       if x['insured']['phones']
         x['insured']['phones'].each do |y|
           phone_type = y.delete('phone_type')
-          y['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
+          y['phone_type_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, phone_type)
           y
         end
       end
       if x['insured']['addresses']
         x['insured']['addresses'].each do |y|
           state = y.delete('state')
-          y['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+          y['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
           country = y.delete('country')
-          y['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+          y['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
           y
         end
       end

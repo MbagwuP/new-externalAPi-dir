@@ -9,14 +9,14 @@ class ApiService < Sinatra::Base
       ENTITY_ADDRESS_FIELDS.each do |f|
         if (request_body['business_entity'][f])
           request_body['business_entity'][f]['state'] =
-              DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, request_body['business_entity'][f]['state'])
+              WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, request_body['business_entity'][f]['state'])
         end
       end
 
       # replace state codes with ids
       addresses = request_body['business_entity'].slice(ENTITY_ADDRESS_FIELDS)
       addresses.each do |_, v|
-        v['state'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+        v['state'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
       end
       request_body['business_entity'].merge!(addresses)
 

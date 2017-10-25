@@ -42,7 +42,7 @@ class ApiService < Sinatra::Base
         temp_value['address'] = location['address']['address'].slice('city', 'county_name', 
                                        'latitude', 'line1', 'line2', 'line3', 'longitude',
                                         'zip_code') 
-        temp_value['address']['state'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::State, location['address']['address']['state_id'])
+        temp_value['address']['state'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::State, location['address']['address']['state_id'])
         temp_value['address']['zip_code'].insert(5, '-') if temp_value['address']['zip_code'].length == 9
       else
         temp_value['address'] = nil
