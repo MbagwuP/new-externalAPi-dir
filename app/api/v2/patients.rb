@@ -285,4 +285,16 @@ class ApiService < Sinatra::Base
     jbuilder :create_insurance
   end
 
+  get '/v2/patients/:patient_id/tasks' do
+    PatientTaskType = 10
+    
+    url = webservices_uri "patient_tasks.json", {token: escaped_oauth_token, patient_id: params[:patient_id], task_type_id: PatientTaskType , filter: true}
+    resp = rescue_service_call 'List Patient Tasks',true do
+      RestClient.get(url, :api_key => APP_API_KEY)
+    end
+    @tasks = JSON.parse(resp.body)
+    status HTTP_OK
+    jbuilder :list_tasks
+  end
+
 end
