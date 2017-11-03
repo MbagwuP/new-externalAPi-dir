@@ -71,13 +71,10 @@ class ApiService < Sinatra::Base
     resp = rescue_service_call 'Patient Insurance' do
       RestClient.get(insurancesurl, :api_key => APP_API_KEY)
     end
-    
     @profiles = JSON.parse(resp)
     @patient_id = params[:patient_id]
-
     jbuilder :list_patient_insurance_profiles
   end
-
 
   # /patients/{guid}
   # /v2/patients/{guid}
@@ -214,6 +211,7 @@ class ApiService < Sinatra::Base
       request_body['insurance_profile']['quaternary_insurance_policy']['priority'] = 4
       insurance_policies << request_body['insurance_profile'].delete('quaternary_insurance_policy')
     end
+    
     request_body['insurance_profile']['insurance_policies'] = insurance_policies
 
     responsible_party_relationship = request_body['insurance_profile'].delete('responsible_party_relationship')
@@ -238,51 +236,87 @@ class ApiService < Sinatra::Base
     request_body['insurance_profile']['responsible_party']['gender_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Gender, gender)
 
     request_body['insurance_profile']['insurance_policies'] = request_body['insurance_profile']['insurance_policies'].map do |x|
-
-      if x['payer'] && x['payer']['address'] && x['payer']['address']['state']
-        state = x['payer']['address'].delete('state')
-        x['payer']['address']['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
-        country = x['payer']['address'].delete('country')
-        x['payer']['address']['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
+      if x['payer'] && x['payer']['address']
+        convert_payer_address(x['payer'])
       end
-
-      insured_person_relationship = x.delete('insured_person_relationship')
-      insurance_policy_type = x.delete('insurance_policy_type')
+      
       x.rename_key('group_number', 'policy_id') # the UI says "group number", but the DB column is "policy_id"
+      create_insured_person_relationship_hash(x)
 
-      gender = x['insured'].delete('gender')
-      x['insured']['gender_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Gender, gender)
-
-      x['insured_person_relationship_type'] = person_relationship_types[insured_person_relationship]
-      x['insurance_policy_type_id'] = insurance_policy_types[insurance_policy_type]
-      if x['insured']['phones']
-        x['insured']['phones'].each do |y|
-          phone_type = y.delete('phone_type')
-          y['phone_type_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, phone_type)
-          y
-        end
-      end
-      if x['insured']['addresses']
-        x['insured']['addresses'].each do |y|
-          state = y.delete('state')
-          y['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
-          country = y.delete('country')
-          y['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
-          y
-        end
-      end
+      insurance_policy_type = x.delete('insurance_policy_type')
+      x['insurance_policy_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::InsurancePolicyType,insurance_policy_type)
+      
+      insured_person_relationship = x.delete('insured_person_relationship')
+      x['insured_person_relationship_type'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,insured_person_relationship)
       x
     end
 
     urlinsurance = webservices_uri "patients/#{patient_id}/insurance_profiles/create.json", token: escaped_oauth_token, business_entity_id: current_business_entity
-
-    @resp = rescue_service_call 'Patient Insurance' do
-      RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
+    begin
+      @resp = rescue_service_call('Patient Insurance',true) do
+        RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
+      end
+      @resp = JSON.parse(@resp.body)
+      status HTTP_CREATED
+      jbuilder :create_insurance
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Patient Insurance Profile Creation Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
+  end
+  
+  put '/v2/patients/:patient_id/insurances/:insurance_profile_id/policies/:insurance_policy_id' do
+    begin
+      request_body = get_request_JSON
+      request_body['id'] = params[:insurance_profile_id]
+      patient_id = params[:patient_id]
+      
+      policy = request_body['insurance_policy']
+      insurance_param_validator(policy)
+    
+      policy['id'] = params[:insurance_policy_id]
+    
+      policy.rename_key('group_number', 'policy_number') if policy['group_number'] # the UI says "group number", but the DB column is "policy_id"
+      policy.rename_key('effective_date', 'effective_from')
+      policy.rename_key('termination_date', 'effective_to') if policy['termination_date']
+      policy.rename_key('requires_authorization?','is_authorization_required') if !policy['requires_authorization?'].nil?
+    
+      insured_person_relationship = policy.delete('insured_person_relationship')
+      policy['primary_insured_person_relationship_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,insured_person_relationship)
+      create_insured_person_relationship_hash(policy)
+    
+      insurance_policy_type = policy.delete('insurance_policy_type')
+      policy['insurance_policy_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::InsurancePolicyType,insurance_policy_type)
 
-    @resp = JSON.parse(@resp.body)
-    status HTTP_CREATED
-    jbuilder :create_insurance
+      if policy['payer'].has_key?('id')
+        policy['payer_id'] = policy['payer']['id']
+        policy['payer'].delete('id')
+        policy['payer_plan_id'] = policy.delete('plan_id')
+      else
+        convert_payer_address(policy['payer'])
+      end
+
+      urlinsurance = webservices_uri "patients/#{patient_id}/insurance_profiles/update.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+      @resp = rescue_service_call('Update Patient Insurance', true) do
+        RestClient.put(urlinsurance, request_body)
+      end
+      @resp = JSON.parse(@resp)
+      status HTTP_CREATED
+      jbuilder :update_insurance
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Update Patient Insurance Profile Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
   end
 
   get '/v2/patients/:patient_id/tasks' do

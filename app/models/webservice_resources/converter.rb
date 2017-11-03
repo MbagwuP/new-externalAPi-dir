@@ -10,6 +10,17 @@ module WebserviceResources
         return ""
       end
     end
+    
+    def self.name_to_cc_id(attribute, name)
+      begin
+        attribute.values.each do |key, value|
+          return key.to_s if value['values'].map{ |e| e.to_s.downcase }.include?(name.to_s.downcase)
+        end
+        return ""
+      rescue
+        return ""
+      end
+    end
 
     def self.cc_id_to_code(attribute, id)
       begin
