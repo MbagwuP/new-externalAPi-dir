@@ -438,7 +438,7 @@ class ApiService < Sinatra::Base
     urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true}
 
     begin
-      @resp = rescue_service_call 'Waitlist' do
+      @resp = rescue_service_call 'Waitlist',true do
         RestClient.get(urlwaitlist_requests, :api_key => APP_API_KEY)
       end
     rescue => e
