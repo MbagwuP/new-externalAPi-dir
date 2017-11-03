@@ -1,8 +1,8 @@
-module DemographicCodes
-  class State < DemographicCode
+module WebserviceResources
+  class State < WebserviceClient
     def self.values
       cache_key = "state-codes"
-      return cache_retrieval(cache_key, :state_codes_from_webservices)
+      cache_retrieval(cache_key, :state_codes_from_webservices)
     end
 
     def self.state_codes_from_webservices
@@ -19,7 +19,7 @@ module DemographicCodes
         state_assembly['display'] = state['name']
         states_assembly[state['id']] = state_assembly
       end
-      return states_assembly
+      states_assembly
     end
   end
 end

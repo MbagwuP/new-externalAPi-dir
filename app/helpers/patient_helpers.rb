@@ -1,16 +1,20 @@
 class ApiService < Sinatra::Base
+  
+  def patient_guid_check(id)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Patient ID must be a valid GUID."}' unless id.is_guid?
+  end
 
   def convert_demographic_codes!(request_body)
     patient = request_body['patient']
-    converter = DemographicCodes::Converter
-    patient['gender_id'] = converter.code_to_cc_id(DemographicCodes::Gender, patient.delete('gender_code')) unless patient['gender_id'].present?
-    patient['race_id'] = converter.code_to_cc_id(DemographicCodes::Race, patient.delete('race_code')) unless patient['race_id'].present?
-    patient['marital_status_id'] = converter.code_to_cc_id(DemographicCodes::MaritalStatus, patient.delete('marital_status_code')) unless patient['marital_status_id'].present?
-    patient['language_id'] = converter.code_to_cc_id(DemographicCodes::Language, patient.delete('language_code')) unless patient['language_id'].present? 
-    patient['drivers_license_state_id'] = converter.code_to_cc_id(DemographicCodes::State, patient.delete('drivers_license_state_code')) unless patient['drivers_license_state_id'].present?
-    patient['employment_status_id'] = converter.code_to_cc_id(DemographicCodes::EmploymentStatus, patient.delete('employment_status_code')) unless patient['employment_status_id'].present?
-    patient['ethnicity_id'] = converter.code_to_cc_id(DemographicCodes::Ethnicity, patient.delete('ethnicity_code')) unless patient['ethnicity_id'].present?
-    patient['student_status_id'] = converter.code_to_cc_id(DemographicCodes::StudentStatus, patient.delete('student_status_code')) unless patient['student_status_id'].present?
+    converter = WebserviceResources::Converter
+    patient['gender_id'] = converter.code_to_cc_id(WebserviceResources::Gender, patient.delete('gender_code')) unless patient['gender_id'].present?
+    patient['race_id'] = converter.code_to_cc_id(WebserviceResources::Race, patient.delete('race_code')) unless patient['race_id'].present?
+    patient['marital_status_id'] = converter.code_to_cc_id(WebserviceResources::MaritalStatus, patient.delete('marital_status_code')) unless patient['marital_status_id'].present?
+    patient['language_id'] = converter.code_to_cc_id(WebserviceResources::Language, patient.delete('language_code')) unless patient['language_id'].present? 
+    patient['drivers_license_state_id'] = converter.code_to_cc_id(WebserviceResources::State, patient.delete('drivers_license_state_code')) unless patient['drivers_license_state_id'].present?
+    patient['employment_status_id'] = converter.code_to_cc_id(WebserviceResources::EmploymentStatus, patient.delete('employment_status_code')) unless patient['employment_status_id'].present?
+    patient['ethnicity_id'] = converter.code_to_cc_id(WebserviceResources::Ethnicity, patient.delete('ethnicity_code')) unless patient['ethnicity_id'].present?
+    patient['student_status_id'] = converter.code_to_cc_id(WebserviceResources::StudentStatus, patient.delete('student_status_code')) unless patient['student_status_id'].present?
     patient.delete('primary_care_physician_id')
   end
 

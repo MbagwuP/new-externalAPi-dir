@@ -1,9 +1,20 @@
-module DemographicCodes
+module WebserviceResources
   class Converter
     def self.code_to_cc_id(attribute, code)
       begin
         attribute.values.each do |key, value|
           return key.to_s if value['values'].map{ |e| e.to_s.downcase }.include?(code.to_s.downcase)
+        end
+        return ""
+      rescue
+        return ""
+      end
+    end
+    
+    def self.name_to_cc_id(attribute, name)
+      begin
+        attribute.values.each do |key, value|
+          return key.to_s if value['values'].map{ |e| e.to_s.downcase }.include?(name.to_s.downcase)
         end
         return ""
       rescue

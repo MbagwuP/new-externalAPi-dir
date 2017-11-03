@@ -74,6 +74,7 @@ class ApiService < Sinatra::Base
   register Sinatra::V2::Drugs
   register Sinatra::V2::Allergens
   register Sinatra::V2::AllergenTypes
+  register Sinatra::V2::Practices::FeatureSubscription
 
   def self.build_version
     build_number = File.open(File.expand_path("../../.build", __FILE__), 'rb').read rescue ''

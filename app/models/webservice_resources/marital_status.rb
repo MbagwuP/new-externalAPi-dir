@@ -1,8 +1,8 @@
-module DemographicCodes
-  class MaritalStatus < DemographicCode
+module WebserviceResources
+  class MaritalStatus < WebserviceClient
     def self.values
       cache_key = "marital-status-codes"
-      return cache_retrieval(cache_key, :marital_status_codes_from_webservices)
+      cache_retrieval(cache_key, :marital_status_codes_from_webservices)
     end
 
     def self.marital_status_codes_from_webservices
@@ -15,7 +15,7 @@ module DemographicCodes
         marital_status_assembly['code'] = '' unless marital_status['marital_status']['code'].present?
         marital_status_assembly[marital_status['marital_status']['id']] = get_fhir_codes['marital_status'][marital_status['marital_status']['code']]
       end
-      return marital_status_assembly
+      marital_status_assembly
     end
   end
 end

@@ -37,7 +37,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|x| x.rename_key('external_id', 'id') }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
@@ -71,13 +71,10 @@ class ApiService < Sinatra::Base
     resp = rescue_service_call 'Patient Insurance' do
       RestClient.get(insurancesurl, :api_key => APP_API_KEY)
     end
-    
     @profiles = JSON.parse(resp)
     @patient_id = params[:patient_id]
-
     jbuilder :list_patient_insurance_profiles
   end
-
 
   # /patients/{guid}
   # /v2/patients/{guid}
@@ -107,7 +104,7 @@ class ApiService < Sinatra::Base
     parsed = JSON.parse(response.body)
     parsed['patient'].rename_key 'external_id', 'id'
     parsed['patient']['business_entity_id'] = current_business_entity
-    parsed['patient']['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, parsed['patient']['gender_id'])
+    parsed['patient']['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, parsed['patient']['gender_id'])
     parsed['patient'].delete('primary_care_physician_id')
     parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
@@ -156,7 +153,7 @@ class ApiService < Sinatra::Base
 
     returnedBody = JSON.parse(response.body)
     returnedBody["patients"].each {|patient| patient["id"] = patient["external_id"] }
-    returnedBody["patients"].each {|patient| patient['gender_code'] = DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, patient.delete('gender_id')) }
+    returnedBody["patients"].each {|patient| patient['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, patient.delete('gender_id')) }
     body(returnedBody.to_json)
     status HTTP_OK
   end
@@ -214,75 +211,124 @@ class ApiService < Sinatra::Base
       request_body['insurance_profile']['quaternary_insurance_policy']['priority'] = 4
       insurance_policies << request_body['insurance_profile'].delete('quaternary_insurance_policy')
     end
+    
     request_body['insurance_profile']['insurance_policies'] = insurance_policies
 
     responsible_party_relationship = request_body['insurance_profile'].delete('responsible_party_relationship')
     patient_id = params[:patient_id]
-    request_body['insurance_profile']['responsible_party_relationship_type_id'] = person_relationship_types[responsible_party_relationship]
+    request_body['insurance_profile']['responsible_party_relationship_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,responsible_party_relationship)
 
     request_body['insurance_profile']['responsible_party']['phones'] = request_body['insurance_profile']['responsible_party']['phones'].map do |x|
       phone_type = x.delete('phone_type')
-      x['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
+      x['phone_type_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, phone_type)
       x
     end
 
     request_body['insurance_profile']['responsible_party']['addresses'] = request_body['insurance_profile']['responsible_party']['addresses'].map do |x|
       state = x.delete('state')
-      x['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
+      x['state_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
       country = x.delete('country')
-      x['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+      x['country_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, country)
       x
     end
 
     gender = request_body['insurance_profile']['responsible_party'].delete('gender')
-    request_body['insurance_profile']['responsible_party']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
+    request_body['insurance_profile']['responsible_party']['gender_id'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Gender, gender)
 
     request_body['insurance_profile']['insurance_policies'] = request_body['insurance_profile']['insurance_policies'].map do |x|
-
-      if x['payer'] && x['payer']['address'] && x['payer']['address']['state']
-        state = x['payer']['address'].delete('state')
-        x['payer']['address']['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
-        country = x['payer']['address'].delete('country')
-        x['payer']['address']['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
+      if x['payer'] && x['payer']['address']
+        convert_payer_address(x['payer'])
       end
-
-      insured_person_relationship = x.delete('insured_person_relationship')
-      insurance_policy_type = x.delete('insurance_policy_type')
+      
       x.rename_key('group_number', 'policy_id') # the UI says "group number", but the DB column is "policy_id"
+      create_insured_person_relationship_hash(x)
 
-      gender = x['insured'].delete('gender')
-      x['insured']['gender_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Gender, gender)
-
-      x['insured_person_relationship_type'] = person_relationship_types[insured_person_relationship]
-      x['insurance_policy_type_id'] = insurance_policy_types[insurance_policy_type]
-      if x['insured']['phones']
-        x['insured']['phones'].each do |y|
-          phone_type = y.delete('phone_type')
-          y['phone_type_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::PhoneType, phone_type)
-          y
-        end
-      end
-      if x['insured']['addresses']
-        x['insured']['addresses'].each do |y|
-          state = y.delete('state')
-          y['state_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::State, state)
-          country = y.delete('country')
-          y['country_id'] = DemographicCodes::Converter.code_to_cc_id(DemographicCodes::Country, country)
-          y
-        end
-      end
+      insurance_policy_type = x.delete('insurance_policy_type')
+      x['insurance_policy_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::InsurancePolicyType,insurance_policy_type)
+      
+      insured_person_relationship = x.delete('insured_person_relationship')
+      x['insured_person_relationship_type'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,insured_person_relationship)
       x
     end
 
     urlinsurance = webservices_uri "patients/#{patient_id}/insurance_profiles/create.json", token: escaped_oauth_token, business_entity_id: current_business_entity
-
-    @resp = rescue_service_call 'Patient Insurance' do
-      RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
+    begin
+      @resp = rescue_service_call('Patient Insurance',true) do
+        RestClient.post(urlinsurance, request_body.to_json, content_type: :json)
+      end
+      @resp = JSON.parse(@resp.body)
+      status HTTP_CREATED
+      jbuilder :create_insurance
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Patient Insurance Profile Creation Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
     end
+  end
+  
+  put '/v2/patients/:patient_id/insurances/:insurance_profile_id/policies/:insurance_policy_id' do
+    begin
+      request_body = get_request_JSON
+      request_body['id'] = params[:insurance_profile_id]
+      patient_id = params[:patient_id]
+      
+      policy = request_body['insurance_policy']
+      insurance_param_validator(policy)
+    
+      policy['id'] = params[:insurance_policy_id]
+    
+      policy.rename_key('group_number', 'policy_number') if policy['group_number'] # the UI says "group number", but the DB column is "policy_id"
+      policy.rename_key('effective_date', 'effective_from')
+      policy.rename_key('termination_date', 'effective_to') if policy['termination_date']
+      policy.rename_key('requires_authorization?','is_authorization_required') if !policy['requires_authorization?'].nil?
+    
+      insured_person_relationship = policy.delete('insured_person_relationship')
+      policy['primary_insured_person_relationship_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,insured_person_relationship)
+      create_insured_person_relationship_hash(policy)
+    
+      insurance_policy_type = policy.delete('insurance_policy_type')
+      policy['insurance_policy_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::InsurancePolicyType,insurance_policy_type)
 
-    @resp = JSON.parse(@resp.body)
-    status HTTP_CREATED
-    jbuilder :create_insurance
+      if policy['payer'].has_key?('id')
+        policy['payer_id'] = policy['payer']['id']
+        policy['payer'].delete('id')
+        policy['payer_plan_id'] = policy.delete('plan_id')
+      else
+        convert_payer_address(policy['payer'])
+      end
+
+      urlinsurance = webservices_uri "patients/#{patient_id}/insurance_profiles/update.json", token: escaped_oauth_token, business_entity_id: current_business_entity
+      @resp = rescue_service_call('Update Patient Insurance', true) do
+        RestClient.put(urlinsurance, request_body)
+      end
+      @resp = JSON.parse(@resp)
+      status HTTP_CREATED
+      jbuilder :update_insurance
+    rescue => e
+      begin
+        exception = e.message
+        errmsg = "Update Patient Insurance Profile Failed - #{exception}"
+        api_svc_halt e.http_code, errmsg
+      rescue
+        api_svc_halt HTTP_INTERNAL_ERROR, errmsg
+      end
+    end
+  end
+
+  get '/v2/patients/:patient_id/tasks' do
+    PatientTaskType = 10
+    
+    url = webservices_uri "patient_tasks.json", {token: escaped_oauth_token, patient_id: params[:patient_id], task_type_id: PatientTaskType , filter: true}
+    resp = rescue_service_call 'List Patient Tasks',true do
+      RestClient.get(url, :api_key => APP_API_KEY)
+    end
+    @tasks = JSON.parse(resp.body)
+    status HTTP_OK
+    jbuilder :list_tasks
   end
 
 end

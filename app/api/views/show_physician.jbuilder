@@ -6,7 +6,7 @@ json.physician do
 	json.last_name @physician['last_name']
 	json.suffix @physician['suffix']
 	json.email @physician['email']
-	json.gender_code DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, @physician['gender_id'])
+	json.gender_code WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, @physician['gender_id'])
 	json.deactivation_date @physician['deactivation_date']
 	if (@physician['primary_phone'].present? && @physician['primary_phone']['phone'].present?)
 		json.phone_number @physician['primary_phone']['phone']['phone_number']

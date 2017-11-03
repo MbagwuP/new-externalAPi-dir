@@ -1,8 +1,8 @@
-module DemographicCodes
-  class Ethnicity < DemographicCode
+module WebserviceResources
+  class Ethnicity < WebserviceClient
     def self.values
       cache_key = "ethnicity-codes"
-      return cache_retrieval(cache_key, :ethnicity_codes_from_webservices)
+      cache_retrieval(cache_key, :ethnicity_codes_from_webservices)
     end
 
     def self.ethnicity_codes_from_webservices
@@ -19,7 +19,7 @@ module DemographicCodes
         inner['display'] = ethnicity['name']
         ethnicity_assembly[ethnicity['id']] = inner
       end
-      return ethnicity_assembly
+      ethnicity_assembly
     end
   end
 end

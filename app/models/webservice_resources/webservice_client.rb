@@ -1,5 +1,5 @@
-module DemographicCodes
-  class DemographicCode
+module WebserviceResources
+  class WebserviceClient < Request 
     def self.make_service_call call_description
       begin
         yield
@@ -8,11 +8,12 @@ module DemographicCodes
         error_msg = "#{call_description} Failed - #{error_detail}"
       end
     end
-
-    def self.webservices_uri path, query_params=nil
-      uri = URI.parse(ApiService::API_SVC_URL + path)
-      uri.query = query_params.is_a?(Hash) ? query_params.to_query : query_params
-      uri.to_s
+    
+    def self.fetch_list(url)
+      request = RestClient::Request.new(:url => url, :method => :get)
+      signed_request = CCAuth::InternalService::Request.sign!(request)
+      raw_response = signed_request.execute
+      JSON.parse(raw_response)
     end
 
     def self.get_fhir_codes

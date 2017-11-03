@@ -1,8 +1,8 @@
-module DemographicCodes
-  class Language < DemographicCode
+module WebserviceResources
+  class Language < WebserviceClient
     def self.values
       cache_key = "language-codes"
-      return cache_retrieval(cache_key, :language_codes_from_webservices)
+      cache_retrieval(cache_key, :language_codes_from_webservices)
     end
 
     def self.language_codes_from_webservices
@@ -19,7 +19,7 @@ module DemographicCodes
         lang_assembly['display'] = language['language']['name']
         languages_assembly[language['language']['id']] = lang_assembly
       end
-      return languages_assembly
+      languages_assembly
     end
   end
 end
