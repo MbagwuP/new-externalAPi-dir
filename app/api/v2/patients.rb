@@ -284,7 +284,7 @@ class ApiService < Sinatra::Base
       policy.rename_key('group_number', 'policy_number') if policy['group_number'] # the UI says "group number", but the DB column is "policy_id"
       policy.rename_key('effective_date', 'effective_from')
       policy.rename_key('termination_date', 'effective_to') if policy['termination_date']
-      policy.rename_key('requires_authorization?','is_authorization_required') if !policy['requires_authorization?'].nil?
+      policy.rename_key('requires_authorization','is_authorization_required') if !policy['requires_authorization'].nil?
     
       insured_person_relationship = policy.delete('insured_person_relationship')
       policy['primary_insured_person_relationship_type_id'] = WebserviceResources::Converter.name_to_cc_id(WebserviceResources::PersonRelationshipType,insured_person_relationship)
