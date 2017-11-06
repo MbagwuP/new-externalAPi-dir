@@ -14,7 +14,7 @@ json.insurance_profiles @profiles do |profile|
     json.deductible policy['deductible']
     json.type profile['name']
     json.group_name policy['group_name']
-    json.requires_authorization? policy['is_authorization_required']
+    json.requires_authorization policy['is_authorization_required']
     if policy['payer_plan_id']
       json.plan do
         json.id policy['payer_plan_id']
