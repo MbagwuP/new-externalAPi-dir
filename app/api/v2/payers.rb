@@ -19,12 +19,16 @@ module Sinatra
           # end
           
           app.get '/v2/payers' do
-            page = params[:page] || 1
+            page = params[:page]
             url = webservices_uri "payers/list_all.json"
             response = rescue_service_call 'List All Payers' do 
               RestClient.get(url, {params: {page: page, token: escaped_oauth_token}, api_key: ApiService::APP_API_KEY})
             end
-          
+            
+            if !response.headers[:link].nil?
+              headers['Link'] = PaginationLinkBuilder.new(response.headers[:link], ExternalAPI::Settings::SWAGGER_ENVIRONMENTS['gateway_url'] + env['PATH_INFO'] + '?' + env['QUERY_STRING']).to_s
+            end
+            
             @payers = JSON.parse(response)
             status HTTP_OK
             jbuilder :list_payers
