@@ -295,7 +295,7 @@ class ApiService < Sinatra::Base
 
       if policy['payer'].has_key?('id')
         policy['payer_id'] = policy['payer']['id']
-        policy['payer'].delete('id')
+        policy.delete('payer')
         policy['payer_plan_id'] = policy.delete('plan_id')
       else
         convert_payer_address(policy['payer'])
