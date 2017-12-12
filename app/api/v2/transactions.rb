@@ -32,6 +32,21 @@ class ApiService < Sinatra::Base
     status HTTP_OK
     jbuilder :list_transactions
   end
+  
+  post '/v2/patients/:patient_id/charge' do
+    begin
+      @charges =  ChargeResource.create(get_request_JSON,params[:patient_id],escaped_oauth_token,current_business_entity)
+    rescue => e
+      begin
+        exception = e.message
+        api_svc_halt e.http_code, exception
+      rescue 
+        api_svc_halt HTTP_INTERNAL_ERROR, exception
+      end
+    end 
+    status HTTP_CREATED
+    jbuilder :create_charge
+  end
 
   private
 
