@@ -19,7 +19,7 @@ localhost:
 production:
   api_internal_svc_url: http://services.carecloud.com/
   api_internal_doc_srv_upld_url: https://dms.carecloud.com
-  mirth_outbound_svc_url: http://mirth-prod.carecloud.local:8088
+  mirth_outbound_svc_url: http://10.50.21.88:8088
   mirth_private_key: thisstringshouldbeprivate
   mirth_edi_token: C4r3Cl0ud3D1F0RPR0DUCT10N3NV
   mirth_ip_address: 10.122.149.15,10.122.149.18,192.168.123.111,72.46.253.196,172.20.0.10,10.0.1.42
