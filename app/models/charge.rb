@@ -14,6 +14,7 @@ end
 class ChargeRequest < Request 
  
   REQUIRED_FIELDS = ["start_time","end_time", "units","procedure_code","diagnosis1_code"]
+  VALID_ICD_INDICATORS = [9, 10]
   
   def initialize(options,patient_id)
     @errors = {}
@@ -22,6 +23,7 @@ class ChargeRequest < Request
     @charge['end_time'] = validate_date("end_time", @charge['end_time']) if @charge['end_time'].present?
     @charge['date_of_service'] = date_of_service(@charge['start_time']) 
     @patient_id = patient_id
+    @charge['icd_indicator'] = @charge['icd_indicator'].nil? ? 10 : @charge['icd_indicator'].to_i
     validate
   end
   
@@ -41,13 +43,11 @@ class ChargeRequest < Request
       @errors[param] = "Required param." unless @charge[param].present?
     end
     @errors["start_time/end_time"] = "end_time can't be before start_time" if (@charge['start_time'].present? && @charge['end_time'].present?) && (@charge['start_time'] > @charge['end_time'])
-    validate_icd_indicator(@charge['icd_indicator'])
+    validate_icd_indicator
   end
   
-  def validate_icd_indicator(icd_indicator)
-    if icd_indicator.blank?
-      indicator_value = 10
-    elsif ![9, 10].include? icd_indicator.to_i
+  def validate_icd_indicator
+    unless VALID_ICD_INDICATORS.include?(@charge['icd_indicator'])
       @errors["icd_indicator"] = "icd_indicator must be \'9\' or \'10\'"
     end
   end
