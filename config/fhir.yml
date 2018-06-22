@@ -1,9 +1,9 @@
 gender:
   'U':
     values:
-      - 'UNK'
+      - 'U'
       - 3
-    default: 'UNK'
+    default: 'U'
     display: 'Unknown'
   'F':
     values:
