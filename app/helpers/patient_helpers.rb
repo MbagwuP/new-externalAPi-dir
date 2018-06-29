@@ -7,7 +7,7 @@ class ApiService < Sinatra::Base
   def convert_demographic_codes!(request_body)
     patient = request_body['patient']
     converter = WebserviceResources::Converter
-    patient['gender_id'] = converter.code_to_cc_id(WebserviceResources::Gender, patient.delete('gender_code')) unless patient['gender_id'].present?
+    patient['gender_id'] = map_fhir_to_cc_gender_codes(patient) unless patient['gender_id'].present?
     patient['race_id'] = converter.code_to_cc_id(WebserviceResources::Race, patient.delete('race_code')) unless patient['race_id'].present?
     patient['marital_status_id'] = converter.code_to_cc_id(WebserviceResources::MaritalStatus, patient.delete('marital_status_code')) unless patient['marital_status_id'].present?
     patient['language_id'] = converter.code_to_cc_id(WebserviceResources::Language, patient.delete('language_code')) unless patient['language_id'].present? 
@@ -16,6 +16,22 @@ class ApiService < Sinatra::Base
     patient['ethnicity_id'] = converter.code_to_cc_id(WebserviceResources::Ethnicity, patient.delete('ethnicity_code')) unless patient['ethnicity_id'].present?
     patient['student_status_id'] = converter.code_to_cc_id(WebserviceResources::StudentStatus, patient.delete('student_status_code')) unless patient['student_status_id'].present?
     patient.delete('primary_care_physician_id')
+  end
+  
+  def map_fhir_to_cc_gender_codes(patient)
+    converter = WebserviceResources::Converter 
+    code = case patient['gender_code'].try(:downcase)
+      when 'male' || 'm'
+        'M'
+      when 'female' || 'f'
+        'F' 
+      when 'unknown' || 'u'
+        'U'
+      else
+       ''
+    end
+      patient.delete('gender_code')
+      converter.code_to_cc_id(WebserviceResources::Gender, code) 
   end
 
     def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
