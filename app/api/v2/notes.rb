@@ -1,6 +1,8 @@
 class ApiService < Sinatra::Base
   
-  post '/v2/appointments/:appointment_id/note' do
+  #/v2/appointments/:appointment_id/notes
+  #/v2/appointments/:appointment_id/note
+  post /\/v2\/appointments\/(?<appointment_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/(note|notes)$/ do
     begin
       request_body = get_request_JSON
       
@@ -47,7 +49,9 @@ class ApiService < Sinatra::Base
     jbuilder :list_notes
   end
   
-  put '/v2/appointments/:appointment_id/note/:id' do
+  #/v2/appointments/:appointment_id/notes/:id
+  #/v2/appointments/:appointment_id/note/:id
+  put /\/v2\/appointments\/(?<appointment_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/(note|notes)\/(?<id>([0-9]*))$/ do
     begin
       request_body = get_request_JSON
       
@@ -75,7 +79,9 @@ class ApiService < Sinatra::Base
     jbuilder :show_note
   end
   
-  post '/v2/patients/:patient_id/note' do
+  #/v2/patients/:patient_id/notes
+  #/v2/patients/:patient_id/note
+  post /\/v2\/patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/(note|notes)$/ do
     begin
       request_body = get_request_JSON
       
@@ -123,7 +129,9 @@ class ApiService < Sinatra::Base
     jbuilder :list_notes
   end
   
-  put '/v2/patients/:patient_id/note/:id' do
+  #/v2/patients/:patient_id/notes/:id
+  #/v2/patients/:patient_id/note/:id
+  put /\/v2\/patients\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/(note|notes)\/(?<id>([0-9]*))$/ do
     begin
       request_body = get_request_JSON
       

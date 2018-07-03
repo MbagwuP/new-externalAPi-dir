@@ -1,6 +1,7 @@
 json.id waitlist_request['id']
 json.business_entity_id waitlist_request['business_entity_id']
 json.appointment_id waitlist_request['appointment_id']
+json.appointment_external_id waitlist_request['appointment']['external_id']
 json.priority waitlist_request['priority']
 json.created_at waitlist_request['created_at']
 json.updated_at waitlist_request['updated_at']
@@ -30,9 +31,11 @@ json.appointment_request do
 
   json.appointment do
     json.id waitlist_request['appointment']['id']
+    json.external_id waitlist_request['appointment']['external_id']
     json.start_time waitlist_request['appointment']['start_time']
     json.end_time waitlist_request['appointment']['end_time']
     json.nature_of_visit_id waitlist_request['appointment']['nature_of_visit_id']
+    json.patient_id waitlist_request['appointment']['patient_appointment_details'][0]['external_id']
     json.first_name waitlist_request['appointment']['patient_appointment_details'][0]['first_name']
     json.middle_initial waitlist_request['appointment']['patient_appointment_details'][0]['middle_initial']
     json.last_name waitlist_request['appointment']['patient_appointment_details'][0]['last_name']
