@@ -101,11 +101,17 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
+    #**improvement needed** update WS jbuilder (_patientfull) with codes or create show_patient jbuilder
     parsed = JSON.parse(response.body)
     parsed['patient'].rename_key 'external_id', 'id'
     parsed['patient']['business_entity_id'] = current_business_entity
     parsed['patient']['gender_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, parsed['patient']['gender_id'])
     parsed['patient'].delete('primary_care_physician_id')
+    if parsed['patient']['phones'].any?
+      parsed['patient']['phones'].each do |phone|
+        phone['phone_type_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::PhoneType, phone['phone_type'])
+      end
+    end
     parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
   end
@@ -116,10 +122,13 @@ class ApiService < Sinatra::Base
   post /\/v2\/(patients\/create|patients)$/ do
     begin
       request_body = get_request_JSON
+      validate_required_params(request_body)
       convert_demographic_codes!(request_body)
-
       url          = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients.json?token=#{escaped_oauth_token}"
       response     = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
+    rescue ArgumentError => e
+      errmsg = "Patient Creation Failed - #{e.message}"
+      api_svc_halt HTTP_UNPROCESSABLE_ENTITY, errmsg
     rescue => e
       begin
         exception = error_handler_filter(e.response)
@@ -161,10 +170,14 @@ class ApiService < Sinatra::Base
   put '/v2/patients/:patient_id'  do
     begin
       request_body = get_request_JSON
+      validate_required_params(request_body)
       convert_demographic_codes!(request_body)
 
       url = "#{ApiService::API_SVC_URL}businesses/#{current_business_entity}/patients/#{params[:patient_id]}.json?token=#{escaped_oauth_token}"
       response = RestClient.put url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
+    rescue ArgumentError => e
+      errmsg = "Patient Update Failed - #{e.message}"
+      api_svc_halt HTTP_UNPROCESSABLE_ENTITY, errmsg
     rescue => e
       begin
           exception = error_handler_filter(e.response)
@@ -185,7 +198,6 @@ class ApiService < Sinatra::Base
     response = rescue_service_call 'Patient Balance' do
       RestClient.get(urlbalance)
     end
-
     @resp = JSON.parse(response.body)
     status HTTP_OK
     jbuilder :patient_balance

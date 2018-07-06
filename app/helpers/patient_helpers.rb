@@ -1,40 +1,71 @@
 class ApiService < Sinatra::Base
   
-  def patient_guid_check(id)
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Patient ID must be a valid GUID."}' unless id.is_guid?
-  end
-
   def convert_demographic_codes!(request_body)
     patient = request_body['patient']
-    converter = WebserviceResources::Converter
-    patient['gender_id'] = map_fhir_to_cc_gender_codes(patient) unless patient['gender_id'].present?
-    patient['race_id'] = converter.code_to_cc_id(WebserviceResources::Race, patient.delete('race_code')) unless patient['race_id'].present?
-    patient['marital_status_id'] = converter.code_to_cc_id(WebserviceResources::MaritalStatus, patient.delete('marital_status_code')) unless patient['marital_status_id'].present?
-    patient['language_id'] = converter.code_to_cc_id(WebserviceResources::Language, patient.delete('language_code')) unless patient['language_id'].present? 
-    patient['drivers_license_state_id'] = converter.code_to_cc_id(WebserviceResources::State, patient.delete('drivers_license_state_code')) unless patient['drivers_license_state_id'].present?
-    patient['employment_status_id'] = converter.code_to_cc_id(WebserviceResources::EmploymentStatus, patient.delete('employment_status_code')) unless patient['employment_status_id'].present?
-    patient['ethnicity_id'] = converter.code_to_cc_id(WebserviceResources::Ethnicity, patient.delete('ethnicity_code')) unless patient['ethnicity_id'].present?
-    patient['student_status_id'] = converter.code_to_cc_id(WebserviceResources::StudentStatus, patient.delete('student_status_code')) unless patient['student_status_id'].present?
+    #gender_code can take the CC code or fhir code
+    patient["gender_code"] = WebserviceResources::Gender.map_fhir_to_cc_gender_codes(patient["gender_code"]) if patient["gender_code"]
+    phones = request_body['phones']
+    addresses = request_body['addresses']
+
+    patient_ids = make_new_id_hash(patient)
+    patient.merge!(patient_ids)
     patient.delete('primary_care_physician_id')
+    
+    if addresses.present?
+      addresses.each do |address|
+        find_and_replace_address_keys(address)
+        address_ids = make_new_id_hash(address)
+        address.merge!(address_ids)
+      end
+    end
+    if phones.present?
+      phones.each do |phone|
+        find_and_replace_phone_type_key(phone)
+        phone_ids = make_new_id_hash(phone)
+        phone.merge!(phone_ids)
+      end
+    end
   end
   
-  def map_fhir_to_cc_gender_codes(patient)
-    converter = WebserviceResources::Converter 
-    code = case patient['gender_code'].try(:downcase)
-      when 'male' || 'm'
-        'M'
-      when 'female' || 'f'
-        'F' 
-      when 'unknown' || 'u'
-        'U'
-      else
-       ''
+  #needed for backwards capability
+  def find_and_replace_address_keys(address)
+    if address["state"].try(:match,/^\d+$/) # needed for update patient
+      address["state_id"] = address.delete("state") 
+    elsif address["state"].try(:match,/^[a-zA-Z]{2}$/) # needed for create patient
+      address["state_code"] = address.delete("state")
     end
-      patient.delete('gender_code')
-      converter.code_to_cc_id(WebserviceResources::Gender, code) 
+    if address["country_name"].try(:match,/^\d+$/) 
+      address["country_id"] = address.delete("country_name") 
+    elsif address["country_name"].try(:match,/^[a-zA-Z]{3}$/)
+      address["country_code"] = address.delete("country_name") 
+    end
+  end
+  
+  def find_and_replace_phone_type_key(phone)
+    if phone["phone_type_id"].try(:match,/^[a-zA-Z]+$/)
+        phone["phone_type_code"] = phone.delete("phone_type_id") 
+    end
+  end
+  
+  def make_new_id_hash(orig_hash)
+    id_hash = {}
+    orig_hash.map do |key,value|
+      if key.match(/(_code)\z/) && !key.match(/(zip_code)/)
+      key_id = key.gsub(/(_code)\z/, "_id")
+      id = code_converter(orig_hash,key,orig_hash.delete(key))
+      id_hash[key_id] = id
+     end
+    end
+    id_hash
+  end
+  
+  def code_converter(obj, code, value)
+    converter = WebserviceResources::Converter 
+    code_class = WebserviceResources::WebserviceClient.set_class(code)
+    value = converter.code_to_cc_id(code_class, value)
   end
 
-    def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
+  def get_internal_patient_id (patientid, business_entity_id, pass_in_token)
 
     pass_in_token = CGI::unescape(pass_in_token)
 
@@ -71,7 +102,6 @@ class ApiService < Sinatra::Base
     end
 
     return patientid
-
   end
 
   def get_internal_patient_id_by_patient_number (patientid, business_entity_id, pass_in_token)
@@ -130,6 +160,10 @@ class ApiService < Sinatra::Base
 
     return patientid
 
+  end
+  
+  def validate_required_params(request_body)
+    raise ArgumentError.new("Missing required parameters: first_name and/or last_name") if request_body["patient"]["first_name"].blank? || request_body["patient"]["last_name"].blank?
   end
 
 end

@@ -1,14 +1,16 @@
 module WebserviceResources
   class Converter
+    
     def self.code_to_cc_id(attribute, code)
-      begin
-        attribute.values.each do |key, value|
-          return key.to_s if value['values'].map{ |e| e.to_s.downcase }.include?(code.to_s.downcase)
-        end
-        return ""
-      rescue
-        return ""
+      attribute.values.each do |key, value|
+        if value['values'].map{ |e| e.to_s.downcase }.include?(code.to_s.downcase)
+          return key.to_s
+        end 
       end
+      # If empty string passed as value then nullifys previous value
+      return nil if code.blank?
+      key_code = WebserviceResources::WebserviceClient.get_code_key(attribute)
+      raise ArgumentError.new("Invalid #{key_code}")
     end
     
     def self.name_to_cc_id(attribute, name)
@@ -42,6 +44,6 @@ module WebserviceResources
         return ""
       end
     end
-
+    
   end
 end
