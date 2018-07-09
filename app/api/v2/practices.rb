@@ -19,9 +19,11 @@ class ApiService < Sinatra::Base
         v['state'] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, state)
       end
       request_body['business_entity'].merge!(addresses)
-
       url = "#{ApiService::API_SVC_URL}businesses.json?token=#{escaped_oauth_token}"
       response = RestClient.post url, request_body.to_json, :content_type => :json, extapikey: ApiService::APP_API_KEY
+    rescue ArgumentError => e
+      errmsg = "Practice Creation Failed - #{e.message}"
+      api_svc_halt HTTP_UNPROCESSABLE_ENTITY, errmsg
     rescue => e
       begin
         exception = error_handler_filter(e.response)
