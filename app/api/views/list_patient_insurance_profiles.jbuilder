@@ -28,7 +28,7 @@ json.insurance_profiles @profiles do |profile|
       json.last_name policy['insured']['last_name']
       json.middle_initial policy['insured']['middle_initial']
       json.date_of_birth policy['insured']['date_of_birth']
-      json.gender DemographicCodes::Converter.cc_id_to_code(DemographicCodes::Gender, policy['insured']['gender_id'])
+      json.gender WebserviceResources::Converter.cc_id_to_code(WebserviceResources::Gender, policy['insured']['gender_id'])
       json.relation_to_patient policy['primary_insured_relationship_type']
       json.addresses policy['insured']['addresses'] do |address|
         json.partial! 'address', address: address['address']
