@@ -1,5 +1,9 @@
 class ApiService < Sinatra::Base
   
+  def patient_guid_check(id)
+    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Patient ID must be a valid GUID."}' unless id.is_guid?
+  end
+  
   def convert_demographic_codes!(request_body)
     patient = request_body['patient']
     #gender_code can take the CC code or fhir code
@@ -61,7 +65,7 @@ class ApiService < Sinatra::Base
   
   def code_converter(obj, code, value)
     converter = WebserviceResources::Converter 
-    code_class = WebserviceResources::WebserviceClient.set_class(code)
+    code_class = WebserviceResources::Demographics.set_class(code)
     value = converter.code_to_cc_id(code_class, value)
   end
 

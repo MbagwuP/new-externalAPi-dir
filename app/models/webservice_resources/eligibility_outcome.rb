@@ -1,5 +1,6 @@
 module WebserviceResources
-  class EligibilityOutcome < WebserviceClient
+  class EligibilityOutcome
+    extend Client::Webservices  
     
     def self.values
       cache_key = "eligibility-outcomes"

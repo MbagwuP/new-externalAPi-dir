@@ -1,12 +1,14 @@
 module WebserviceResources
-  class Ethnicity < WebserviceClient
+  class Ethnicity
+    extend Client::Webservices
+      
     def self.values
       cache_key = "ethnicity-codes"
       cache_retrieval(cache_key, :ethnicity_codes_from_webservices)
     end
 
     def self.ethnicity_codes_from_webservices
-      ethnicities = make_service_call 'Ethnicity Look Up' do
+      ethnicities = rescue_service_call('Ethnicity Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_ethnicities.json", :api_key => ApiService::APP_API_KEY)
       end
       ethnicities = JSON.parse ethnicities

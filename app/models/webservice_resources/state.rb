@@ -1,12 +1,14 @@
 module WebserviceResources
-  class State < WebserviceClient
+  class State
+    extend Client::Webservices
+      
     def self.values
       cache_key = "state-codes"
       cache_retrieval(cache_key, :state_codes_from_webservices)
     end
 
     def self.state_codes_from_webservices
-      states = make_service_call 'State Look Up' do
+      states = rescue_service_call('State Look Up',true) do
         RestClient.get(webservices_uri "addresses/list_all_states.json", :api_key => ApiService::APP_API_KEY)
       end
       states = JSON.parse states

@@ -1,17 +1,18 @@
-class ChargeResource < Request
+class ChargeResource
+  extend Client::Webservices
 
   def self.create(request,patient_id,token,current_business_entity)
-    payload = ChargeRequest.new(request, patient_id)
+    payload = Charge.new(request, patient_id)
     url = webservices_uri "charges/#{patient_id}/business_entity/#{current_business_entity}/create.json", {token: token}
     if payload.valid?
       make_request('Create Charge Request',"post",url,payload.as_json)
     else
-      raise InvalidRequestError.new(payload.error_messages)
+      raise Error::InvalidRequestError.new(payload.error_messages)
     end
   end
 end
   
-class ChargeRequest < Request 
+class Charge
  
   REQUIRED_FIELDS = ["start_time","end_time", "units","procedure_code","diagnosis1_code"]
   VALID_ICD_INDICATORS = [9, 10]

@@ -1,5 +1,7 @@
 module WebserviceResources
-  class InsurancePolicyType < WebserviceClient
+  class InsurancePolicyType  
+    extend Client::Webservices
+    
     def self.values
       cache_key = "insurance-policy-types"
       cache_retrieval(cache_key, :list_all)

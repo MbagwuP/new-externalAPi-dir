@@ -1,7 +1,8 @@
-class EligibilityResource < Request
+class EligibilityResource
+  extend Client::Webservices
   
   def self.create(request,appointment_id,token)
-    payload = EligibilityRequest.new(request, appointment_id).add_root_key
+    payload = Eligibility.new(request, appointment_id).add_root_key
     url = build_eligibility_url(nil,nil,token)
     make_request('Create Manual Eligibility Request',"post",url,payload)
   end
@@ -23,7 +24,7 @@ class EligibilityResource < Request
 
 end
   
-class EligibilityRequest < Request
+class Eligibility
   
   def initialize(options,appointment_id)
     @appointment_id = appointment_id
@@ -41,7 +42,7 @@ class EligibilityRequest < Request
   AppointmentOrigin = 1
   
   def check_method_value(method)
-    raise InvalidRequestError.new("'Auto' method can not be used for a manual eligibility request") if method.downcase == "au"
+    raise Error::InvalidRequestError.new("'Auto' method can not be used for a manual eligibility request") if method.downcase == "au"
     WebserviceResources::Converter.code_to_cc_id(WebserviceResources::EligibilityMethod, method)
   end
   
