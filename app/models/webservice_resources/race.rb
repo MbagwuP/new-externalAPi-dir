@@ -1,12 +1,14 @@
 module WebserviceResources
-  class Race < WebserviceClient
+  class Race
+    extend Client::Webservices
+      
     def self.values
       cache_key = "race-codes"
       cache_retrieval(cache_key, :race_codes_from_webservices)
     end
 
     def self.race_codes_from_webservices
-      races = make_service_call 'Race Look Up' do
+      races = rescue_service_call('Race Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_races.json", :api_key => ApiService::APP_API_KEY)
       end
       races = JSON.parse races

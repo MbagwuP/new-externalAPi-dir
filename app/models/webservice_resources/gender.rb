@@ -1,12 +1,14 @@
 module WebserviceResources
-  class Gender < WebserviceClient
+  class Gender
+    extend Client::Webservices
+      
     def self.values
       cache_key = "gender-codes"
       cache_retrieval(cache_key, :gender_codes_from_webservices)
     end
 
     def self.gender_codes_from_webservices
-      genders = make_service_call 'Gender Look Up' do
+      genders = rescue_service_call('Gender Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_genders.json", :api_key => ApiService::APP_API_KEY)
       end
       genders = JSON.parse genders

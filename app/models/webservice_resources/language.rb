@@ -1,12 +1,14 @@
 module WebserviceResources
-  class Language < WebserviceClient
+  class Language
+    extend Client::Webservices
+      
     def self.values
       cache_key = "language-codes"
       cache_retrieval(cache_key, :language_codes_from_webservices)
     end
 
     def self.language_codes_from_webservices
-      languages = make_service_call 'Language Look Up' do
+      languages = rescue_service_call('Language Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_languages.json", :api_key => ApiService::APP_API_KEY)
       end
       languages = JSON.parse languages
