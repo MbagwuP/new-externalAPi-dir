@@ -1,5 +1,7 @@
 module WebserviceResources
-  class NoteTrigger < WebserviceClient
+  class NoteTrigger
+    extend Client::Webservices
+      
     def self.values
       cache_key = "note_triggers"
       cache_retrieval(cache_key, :list_all)

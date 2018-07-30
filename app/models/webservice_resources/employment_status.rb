@@ -1,12 +1,14 @@
 module WebserviceResources
-  class EmploymentStatus < WebserviceClient
+  class EmploymentStatus
+    extend Client::Webservices
+      
     def self.values
       cache_key = "employment-status"
       cache_retrieval(cache_key, :employment_status_codes_from_webservices)
     end
 
     def self.employment_status_codes_from_webservices
-      employment_statuses = make_service_call 'Employment Status Look Up' do
+      employment_statuses = rescue_service_call('Employment Status Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_employment_statuses.json", :api_key => ApiService::APP_API_KEY)
       end
       employment_statuses = JSON.parse employment_statuses

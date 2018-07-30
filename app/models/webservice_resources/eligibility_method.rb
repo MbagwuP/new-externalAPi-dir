@@ -1,5 +1,6 @@
 module WebserviceResources
-  class EligibilityMethod < WebserviceClient
+  class EligibilityMethod
+    extend Client::Webservices  
     
     def self.values
       cache_key = "eligibility-methods"

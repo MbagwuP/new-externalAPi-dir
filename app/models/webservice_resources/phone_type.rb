@@ -1,12 +1,14 @@
 module WebserviceResources
-  class PhoneType < WebserviceClient
+  class PhoneType
+    extend Client::Webservices
+      
     def self.values
       cache_key = "phone-types"
       cache_retrieval(cache_key, :phone_types_from_webservices)
     end
 
     def self.phone_types_from_webservices
-      phone_types = make_service_call 'Phone Type Look Up' do
+      phone_types = rescue_service_call('Phone Type Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_phone_types.json", :api_key => ApiService::APP_API_KEY)
       end
       phone_types = JSON.parse phone_types

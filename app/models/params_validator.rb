@@ -10,11 +10,11 @@ class ParamsValidator
     error = 'Invalid Date format for start and/or end date parameter. Valid Date format is YYYY-MM-DD or YYYYMMDD'
     if @params[:start_date].present? 
       Date.parse(@params[:start_date])
-      error if date_format_invalid?(@params[:start_date])
+      return error if date_format_invalid?(@params[:start_date])
     end
     if @params[:end_date].present? 
       Date.parse(@params[:end_date])
-      error if date_format_invalid?(@params[:end_date])
+      return error if date_format_invalid?(@params[:end_date])
     end
     rescue ArgumentError 
       'Invalid Date. The valid date format is YYYY-MM-DD or YYYYMMDD'
@@ -63,7 +63,7 @@ class ParamsValidator
   private
   
   def date_format_invalid?(date) #return true if invalid
-    !(date.match(/^\d{4}-\d{2}-\d{2}\z/) || date.match(/^\d{8}\z/))
+    !(date.match(/^\d{4}-\d{2}-\d{2}$/) || date.match(/^\d{8}$/))
   end
 
   def validate

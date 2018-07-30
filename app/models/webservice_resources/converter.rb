@@ -9,7 +9,7 @@ module WebserviceResources
       end
       # If empty string passed as value then nullifys previous value
       return nil if code.blank?
-      key_code = WebserviceResources::WebserviceClient.get_code_key(attribute)
+      key_code = WebserviceResources::Demographics.get_code_key(attribute)
       raise ArgumentError.new("Invalid #{key_code}")
     end
     

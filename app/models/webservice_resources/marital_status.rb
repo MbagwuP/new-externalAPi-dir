@@ -1,12 +1,14 @@
 module WebserviceResources
-  class MaritalStatus < WebserviceClient
+  class MaritalStatus
+    extend Client::Webservices
+      
     def self.values
       cache_key = "marital-status-codes"
       cache_retrieval(cache_key, :marital_status_codes_from_webservices)
     end
 
     def self.marital_status_codes_from_webservices
-      marital_statuses = make_service_call 'Marital Status Look Up' do
+      marital_statuses = rescue_service_call('Marital Status Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_marital_statuses.json", :api_key => ApiService::APP_API_KEY)
       end
       marital_statuses = JSON.parse marital_statuses

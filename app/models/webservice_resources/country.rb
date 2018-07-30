@@ -1,12 +1,14 @@
 module WebserviceResources
-  class Country < WebserviceClient
+  class Country
+    extend Client::Webservices
+    
     def self.values
       cache_key = "country-codes"
       cache_retrieval(cache_key, :country_codes_from_webservices)
     end
 
     def self.country_codes_from_webservices
-      countries = make_service_call 'Country Look Up' do
+      countries = rescue_service_call('Country Look Up',true) do
         request = RestClient::Request.new(url: webservices_uri('addresses/list_all_countries.json'), method: :get, headers: {api_key: ApiService::APP_API_KEY})
         CCAuth::InternalService::Request.sign!(request).execute
       end

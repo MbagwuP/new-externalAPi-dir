@@ -1,5 +1,7 @@
 module WebserviceResources
-  class PersonRelationshipType < WebserviceClient
+  class PersonRelationshipType
+    extend Client::Webservices
+      
     def self.values
       cache_key = "person-relationship-types"
       cache_retrieval(cache_key, :list_all)

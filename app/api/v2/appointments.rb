@@ -60,10 +60,16 @@ class ApiService < Sinatra::Base
     forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], page: params[:page], 
                         use_pagination: 'true', nature_of_visit_ids: params[:visit_reason_ids], patient_ids: params[:patient_ids]}
     
-    validate_date_filter_params! if date_filter_params?
-    today = Date.today.to_s
-    forwarded_params[:from] = params['start_date'].blank? ? today + ' 00:00:00' : params['start_date'] + ' 00:00:00'
-    forwarded_params[:to]   = params['end_date'].blank? ? today + ' 23:59:59' : params['end_date'] + ' 23:59:59'
+    if params['start_date'].blank? & params['end_date'].blank?
+      today = Date.today.to_s
+      params['start_date'] =  today
+      params['end_date'] = today
+    else 
+      validate_date_filter_params!
+    end
+    
+    forwarded_params[:from] = params['start_date'] + ' 00:00:00'
+    forwarded_params[:to]   = params['end_date'] + ' 23:59:59'
     
     # webservices: AppointmentsController#get_appt_data_by_date_range
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",

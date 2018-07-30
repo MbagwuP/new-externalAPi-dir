@@ -1,12 +1,14 @@
 module WebserviceResources
-  class StudentStatus < WebserviceClient
+  class StudentStatus
+    extend Client::Webservices
+      
     def self.values
       cache_key = "student-status-codes"
       cache_retrieval(cache_key, :student_status_codes_from_webservices)
     end
 
     def self.student_status_codes_from_webservices
-      student_statuses = make_service_call 'Student Status Look Up' do
+      student_statuses = rescue_service_call('Student Status Look Up',true) do
         RestClient.get(webservices_uri "people/list_all_student_statuses.json", :api_key => ApiService::APP_API_KEY)
       end
       student_statuses = JSON.parse student_statuses
