@@ -9,8 +9,8 @@ module WebserviceResources
       end
       # If empty string passed as value then nullifys previous value
       return nil if code.blank?
-      key_code = WebserviceResources::Demographics.get_code_key(attribute)
-      raise ArgumentError.new("Invalid #{key_code}")
+      key_code = WebserviceResources::Demographics.get_code_key(attribute) || attribute.to_s.split("::")[1].underscore
+      raise Error::InvalidRequestError.new("Invalid #{key_code}")
     end
     
     def self.name_to_cc_id(attribute, name)
@@ -34,6 +34,14 @@ module WebserviceResources
       end
     end
 
+    def self.id_to_name(attribute,id)
+      #make the formatted list as the "name"
+      attribute.values.each do |key, value|
+        return value["name"] if (key.to_i).eql?(id.to_i)
+      end
+      return ""
+    end
+    
     def self.display_by_code(attribute, code)
       begin
         attribute.values.each do |key, value|
