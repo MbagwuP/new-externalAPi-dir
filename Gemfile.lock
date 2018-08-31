@@ -1,5 +1,5 @@
 PATH
-  remote: ./vendor/gems
+  remote: vendor/gems
   specs:
     c_cloud_dms_client (0.1.1)
       c_cloud_http_client
@@ -136,6 +136,7 @@ GEM
       rspec-core (!= 2.12.0)
     shotgun (0.9)
       rack (>= 1.0)
+    simple_command (0.0.9)
     sinatra (1.4.5)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -192,6 +193,7 @@ DEPENDENCIES
   rspec (~> 2.14)
   rspec_junit_formatter
   shotgun
+  simple_command
   sinatra
   stoplight (~> 1.1)
   tilt-jbuilder (>= 0.4.0)
@@ -199,4 +201,4 @@ DEPENDENCIES
   tzinfo
 
 BUNDLED WITH
-   1.13.1
+   1.16.0
