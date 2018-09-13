@@ -44,7 +44,8 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    @notes = JSON.parse(resp)
+    notes = JSON.parse(resp)
+    @notes = notes["notes"].select {|note| note["status"] == 'A'}
     status HTTP_OK
     jbuilder :list_notes
   end
@@ -124,7 +125,8 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_INTERNAL_ERROR, errmsg
       end
     end
-    @notes = JSON.parse(resp)
+    notes = JSON.parse(resp)
+    @notes = notes["notes"].select {|note| note["status"] == 'A'}
     status HTTP_OK
     jbuilder :list_notes
   end
