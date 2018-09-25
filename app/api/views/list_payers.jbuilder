@@ -2,6 +2,7 @@ json.payers @payers['payers'] do |payer|
   json.payer do 
     json.id payer['id']
     json.name payer['name']
+    json.sender_number payer['sender_number']
     if payer['addresses']
       json.addresses payer['addresses'] do |address|
         json.line1 address['address']['line1']
