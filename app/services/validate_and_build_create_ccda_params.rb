@@ -53,7 +53,12 @@ class ValidateAndBuildCreateCcdaParams
   end
 
   def validate!
-    if single_date?
+    if !valid_date_parameters?
+      errors.add(:base,
+        "Invalid date parameters. Either pass a single 'date' or pass a "\
+        "'start_date' and 'end_date'."
+      )
+    elsif single_date?
       errors.add(:date, "Date must be YYYY-MM-DD") unless valid_date?(date)
     elsif date_range?
       errors.add(:start_date, "Date must be YYYY-MM-DD") unless valid_date?(start_date)
@@ -93,6 +98,11 @@ class ValidateAndBuildCreateCcdaParams
 
   def date_range?
     !!@start_date
+  end
+
+  def valid_date_parameters?
+    (!!@date && !@start_date && !@end_date) || 
+      (!!@start_date && !!@end_date && !@date )
   end
 
   def valid_date?(date)
