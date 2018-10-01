@@ -52,18 +52,13 @@ class ValidateAndBuildCreateCcdaParams
     sections = Array.wrap(sections).map(&:upcase) if sections
   end
 
+  # Intentionally didn't use ParamsValidator (app/models/params_validator.rb)
+  # here due to inflexibility in capturing multiple errors and to use a more
+  # precise date regex.
+  # In the future, it might be worthwhile to incoporate multiple errors into
+  # that class using ActiveRecord Validations or SimpleCommand.
   def validate!
-    if !valid_date_parameters?
-      errors.add(:base,
-        "Invalid date parameters. Either pass a single 'date' or pass a "\
-        "'start_date' and 'end_date'."
-      )
-    elsif single_date?
-      errors.add(:date, "Date must be YYYY-MM-DD") unless valid_date?(date)
-    elsif date_range?
-      errors.add(:start_date, "Date must be YYYY-MM-DD") unless valid_date?(start_date)
-      errors.add(:end_date, "Date must be YYYY-MM-DD") if end_date && !valid_date?(end_date)
-    end
+    validate_date_params if any_date_params?
     invalid_section = sections && sections.any? do |section|
       VALID_SECTIONS.exclude?(section.upcase)
     end
@@ -98,6 +93,27 @@ class ValidateAndBuildCreateCcdaParams
 
   def date_range?
     !!@start_date
+  end
+
+  def validate_date_params
+    if !valid_date_parameters?
+      errors.add(:base,
+        "Invalid date parameters. Either pass a single 'date' or pass a "\
+        "'start_date' and 'end_date'."
+      )
+    elsif single_date?
+      errors.add(:date, "Date must be YYYY-MM-DD") unless valid_date?(date)
+    elsif date_range?
+      errors.add(:start_date, "Date must be YYYY-MM-DD") unless valid_date?(start_date)
+      errors.add(:end_date, "Date must be YYYY-MM-DD") if end_date && !valid_date?(end_date)
+      if Date.parse(@start_date) > Date.parse(@end_date)
+        errors.add(:date, "Start date must be before end date")
+      end
+    end
+  end
+
+  def any_date_params?
+    !!@date || !!@start_date || !!@end_date
   end
 
   def valid_date_parameters?
