@@ -40,6 +40,10 @@ gem 'cc_auth', '~> 0.8.0'
 gem 'rake'
 gem 'dotenv'
 
+# lightweight tool for service objects
+# See https://github.com/nebulab/simple_command
+gem 'simple_command'
+
 group :development, :localhost, :test do
   gem 'rack-test'
   gem 'tux'

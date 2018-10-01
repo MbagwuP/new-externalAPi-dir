@@ -474,6 +474,34 @@
           #  $ref: Patient
       422:
         description: validation error
+        # BEGIN MIKE
+/ccda:
+  get:
+    summary: Get Ccda Request
+    description: |
+      Get a Ccda Request
+
+    tags:
+      - Ccda
+    responses:
+      200:
+        description: Get Ccda Request successfully.
+        schema:
+          $ref: GetCcda_Response
+  post:
+    summary: Create Ccda Request
+    description: |
+      Create a Ccda Request for all patients for a business entity.
+
+    parameters:
+    tags:
+      - Ccda
+    responses:
+      201:
+        description: Successfully Created Ccda Request.
+        schema:
+          $ref: CreateCcda_Response
+        # END MIKE
 # /schedule/{date}/getblockouts/{location_id}/{resource_id}:
 #   get:
 #     summary: List Appointment Blockouts

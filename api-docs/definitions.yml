@@ -271,6 +271,35 @@ CreateAppointmentConfirmation_Response_appointment_confirmation:
     date_confirmed: string
     id: integer
     updated_at: string
+CreateCcda_Response:
+  properties:
+    business_entity_id: integer
+    created_at: string
+    created_by: integer
+    document_id: string
+    document_name: string
+    document_url: string
+    guid: string
+    id: integer
+    job_id: string
+    provider_id: integer
+    updated_at: string
+    updated_by: integer
+    status: 
+      $ref: Ccda_Status
+Ccda_Status:
+  properties:
+    time: integer
+    status: string
+    uuid: string
+    options:
+      business_entity_id: integer
+      user_id: integer
+      ccda_request_id: integer
+    name: 'string'
+    message: 'string'
+GetCcda_Response:
+  $ref: CreateCcda_Response
 PatientInsuranceShow:
   properties:
     id: string
