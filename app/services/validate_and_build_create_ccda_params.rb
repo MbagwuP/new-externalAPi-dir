@@ -23,7 +23,9 @@ class ValidateAndBuildCreateCcdaParams
     "UNIQUE_DEVICE_IDENTIFIERS",
     "PLAN_OF_TREATMENT",
     "GOALS",
-    "HEALTH_CONCERNS"
+    "HEALTH_CONCERNS",
+    "REASON_FOR_REFERRAL",
+    "ASSESSMENT"
   ]
 
   def initialize(params, token:, business_entity_guid:)
@@ -31,7 +33,7 @@ class ValidateAndBuildCreateCcdaParams
     @start_date = params[:start_date]
     @end_date = params[:end_date]
     @sections = Array.wrap(params[:sections])
-    @patient_id = params[:patient_id]
+    @patient_ids = Array.wrap(params[:patient_ids])
     @token = token
     @business_entity_guid = business_entity_guid
   end
@@ -45,7 +47,7 @@ class ValidateAndBuildCreateCcdaParams
 
   private
 
-  attr_reader :date, :start_date, :end_date, :sections, :patient_id, :token,
+  attr_reader :date, :start_date, :end_date, :sections, :patient_ids, :token,
     :business_entity_guid
 
   def before_validate
@@ -71,7 +73,7 @@ class ValidateAndBuildCreateCcdaParams
       business_entity_guid: business_entity_guid
     }
 
-    params[:patient_guid] = patient_id if patient_id
+    params[:patient_guids] = patient_ids if patient_ids
     params[:sections] = sections if sections.any?
 
     if single_date?
