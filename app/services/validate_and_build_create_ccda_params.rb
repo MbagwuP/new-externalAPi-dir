@@ -74,18 +74,16 @@ class ValidateAndBuildCreateCcdaParams
     params[:patient_guid] = patient_id if patient_id
     params[:sections] = sections if sections.any?
 
-    # Don't pass dates for now, but leave this code in case we need to quickly
-    # turn it back on for ONC certification testing.
-    # if single_date?
-    #   params[:start_date] = date
-    #   params[:end_date] = date
-    # elsif date_range?
-    #   params[:start_date] = start_date
-    #   params[:end_date] = [
-    #     Date.parse(end_date),
-    #     Date.parse(start_date) + 30.days
-    #   ].min.to_s
-    # end
+    if single_date?
+      params[:start_date] = date
+      params[:end_date] = date
+    elsif date_range?
+      params[:start_date] = start_date
+      params[:end_date] = [
+        Date.parse(end_date),
+        Date.parse(start_date) + 30.days
+      ].min.to_s
+    end
     params
   end
 
