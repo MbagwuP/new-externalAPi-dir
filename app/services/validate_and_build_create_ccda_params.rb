@@ -33,7 +33,7 @@ class ValidateAndBuildCreateCcdaParams
     @start_date = params[:start_date]
     @end_date = params[:end_date]
     @sections = Array.wrap(params[:sections])
-    @patient_ids = Array.wrap(params[:patient_ids])
+    @patient_ids = [*params[:patient_ids], *params[:patient_guids], *params[:patient_id], *params[:patient_guid]]
     @token = token
     @business_entity_guid = business_entity_guid
   end
