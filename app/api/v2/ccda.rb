@@ -7,9 +7,10 @@ class ApiService < Sinatra::Base
   # start_date & end_date (YYYY-MM-DD)
   # category
   post '/v2/ccda' do
-    params = get_request_JSON.symbolize_keys
+    query_args = params || {}
+    args = get_request_JSON.symbolize_keys.merge(query_args).with_indifferent_access
     command = ValidateAndBuildCreateCcdaParams.call(
-      params,
+      args,
       token: escaped_oauth_token,
       business_entity_guid: current_business_entity
     )
