@@ -14,7 +14,6 @@ class ValidateAndBuildCreateCcdaParams
     "PROBLEMS",
     "MEDICATIONS",
     "MEDICATION_ALLERGIES",
-    "LABORATORY_TESTS",
     "LABORATORY_RESULTS",
     "VITAL_SIGNS",
     "PROCEDURES",
