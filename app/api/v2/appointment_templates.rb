@@ -13,7 +13,7 @@ class ApiService < Sinatra::Base
     end
 
     urlappt = webservices_uri "appointment_templates/#{current_business_entity}.json",
-                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
+                              {token: escaped_oauth_token, local_timezone: local_timezone?}.merge(forwarded_params).compact
     LOG.debug("URL:" + urlappt)
 
 

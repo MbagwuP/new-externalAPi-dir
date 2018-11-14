@@ -19,7 +19,7 @@ class ApiService < Sinatra::Base
     check_for_valid_provider(providerids, providerid)
 
     urlappt = webservices_uri "providers/#{providerid}/appointments.json",
-                              {token: escaped_oauth_token, date: the_date, business_entity_id: current_business_entity, local_timezone: (local_timezone? ? 'true' : nil)}.compact
+                              {token: escaped_oauth_token, date: the_date, business_entity_id: current_business_entity, local_timezone: local_timezone?}.compact
 
     response = rescue_service_call 'Appointment Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
@@ -98,11 +98,11 @@ class ApiService < Sinatra::Base
     base_path = "appointments/#{current_business_entity}/#{params[:appointment_id]}/find_by_external_id.json"
 
     if (current_internal_request_header)
-      url = webservices_uri base_path, include_confirmation_method: 'true'
+      url = webservices_uri base_path, {include_confirmation_method: 'true', local_timezone: local_timezone?}
       internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
       resp = internal_signed_request.execute
     else
-      url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'
+      url = webservices_uri base_path, {token: escaped_oauth_token, include_confirmation_method: 'true',local_timezone: local_timezone?}
       resp = rescue_service_call 'Appointment Look Up' do
         RestClient.get(url, :api_key => APP_API_KEY)
       end
@@ -173,7 +173,7 @@ class ApiService < Sinatra::Base
     appointment_guid_check(params[:appointment_id])
 
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:appointment_id]}/confirmations.json",
-      token: escaped_oauth_token
+      {token: escaped_oauth_token, local_timezone: local_timezone?}
     resp = rescue_service_call 'Appointment Confirmations' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
@@ -441,7 +441,7 @@ class ApiService < Sinatra::Base
 
     api_svc_halt HTTP_BAD_REQUEST, '{"error": "Missing query parameters"}' unless params[:appointment_id]
 
-    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true}
+    urlwaitlist_requests = webservices_uri "/scheduler/waitlist_requests.json", {token: escaped_oauth_token, id: params[:appointment_id], enforce_hold: true, from_appointment: true, local_timezone: local_timezone?}
 
     begin
       @resp = rescue_service_call 'Waitlist',true do
@@ -502,7 +502,7 @@ class ApiService < Sinatra::Base
       elsif !params["start_date"].blank? && params["end_date"].blank?
         params["end_date"]   = params["start_date"]
       end
-      search_criteria = AppointmentAvailabilitySearchCriteria.new(params.merge('token' => escaped_oauth_token, 'business_entity_id' => current_business_entity)).query_params
+      search_criteria = AppointmentAvailabilitySearchCriteria.new(params.merge('token' => escaped_oauth_token, 'business_entity_id' => current_business_entity,'local_timezone'=> local_timezone?)).query_params
       appt_avail_url = webservices_uri "/appointment_availability.json", search_criteria
       @resp = rescue_service_call 'Appointment Availability Look Up' do
         JSON.parse(RestClient.get(appt_avail_url))
