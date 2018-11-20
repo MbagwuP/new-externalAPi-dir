@@ -80,10 +80,7 @@ class ValidateAndBuildCreateCcdaParams
       params[:end_date] = date
     elsif date_range?
       params[:start_date] = start_date
-      params[:end_date] = [
-        Date.parse(end_date),
-        Date.parse(start_date) + 30.days
-      ].min.to_s
+      params[:end_date] = end_date ? Date.parse(end_date) : Date.parse(start_date) + 30.days
     end
     params
   end
