@@ -8,6 +8,10 @@ else
       json.name trigger['note_trigger']['name']
       json.code trigger['note_trigger']['code']
     end
-  json.expires_at note['note_trigger']['expires_at'] || nil
+    if note['note_trigger']['expires_at'].nil?
+      json.expires_at nil
+    else 
+      json.expires_at Date.parse(note['note_trigger']['expires_at']).try(:to_s)
+    end
   end
 end

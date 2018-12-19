@@ -171,7 +171,9 @@ class ApiService < Sinatra::Base
         id
       end
       # if "expires_at" is blank or null then trigger expires_at=never
-      request_body['note_trigger']['expires_at'] = request_body['note_trigger']['expires_at'] || nil
+      # added the "noon hack" to prevent any timezone issues in CC UI
+      expires_at = request_body['note_trigger']['expires_at']
+      request_body['note_trigger']['expires_at'] = expires_at.blank? ? nil : expires_at +"T12:00"
     end
     request_body
   end
