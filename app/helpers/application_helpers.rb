@@ -17,7 +17,7 @@ TRUE_PARAM_VALUES = [1, '1', true, 'true'].freeze
 class ApiService < Sinatra::Base
   
   def local_timezone?
-    params[:local_timezone] && ["true",true,"1",1].include?(params[:local_timezone])
+    ["true",true,"1",1].include?(params[:local_timezone]) || ["true",true,"1",1].include?(params[:entity_timezone])
   end
 
   def base_url
