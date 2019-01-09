@@ -4,7 +4,7 @@ class AppointmentAvailabilitySearchCriteria
   
   class InvalidParameterError < StandardError; end
   
-  REQUIRED_PARAMS = ['start_date', 'visit_reason_id', 'location_ids', 'resource_ids', 'token', 'business_entity_id','local_timezone'].freeze
+  REQUIRED_PARAMS = ['start_date', 'visit_reason_id', 'location_ids', 'resource_ids', 'token', 'business_entity_id'].freeze
   
   OPTIONAL_PARAMS = [
                       'end_date', # defaults to start_date
@@ -45,7 +45,6 @@ class AppointmentAvailabilitySearchCriteria
       afternoon: meridian_matches?(params, 'pm'),
       business_entity_id: params[:business_entity_id],
       original_business_entity_id: params[:business_entity_id],
-      local_timezone: params[:local_timezone],
       sequential: true,
       token: params[:token]
     }.merge(dow_to_wday_hash(params))
