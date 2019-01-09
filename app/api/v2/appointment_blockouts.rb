@@ -17,7 +17,7 @@ class ApiService < Sinatra::Base
     
     # in Webservices: AppointmentBlockoutsController#list_by_business_entity
     urlappt = webservices_uri "appointment_blockouts/#{current_business_entity}.json",
-                              {token: escaped_oauth_token, local_timezone: local_timezone?}.merge(forwarded_params).compact
+                              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.merge(forwarded_params).compact
     @blockouts = rescue_service_call 'Appointment Blockout Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
@@ -60,7 +60,7 @@ class ApiService < Sinatra::Base
 
   get '/v2/schedule/:date/getblockouts/:location_id/:resource_id' do
     urlappt = webservices_uri "appointments/#{current_business_entity}/#{params[:date]}/1/#{params[:location_id]}/#{params[:resource_id]}/getByDay.json",
-              {token: escaped_oauth_token, local_timezone: local_timezone?}.compact
+              {token: escaped_oauth_token, local_timezone: (local_timezone? ? 'true' : nil)}.compact
 
     response = rescue_service_call 'Appointment Look Up' do
       response = RestClient.get(urlappt)
