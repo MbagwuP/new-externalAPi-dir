@@ -12,12 +12,16 @@ module WebserviceResources
         RestClient.get(webservices_uri "people/list_all_races.json", :api_key => ApiService::APP_API_KEY)
       end
       races = JSON.parse races
-      race_assembly = {}
-      races.each do |race|
-        race['race']['code'] = '' unless race['race']['code'].present?
-        race_assembly[race['race']['id']] = get_fhir_codes['race'][race['race']['code']]
-      end
-      race_assembly
+
+      races.map do |race|
+        id = race['race']['id']
+        code = race['race']['code'] || ''
+        name = race['race']['name']
+
+        body = {'values' => [code, id], 'default' => code, 'display' => name}
+
+        [id, body]
+      end.to_h
     end
   end
 end
