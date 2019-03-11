@@ -23,12 +23,15 @@ class ApiService < Sinatra::Base
   end
   
   get '/v2/appointments/:appointment_id/encounter_note_templates' do
-    path = (request.content_type == "application/xml") ?  "encounter_note_templates.xml" : "encounter_note_templates.json"
-
-    ent_url = webservices_uri(path, {token: escaped_oauth_token, appointment_id: params[:appointment_id], business_entity_id: current_business_entity})
     
-    resp = rescue_service_call('Appointment Note Template',true) do
-      RestClient.get(ent_url, api_key: APP_API_KEY)
+    #WS mapping: encounter_note_content_items#find_by_id
+    path = "encounter_note_content_items/default/find_by_id"
+    path_and_format = (request.content_type == "application/xml") ?  "#{path}.xml" : "#{path}.json"
+
+    enci_url = webservices_uri(path_and_format, {token: escaped_oauth_token, with_data: "true", appointment_id: params[:appointment_id], business_entity_id: current_business_entity})
+    
+    resp = rescue_service_call('Encounter Note Template',true) do
+      RestClient.get(enci_url, api_key: APP_API_KEY)
     end
     resp  #resp is either json or xml
   end
