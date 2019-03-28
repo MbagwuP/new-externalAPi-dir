@@ -21,10 +21,10 @@ class ApiService < Sinatra::Base
     @blockouts = rescue_service_call 'Appointment Blockout Look Up' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
-    @blockouts = JSON.parse(@blockouts)
     
-    status HTTP_OK
-    body jbuilder :list_appointment_blockouts
+    @current_business_entity_id = current_business_entity
+    @blockouts = JSON.parse(@blockouts)
+    jbuilder :list_appointment_blockouts
   end
 
   get '/v2/appointmentblockouts/listbyresourceanddate/:resourceid/date/:date?' do
