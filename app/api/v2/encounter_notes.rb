@@ -36,4 +36,22 @@ class ApiService < Sinatra::Base
     resp  #resp is either json or xml
   end
   
+  # post /\/v2\/appointments\/(?<appointment_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/(note|notes)$/ do
+  post /\/v2\/appointments\/(?<appointment_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}))\/clinical_findings(|\/(?<id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})))$/ do  
+    begin
+      response = ClinicalFormResource.create(get_request_JSON.merge("appointment_id" => params[:appointment_id],"uuid" => params[:id]), current_business_entity, escaped_oauth_token)
+    rescue => e
+      begin
+        exception = e.message
+        api_svc_halt e.http_code, exception
+      rescue 
+        api_svc_halt HTTP_INTERNAL_ERROR, exception
+      end
+    end
+    response["id"] = response.delete("uuid")
+    response["business_entity_id"] = current_business_entity
+    response.to_json
+  end
+
+  
 end
