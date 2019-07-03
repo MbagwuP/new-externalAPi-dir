@@ -303,7 +303,11 @@ class ApiService < Sinatra::Base
       rescue
         api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Credentials"}'
       end
-
+      ApiService::NewRelic::Agent.add_custom_attributes({
+                                                  client_id:    user_name,
+                                                  grant_type:   request_data["grant_type"],
+                                                  api_version:  "v2"
+        }.compact)
       begin
         resp = CCAuth::OAuth2Client.new.access_token user_name, password, request_data
       rescue => e
