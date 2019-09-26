@@ -53,7 +53,7 @@ group :development, :localhost, :test do
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
   gem 'awesome_print'
-  gem 'dotenv'
+  # gem 'dotenv' already declared above
 end
 
 group :test do
