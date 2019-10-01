@@ -202,7 +202,8 @@ class ApiService < Sinatra::Base
 
     appointmentid = params[:appointmentid]
 
-    #http://localservices.carecloud.local/appointments/1/abcd93832/listbyexternalid.json?token=
+    # http://localservices.carecloud.local
+    #   /appointments/1/abcd93832/listbyexternalid2.json
     urlappt = ''
     urlappt << API_SVC_URL
     urlappt << 'appointments/'
@@ -211,6 +212,8 @@ class ApiService < Sinatra::Base
     urlappt << appointmentid
     urlappt << '/listbyexternalid2.json?token='
     urlappt << CGI::escape(pass_in_token)
+    urlappt << "&vitals=#{params[:vitals]}" if params[:vitals]
+    urlappt << "&diagnosis_codes=#{params[:diagnosis_codes]}" if params[:diagnosis_codes]
 
 
     begin
