@@ -6,8 +6,10 @@ class ApiService < Sinatra::Base
     #LOG.debug(business_entity)
 
     #http://localservices.carecloud.local:3000/public/businesses/1/locations.json?token=
-
-    urllocation = webservices_uri "public/businesses/#{current_business_entity}/locations.json", token: escaped_oauth_token
+    
+    #returns all locations that can be viewed in patient portal ("public locations") and not all all
+    all_flag = true_param?(params[:all_public]) 
+    urllocation = webservices_uri "public/businesses/#{current_business_entity}/locations.json", token: escaped_oauth_token, all: all_flag
     response = rescue_service_call 'Location Look Up Failed' do
       RestClient.get(urllocation, :api_key => APP_API_KEY)
     end
