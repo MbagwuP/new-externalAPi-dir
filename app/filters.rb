@@ -33,7 +33,7 @@ module Sinatra
       app.before %r{^(?!/v2/api-docs$)} do
         cache_control :no_store
       end
-      
+
       # # Control the level of logging based on settings
       app.before do
         # ensure all responses are JSON, unless specified otherwise on a per-endpoint basis
@@ -71,6 +71,7 @@ module Sinatra
         #audit_log(AUDIT_TYPE_TRANS, SEVERITY_TYPE_LOG, auditoptions)
 
         if statuscode >= HTTP_BAD_REQUEST
+          NewRelic::Agent.notice_error(@message)
           ApiService::LOG.warn("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message}")
         else
           ApiService::LOG.info("----#{request.ip} \"#{request.request_method} #{request.fullpath}\" - #{statuscode} #{@message}")
