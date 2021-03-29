@@ -14,7 +14,7 @@ gem 'stoplight', '~> 1.1'
 gem 'dalli-elasticache', '~> 0.2.0'
 
 # logging
-gem 'newrelic_rpm', '~> 3.12.0.288'
+gem 'newrelic_rpm', '~> 5.3'
 gem 'log4r'
 
 #requests
