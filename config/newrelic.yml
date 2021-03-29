@@ -171,9 +171,9 @@ common: &default_settings
   distributed_tracing:
    enabled: true
 
- labels:
-  env: <%=ENV['RACK_ENV']%>
-  project: "classic"
+  labels:
+    env: <%=ENV['RACK_ENV']%>
+    project: "classic"
 
   # If you're interested in capturing memcache.rb keys as though they
   # were SQL uncomment this flag. Note that this does increase
