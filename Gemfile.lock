@@ -86,7 +86,7 @@ GEM
     multi_json (1.12.1)
     multipart-post (2.0.0)
     netrc (0.11.0)
-    newrelic_rpm (3.12.0.288)
+    newrelic_rpm (5.7.0.350)
     oj (2.10.0)
     plucky (0.5.2)
       mongo (~> 1.5)
@@ -180,7 +180,7 @@ DEPENDENCIES
   json
   log4r
   mongo_mapper
-  newrelic_rpm (~> 3.12.0.288)
+  newrelic_rpm (~> 5.3)
   oj (~> 2.10.0)
   pry
   pry-byebug
@@ -201,4 +201,4 @@ DEPENDENCIES
   tzinfo
 
 BUNDLED WITH
-   1.16.0
+   1.17.3
