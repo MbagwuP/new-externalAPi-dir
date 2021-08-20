@@ -625,6 +625,29 @@ class ApiService < Sinatra::Base
     TRUE_PARAM_VALUES.include?(param)
   end
 
+  def status_by_dates(start_date, end_date)
+    status = "inactive"
+    time_now = Time.now
+    
+    if start_date && end_date.nil?
+      status = "active" if start_date < time_now
+    elsif start_date && end_date
+      status = "active" if start_date < time_now && time_now < end_date
+    end
+    
+    status
+  end
+
+  def status_by_any_active_participant(participants)
+    status = "inactive"
+    participants.each do |participant|
+      participant_status = status_by_dates(participant['effective_from'], participant['effective_to'])
+      return "active" if participant_status == "active"
+    end
+
+    status
+  end
+
   def evaluate_current_internal_request_header_and_execute_request(base_path:, params:, rescue_string:, request_method: :get)
     params.merge!({ business_entity_id: current_business_entity })
     
@@ -645,5 +668,12 @@ class ApiService < Sinatra::Base
   def validate_patient_id_param(patient_id)
     api_svc_halt HTTP_BAD_REQUEST, '{error: Missing required patient_id params.}' unless patient_id
     api_svc_halt HTTP_BAD_REQUEST, '{error: Patient ID must be a valid GUID.}' unless patient_id.is_guid?
+  end
+
+  def participant_role(member_type)
+   return "RelatedPerson" if member_type == "Vo::Person"
+   return "Physician" if member_type == "Physician"
+
+   ""
   end
 end
