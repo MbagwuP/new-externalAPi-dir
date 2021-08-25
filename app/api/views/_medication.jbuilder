@@ -1,5 +1,4 @@
 patient = OpenStruct.new(medication.patient)
-business_entity = medication.business_entity
 provider = OpenStruct.new(medication.provider)
 encounter = OpenStruct.new(medication.encounter)
 
@@ -34,10 +33,6 @@ json.code_system 'ndc' # medication.dispensable_drug_id
 json.code medication.ndc_code
 json.code_display medication.drug_name
 
-json.patient do
-  json.partial! :patient, patient: patient
-end
-
 json.encounter do
   json.partial! :encounter, encounter: encounter
 end
@@ -64,8 +59,4 @@ end
 
 json.provider do
   json.partial! :provider, provider: provider
-end
-
-json.business_entity do
-  json.partial! :business_entity, business_entity: business_entity
 end
