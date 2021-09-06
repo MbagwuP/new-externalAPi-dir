@@ -2,18 +2,35 @@ class ApiService < Sinatra::Base
 
   get '/v2/conditions/:id' do
     condition_id = params[:id]
-    condition_url = webservices_uri "assertions/#{condition_id}.json",
-                                    { token: escaped_oauth_token }
+    base_path = "assertions/#{condition_id}.json"
 
-    @resp = rescue_service_call 'Condition' do
-      RestClient.get(condition_url)
-    end
-  
-    @resp = JSON.parse(@resp)
-    
-    @condition = @resp['problems'].first
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: {},
+      rescue_string: "Condition"
+    )
+
+    @condition = resp['problems'].first
 
     status HTTP_OK
     jbuilder :show_condition
+  end
+
+  get '/v2/conditions' do
+    patient_id = params[:patient_id]
+    base_path = "patients/#{patient_id}/problems.json"
+    
+    validate_patient_id_param(patient_id)
+
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: {},
+      rescue_string: "Conditions"
+    )
+  
+    @conditions = resp['problems']
+
+    status HTTP_OK
+    jbuilder :list_conditions
   end
 end
