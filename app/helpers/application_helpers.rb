@@ -14,6 +14,10 @@ DATE_REGEX = '\d{8}\z'
 DATE_MAX_LEN = 8
 TRUE_PARAM_VALUES = [1, '1', true, 'true'].freeze
 
+SNOMED_CODE_SYSTEM = "snomed".freeze
+LIONIC_CODE_SYSTEM = "loinc".freeze
+UNIT_OF_MEASURE_CODE_SYSTEM = "unitsofmeasure".freeze
+
 class ApiService < Sinatra::Base
   
   def local_timezone?

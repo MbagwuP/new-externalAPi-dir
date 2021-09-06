@@ -11,7 +11,7 @@ json.onset allergy.onset_date
 json.date_recorded allergy.created_at
 
 json.code allergy.snomed_code
-json.code_system 'snomed'
+json.code_system SNOMED_CODE_SYSTEM
 json.code_display allergy.name
 
 json.reaction reactions do |reaction|
