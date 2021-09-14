@@ -676,4 +676,18 @@ class ApiService < Sinatra::Base
 
    ""
   end
+
+  def status_reason_from_reason_string(reason_text)
+    status_reason = { system: "http://terminology.hl7.org/CodeSystem/v3-ActReason" }
+    
+    case reason_text
+    when "Religious exemption"
+      status_reason.merge({code: "RELIG", reason: "religious objection"})
+    
+    when "Parental decision", "Patient decision", "Other refusal reason"
+      status_reason.merge({code: "PATOBJ", reason: "patient objection"})
+    else
+      {code: "", reason: "", system: ""}
+    end
+  end
 end
