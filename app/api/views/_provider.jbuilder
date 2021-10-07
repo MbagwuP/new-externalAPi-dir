@@ -15,3 +15,6 @@ if (provider['primary_specialty'].present? && provider['primary_specialty']['spe
 else 
   json.specialty nil
 end
+
+json.last_name provider['last_name'] ? provider['last_name'] : nil
+json.first_name provider['first_name'] ? provider['first_name'] : nil

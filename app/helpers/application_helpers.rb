@@ -625,4 +625,14 @@ class ApiService < Sinatra::Base
     TRUE_PARAM_VALUES.include?(param)
   end
 
+  def intent(patient_reported)
+    return nil if patient_reported
+    
+    "order"
+  end
+
+  def reported_reference(patient_reported)
+    patient_reported ? "Patient" : "Pracitioner"
+  end
+
 end
