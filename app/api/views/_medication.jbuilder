@@ -1,7 +1,7 @@
 patient = OpenStruct.new(medication.patient)
 provider = OpenStruct.new(medication.provider)
 encounter = OpenStruct.new(medication.encounter)
-
+patient_reported = medication.patient_reported
 dosage_instructions = [
   {
     text: medication.prescription_instructions,
@@ -10,26 +10,13 @@ dosage_instructions = [
   }
 ]
 
-dispense_request = OpenStruct.new({
-  refills: medication.refill_count,
-  quantity_value: medication.quantity,
-  quantity_unit: medication.quantity_uom,
-  quantity_code: medication.quantity_uom_code,
-  quantity_code_system: 'ncpdp',
-  duration_value: medication.duration,
-  duration_unit: medication.duration_uom,
-  duration_code: medication.duration_uom_code,
-  duration_code_system: 'https://ucum.org/trac'
-})
-
-
 json.id medication.id
 json.status medication.status
-json.intent intent(medication.patient_reported)
-json.reported medication.patient_reported
-json.reported_reference reported_reference(medication.patient_reported)
+json.intent intent(patient_reported)
+json.reported patient_reported
+json.reported_reference reported_reference(patient_reported)
 json.date_authored medication.created_at
-json.code_system 'ndc' # medication.dispensable_drug_id
+json.code_system 'ndc'
 json.code medication.ndc_code
 json.code_display medication.drug_name
 
@@ -38,7 +25,7 @@ json.encounter do
 end
 
 json.requester do
-  if medication.patient_reported
+  if patient_reported
     json.id patient.external_id
     json.description patient.full_name
   else
@@ -54,7 +41,21 @@ json.dosage_instruction dosage_instructions do |dosage_instruction|
 end
 
 json.dispense_request do
-  json.partial! :dispense_request, dispense_request: dispense_request
+  if patient_reported
+    json.partial! :dispense_request, dispense_request: nil
+  else
+    json.partial! :dispense_request, dispense_request: OpenStruct.new({
+      refills: medication.refill_count,
+      quantity_value: medication.quantity,
+      quantity_unit: medication.quantity_uom,
+      quantity_code: medication.quantity_uom_code,
+      quantity_code_system: 'ncpdp',
+      duration_value: medication.duration,
+      duration_unit: medication.duration_uom,
+      duration_code: medication.duration_uom_code,
+      duration_code_system: 'https://ucum.org/trac'
+    })
+  end
 end
 
 json.provider do
