@@ -7,6 +7,6 @@ class ApiService < Sinatra::Base
   end
 
   def reported_reference(patient_reported)
-    patient_reported ? "Patient" : "Pracitioner"
+    patient_reported ? "Patient" : "Practitioner"
   end
 end
