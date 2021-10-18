@@ -19,6 +19,7 @@ SNOMED_CODE_SYSTEM = "snomed".freeze
 LIONIC_CODE_SYSTEM = "loinc".freeze
 UNIT_OF_MEASURE_CODE_SYSTEM = "unitsofmeasure".freeze
 CPT_CODE_SYSTEM = "http://www.ama-assn.org/go/cpt".freeze
+HOME_CODE_FROM_WEBSERVICE = 'H' # phone and address
 
 class ApiService < Sinatra::Base
   
