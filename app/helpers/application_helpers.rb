@@ -624,5 +624,4 @@ class ApiService < Sinatra::Base
   def true_param?(param)
     TRUE_PARAM_VALUES.include?(param)
   end
-
 end
