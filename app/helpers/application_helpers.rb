@@ -624,4 +624,26 @@ class ApiService < Sinatra::Base
   def true_param?(param)
     TRUE_PARAM_VALUES.include?(param)
   end
+
+  def evaluate_current_internal_request_header_and_execute_request(base_path:, params:, rescue_string:, request_method: :get)
+    params.merge!({ business_entity_id: current_business_entity })
+    
+    if current_internal_request_header
+      url = webservices_uri base_path, params
+      internal_signed_request = sign_internal_request(url: url, method: request_method, headers: {accept: :json})
+      resp = internal_signed_request.execute
+    else
+      url = webservices_uri base_path, params.merge(token: escaped_oauth_token)
+      resp = rescue_service_call rescue_string do
+        RestClient.get(url, api_key: APP_API_KEY)
+      end  
+    end
+    
+    JSON.parse(resp)
+  end
+
+  def validate_patient_id_param(patient_id)
+    api_svc_halt HTTP_BAD_REQUEST, '{error: Missing required patient_id params.}' unless patient_id
+    api_svc_halt HTTP_BAD_REQUEST, '{error: Patient ID must be a valid GUID.}' unless patient_id.is_guid?
+  end
 end
