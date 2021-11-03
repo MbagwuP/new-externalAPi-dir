@@ -3,15 +3,16 @@ class ApiService < Sinatra::Base
   get '/v2/medications/:id' do
     medication_id = params[:id]
     business_entity_id = current_business_entity
-    mediation_url = webservices_uri "businesses/#{business_entity_id}/medications/find_by_id.json",
-                                    { id: medication_id, token: escaped_oauth_token }
+    base_path = "businesses/#{business_entity_id}/medications/find_by_id.json"
+    params = { id: medication_id }
 
-    @resp = rescue_service_call 'Medication order' do
-      RestClient.get(mediation_url, api_key: APP_API_KEY)
-    end
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: params,
+      rescue_string: 'Medication order'
+    )
 
-    @resp = JSON.parse(@resp)
-    @medication = @resp['medications'].first
+    @medication = resp['medications'].first
 
     status HTTP_OK
     jbuilder :show_medication_order
@@ -19,17 +20,17 @@ class ApiService < Sinatra::Base
 
   get '/v2/medications' do
     patient_id = params[:patient_id]
-    api_svc_halt HTTP_BAD_REQUEST, '{error: Missing required patient_id params.}' unless patient_id
+    base_path = "patients/#{patient_id}/medications_list.json"
 
-    mediation_order_list_url = webservices_uri "patients/#{patient_id}/medications_list.json",
-                                               { token: escaped_oauth_token }
+    validate_patient_id_param(patient_id)
+    
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: {},
+      rescue_string: 'Medication order list'
+    )
 
-    @resp = rescue_service_call 'Medication order list' do
-      RestClient.get(mediation_order_list_url, api_key: APP_API_KEY)
-    end
-
-    @resp = JSON.parse(@resp)
-    @medications = @resp['medications']
+    @medications = resp['medications']
 
     status HTTP_OK
     jbuilder :list_medication_orders
