@@ -17,9 +17,9 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/immunizations' do
-    patinet_id = params[:patient_id]
-    base_path = "patients/#{patinet_id}/immunizations.json"
-    parameters = { patinet_id: patinet_id }
+    patient_id = params[:patient_id]
+    base_path = "patients/#{patient_id}/immunizations.json"
+    parameters = { patient_id: patient_id }
 
     validate_patient_id_param(patient_id)
     
