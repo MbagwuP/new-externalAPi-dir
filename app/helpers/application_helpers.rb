@@ -697,4 +697,15 @@ class ApiService < Sinatra::Base
       {code: "", reason: "", system: ""}
     end
   end
+
+  def encounter_status(status)
+    case status
+    when "Open", "Pending Signature"
+      "in-progress"
+    when "Signed"
+      "completed"
+    else
+      "unknown"
+    end
+  end
 end
