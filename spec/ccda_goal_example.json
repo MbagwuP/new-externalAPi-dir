@@ -1,0 +1,428 @@
+{
+  "ClinicalDocument": {
+    "xmlns": "urn:hl7-org:v3",
+    "xmlns:sdtc": "urn:hl7-org:sdtc",
+    "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "xsi:schemaLocation": "urn:hl7-org:v3 CDA.xsd",
+    "realmCode": {
+      "code": "US"
+    },
+    "typeId": {
+      "root": "2.16.840.1.113883.1.3",
+      "extension": "POCD_HD000040"
+    },
+    "templateId": [
+      {
+        "root": "2.16.840.1.113883.10.20.22.1.1",
+        "assigningAuthorityName": "HL7/CCDA General Header",
+        "extension": "2015-08-01"
+      },
+      {
+        "root": "2.16.840.1.113883.10.20.22.1.2",
+        "assigningAuthorityName": "HL7/CCD 2.1",
+        "extension": "2015-08-01"
+      }
+    ],
+    "id": {
+      "root": "2.16.840.1.113883.3.1318.1"
+    },
+    "code": {
+      "code": "34133-9",
+      "displayName": "Summarization of episode note",
+      "codeSystem": "2.16.840.1.113883.6.1",
+      "codeSystemName": "LOINC"
+    },
+    "title": "Patient Summary Record",
+    "effectiveTime": {
+      "value": "20220303185620-0300"
+    },
+    "confidentialityCode": {
+      "code": "N",
+      "displayName": "Normal Sharing",
+      "codeSystem": "2.16.840.1.113883.5.25",
+      "codeSystemName": "HL7 Confidentiality"
+    },
+    "languageCode": {
+      "code": "en-US"
+    },
+    "recordTarget": {
+      "typeCode": "RCT",
+      "contextControlCode": "OP",
+      "patientRole": {
+        "id": [
+          {
+            "root": "2.100"
+          },
+          {
+            "root": "2.16.840.1.113883.3.608.1.1",
+            "extension": "32534788"
+          }
+        ],
+        "addr": {
+          "streetAddressLine": "1948 BAINBRIDGE ST",
+          "city": "PHILADELPHIA",
+          "state": "PA",
+          "postalCode": "19146",
+          "country": "UNITED STATES"
+        },
+        "telecom": {
+          "nullFlavor": "UNK"
+        },
+        "patient": {
+          "name": {
+            "use": "L",
+            "given": "SOLOMAN",
+            "family": "BERGAMEL"
+          },
+          "administrativeGenderCode": {
+            "code": "M",
+            "displayName": "Male",
+            "codeSystem": "2.16.840.1.113883.5.1",
+            "codeSystemName": "HL7 AdministrativeGender"
+          },
+          "birthTime": {
+            "value": "19700321"
+          },
+          "maritalStatusCode": {
+            "nullFlavor": "UNK"
+          },
+          "raceCode": [
+            {
+              "code": "2135-2",
+              "displayName": "Hispanic",
+              "codeSystem": "2.16.840.1.113883.6.238",
+              "codeSystemName": "CDC Race and Ethnicity"
+            },
+            {
+              "nullFlavor": "UNK"
+            }
+          ],
+          "ethnicGroupCode": {
+            "code": "2135-2",
+            "displayName": "Hispanic or Latino",
+            "codeSystem": "2.16.840.1.113883.6.238",
+            "codeSystemName": "CDC Race and Ethnicity"
+          },
+          "languageCommunication": {
+            "templateId": {
+              "root": "2.16.840.1.113883.3.88.11.32.2"
+            },
+            "languageCode": {
+              "code": "es"
+            },
+            "preferenceInd": {
+              "value": "true"
+            }
+          }
+        },
+        "providerOrganization": {
+          "id": [
+            {
+              "root": "2.201",
+              "extension": "0001"
+            },
+            {
+              "root": "2.16.840.1.113883.4.6",
+              "extension": "1225335698"
+            }
+          ],
+          "name": "ALBERTO DOMINGUEZ BALI MD PA",
+          "telecom": {
+            "value": "tel:+1-3058675309"
+          },
+          "addr": {
+            "streetAddressLine": [
+              "6541 DGDGFGFD",
+              "SUITE 800"
+            ],
+            "city": "KATY",
+            "state": "TX",
+            "postalCode": "77449",
+            "country": "UNITED STATES"
+          }
+        }
+      }
+    },
+    "author": {
+      "time": {
+        "value": "20220303185620-0300"
+      },
+      "assignedAuthor": {
+        "id": [
+          {
+            "extension": "2",
+            "root": "2.16.840.1.113883.3.1318",
+            "assigningAuthorityName": "CareCloud User ID"
+          },
+          {
+            "root": "2.16.840.1.113883.4.6",
+            "extension": "1457463010"
+          }
+        ],
+        "addr": {
+          "streetAddressLine": [
+            "5200 BLUE LAGOON DR",
+            "SUITE 900"
+          ],
+          "city": "MIAMI",
+          "state": "FL",
+          "postalCode": "33126",
+          "country": "UNITED STATES"
+        },
+        "telecom": {
+          "use": "WP",
+          "value": "tel:+1-7079845571"
+        },
+        "assignedPerson": {
+          "name": {
+            "given": "ALBERTO",
+            "family": "YOUNG"
+          }
+        },
+        "representedOrganization": {
+          "id": {
+            "extension": "1",
+            "root": "2.16.840.1.113883.3.1318",
+            "assigningAuthorityName": "CareCloud Practice ID"
+          },
+          "name": "ALBERTO DOMINGUEZ BALI MD PA",
+          "telecom": {
+            "value": "tel:+1-3058675309",
+            "use": "WP"
+          },
+          "addr": {
+            "streetAddressLine": [
+              "6541 DGDGFGFD",
+              "SUITE 800"
+            ],
+            "city": "KATY",
+            "state": "TX",
+            "postalCode": "77449",
+            "country": "UNITED STATES"
+          }
+        }
+      }
+    },
+    "custodian": {
+      "assignedCustodian": {
+        "representedCustodianOrganization": {
+          "id": {
+            "extension": "1225335698",
+            "root": "2.16.840.1.113883.4.6"
+          },
+          "name": "ALBERTO DOMINGUEZ BALI MD PA",
+          "telecom": {
+            "value": "tel:+1-3058675309",
+            "use": "WP"
+          },
+          "addr": {
+            "streetAddressLine": [
+              "6541 DGDGFGFD",
+              "SUITE 800"
+            ],
+            "city": "KATY",
+            "state": "TX",
+            "postalCode": "77449",
+            "country": "UNITED STATES"
+          }
+        }
+      }
+    },
+    "legalAuthenticator": {
+      "time": {
+        "value": "20220303185620-0300"
+      },
+      "signatureCode": {
+        "code": "S"
+      },
+      "assignedEntity": {
+        "id": {
+          "root": "2.16.840.1.113883.4.6",
+          "extension": "1457463010"
+        },
+        "code": {
+          "code": "207V00000X",
+          "displayName": "Healthcare Provider Taxonomy",
+          "codeSystem": "2.16.840.1.113883.6.101",
+          "codeSystemName": "NUCC"
+        },
+        "addr": {
+          "streetAddressLine": [
+            "5200 BLUE LAGOON DR",
+            "SUITE 900"
+          ],
+          "city": "MIAMI",
+          "state": "FL",
+          "postalCode": "33126",
+          "country": "UNITED STATES"
+        },
+        "telecom": {
+          "use": "WP",
+          "value": "tel:+1-7079845571"
+        },
+        "assignedPerson": {
+          "name": {
+            "given": "ALBERTO",
+            "family": "YOUNG"
+          }
+        }
+      }
+    },
+    "documentationOf": {
+      "serviceEvent": {
+        "classCode": "PCPR",
+        "effectiveTime": {
+          "low": {
+            "nullFlavor": "UNK"
+          },
+          "high": {
+            "nullFlavor": "UNK"
+          }
+        },
+        "performer": [
+          {
+            "typeCode": "PRF",
+            "templateId": {
+              "root": "2.16.840.1.113883.10.20.6.2.1"
+            },
+            "assignedEntity": {
+              "id": {
+                "root": "2.16.840.1.113883.4.6",
+                "nullFlavor": "UNK"
+              },
+              "code": {
+                "code": "207V00000X",
+                "displayName": "Healthcare Provider Taxonomy",
+                "codeSystem": "2.16.840.1.113883.6.101",
+                "codeSystemName": "NUCC"
+              },
+              "telecom": {
+                "use": "WP",
+                "value": "tel:+1-5555555555"
+              },
+              "assignedPerson": {
+                "name": {
+                  "given": "ALEXANDRA",
+                  "family": "AGUIRRE"
+                }
+              }
+            }
+          },
+          {
+            "typeCode": "PRF",
+            "templateId": {
+              "root": "2.16.840.1.113883.10.20.6.2.1"
+            },
+            "assignedEntity": {
+              "id": {
+                "root": "2.16.840.1.113883.4.6",
+                "extension": "1598064651"
+              },
+              "code": {
+                "code": "207V00000X",
+                "displayName": "Healthcare Provider Taxonomy",
+                "codeSystem": "2.16.840.1.113883.6.101",
+                "codeSystemName": "NUCC"
+              },
+              "addr": {
+                "streetAddressLine": "30255 SW 163 CT",
+                "city": "HOMESTEAD",
+                "state": "FL",
+                "postalCode": "33033",
+                "country": "UNITED STATES"
+              },
+              "telecom": {
+                "use": "WP",
+                "value": "tel:+1-3052454858"
+              },
+              "assignedPerson": {
+                "name": {
+                  "prefix": "MRS.",
+                  "given": "NEIDA",
+                  "family": "ALBITE"
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "component": {
+      "structuredBody": {
+        "component": {
+          "section": {
+            "templateId": {
+              "root": "2.16.840.1.113883.10.20.22.2.60"
+            },
+            "code": {
+              "code": "61146-7",
+              "displayName": "Goals",
+              "codeSystem": "2.16.840.1.113883.6.1",
+              "codeSystemName": "LOINC"
+            },
+            "title": "Goals Section",
+            "text": {
+              "table": {
+                "border": "1",
+                "width": "100%",
+                "thead": {
+                  "tr": {
+                    "th": [
+                      "Text",
+                      "Date"
+                    ]
+                  }
+                },
+                "tbody": {
+                  "tr": {
+                    "ID": "goalsNarrative-0",
+                    "td": [
+                      " goal test",
+                      "02/23/2022"
+                    ]
+                  }
+                }
+              }
+            },
+            "entry": {
+              "observation": {
+                "classCode": "OBS",
+                "moodCode": "GOL",
+                "templateId": {
+                  "root": "2.16.840.1.113883.10.20.22.4.121"
+                },
+                "id": {
+                  "root": "ADC5E858-104F-46EF-BD67-E4812A27B9DC"
+                },
+                "code": {
+                  "code": "225294001",
+                  "codeSystem": "2.16.840.1.113883.6.96",
+                  "codeSystemName": "SNOMED"
+                },
+                "statusCode": {
+                  "code": "active"
+                },
+                "effectiveTime": {
+                  "value": "20130902"
+                },
+                "author": {
+                  "typeCode": "AUT",
+                  "time": {
+                    "value": "20220223084315-0500"
+                  },
+                  "assignedAuthor": {
+                    "id": {
+                      "extension": "117994",
+                      "root": "2.16.840.1.113883.3.1318",
+                      "assigningAuthorityName": "CareCloud User ID"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
