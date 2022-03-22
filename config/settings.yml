@@ -17,7 +17,7 @@ localhost:
   *development
 
 production:
-  api_internal_svc_url: http://services.carecloud.com/
+  api_internal_svc_url: <%=ENV['CONFIG_API_INTERNAL_SVC_URL']%>
   api_internal_doc_srv_upld_url: https://dms.carecloud.com
   mirth_outbound_svc_url: http://10.50.21.88:8088
   mirth_private_key: thisstringshouldbeprivate
