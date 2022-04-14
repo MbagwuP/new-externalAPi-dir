@@ -101,6 +101,8 @@ class ApiService < Sinatra::Base
       url = webservices_uri base_path, include_confirmation_method: 'true'
       internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
       resp = internal_signed_request.execute
+      # NOTE: change the structure of some attributes if it's a internal request.
+      @internal_request = true
     else
       url = webservices_uri base_path, token: escaped_oauth_token, include_confirmation_method: 'true'
       resp = rescue_service_call 'Appointment Look Up' do
