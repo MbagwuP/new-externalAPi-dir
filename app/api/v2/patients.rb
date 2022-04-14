@@ -6,12 +6,20 @@ class ApiService < Sinatra::Base
     searching_by_fields = request_body['fields'].present?
     using_old_search_format = request_body['search'].present?
     searching_by_terms = request_body['terms'].present? || using_old_search_format
+    if using_old_search_format
+      dates = request_body['search']
+      if dates['created_to'].present? && dates['created_from'].present?
+        searching_by_date = true
+      end
+    end
 
     if (searching_by_terms && searching_by_fields) || (!searching_by_terms && !searching_by_fields)
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"You must search by either a list of terms, or specific terms against specific fields."}'
     end
 
-    if using_old_search_format
+    if searching_by_date
+      request_payload = {search: dates}
+    elsif using_old_search_format
       search_data = ""
       request_body['search'].each { |x|
         search_data = search_data + x["term"] + " "
