@@ -662,6 +662,8 @@ class ApiService < Sinatra::Base
       url = webservices_uri base_path, params
       internal_signed_request = sign_internal_request(url: url, method: request_method, headers: {accept: :json})
       resp = internal_signed_request.execute
+      # NOTE: change the structure of some attributes if it's a internal request.
+      @internal_request = true
     else
       url = webservices_uri base_path, params.merge(token: escaped_oauth_token)
       resp = rescue_service_call rescue_string do

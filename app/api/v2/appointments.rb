@@ -87,6 +87,23 @@ class ApiService < Sinatra::Base
   end
 
 
+  # /v2/appointments/listbypatient?patient_id
+  get '/v2/appointments/listbypatient' do
+    patient_id = params[:patient_id]
+    validate_patient_id_param(patient_id)
+    
+    base_path = "appointments/#{current_business_entity}/#{patient_id}/listbypatientid.json"
+
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: { patient_id: patient_id },
+      rescue_string: "Appointment by patient "
+    )
+    @resp = resp
+
+    jbuilder :list_appointment_entries
+  end
+
   get '/v2/appointments/:appointment_id' do
     appointments = params[:appointment_id].split(',').map(&:strip)
     api_svc_halt HTTP_BAD_REQUEST, '{"error": "exeeded maximum number of appointments per call"}' if appointments.length > 25
