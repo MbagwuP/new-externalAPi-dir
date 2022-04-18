@@ -8,7 +8,10 @@ class ApiService < Sinatra::Base
     searching_by_terms = request_body['terms'].present? || using_old_search_format
     if using_old_search_format
       dates = request_body['search']
-      if dates['created_to'].present? && dates['created_from'].present?
+      if dates['created_to'].present? || dates['created_from'].present?
+        params_error = ParamsValidator.new({start_date: dates['created_from'], end_date: dates['created_to']}, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
+        api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
+        
         searching_by_date = true
       end
     end
