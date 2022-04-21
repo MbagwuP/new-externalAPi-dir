@@ -1,11 +1,14 @@
 class ApiService < Sinatra::Base
 
+  ERROR = '{"error":"You must search by either a list of terms, by creation date, or specific terms against specific fields."}'.freeze
+
   post '/v2/patients/search?' do
     ## Validate the input parameters
     request_body = get_request_JSON
     searching_by_fields = request_body['fields'].present?
     using_old_search_format = request_body['search'].present?
-    searching_by_terms = request_body['terms'].present? || using_old_search_format
+    searching_by_terms = request_body['terms'].present?
+    
     if using_old_search_format
       dates = request_body['search']
       if dates['created_to'].present? || dates['created_from'].present?
@@ -14,10 +17,16 @@ class ApiService < Sinatra::Base
         
         searching_by_date = true
       end
+
+      if searching_by_terms
+        api_svc_halt HTTP_BAD_REQUEST, ERROR
+      else
+        searching_by_terms = true
+      end
     end
 
     if (searching_by_terms && searching_by_fields) || (!searching_by_terms && !searching_by_fields)
-      api_svc_halt HTTP_BAD_REQUEST, '{"error":"You must search by either a list of terms, or specific terms against specific fields."}'
+      api_svc_halt HTTP_BAD_REQUEST, ERROR
     end
 
     if searching_by_date
