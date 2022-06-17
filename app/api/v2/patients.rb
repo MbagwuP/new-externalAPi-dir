@@ -109,6 +109,7 @@ class ApiService < Sinatra::Base
       if (current_internal_request_header)
         internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
         response = internal_signed_request.execute
+        internal_request = true
       else
         url  += "&token=#{escaped_oauth_token}"
         response = RestClient.get url, extapikey: ApiService::APP_API_KEY
@@ -132,6 +133,10 @@ class ApiService < Sinatra::Base
         phone['phone_type_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::PhoneType, phone['phone_type'])
       end
     end
+
+    # fhir guarantor object is equal to responsible_party
+    parsed['patient']['guarantor'] = parsed['patient']['responsible_party'] if internal_request
+
     parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
   end
