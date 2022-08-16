@@ -1,6 +1,7 @@
 class ApiService < Sinatra::Base
 
   CREATE_PARAMS = %w(start_time end_time appointment_status_id location_id provider_id nature_of_visit_id reason_for_visit resource_id chief_complaint patients)
+  APPOINTMENT_STATUS_CODES = %w(P I O C R)
 
   get '/v2/appointment/listbydate/:date/:providerid?' do
     # Validate the input parameters
@@ -57,20 +58,38 @@ class ApiService < Sinatra::Base
 
   # /v2/appointments
   get '/v2/appointments' do
-    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], page: params[:page], 
+    forwarded_params = {resource_ids: params[:resource_id], location_ids: params[:location_id], page: params[:page],
                         use_pagination: 'true', nature_of_visit_ids: params[:visit_reason_ids], patient_ids: params[:patient_ids]}
-    
-    if params['start_date'].blank? & params['end_date'].blank?
+
+    if params[:status].present?
+      raise ArgumentError.new("Invalid appointment status") unless APPOINTMENT_STATUS_CODES.include?(params[:status].upcase)
+      forwarded_params[:status_code] = params[:status]
+    end
+
+    if params['created_at_from'].present? || params['created_at_to'].present?
+     params['created_at_to'] = params['created_at_from'] if params['created_at_from'].present? && params['created_at_to'].blank?
+     params['created_at_from'] = params['created_at_to'] if params['created_at_to'].present? && params['created_at_from'].blank?
+     created_at_params = true
+    end
+
+    if !created_at_params && params['start_date'].blank? && params['end_date'].blank? #no start, end or created_at params
       today = Date.today.to_s
       params['start_date'] =  today
       params['end_date'] = today
-    else 
+    else #no created at params
       validate_date_filter_params!
     end
-    
-    forwarded_params[:from] = params['start_date'] + ' 00:00:00'
-    forwarded_params[:to]   = params['end_date'] + ' 23:59:59'
-    
+
+    if params['created_at_from'].present? || params['created_at_to'].present?
+     forwarded_params[:created_at_from] = params['created_at_from'] + ' 00:00:00'
+     forwarded_params[:created_at_to]   = params['created_at_to'] + ' 23:59:59'
+    end
+
+    if params['start_date'].present? && params['end_date'].present?
+      forwarded_params[:from] = params['start_date'] + ' 00:00:00'
+      forwarded_params[:to]   = params['end_date'] + ' 23:59:59'
+    end
+
     # webservices: AppointmentsController#get_appt_data_by_date_range
     urlappt = webservices_uri "appointments/#{current_business_entity}/getByDateRange.json",
                               {token: escaped_oauth_token, local_timezone: 'true', use_current_business_entity: 'true'}.merge(forwarded_params).compact
@@ -91,7 +110,7 @@ class ApiService < Sinatra::Base
   get '/v2/appointments/listbypatient' do
     patient_id = params[:patient_id]
     validate_patient_id_param(patient_id)
-    
+
     base_path = "appointments/#{current_business_entity}/#{patient_id}/listbypatientid.json"
 
     resp = evaluate_current_internal_request_header_and_execute_request(
@@ -133,14 +152,14 @@ class ApiService < Sinatra::Base
       @resp.each do |appt|
         set_preferred_confirmation_method(appt['appointment'])
       end
-      
+
       jbuilder :show_appointments
     else
       appt = @resp['appointment']
       set_preferred_confirmation_method(appt)
       @resp = {'appointment' => appt}
 
-      jbuilder :show_appointment 
+      jbuilder :show_appointment
     end
   end
 
@@ -161,14 +180,14 @@ class ApiService < Sinatra::Base
 
     @confirmation = JSON.parse(resp)
     @appointment_id = params[:appointment_id]
-    
+
     status HTTP_CREATED
     jbuilder :_appointment_confirmation
   end
-  
+
   post '/v2/appointments/:appointment_id/confirm' do
     appointment_guid_check(params[:appointment_id])
-    
+
     request_body = get_request_JSON
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid Parameter- communication_outcome"}' if request_body.has_key?("communication_outcome")
 
@@ -183,7 +202,7 @@ class ApiService < Sinatra::Base
 
     @confirmation = JSON.parse(resp)
     @appointment_id = params[:appointment_id]
-    
+
     status HTTP_CREATED
     jbuilder :_appointment_confirm
   end
@@ -196,17 +215,17 @@ class ApiService < Sinatra::Base
     resp = rescue_service_call 'Appointment Confirmations' do
       RestClient.get(urlappt, :api_key => APP_API_KEY)
     end
-    
+
     @resp = JSON.parse(resp)
     @appointment_id = params[:appointment_id]
     status HTTP_OK
     jbuilder :list_appointment_confirmations
   end
-  
-  # used to create an appointment communication (i.e reminder) but WILL NOT confirm an appointment. An appointment communication creates an appointment_confirmation instance. 
+
+  # used to create an appointment communication (i.e reminder) but WILL NOT confirm an appointment. An appointment communication creates an appointment_confirmation instance.
   post '/v2/appointments/:appointment_id/communication' do
     appointment_guid_check(params[:appointment_id])
-    
+
     request_body = get_request_JSON
     # If a communication_outcome value of CONFIRMED is passed in then an error is thrown to use the POST /confirm endpoint.  (POST /confirmation endpoint is being depracted)
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"This endpoint does not confirm an appointment. Use POST /confirm endpoint."}' if request_body["communication_outcome"] == "confirmed"
@@ -223,7 +242,7 @@ class ApiService < Sinatra::Base
 
     @apt_communication = JSON.parse(resp)
     @appointment_id = params[:appointment_id]
-    
+
     status HTTP_CREATED
     jbuilder :_appointment_communication
   end
@@ -243,8 +262,8 @@ class ApiService < Sinatra::Base
       end
     rescue
       api_svc_halt HTTP_BAD_REQUEST, '{"error":"Provider id must be passed in"}'
-    end    
-    
+    end
+
     # accept "patient" or "patients", whose value can be either an object or an array containing one object (backwards compatibility support)
     request_body['appointment'].rename_key('patient', 'patients') if request_body['appointment'].keys.include?('patient')
     # normalize patient data into an Array to meet internal service's api contract
@@ -312,10 +331,10 @@ class ApiService < Sinatra::Base
 
     request_body = get_request_JSON
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Invalid communication method."}' if !visible_communication_method?(request_body['communication_method']) && !request_body['communication_method'].nil?
-    
+
     communication_method_slug = request_body.delete('communication_method')
     request_body['communication_method_id'] = communication_methods[communication_method_slug]
-    
+
     urlapptcancel = webservices_uri "appointments/#{current_business_entity}/#{params[:id]}/cancel_appointment.json", token: escaped_oauth_token
 
     response = rescue_service_call 'Appointment Cancellation', true do
@@ -366,7 +385,7 @@ class ApiService < Sinatra::Base
     @resp = {'appointment' => @appt}
     jbuilder :show_appointment
   end
-  
+
   put '/v2/appointments/:id/pending' do
     api_svc_halt HTTP_BAD_REQUEST, '{"error":"Appointment ID must be a valid GUID."}' unless params[:id].is_guid?
 
@@ -393,7 +412,7 @@ class ApiService < Sinatra::Base
     elsif forwarded_params[:start_date].blank? && !forwarded_params[:end_date].blank?
       api_svc_halt HTTP_BAD_REQUEST, "If you include the end_date parameter then a start_date parameter must be included."
     end
-    
+
     params_error = ParamsValidator.new(forwarded_params, :invalid_date_passed, :blank_date_field_passed,
                                        :missing_one_date_filter_field, :date_filter_range_too_long, :end_date_is_before_start_date).error
     api_svc_halt HTTP_BAD_REQUEST, params_error if params_error.present?
@@ -445,7 +464,7 @@ class ApiService < Sinatra::Base
   put '/v2/appointment_recalls/:id' do
     urlrecall = webservices_uri "businesses/#{current_business_entity}/recalls/#{params[:id]}/update.json", token: escaped_oauth_token
 
-    request_body = get_request_JSON    
+    request_body = get_request_JSON
     update_json = {recall_status_id: RecallStatus.parse_to_webservices(request_body['recall_status']), comments: request_body['comments']}
 
     @resp = rescue_service_call 'Appointment Recall' do
@@ -511,7 +530,7 @@ class ApiService < Sinatra::Base
     status HTTP_OK
     jbuilder :show_appointment
   end
-  
+
   get '/v2/appointment_availability' do
     begin
       if params["start_date"].blank? && params["end_date"].blank?
@@ -535,7 +554,7 @@ class ApiService < Sinatra::Base
         api_svc_halt HTTP_BAD_REQUEST, errmsg
       end
     end
-    
+
     @resp.to_json
   end
 
