@@ -22,7 +22,7 @@ CPT_CODE_SYSTEM = "http://www.ama-assn.org/go/cpt".freeze
 HOME_CODE_FROM_WEBSERVICE = 'H' # phone and address
 
 class ApiService < Sinatra::Base
-  
+
   def local_timezone?
     params[:local_timezone] && ["true",true,"1",1].include?(params[:local_timezone])
   end
@@ -58,8 +58,10 @@ class ApiService < Sinatra::Base
   end
 
   def validate_date_filter_params! options={}
-    params_error =  if options[:require_only_end] 
+    params_error =  if options[:require_only_end]
                       ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_end_date_filter_field, :date_filter_range_too_long).error
+                    elsif params[:created_at_from] || params[:created_at_to]
+                      ParamsValidator.new(params, :invalid_date_passed, :missing_one_date_filter_field, :date_filter_range_too_long, :future_date, :created_at_from_is_after_created_at_to).error
                     else
                       ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
                     end
@@ -91,7 +93,6 @@ class ApiService < Sinatra::Base
   ## this data exists on the authenticated user, but if we cannot find it in cache, we need a place to go
   ## hence the secondary call
   def get_business_entity(pass_in_token)
-
     ## TODO: figure this encoding out
     pass_in_token = CGI::unescape(pass_in_token)
     #LOG.debug("passed in token: " + pass_in_token)
@@ -635,13 +636,13 @@ class ApiService < Sinatra::Base
   def status_by_dates(start_date, end_date)
     status = "inactive"
     time_now = Time.now
-    
+
     if start_date && end_date.nil?
       status = "active" if start_date < time_now
     elsif start_date && end_date
       status = "active" if start_date < time_now && time_now < end_date
     end
-    
+
     status
   end
 
@@ -657,7 +658,7 @@ class ApiService < Sinatra::Base
 
   def evaluate_current_internal_request_header_and_execute_request(base_path:, params:, rescue_string:, request_method: :get)
     params.merge!({ business_entity_id: current_business_entity })
-    
+
     if current_internal_request_header
       url = webservices_uri base_path, params
       internal_signed_request = sign_internal_request(url: url, method: request_method, headers: {accept: :json})
@@ -668,9 +669,9 @@ class ApiService < Sinatra::Base
       url = webservices_uri base_path, params.merge(token: escaped_oauth_token)
       resp = rescue_service_call rescue_string do
         RestClient.get(url, api_key: APP_API_KEY)
-      end  
+      end
     end
-    
+
     JSON.parse(resp)
   end
 
@@ -688,11 +689,11 @@ class ApiService < Sinatra::Base
 
   def status_reason_from_reason_string(reason_text)
     status_reason = { system: "http://terminology.hl7.org/CodeSystem/v3-ActReason" }
-    
+
     case reason_text
     when "Religious exemption"
       status_reason.merge({code: "RELIG", reason: "religious objection"})
-    
+
     when "Parental decision", "Patient decision", "Other refusal reason"
       status_reason.merge({code: "PATOBJ", reason: "patient objection"})
     else
@@ -711,4 +712,3 @@ class ApiService < Sinatra::Base
     end
   end
 end
-
