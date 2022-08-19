@@ -15,7 +15,7 @@ DATE_MAX_LEN = 8
 TRUE_PARAM_VALUES = [1, '1', true, 'true'].freeze
 
 class ApiService < Sinatra::Base
-  
+
   def local_timezone?
     params[:local_timezone] && ["true",true,"1",1].include?(params[:local_timezone])
   end
@@ -51,8 +51,10 @@ class ApiService < Sinatra::Base
   end
 
   def validate_date_filter_params! options={}
-    params_error =  if options[:require_only_end] 
+    params_error =  if options[:require_only_end]
                       ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_end_date_filter_field, :date_filter_range_too_long).error
+                    elsif params[:created_at_from] || params[:created_at_to]
+                      ParamsValidator.new(params, :invalid_date_passed, :missing_one_date_filter_field, :date_filter_range_too_long, :future_date, :created_at_from_is_after_created_at_to).error
                     else
                       ParamsValidator.new(params, :invalid_date_passed, :blank_date_field_passed, :missing_one_date_filter_field, :date_filter_range_too_long).error
                     end
@@ -84,7 +86,6 @@ class ApiService < Sinatra::Base
   ## this data exists on the authenticated user, but if we cannot find it in cache, we need a place to go
   ## hence the secondary call
   def get_business_entity(pass_in_token)
-
     ## TODO: figure this encoding out
     pass_in_token = CGI::unescape(pass_in_token)
     #LOG.debug("passed in token: " + pass_in_token)
