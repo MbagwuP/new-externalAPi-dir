@@ -1,0 +1,39 @@
+json.simple_charge do
+  json.id @simple_charge["simple_charge"]["id"]
+end
+
+
+# {"id"=>2487430,
+#    "simple_charge_type_id"=>402,
+#    "provider_id"=>20273,
+#    "location_id"=>479,
+#    "debit_transaction_id"=>66091608,
+#    "units"=>1,
+#    "description"=>"SUNGLASSES",
+#    "patient_payments_applied"=>nil,
+#    "patient_adjustments_applied"=>nil,
+#    "created_by"=>105182,
+#    "updated_by"=>105182,
+#    "created_at"=>"2022-08-24T15:47:11-04:00",
+#    "updated_at"=>"2022-08-24T15:47:11-04:00",
+#    "is_reversal"=>false,
+#    "companion_simple_charge_id"=>nil,
+#    "reversed_at"=>nil,
+#    "reversed_by"=>nil,
+#    "original_simple_charge_id"=>2487430,
+#    "simple_charge_type"=>
+#     {"id"=>402,
+#      "business_entity_id"=>64,
+#      "name"=>"SUNGLASSES",
+#      "code"=>"SUNGL",
+#      "description"=>"SUNGLASSES",
+#      "default_units"=>1,
+#      "amount"=>"0.0",
+#      "status"=>"A",
+#      "sort_code"=>nil,
+#      "created_at"=>"2011-01-05T01:18:15-05:00",
+#      "updated_at"=>"2022-07-08T10:18:08-04:00",
+#      "created_by"=>20,
+#      "updated_by"=>120049,
+#      "provider_required"=>false,
+#      "location_required"=>false}}}
