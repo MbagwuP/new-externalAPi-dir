@@ -711,4 +711,15 @@ class ApiService < Sinatra::Base
       "unknown"
     end
   end
+
+  def get_observations_path(code)
+    case code
+    when "5778-6"
+      "labs/get_results_by_patient_and_code.json"
+    when "72166-2"
+      "patient_summary/generate_json_by_patient_id_and_component.json"
+    else
+      "vital_observations/list_by_observation_code.json"
+    end
+  end
 end
