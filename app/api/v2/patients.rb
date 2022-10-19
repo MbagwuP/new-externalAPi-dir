@@ -368,4 +368,23 @@ class ApiService < Sinatra::Base
     jbuilder :list_tasks
   end
 
+  get '/v2/patients' do
+    patientid = params[:patientid]
+    validate_patient_id_param(patientid) if patientid
+
+    base_path = "patients/search/v2.json"
+    parameters = { patient_id: patientid, name: params[:name], dob: params[:birthdate], gender: params[:gender]}
+
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: parameters,
+      rescue_string: "Patients"
+    )
+
+    @patients = resp['patients']
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    status HTTP_OK
+    jbuilder :list_patients
+  end
+
 end
