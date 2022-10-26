@@ -3,6 +3,7 @@ previous_address = OpenStruct.new(patient.previous_home_address)
 phone = OpenStruct.new(patient.phones)
 guarantor = OpenStruct.new(patient.responsible_party)
 guarantor_address = OpenStruct.new(guarantor.try(:addresses).try(:first))
+guarantor_phones = OpenStruct.new(guarantor.try(:phones))
 primary_location = OpenStruct.new(patient.primary_location)
 json.patient do 
 	json.account_number patient.external_id
@@ -16,7 +17,7 @@ json.patient do
 	json.prefix patient.prefix
 	json.suffix patient.suffix
 	json.preferred_name patient.preferred_name
-	json.previous_first_name nil
+	json.previous_first_name patient.previous_name
 	json.previous_last_name nil
 
 	json.healthcare_entity do
@@ -30,14 +31,14 @@ json.patient do
 		json.coding_system "Race & Ethnicity - CDC"
 	end
 
-	json.ethinicity do
+	json.ethnicity do
 		json.name patient.ethnicity
 		json.code patient.ethnicity_code
 		json.coding_system "Race & Ethnicity - CDC"
 	end
 
-	json.date_of_birth patient.date_of_birth
-	json.age patient.date_of_birth.present? ? (Date.today.year - patient.date_of_birth.to_date.year) : nil
+	json.date_of_birth patient.dob
+	json.age patient.dob.present? ? (Date.today.year - patient.dob.to_date.year) : nil
 	json.gender patient.gender
 	json.birth_sex (patient.gender == 'female' ? 'F' : 'M')
 
@@ -77,6 +78,7 @@ json.patient do
 		json.npi patient.referring_physician_npi
 		json.first_name patient.referring_physician_first_name
 		json.last_name patient.referring_physician_last_name
+		json.middle_name patient.referring_physician_middle_name
 	end
 
 	json.primary_care_physician do
@@ -84,6 +86,7 @@ json.patient do
 		json.npi patient.primary_care_physician_npi
 		json.first_name patient.primary_care_physician_first_name
 		json.last_name patient.primary_care_physician_last_name
+		json.middle_name patient.primary_care_physician_middle_name
 	end
 
 	json.address do
@@ -137,6 +140,13 @@ json.patient do
 			json.city guarantor_address.city
 			json.zip guarantor_address.zip
 			json.country_name guarantor_address.country_name
+		end
+		json.phones do
+			json.home guarantor_phones.try(:home_phone)
+			json.work nil
+			json.cellphone guarantor_phones.try(:cell_phone)
+			json.main guarantor_phones.try(:main_phone)
+			json.business guarantor_phones.try(:business_phone)
 		end
 	end
 
