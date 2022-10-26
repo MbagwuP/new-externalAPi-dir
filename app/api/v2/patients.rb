@@ -387,4 +387,18 @@ class ApiService < Sinatra::Base
     jbuilder :list_patients
   end
 
+  get '/v2/patientlist' do
+    base_path = "patients/search/v2.json"
+    parameters = { elementary: 'true' }
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: parameters,
+      rescue_string: "Patients"
+    )
+
+    @patients = resp['patients']
+    status HTTP_OK
+    jbuilder :patientlist
+  end
+
 end
