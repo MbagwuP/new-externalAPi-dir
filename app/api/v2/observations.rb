@@ -27,6 +27,7 @@ class ApiService < Sinatra::Base
       @patient = resp['patient']['patient']
       @business_entity = resp['business_entity']['business_entity']
       @provider = resp['provider']
+      @contact = resp['contact']
       status HTTP_OK
       jbuilder :list_observations_smoking_status
     else
