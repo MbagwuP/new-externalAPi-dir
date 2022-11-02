@@ -1,6 +1,7 @@
 class ApiService < Sinatra::Base
 
   get '/v2/patients/:patient_id/transactions' do
+    binding.pry
     date_params = get_date_params(params)
     forwarded_params = {start_date: date_params[0], end_date: date_params[1], page: params[:page], use_pagination: 'true', only_posted: 'true'}
 
@@ -82,6 +83,30 @@ class ApiService < Sinatra::Base
     end
     status HTTP_OK
     jbuilder :list_simple_charge_types
+  end
+
+  get '/v2/claims/get-claim-data' do
+    urlclaim = webservices_uri "claims/get-claim-data.json", {token: escaped_oauth_token, business_entity_id: current_business_entity}
+
+    @resp = rescue_service_call 'Claims Look Up' do
+      RestClient.get(urlclaim, :api_key => APP_API_KEY)
+    end
+
+    @resp = JSON.parse(@resp)
+    status HTTP_OK
+    body(@resp.to_json)
+  end
+
+  post '/v2/claims/save-claim-data' do
+      request_body = get_request_JSON
+      urlclaimsave = webservices_uri "claims/save-claim-data.json", {token: escaped_oauth_token}
+      @resp = rescue_service_call 'Save Claim' do
+        RestClient.post(urlclaimsave, request_body)
+      end
+
+      @resp = JSON.parse(@resp)
+      status HTTP_OK
+      body(@resp.to_json)
   end
 
   private
