@@ -1,7 +1,6 @@
 class ApiService < Sinatra::Base
 
   get '/v2/patients/:patient_id/transactions' do
-    binding.pry
     date_params = get_date_params(params)
     forwarded_params = {start_date: date_params[0], end_date: date_params[1], page: params[:page], use_pagination: 'true', only_posted: 'true'}
 
