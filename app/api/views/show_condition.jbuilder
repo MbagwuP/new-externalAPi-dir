@@ -3,7 +3,7 @@ patient = OpenStruct.new(condition.patient)
 business_entity = OpenStruct.new(condition.business_entity)
 
 json.condition do
-  json.partial! :condition, condition: condition
+  json.partial! :condition, condition: condition, patient: patient
 
   json.patient do
     json.partial! :patient, patient: patient

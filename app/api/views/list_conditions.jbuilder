@@ -2,8 +2,10 @@ first_condition = OpenStruct.new(@conditions.first)
 patient = OpenStruct.new(first_condition.patient)
 business_entity = OpenStruct.new(first_condition.business_entity)
 
-json.condition_entries @conditions do |condition|
-  json.partial! :condition, condition: OpenStruct.new(condition)
+json.conditionEntries @conditions do |condition|
+  json.condition do 
+    json.partial! :condition, condition: OpenStruct.new(condition), patient: patient
+  end
 end
 
 json.patient do
