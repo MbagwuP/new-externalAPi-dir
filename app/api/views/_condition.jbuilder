@@ -1,9 +1,8 @@
-json.partial! :patient, patient: patient
-json.identifier condition.id
+json.id condition.id
 
 json.clinical_status condition.condition
 json.verification_status condition.status
-json.categoryCode "encounter-diagnosis"
+json.category_code "encounter-diagnosis"
 
 json.onset condition.onset_date
 json.date_recorded condition.created_at
@@ -17,7 +16,4 @@ json.severity_code_display nil
 
 json.provider do
   json.partial! :provider, provider: OpenStruct.new(condition.provider)
-end
-json.healthcare_entity do
-	json.partial! :healthcare_entity, healthcare_entity: condition.business_entity
 end

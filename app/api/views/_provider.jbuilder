@@ -1,4 +1,4 @@
-json.identifier provider['id']	
+json.id provider['id']	
 json.npi provider['npi']
 json.name provider['name']
 json.email provider['email']
