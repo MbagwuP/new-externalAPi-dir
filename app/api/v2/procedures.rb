@@ -32,6 +32,7 @@ class ApiService < Sinatra::Base
     )
 
     @procedures = resp['procedures']
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
     status HTTP_OK
     jbuilder :list_procedures

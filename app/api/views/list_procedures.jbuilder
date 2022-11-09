@@ -2,7 +2,7 @@ first_procedure = OpenStruct.new(@procedures.first)
 patient = OpenStruct.new(first_procedure.patient)
 business_entity = OpenStruct.new(first_procedure.business_entity)
 
-json.procedure_entries @procedures do |procedure|
+json.procedureEntries @procedures do |procedure|
   json.partial! :procedure, procedure: OpenStruct.new(procedure)
 end
 
