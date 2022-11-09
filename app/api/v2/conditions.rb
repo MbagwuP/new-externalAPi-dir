@@ -18,6 +18,7 @@ class ApiService < Sinatra::Base
 
   get '/v2/conditions' do
     patient_id = params[:patient_id]
+    @acc_number = patient_id
     base_path = "patients/#{patient_id}/problems.json"
     
     validate_patient_id_param(patient_id)
@@ -27,9 +28,9 @@ class ApiService < Sinatra::Base
       params: {},
       rescue_string: "Conditions"
     )
-  
-    @conditions = resp['problems']
 
+    @conditions = resp['problems']
+    @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
     status HTTP_OK
     jbuilder :list_conditions
   end
