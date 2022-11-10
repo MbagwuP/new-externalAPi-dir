@@ -402,10 +402,10 @@ class ApiService < Sinatra::Base
       rescue_string: "Patients"
     )
 
-    @patients = resp['patients']
+    @patient = resp['patients'].first    
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     status HTTP_OK
-    jbuilder :list_patients
+    jbuilder :show_patient
   end
 
   get '/v2/patientlist' do
