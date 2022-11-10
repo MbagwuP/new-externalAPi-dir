@@ -1,15 +1,10 @@
-first_allergy = OpenStruct.new(@allergies.first)
-patient = OpenStruct.new(first_allergy.patient)
-business_entity = OpenStruct.new(first_allergy.business_entity)
+json.allergyEntries @allergies do |allergy|
+  allergyItem = OpenStruct.new(allergy)
+  json.partial! :allergy, allergy: allergyItem, 
+  patient: OpenStruct.new(allergyItem.patient), 
+  business_entity: OpenStruct.new(allergyItem.business_entity), 
+  provider: OpenStruct.new(allergyItem.provider), 
+  include_provenance_target: @include_provenance_target
+  
 
-json.allergy_intolerance_entries @allergies do |allergy|
-  json.partial! :allergy, allergy: OpenStruct.new(allergy)
-end
-
-json.patient do
-  json.partial! :patient, patient: patient
-end
-
-json.business_entity do
-  json.partial! :business_entity, business_entity: business_entity
 end
