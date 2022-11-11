@@ -13,7 +13,6 @@ class ApiService < Sinatra::Base
     )
 
     @medication = resp['medications'].first
-
     status HTTP_OK
     jbuilder :show_medication_order
   end
@@ -29,8 +28,8 @@ class ApiService < Sinatra::Base
       params: {},
       rescue_string: 'Medication order list'
     )
-
     @medications = resp['medications']
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
     status HTTP_OK
     jbuilder :list_medication_orders

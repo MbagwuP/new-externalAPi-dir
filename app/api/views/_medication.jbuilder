@@ -1,6 +1,7 @@
 patient = OpenStruct.new(medication.patient)
 provider = OpenStruct.new(medication.provider)
 encounter = OpenStruct.new(medication.encounter)
+business_entity = OpenStruct.new(medication.business_entity)
 patient_reported = medication.patient_reported
 dosage_instructions = [
   {
@@ -9,8 +10,12 @@ dosage_instructions = [
     date_end: medication.effective_to
   }
 ]
+json.account_number patient.external_id
 
-json.id medication.id
+json.mrn patient.chart_number
+json.patient_name patient.full_name
+json.external_id patient.external_id
+json.identifier medication.id
 json.status medication.status
 json.intent intent(patient_reported)
 json.reported patient_reported
@@ -23,7 +28,9 @@ json.code_display medication.drug_name
 json.encounter do
   json.partial! :encounter, encounter: encounter
 end
-
+json.medication do
+  json.reference "Medication/"+medication.medication_number
+end
 json.requester do
   if patient_reported
     json.id patient.external_id
@@ -57,7 +64,13 @@ json.dispense_request do
     })
   end
 end
-
+json.healthcare_entity do
+  json.identifier business_entity.id
+  json.name business_entity.name
+end
 json.provider do
   json.partial! :provider, provider: provider
+end
+if @include_provenance_target
+  json.partial! :provenance, patient: patient, record: medication, provider: provider, business_entity: business_entity, obj: 'Medication'
 end
