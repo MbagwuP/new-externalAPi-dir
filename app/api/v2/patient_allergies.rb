@@ -1,6 +1,6 @@
 class ApiService < Sinatra::Base
 
-  get '/v2/allergy_intolerance/:id' do
+  get '/v2/allergy_intolerances/:id' do
     allergy_intolerance_id = params[:id]
     base_path = "patient_allergies/#{allergy_intolerance_id}.json"
 
