@@ -1,5 +1,5 @@
 class ApiService < Sinatra::Base
-  get '/v2/providers/:id' do
+  get '/v2/practitioner/:id' do
     practicioner_id = params[:id]
     business_entity_id = current_business_entity
     base_path = "businesses/#{business_entity_id}/providers/#{practicioner_id}/details.json"
@@ -8,7 +8,7 @@ class ApiService < Sinatra::Base
       base_path: base_path,
       params: {},
       rescue_string: 'Practicioner '
-    )
+    ) 
 
     @practicioner = OpenStruct.new(resp['provider'])
 

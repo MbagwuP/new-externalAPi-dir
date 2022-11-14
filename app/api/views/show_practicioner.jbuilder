@@ -1,8 +1,10 @@
 specialty = OpenStruct.new(@practicioner.specialty)
 business_entity = OpenStruct.new(@practicioner.business_entity)
+address = (@practicioner.addresses).first
+phones = @practicioner.phones
 
 json.practicioner do
-  json.id @practicioner.id 
+  json.identifier @practicioner.id 
   json.first_name @practicioner.first_name
   json.last_name @practicioner.last_name
   json.middle_name @practicioner.middle_initial
@@ -11,24 +13,26 @@ json.practicioner do
   json.npi @practicioner.npi
   json.gender @practicioner.gender_name
 
+  json.code do
+    json.code ""
+    json.code_system ""
+  end
   json.specialty do
     json.code specialty.code
-    json.code_system
+    json.code_system ""
     json.code_display specialty.name
   end
 
-  json.phones @practicioner.phones do |phone|
-    # FHIR rule: The telecom of an organization can never be of use 'home'
-    next if phone['phone_type_code'] == HOME_CODE_FROM_WEBSERVICE
-
-    json.phone_system phone['phone_type_name']
-    json.value phone['phone_number']
+  json.phone do
+    json.home get_phone_number(phones, "H")
+    json.work get_phone_number(phones, "W")
+    json.cellphone get_phone_number(phones, "C")
+    json.main get_phone_number(phones, "M")
+    json.business get_phone_number(phones, "B")
+    json.fax get_phone_number(phones, "F")
   end
 
-  json.addresses @practicioner.addresses do |address|
-    # FHIR rule: The address of an organization can never be of use 'home'
-    next if address['address_type_code'] == HOME_CODE_FROM_WEBSERVICE
-
+  json.address do
     json.type_address_code 'both'
     json.type_address_system 'http://hl7.org/fhir/ValueSet/address-type'
     json.type_address_display 'Postal & Physical'
@@ -41,7 +45,8 @@ json.practicioner do
     json.country_name address['country_name']
   end
 
-  json.business_entity do
-    json.partial! :business_entity, business_entity: business_entity
+  json.healthcare_entity do
+    json.identifier business_entity.id
+    json.name business_entity.name
   end
 end
