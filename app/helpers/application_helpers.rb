@@ -722,6 +722,19 @@ class ApiService < Sinatra::Base
       "vital_observations/list_by_observation_code.json"
     end
   end
+
+  def get_observations_code(code)
+    case code
+    when ObservationCode::BODY_WEIGHT
+      ObservationCode::WEIGHT
+    when ObservationCode::BLOOD_PRESSURE
+      [ObservationCode::SYSTOLIC,ObservationCode::DIASTOLIC]
+    when ObservationCode::PULSE_OXIMETRY
+      [ObservationCode::OXYGEN_SATURATION,ObservationCode::INHALED_OXYGEN_CONCENTRATION]
+    else
+      code
+    end      
+  end
 end
 
 

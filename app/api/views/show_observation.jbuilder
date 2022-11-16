@@ -1,4 +1,4 @@
-observation = OpenStruct.new(observation)
+observation = OpenStruct.new(@observation)
 patient = OpenStruct.new(observation.patient)
 business_entity = OpenStruct.new(observation.business_entity)
 provider = OpenStruct.new(observation.provider)
@@ -9,7 +9,7 @@ json.observation do
 			json.account_number patient.external_id
 			json.mrn patient.chart_number
 			json.patient_name patient.full_name
-			json.identifier observation.id.to_s + "-#{observation_type}"
+			json.identifier observation.id.to_s + "-#{@observation_type}"
 			json.status 'Final'
 			json.category do
 				json.child! do 
@@ -26,7 +26,7 @@ json.observation do
 			json.code do
 				json.coding do
 					json.child! do
-						json.code observation.code
+						json.code observation.code == '3141-9' ? '29463-7' : observation.code
 						json.code_system "loinc"
 						json.code_display observation.code_display
 					end
@@ -39,7 +39,7 @@ json.observation do
 				json.value observation.value
 				json.unit observation.unit
 				json.system 'unitsofmeasure'
-				json.code observation.code
+				json.code observation.code == '3141-9' ? '29463-7' : observation.code
 			end
 
 			json.provider do
@@ -52,10 +52,6 @@ json.observation do
 			json.healthcare_entity do
 				json.partial! :healthcare_entity, healthcare_entity: business_entity
 			end
-		end
-
-		if include_provenance_target
-			json.partial! :_provenance, patient: patient, record: observation, provider: provider, business_entity: business_entity, obj: 'Observation'
 		end
 	end
 end

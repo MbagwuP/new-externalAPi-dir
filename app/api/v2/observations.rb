@@ -5,19 +5,22 @@ class ApiService < Sinatra::Base
     validate_patient_id_param(patient_id)
 
     base_path = get_observations_path(params[:code])
-    parameters = { patient_id: patient_id, code: params[:code], date: params[:date], ccd_components: ['social_history'] }
+    code = get_observations_code(params[:code])
+    parameters = { patient_id: patient_id, code: code, date: params[:date], ccd_components: ['social_history'] }
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
       params: parameters,
       rescue_string: "Observation"
     )
-    case params[:code]
-    when "5778-6"
+
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    if params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory'
       @lab_results = resp['lab_request_test_results']
+      @observation_type = ObservationType::LAB_REQUEST
       status HTTP_OK
       jbuilder :list_lab_results
-    when "72166-2"
+    elsif params[:code] == ObservationCode::SMOKING_STATUS
       patient_summary = resp['patient_summary']
       patient_summary = JSON.parse(patient_summary) if patient_summary
 
@@ -28,12 +31,64 @@ class ApiService < Sinatra::Base
       @business_entity = resp['business_entity']['business_entity']
       @provider = resp['provider']
       @contact = resp['contact']
+      @observation_type = ObservationType::SMOKING_STATUS
       status HTTP_OK
       jbuilder :list_observations_smoking_status
     else
-      @observation_entries = resp['observations']
+      @blood_pressure_observation = BloodPressureObservation.new(resp['observations']) if resp['observations'].select{|a| a['code'] == ObservationCode::SYSTOLIC}.present?
+      @pulse_oximetry_observation = PulseOximetryObservation.new(resp['observations']) if resp['observations'].select{|a| a['code'] == ObservationCode::OXYGEN_SATURATION}.present?
+
+      @observation_entries = resp['observations'].reject{|a| [ObservationCode::SYSTOLIC,ObservationCode::DIASTOLIC,ObservationCode::OXYGEN_SATURATION,ObservationCode::INHALED_OXYGEN_CONCENTRATION].include? a['code']}
+      @observation_entries << @blood_pressure_observation if @blood_pressure_observation.present?
+      @observation_entries << @pulse_oximetry_observation if @pulse_oximetry_observation.present?
+      @observation_type = ObservationType::VITAL_SIGNS
       status HTTP_OK
       jbuilder :list_observations
+    end
+  end
+
+
+  # /v2/observations/{guid}
+  # /v2/observations/{integer_id}
+  get /\/v2\/observations\/(?<observation_id>(\d+)(-\s*\d+)*)$/ do |observation_id|
+    observation_id_with_enum = params[:observation_id].split("-")
+    type_code = observation_id_with_enum.last
+    observation_id_with_enum.pop()
+    observation_id_array = observation_id_with_enum
+    case type_code.to_i
+    when ObservationType::LAB_REQUEST
+    when ObservationType::SMOKING_STATUS
+    when ObservationType::BLOOD_PRESSURE
+      base_path = "vital_observations/list_by_observation_code.json"
+      resp = evaluate_current_internal_request_header_and_execute_request(
+        base_path: base_path,
+        params: {observation_id: observation_id_array},
+        rescue_string: "Observation"
+      )
+      @blood_pressure_observation = BloodPressureObservation.new(resp['observations'])
+      status HTTP_OK
+      jbuilder :show_blood_pressure_observation
+    when ObservationType::PULSE_OXIMETRY
+      base_path = "vital_observations/list_by_observation_code.json"
+      resp = evaluate_current_internal_request_header_and_execute_request(
+        base_path: base_path,
+        params: {observation_id: observation_id_array},
+        rescue_string: "Observation"
+      )
+      @pulse_oximetry_observation = PulseOximetryObservation.new(resp['observations'])
+      status HTTP_OK
+      jbuilder :show_pulse_oximetry_observation
+    else
+      base_path = "vital_observations/list_by_observation_code.json"
+      resp = evaluate_current_internal_request_header_and_execute_request(
+        base_path: base_path,
+        params: {observation_id: observation_id_array},
+        rescue_string: "Observation"
+      )
+      @observation = resp['observations'].first
+      @observation_type = type_code
+      status HTTP_OK
+      jbuilder :show_observation
     end
   end
 end
