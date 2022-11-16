@@ -1,7 +1,7 @@
 class ApiService < Sinatra::Base
 
   get '/v2/observations' do
-    patient_id = params[:patientid]
+    patient_id = params[:patient_id]
     validate_patient_id_param(patient_id)
 
     base_path = get_observations_path(params[:code])
