@@ -84,7 +84,7 @@ json.observation do
 						json.value inhaled_oxygen_concentration.value
 						json.unit inhaled_oxygen_concentration.unit
 						json.system 'unitsofmeasure'
-						json.code inhaled_oxygen_concentration.code
+						json.code "%"
 					end
 				end
 			end

@@ -26,7 +26,7 @@ json.observation do
 			json.code do
 				json.coding do
 					json.child! do
-						json.code observation.code
+						json.code observation.code == ObservationCode::WEIGHT ? ObservationCode::BODY_WEIGHT : observation.code
 						json.code_system "loinc"
 						json.code_display observation.code_display
 					end
@@ -39,7 +39,7 @@ json.observation do
 				json.value observation.value
 				json.unit observation.unit
 				json.system 'unitsofmeasure'
-				json.code observation.code
+				json.code observation.unit_abbreviation
 			end
 
 			json.provider do
