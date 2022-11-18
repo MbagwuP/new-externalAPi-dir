@@ -1,19 +1,14 @@
-json.documentReferenceEntries @documents do |doc|
-  doc = OpenStruct.new(doc)
   json.documentReference do
     json.identifier doc.id
     json.text doc.title
     json.status doc.full_status
-    json.patient_name 
-    json.date @date || doc.created_at
-
+    json.date doc.created_at
     json.description doc.description
 
     json.type do
       json.coding do
         json.array!([:once]) do
-          json.code @type
-
+          json.code nil
           json.code_system nil
           json.code_display nil
         end
@@ -24,19 +19,13 @@ json.documentReferenceEntries @documents do |doc|
     json.category do
       json.coding do
         json.array!([:once]) do
-          json.code @category
-          json.code_system nil
-          json.code_display nil
+          json.code 'clinical-note'
+          json.code_system 'http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category'
+          json.code_display 'Clinical Note'
         end
       end
       json.text nil
     end
-    
-    json.author do
-      json.identifier doc.created_by
-      json.name doc.creator_name
-    end
-
 
     json.context do
       json.encounter do
@@ -68,11 +57,8 @@ json.documentReferenceEntries @documents do |doc|
         end
       end
     end
-    json.partial! :patient, patient: OpenStruct.new(doc.patient)
-    if @is_provenance_target_present
-      json.partial! :_provenance, patient: OpenStruct.new(doc.patient), record: doc, 
-            provider: OpenStruct.new(doc.provider), business_entity: OpenStruct.new(doc.business_entity), obj: 'Document'
+    
+    json.patient do
+      json.partial! :patient, patient: OpenStruct.new(doc.patient)
     end
   end
-end
-
