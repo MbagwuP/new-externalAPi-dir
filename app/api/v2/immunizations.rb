@@ -22,10 +22,13 @@ class ApiService < Sinatra::Base
 
     base_path = "patients/#{patient_id}/immunizations.json"
     validate_patient_id_param(patient_id)
+    if date_param.present?
+      date_param = validate_date_param(date_param)
+    end
     
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
-      params: { patient_id: patient_id, status: patient_status, date: validate_date_param(date_param) },
+      params: { patient_id: patient_id, status: patient_status, date: date_param },
       rescue_string: 'Immunizations'
     )
     
