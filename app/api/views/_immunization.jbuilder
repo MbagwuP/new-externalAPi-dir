@@ -18,8 +18,11 @@ json.immunization do
 	json.vaccine_translation_code_display ""
 	json.occurrence_date immunization.admin_date
 	json.occurrence_string ""
-	json.primary_source ""
-
+	if immunization.status == 'completed'
+		json.primary_source false
+	else
+		json.primary_source true
+	end
 	json.provider do
 		json.identifier provider.try(:id)	
 		json.npi provider.try(:npi)

@@ -21,6 +21,8 @@ UNIT_OF_MEASURE_CODE_SYSTEM = "unitsofmeasure".freeze
 CPT_CODE_SYSTEM = "http://www.ama-assn.org/go/cpt".freeze
 HOME_CODE_FROM_WEBSERVICE = 'H' # phone and address
 
+VALID_DATE_PARAMS = ["gt","lt","le","ge"]
+
 class ApiService < Sinatra::Base
 
   def local_timezone?
@@ -739,11 +741,18 @@ end
 
 
 def get_phone_number(phones, phone_code)
-
   phone = phones.find {|phone| phone["phone_type_code"] == phone_code}
   if phone.nil?
     return nil
   else
     return phone['phone_number']
+  end
+end
+
+def validate_date_param(date_param)
+  if !VALID_DATE_PARAMS.include?(date_param[0, 2])
+    return "ge" + date_param
+  else
+    return date_param
   end
 end
