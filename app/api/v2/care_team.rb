@@ -3,8 +3,7 @@ class ApiService < Sinatra::Base
   get '/v2/careteam/:id' do
     care_team_id = params[:id]
 
-    base_path = "care_team_members/#{care_team_id}.json"
-    
+    base_path ="care_team_members/#{care_team_id}/find_by_id.json"
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
       params: {},
@@ -28,7 +27,7 @@ class ApiService < Sinatra::Base
       params: { status: care_team_status,},
       rescue_string: "Care team members"
     )
-    p
+    
     @care_team_members = resp['care_team_members']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
