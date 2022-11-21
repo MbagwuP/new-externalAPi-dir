@@ -9,16 +9,9 @@ json.observation do
 			json.category_code "social-history"
 			json.category_code_system "observation-category"
 			json.category_code_display social_history_code.displayName
-			json.code do
-				json.coding do
-					json.child! do
-						json.code smoking_status.code.code
-						json.code_system "loinc"
-						json.code_display smoking_status.code.displayName
-					end
-				end
-				json.text smoking_status.code.displayName
-			end
+			json.code smoking_status.code.code
+			json.code_system "loinc"
+			json.code_display smoking_status.code.displayName
 			json.issued_date smoking_status.start_date.present? ? Date.strptime(smoking_status.start_date, '%m/%d/%Y').strftime('%Y-%m-%d') : nil
 			json.value_system 'snomed'
 			json.value_code smoking_status.value_code.code
