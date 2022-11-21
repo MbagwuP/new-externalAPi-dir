@@ -44,6 +44,7 @@ json.careTeamEntries @care_team_members do |careTeam|
   careTeam = OpenStruct.new(careTeam)
   patient = OpenStruct.new(careTeam.patient)
   business_entity = OpenStruct.new(careTeam.business_entity)
+  provider = OpenStruct.new(careTeam.provider)
 
   json.careTeam do
 
@@ -95,6 +96,11 @@ json.careTeamEntries @care_team_members do |careTeam|
     
     json.healthcare_entity do
       json.partial! :healthcare_entity, healthcare_entity: business_entity
+    end
+
+    if @include_provenance_target
+	    json.partial! :_provenance, patient: patient, record: careTeam, 
+      provider: provider, business_entity: business_entity, obj: 'CareTeam'
     end
   end
 end
