@@ -1,6 +1,6 @@
 json.provenance do
 
-	json.identifier record.id.present? ? "#{obj}-#{record.id}" : "#{obj}-#{patient.external_id}"
+	json.identifier record.id.present? ? "#{obj}:#{record.id}" : "#{obj}:#{patient.external_id}"
 	json.text do
 		json.status 'generated'
 		json.div ''
