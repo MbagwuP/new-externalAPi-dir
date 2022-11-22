@@ -26,12 +26,12 @@ json.careTeamEntries @care_team_members do |careTeam|
             json.array!([:once]) do
               if role == 'Physician'
                   json.code '158965000'
-                  json.code_display 'snomed'
-                  json.code_system 'Medical Practicioner'
+                  json.code_system 'snomed'
+                  json.code_display 'Medical Practicioner'
               else
                   json.code '116154003'
-                  json.code_display 'snomed'
-                  json.code_system 'Patient'
+                  json.code_system 'snomed'
+                  json.code_display 'Patient'
               end
             end
           end
