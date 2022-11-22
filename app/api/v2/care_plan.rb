@@ -13,7 +13,6 @@ class ApiService < Sinatra::Base
       rescue_string: "Care Plans "
     )
 
-
     patient_summary = resp['patient_summary']
     patient_summary = JSON.parse(patient_summary) if patient_summary
 
