@@ -17,12 +17,12 @@ json.organization do |json|
   json.name organization.name
   
   json.phone do
-    json.home get_phone_number(phones, "H")
-    json.work get_phone_number(phones, "W")
-    json.cellphone get_phone_number(phones, "C")
-    json.main get_phone_number(phones, "M")
-    json.business get_phone_number(phones, "B")
-    json.fax get_phone_number(phones, "F")
+    json.home get_phone_number(phones, "phone_type_code", "H")
+    json.work get_phone_number(phones, "phone_type_code", "W")
+    json.cellphone get_phone_number(phones, "phone_type_code", "C")
+    json.main get_phone_number(phones, "phone_type_code", "M")
+    json.business get_phone_number(phones, "phone_type_code", "B")
+    json.fax get_phone_number(phones, "phone_type_code", "F")
   end
 
   json.address do

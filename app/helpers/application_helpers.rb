@@ -740,8 +740,9 @@ class ApiService < Sinatra::Base
 end
 
 
-def get_phone_number(phones, phone_code)
-  phone = phones.find {|phone| phone["phone_type_code"] == phone_code}
+def get_phone_number(phones, phone_type_field, phone_code)
+  phone = phones.find {|phone| phone[phone_type_field] == phone_code}
+
   if phone.nil?
     return nil
   else
