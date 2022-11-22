@@ -1,6 +1,6 @@
 class ApiService < Sinatra::Base
 
-    get '/v2/provencance/:id' do
+    get '/v2/provenance/:id' do
       resourceid = params[:id]
       resource, id = resourceid.split(':')
       case resource
