@@ -16,23 +16,9 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/immunizations' do
-    patient_id = params[:patient_id]
-    patient_status = params[:status]
-    date_param = params[:date]
-
-    base_path = "patients/#{patient_id}/immunizations.json"
-    validate_patient_id_param(patient_id)
-    if date_param.present?
-      date_param = validate_date_param(date_param)
-    end
+    response = get_response(params[:patient_id],'Immunization',nil,params[:date],params[:status])
     
-    resp = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: { patient_id: patient_id, status: patient_status, date: date_param },
-      rescue_string: 'Immunizations'
-    )
-    
-    @immunizations = resp['immunizations']
+    @immunizations = response[:resources]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
     status HTTP_OK
