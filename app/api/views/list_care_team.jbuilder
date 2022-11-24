@@ -1,3 +1,4 @@
+json.resource_count @count_summary unless @count_summary.nil?
 json.careTeamEntries @care_team_members do |careTeam|
 
   careTeam = OpenStruct.new(careTeam)
@@ -5,9 +6,7 @@ json.careTeamEntries @care_team_members do |careTeam|
   business_entity = OpenStruct.new(careTeam.business_entity)
   provider = OpenStruct.new(careTeam.provider)
 
-
   json.careTeam do
-
     json.account_number patient.external_id
     json.mrn patient.chart_number
     json.patient_name patient.full_name

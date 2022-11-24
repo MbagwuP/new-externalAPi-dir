@@ -32,6 +32,9 @@ class ApiService < Sinatra::Base
     @care_team_members = resp['care_team_members']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
+    if params[:summary] == "count"
+      @count_summary =  @care_team_members.length
+    end
     status HTTP_OK
     jbuilder :list_care_team
   end

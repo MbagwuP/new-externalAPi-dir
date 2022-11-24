@@ -21,6 +21,9 @@ class ApiService < Sinatra::Base
     @immunizations = response[:resources]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
+    if params[:summary] == "count"
+      @count_summary =  @immunizations.length
+    end
     status HTTP_OK
     jbuilder :list_immunizations
   end

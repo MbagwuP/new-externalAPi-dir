@@ -6,7 +6,7 @@ contact = OpenStruct.new(@contact)
 
 
 care_plan_code = OpenStruct.new(carePlan.code)
-category_care_plan_code = [[care_plan_code.code, care_plan_code.displayName], ["assess-plan", "careplan-category"]]
+category_care_plan_code = [[care_plan_code.code, "snomed", care_plan_code.displayName], ["assess-plan", "http://hl7.org/fhir/us/core/CodeSystem/careplan-category", "careplan-category"]]
 
 json.carePlan do
   json.account_number patient.external_id
@@ -22,8 +22,8 @@ json.carePlan do
     json.coding do
       json.array!(category_care_plan_code) do |category_code|
         json.code category_code[0]
-        json.code_system "snomed"
-        json.code_display category_code[1]
+        json.code_system category_code[1]
+        json.code_display category_code[2]
       end
     end
   end

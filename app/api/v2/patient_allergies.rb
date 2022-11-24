@@ -28,6 +28,10 @@ class ApiService < Sinatra::Base
 
     @allergies = resp['allergies']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+
+    if params[:summary] == "count"
+      @count_summary =  @allergies.length
+    end
     status HTTP_OK
     jbuilder :list_allergy_intolerance
   end

@@ -1,3 +1,4 @@
+json.resource_count @count_summary unless @count_summary.nil?
 json.immunizationEntries @immunizations do |immunization|
   immunizationItem = OpenStruct.new(immunization)
   json.partial! :immunization, immunization: immunizationItem, 
