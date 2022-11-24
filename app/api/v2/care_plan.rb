@@ -5,7 +5,7 @@ class ApiService < Sinatra::Base
 
     @care_plan_id = params[:id]
 
-    splited_params_ids= @care_plan_id.split("_")
+    splited_params_ids= @care_plan_id.split("$")
     validate_patient_id_param(splited_params_ids[0])
 
     base_path = "patient_summary/generate_json_by_patient_id_and_component.json"
