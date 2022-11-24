@@ -20,16 +20,28 @@ class ApiService < Sinatra::Base
   get '/v2/medications' do
     patient_id = params[:patient_id]
     base_path = "patients/#{patient_id}/medications_list.json"
-
+    parameters = { patient_id: patient_id, intent: params[:intent], status: params[:status]}
     validate_patient_id_param(patient_id)
-    
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
-      params: {},
+      params: parameters,
       rescue_string: 'Medication order list'
     )
     @medications = resp['medications']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    if (params[:intent])
+      @include_intent_target=params[:intent].split(",") if params[:intent].include? ","
+      @include_intent_target = [params[:intent]]  unless params[:intent].include? ","
+    else
+      @include_intent_target = []
+    end
+
+    if (params[:status])
+      @include_status_target=params[:status].split(",") if params[:status].include? ","
+      @include_status_target = [params[:status]] unless params[:status].include? ","
+    else
+      @include_status_target = []
+    end
 
     status HTTP_OK
     jbuilder :list_medication_orders
