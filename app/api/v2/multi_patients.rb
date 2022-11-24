@@ -10,7 +10,6 @@ class ApiService < Sinatra::Base
         @responses = []
         @patient_ids.each do |patient_id|
           response = get_response(patient_id,'Goal',['goals'])
-
           @responses << response if response
         end
 
@@ -22,9 +21,16 @@ class ApiService < Sinatra::Base
            response = get_response(patient_id,'Immunization',nil,params[:date],params[:status])
            @responses << response[:resources]
         end
-        binding.pry
         status HTTP_OK
         jbuilder :multipatient_list_immunizations
+      when 'Condition'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Condition')
+          @responses << response[:resources]
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_conditions
       else
         status HTTP_OK
         jbuilder :patientlist

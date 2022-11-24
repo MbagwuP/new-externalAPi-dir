@@ -13,7 +13,7 @@ class ApiService < Sinatra::Base
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
       params: params,
-      rescue_string: "Patient"
+      rescue_string: type
     )
 
     result_hash = {}
@@ -47,11 +47,13 @@ class ApiService < Sinatra::Base
 	    result_hash[:provider] = provider
 	    result_hash[:contact] = contact
 	    result_hash[:business_entity] = business_entity
-	   when 'Immunization'
+	  when 'Immunization'
 	   	immunizations = resp['immunizations']
 	   	result_hash[:resources] = immunizations
-	   else
-	   end    
+		when 'Condition'
+			result_hash[:resources] = resp['problems']
+		else
+	  end
     result_hash
 	end
 
@@ -63,6 +65,8 @@ class ApiService < Sinatra::Base
 			"patient_summary/generate_json_by_patient_id_and_component.json"
 		when "Immunization"
 			"patients/#{patient_id}/immunizations.json"
+		when "Condition"
+			"patients/#{patient_id}/problems.json"
 		else
 		end
 	end
