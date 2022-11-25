@@ -39,6 +39,26 @@ class ApiService < Sinatra::Base
         end
         status HTTP_OK
         jbuilder :multipatient_list_care_plans
+      when 'Observation'
+        @responses = []
+        options = {
+            ccd_component: ['social_history'],
+            summary: params[:summary],
+            code: params[:code],
+            category: params[:category]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Observation',options)
+          @responses << response
+        end
+        status HTTP_OK
+        if params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory'
+          jbuilder :multipatient_list_lab_results
+        elsif params[:code] == ObservationCode::SMOKING_STATUS
+          jbuilder :multipatient_list_observations_smoking_status
+        else
+          jbuilder :multipatient_list_observations
+        end
       else
         status HTTP_OK
         jbuilder :patientlist
