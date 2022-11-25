@@ -1,14 +1,16 @@
 class ApiService < Sinatra::Base
 
-	#type - Type of resource
+	#input patient_id , type
+  #optional input - ccd_components, date ,status , summary
+  #type - Type of resource
 	#ccd_component - For patient summary request(Goals and smoking status)
-	def get_response(patient_id,type,ccd_component=nil,date=nil,status=nil)
+	def get_response(patient_id,type,options={})
 		base_path = get_base_path(type,patient_id)
 		params = {}
     params[:patient_id] = patient_id
-    params[:ccd_components] = ccd_component if ccd_component.present?
-    params[:date] = date if date.present?
-    params[:status] = status if status.present?
+    params[:ccd_components] = options[:ccd_component] if options[:ccd_component].present?
+    params[:date] = options[:date] if options[:date].present?
+    params[:status] = options[:status] if options[:status].present?
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
@@ -52,6 +54,20 @@ class ApiService < Sinatra::Base
 	   	result_hash[:resources] = immunizations
 		when 'Condition'
 			result_hash[:resources] = resp['problems']
+		when 'Careplan'
+      patient_summary = resp['patient_summary']
+      patient_summary = JSON.parse(patient_summary) if patient_summary
+      plan_of_treatment_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
+      resources = PlanOfTreatmentSection.new(plan_of_treatment_section)
+      result_hash[:resources] = resources
+      result_hash[:patient] = resp['patient']['patient']
+      result_hash[:provider] = resp['provider']
+      result_hash[:contact] = resp['contact']
+      result_hash[:business_entity] = resp['business_entity']['business_entity']
+
+      if options[:summary] == "count"
+        result_hash[:count_summary] = resources.entries.length
+      end
 		else
 	  end
     result_hash
@@ -67,6 +83,8 @@ class ApiService < Sinatra::Base
 			"patients/#{patient_id}/immunizations.json"
 		when "Condition"
 			"patients/#{patient_id}/problems.json"
+		when "Careplan"
+			"patient_summary/generate_json_by_patient_id_and_component.json"
 		else
 		end
 	end

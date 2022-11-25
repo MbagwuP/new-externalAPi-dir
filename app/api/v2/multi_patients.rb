@@ -9,7 +9,7 @@ class ApiService < Sinatra::Base
       when 'Goal'
         @responses = []
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Goal',['goals'])
+          response = get_response(patient_id,'Goal',{ccd_component: ['goals']})
           @responses << response if response
         end
 
@@ -18,7 +18,7 @@ class ApiService < Sinatra::Base
       when 'Immunization'
         @responses = []
         @patient_ids.each do |patient_id|
-           response = get_response(patient_id,'Immunization',nil,params[:date],params[:status])
+           response = get_response(patient_id,'Immunization',{date: params[:date],status: params[:status]})
            @responses << response[:resources]
         end
         status HTTP_OK
@@ -31,6 +31,14 @@ class ApiService < Sinatra::Base
         end
         status HTTP_OK
         jbuilder :multipatient_list_conditions
+      when 'Careplan'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Careplan',{ccd_component: ['plan_of_treatment'], summary: params[:summary]})
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_care_plans
       else
         status HTTP_OK
         jbuilder :patientlist

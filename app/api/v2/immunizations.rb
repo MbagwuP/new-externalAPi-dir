@@ -16,7 +16,7 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/immunizations' do
-    response = get_response(params[:patient_id],'Immunization',nil,params[:date],params[:status])
+    response = get_response(params[:patient_id],'Immunization',{date: params[:date],status: params[:status]})
     
     @immunizations = response[:resources]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
