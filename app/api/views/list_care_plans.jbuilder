@@ -15,7 +15,7 @@ json.carePlanEntries @plan_of_treatment.entries do |carePlan|
     json.account_number patient.external_id
     json.mrn patient.chart_number
     json.patient_name contact.first_name + " " + contact.middle_name + " " + contact.last_name
-    json.identifier "#{patient.external_id}$#{position_of_care_plan}"
+    json.identifier "#{patient.external_id}-CarePlan-#{position_of_care_plan}"
     json.text carePlan.title
     json.text_status "generated"
     json.status carePlan.status
