@@ -18,6 +18,11 @@ class ApiService < Sinatra::Base
     if params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory'
       @lab_results = resp['lab_request_test_results']
       @observation_type = ObservationType::LAB_REQUEST
+
+      if params[:summary] == "count"
+        @count_summary =  @lab_results.ObservationEntries.length
+      end
+
       status HTTP_OK
       jbuilder :list_lab_results
     elsif params[:code] == ObservationCode::SMOKING_STATUS
@@ -31,6 +36,11 @@ class ApiService < Sinatra::Base
       @business_entity = resp['business_entity']['business_entity']
       @provider = resp['provider']
       @contact = resp['contact']
+
+      if params[:summary] == "count"
+        @count_summary =  @social_history.entries.length
+      end
+
       status HTTP_OK
       jbuilder :list_observations_smoking_status
     else
@@ -41,6 +51,11 @@ class ApiService < Sinatra::Base
       @observation_entries << @blood_pressure_observation if @blood_pressure_observation.present?
       @observation_entries << @pulse_oximetry_observation if @pulse_oximetry_observation.present?
       @observation_type = ObservationType::VITAL_SIGNS
+
+      if params[:summary] == "count"
+        @count_summary =  @observation_entries.entries.length
+      end
+
       status HTTP_OK
       jbuilder :list_observations
     end

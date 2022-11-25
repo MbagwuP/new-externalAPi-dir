@@ -11,6 +11,11 @@ class ApiService < Sinatra::Base
     @provider = response[:provider]
     @contact = response[:contact]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+
+    if params[:summary] == "count"
+      @count_summary =  @goal.entries.length
+    end
+
     status HTTP_OK
     jbuilder :list_goals
   end
