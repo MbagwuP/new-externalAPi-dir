@@ -33,6 +33,11 @@ class ApiService < Sinatra::Base
     @category = params[:category] || nil
     @date = params[:date] || nil
     @type = params[:type] || nil
+
+    if params[:_summary] == "count"
+      @count_summary =  @documents.entries.length
+    end
+
     status HTTP_OK
     jbuilder :list_document_reference
   end

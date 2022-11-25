@@ -31,6 +31,11 @@ class ApiService < Sinatra::Base
 
     @conditions = resp['problems']
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
+
+    if params[:_summary] == "count"
+      @count_summary =  @conditions.entries.length
+    end
+
     status HTTP_OK
     jbuilder :list_conditions
   end

@@ -34,6 +34,10 @@ class ApiService < Sinatra::Base
     @procedures = resp['procedures']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
+    if params[:_summary] == "count"
+      @count_summary =  @procedures.entries.length
+    end
+
     status HTTP_OK
     jbuilder :list_procedures
   end

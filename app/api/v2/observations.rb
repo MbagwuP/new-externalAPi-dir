@@ -19,7 +19,7 @@ class ApiService < Sinatra::Base
       @lab_results = resp['lab_request_test_results']
       @observation_type = ObservationType::LAB_REQUEST
 
-      if params[:summary] == "count"
+      if params[:_summary] == "count"
         @count_summary =  @lab_results.ObservationEntries.length
       end
 
@@ -37,7 +37,7 @@ class ApiService < Sinatra::Base
       @provider = resp['provider']
       @contact = resp['contact']
 
-      if params[:summary] == "count"
+      if params[:_summary] == "count"
         @count_summary =  @social_history.entries.length
       end
 
@@ -52,7 +52,7 @@ class ApiService < Sinatra::Base
       @observation_entries << @pulse_oximetry_observation if @pulse_oximetry_observation.present?
       @observation_type = ObservationType::VITAL_SIGNS
 
-      if params[:summary] == "count"
+      if params[:_summary] == "count"
         @count_summary =  @observation_entries.entries.length
       end
 

@@ -384,7 +384,7 @@ class ApiService < Sinatra::Base
     @patients = resp['patients']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
-    if params[:summary] == "count"
+    if params[:_summary] == "count"
       @count_summary =  @patients.entries.length
     end
 

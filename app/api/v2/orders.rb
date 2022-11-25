@@ -43,6 +43,10 @@ class ApiService < Sinatra::Base
       @include_status_target = []
     end
 
+    if params[:_summary] == "count"
+      @count_summary =  @medications.entries.length
+    end
+
     status HTTP_OK
     jbuilder :list_medication_orders
   end

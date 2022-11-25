@@ -23,7 +23,7 @@ class ApiService < Sinatra::Base
     @plan_of_treatment = PlanOfTreatmentSection.new(plan_of_treatment_section).entries[splited_params_ids[1].to_i-1]
     @patient = resp['patient']['patient']
 
-    if params[:summary] == "count"
+    if params[:_summary] == "count"
       @count_summary =  @plan_of_treatment.entries.length
     end
     @contact = resp['contact']
@@ -59,7 +59,7 @@ class ApiService < Sinatra::Base
     @patient = resp['patient']['patient']
     @business_entity = resp['business_entity']['business_entity']
 
-    if params[:summary] == "count"
+    if params[:_summary] == "count"
       @count_summary =  @plan_of_treatment.entries.length
     end
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false

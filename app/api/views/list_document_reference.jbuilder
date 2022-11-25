@@ -1,3 +1,4 @@
+json.resource_count @count_summary unless @count_summary.nil?
 json.documentReferenceEntries @documents do |doc|
   doc = OpenStruct.new(doc)
   json.documentReference do
