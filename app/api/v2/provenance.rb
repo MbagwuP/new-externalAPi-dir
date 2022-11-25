@@ -2,7 +2,7 @@ class ApiService < Sinatra::Base
 
     get '/v2/provenance/:id' do
       resourceid = params[:id]
-      resource, id = resourceid.split(':')
+      resource, id = resourceid.split('-provenance-')
       case resource
       when "Condition"
         base_path = "assertions/#{id}.json"

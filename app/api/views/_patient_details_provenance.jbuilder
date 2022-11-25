@@ -1,6 +1,6 @@
 json.provenance do
 
-	json.identifier "patient:#{patient.external_id}"
+	json.identifier "patient-provenance-#{patient.external_id}"
 	json.text do
 		json.status 'generated'
 		json.div ''
