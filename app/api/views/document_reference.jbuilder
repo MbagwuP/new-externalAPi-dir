@@ -1,3 +1,5 @@
+doc = OpenStruct.new @document
+
   json.documentReference do
     json.identifier doc.id
     json.text doc.title
@@ -37,6 +39,11 @@
         json.end nil
       end
     end
+    json.custodian do
+        json.identifier nil
+        json.name nil
+    end
+
 
     
     json.author do

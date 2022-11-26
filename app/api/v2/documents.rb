@@ -9,7 +9,6 @@ class ApiService < Sinatra::Base
       params: { id: doc_id },
       rescue_string: "Document reference "
     )
-    debugger
     @document = resp['document']
   
     status HTTP_OK
@@ -37,7 +36,6 @@ class ApiService < Sinatra::Base
     if params[:_summary] == "count"
       @count_summary =  @documents.entries.length
     end
-
     status HTTP_OK
     jbuilder :list_document_reference
   end

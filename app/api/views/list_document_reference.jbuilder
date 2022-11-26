@@ -21,6 +21,10 @@ json.documentReferenceEntries @documents do |doc|
       end
       json.text nil
     end
+    json.custodian do
+      json.identifier nil
+      json.name nil
+    end
 
     json.category do
       json.coding do
