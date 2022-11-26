@@ -9,7 +9,7 @@ class ApiService < Sinatra::Base
       when 'Goal'
         @responses = []
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Goal',{ccd_component: ['goals']})
+          response = get_response(patient_id,'Goal',{ccd_component: ['goals'], summary: params[:_summary]})
           @responses << response if response
         end
 
@@ -17,33 +17,87 @@ class ApiService < Sinatra::Base
         jbuilder :multipatient_list_goals
       when 'Immunization'
         @responses = []
+        options = {
+            date: params[:date],
+            status: params[:status],
+            summary: params[:_summary]
+        }
         @patient_ids.each do |patient_id|
-           response = get_response(patient_id,'Immunization',{date: params[:date],status: params[:status]})
-           @responses << response[:resources]
+           response = get_response(patient_id,'Immunization',options)
+           @responses << response
         end
         status HTTP_OK
         jbuilder :multipatient_list_immunizations
       when 'Condition'
         @responses = []
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Condition')
-          @responses << response[:resources]
+          response = get_response(patient_id,'Condition',{summary: params[:_summary]})
+          @responses << response
         end
         status HTTP_OK
         jbuilder :multipatient_list_conditions
       when 'Careplan'
         @responses = []
+        options = {
+            ccd_component: ['plan_of_treatment'],
+            summary: params[:_summary]
+        }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Careplan',{ccd_component: ['plan_of_treatment'], summary: params[:summary]})
+          response = get_response(patient_id,'Careplan',options)
           @responses << response
         end
         status HTTP_OK
         jbuilder :multipatient_list_care_plans
+      when 'Careteam'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Careteam', {status: params[:status], summary: params[:_summary]})
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_care_team
+      when 'Allergyintolerances'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Allergyintolerances', {status: params[:status], summary: params[:_summary]})
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_allergy_intolerance
+      when 'Documentreference'
+        @responses = []
+        options = {
+            category: params[:category],
+            summary: params[:_summary],
+            date: params[:date]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Documentreference',options)
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_document_reference
+      when 'Patient'
+        @responses = []
+        options = {
+            name: params[:name],
+            dob: params[:birthdate],
+            gender: params[:gender],
+            mrn: params[:mrn],
+            summary: params[:_summary]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Patient',options)
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_patients
+
       when 'Observation'
         @responses = []
         options = {
             ccd_component: ['social_history'],
-            summary: params[:summary],
+            summary: params[:_summary],
             code: params[:code],
             category: params[:category]
         }

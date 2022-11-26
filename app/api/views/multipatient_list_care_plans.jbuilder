@@ -2,7 +2,7 @@ json.carePlanEntriesList do
   json.array! @responses do |response|
     position_of_care_plan=0
 
-    json.resource_count response[:count_summary]
+    json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.carePlanEntries response[:resources].entries do |carePlan|
       patient = OpenStruct.new(response[:patient])
       provider = OpenStruct.new(response[:provider])

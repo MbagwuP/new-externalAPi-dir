@@ -12,6 +12,10 @@ class ApiService < Sinatra::Base
     params[:date] = options[:date] if options[:date].present?
     params[:status] = options[:status] if options[:status].present?
     params[:code] = get_observations_code(options[:code]) if options[:code].present?
+    params[:name] = options[:name] if options[:name].present?
+    params[:dob] = options[:dob] if options[:dob].present?
+    params[:gender] = options[:gender] if options[:gender].present?
+    params[:mrn] =  options[:mrn] if options[:mrn].present?
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
@@ -36,6 +40,9 @@ class ApiService < Sinatra::Base
 	    result_hash[:provider] = provider
 	    result_hash[:contact] = contact
 	    result_hash[:business_entity] = business_entity
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
     when 'Smoking Status'
     	patient_summary = resp['patient_summary']
     	patient_summary = JSON.parse(patient_summary) if patient_summary
@@ -50,11 +57,25 @@ class ApiService < Sinatra::Base
 	    result_hash[:provider] = provider
 	    result_hash[:contact] = contact
 	    result_hash[:business_entity] = business_entity
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
 	  when 'Immunization'
 	   	immunizations = resp['immunizations']
 	   	result_hash[:resources] = immunizations
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
 		when 'Condition'
 			result_hash[:resources] = resp['problems']
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
+    when 'Patient'
+      result_hash[:resources] = resp['patients']
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
 		when 'Careplan'
       patient_summary = resp['patient_summary']
       patient_summary = JSON.parse(patient_summary) if patient_summary
@@ -68,6 +89,24 @@ class ApiService < Sinatra::Base
 
       if options[:summary] == "count"
         result_hash[:count_summary] = resources.entries.length
+      end
+    when 'Careteam'
+      result_hash[:resources] = resp['care_team_members']
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].length
+      end
+    when 'Documentreference'
+      result_hash[:resources] = resp['documents']
+      result_hash[:category] = options[:category] || nil
+      result_hash[:date] = options[:date] || nil
+      result_hash[:type] = type || nil
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].length
+      end
+    when 'Allergyintolerances'
+      result_hash[:resources] = resp['allergies']
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Observation'
 
@@ -125,6 +164,14 @@ class ApiService < Sinatra::Base
 			"patients/#{patient_id}/problems.json"
 		when "Careplan"
 			"patient_summary/generate_json_by_patient_id_and_component.json"
+    when "Careteam"
+      "businesses/#{current_business_entity}/patients/#{patient_id}/care_team_members.json"
+    when 'Allergyintolerances'
+      "patient_allergies/list_by_patient.json"
+    when 'Patient'
+      "patients/search/v2.json"
+    when 'Documentreference'
+      "patients/#{patient_id}/documents/list_by_patient_id.json"
     when "Observation"
       get_observations_path(opts[:code])
 		else

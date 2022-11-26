@@ -5,6 +5,7 @@ json.conditionEntriesList do
     business_entity = OpenStruct.new(first_condition.business_entity)
 
     json.conditionEntries conditions do |condition|
+      json.resource_count condition[:count_summary] unless condition[:count_summary].nil?
       json.condition do
         json.partial! :condition, condition: OpenStruct.new(condition), patient: patient, account_number: patient.external_id
       end

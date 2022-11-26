@@ -2,6 +2,7 @@ json.immunizationEntriesList do
   json.array! @responses  do |immunizations|
     json.immunizationEntries immunizations do |immunization|
       immunizationItem = OpenStruct.new(immunization)
+      json.resource_count immunization[:count_summary] unless immunization[:count_summary].nil?
       json.partial! :immunization, immunization: immunizationItem,
                     patient: OpenStruct.new(immunizationItem.patient),
                     business_entity: OpenStruct.new(immunizationItem.business_entity),
