@@ -109,6 +109,29 @@ class ApiService < Sinatra::Base
         @business_entity = OpenStruct.new(@resource.business_entity)
         @provider = OpenStruct.new(@resource.provider)
         @obj = resource
+      when "CarePlan"
+        base_path = "patient_summary/generate_json_by_patient_id_and_component.json"
+        params =  { patient_id: id, ccd_components: ['plan_of_treatment'] }
+        resp = call_resource(base_path, resource, params)
+        patient_summary = resp['patient_summary']
+        patient_summary = JSON.parse(patient_summary) if patient_summary
+        plan_of_treatment_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
+        @resource = OpenStruct.new PlanOfTreatmentSection.new(plan_of_treatment_section).entries[1]
+        @patient = OpenStruct.new resp['patient']['patient']
+        @business_entity = OpenStruct.new resp['business_entity']['business_entity']
+        @provider = OpenStruct.new resp['provider']
+        @obj = resource 
+      when "Medication"
+        base_path = "businesses/#{current_business_entity}/medications/find_by_id.json"
+        params = { id: id }
+        resp = call_resource(base_path, resource, params)
+        @resource = OpenStruct.new resp['medications'].first
+        @patient = OpenStruct.new(@resource.patient)
+        @provider = OpenStruct.new(@resource.provider)
+        @business_entity = OpenStruct.new(@resource.business_entity)
+        @obj = resource 
+
+
       end
 
       status HTTP_OK
