@@ -130,7 +130,15 @@ class ApiService < Sinatra::Base
         @provider = OpenStruct.new(@resource.provider)
         @business_entity = OpenStruct.new(@resource.business_entity)
         @obj = resource 
-
+      when "Document"
+        base_path = "documents/#{id}.json"
+        params = { id: id }
+        resp = call_resource(base_path, resource, params)
+        @resource = OpenStruct.new resp['document']
+        @business_entity = OpenStruct.new resp["document"]["business_entity"]
+        @patient = OpenStruct.new resp["document"]["patient"]
+        @provider = OpenStruct.new resp["document"]["provider"]
+        @obj = resource
 
       end
 
