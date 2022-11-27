@@ -6,6 +6,7 @@ class ApiService < Sinatra::Base
 	#ccd_component - For patient summary request(Goals and smoking status)
 	def get_response(patient_id,type,options={})
 		base_path = get_base_path(type,patient_id,{code: options[:code]})
+
 		params = {}
     params[:patient_id] = patient_id
     params[:ccd_components] = options[:ccd_component] if options[:ccd_component].present?
@@ -16,6 +17,7 @@ class ApiService < Sinatra::Base
     params[:dob] = options[:dob] if options[:dob].present?
     params[:gender] = options[:gender] if options[:gender].present?
     params[:mrn] =  options[:mrn] if options[:mrn].present?
+    params[:intent] = options[:intent] if options[:intent].present?
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
@@ -95,11 +97,51 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count"
         result_hash[:count_summary] = result_hash[:resources].length
       end
+    when 'Device'
+      result_hash[:resources] = resp.map { |e| e['implantable_device'] }
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].length
+      end
+    when 'Procedure'
+      result_hash[:resources] = resp['procedures']
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
+      when 'Medication'
+      result_hash[:resources] = resp['medications']
+      if options[:intent]
+        result_hash[:include_intent_target] = options[:intent].split(",") if options[:intent].include? ","
+        result_hash[:include_intent_target] = [options[:intent]]  unless options[:intent].include? ","
+      else
+        result_hash[:include_intent_target] = []
+      end
+
+      if options[:status]
+        result_hash[:include_status_target] = options[:status].split(",") if options[:status].include? ","
+        result_hash[:include_status_target] = [options[:status]] unless options[:status].include? ","
+      else
+        result_hash[:include_status_target] = []
+      end
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
     when 'Documentreference'
       result_hash[:resources] = resp['documents']
       result_hash[:category] = options[:category] || nil
       result_hash[:date] = options[:date] || nil
       result_hash[:type] = type || nil
+      if options[:summary] == "count"
+        result_hash[:count_summary] = result_hash[:resources].length
+      end
+    when 'Diagnosticreport'
+      patient_summary = resp['patient_summary']
+      patient_summary = JSON.parse(patient_summary) if patient_summary
+
+      diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
+
+      result_hash[:resources] = ResultSection.new(diagnostic_reports_section)
+      result_hash[:patient] = resp['patient']['patient']
+      result_hash[:business_entity] = resp['business_entity']['business_entity']
       if options[:summary] == "count"
         result_hash[:count_summary] = result_hash[:resources].length
       end
@@ -172,6 +214,14 @@ class ApiService < Sinatra::Base
       "patients/search/v2.json"
     when 'Documentreference'
       "patients/#{patient_id}/documents/list_by_patient_id.json"
+    when 'Medication'
+      "patients/#{patient_id}/medications_list.json"
+    when 'Procedure'
+      "procedure_tests/list_by_patient.json"
+    when 'Diagnosticreport'
+      "patient_summary/generate_json_by_patient_id_and_component.json"
+    when 'Device'
+      "implantable_devices/list_by_patient.json"
     when "Observation"
       get_observations_path(opts[:code])
 		else

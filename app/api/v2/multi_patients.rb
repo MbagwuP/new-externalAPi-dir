@@ -64,6 +64,37 @@ class ApiService < Sinatra::Base
         end
         status HTTP_OK
         jbuilder :multipatient_list_allergy_intolerance
+      when 'Procedure'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Procedure', {summary: params[:_summary]})
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_procedures
+      when 'Device'
+        @responses = []
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Device', {summary: params[:_summary]})
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_medical_devices
+
+      when 'Medication'
+        @responses = []
+        options = {
+            status: params[:status],
+            summary: params[:_summary],
+            intent: params[:intent]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Medication',options)
+          @responses << response
+        end
+
+        status HTTP_OK
+        jbuilder :multipatient_list_medication_orders
       when 'Documentreference'
         @responses = []
         options = {
@@ -77,6 +108,18 @@ class ApiService < Sinatra::Base
         end
         status HTTP_OK
         jbuilder :multipatient_list_document_reference
+      when 'Diagnosticreport'
+        @responses = []
+        options = {
+            summary: params[:_summary],
+            ccd_components: ['labresults']
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Diagnosticreport',options)
+          @responses << response
+        end
+        status HTTP_OK
+        jbuilder :multipatient_list_diagnostic_reports
       when 'Patient'
         @responses = []
         options = {
