@@ -9,19 +9,23 @@ class ApiService < Sinatra::Base
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
-      params: { patient_id: patient_id, ccd_components: ['labresults'] },
+      params: { patient_id: patient_id, ccd_components: ['labresults'], code: params[:code], category: params[:category],date: params[:date]},
       rescue_string: "Diagnostic report "
     )
-
+    @include_code_target = params[:code] || nil
+    @include_category_target = params[:category] || nil
+    @include_date_target = params[:date] || nil
     patient_summary = resp['patient_summary']
-    patient_summary = JSON.parse(patient_summary) if patient_summary
 
+    patient_summary = JSON.parse(patient_summary) if patient_summary
     diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
     @diagnostic_report = ResultSection.new(diagnostic_reports_section)
     @patient = resp['patient']['patient']
     @business_entity = resp['business_entity']['business_entity']
-
+    @encounter = resp['encounter']['encounter']
+    @provider = resp['provider']['provider']
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     status HTTP_OK
     jbuilder :list_diagnostic_reports
   end
