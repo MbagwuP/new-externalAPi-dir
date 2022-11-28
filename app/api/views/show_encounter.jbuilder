@@ -58,13 +58,21 @@ json.encounter do
   end
 
   json.healthcare_entity do
-		json.partial! :healthcare_entity, healthcare_entity: business_entity
+    json.partial! :healthcare_entity, healthcare_entity: business_entity
 	end
 
   json.location do
     json.id location.id
     json.name location.name
     json.status location.status
+  end
+
+  json.hospitalization
+    json.discharge_disposition
+      json.code "oth"
+      json.code_system "discharge-disposition"
+      json.code_display "Other"
+    end
   end
 
 end
