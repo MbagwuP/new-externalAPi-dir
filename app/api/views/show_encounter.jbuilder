@@ -26,8 +26,23 @@ json.encounter do
   json.type_code_display nature_of_visit.name
 
   json.participant participants do |participant|
-    json.partial! :provider, provider: participant
-    json.participant_type participant.participant_type
+    # json.partial! :provider, provider: participant
+    # json.participant_type participant.participant_type
+
+    json.type do
+      json.code 
+      json.code_system 
+      json.code_display participant.participant_type
+    end
+
+    json.period
+      json.start
+      json.end
+    end
+    
+    json.individual
+      json.reference
+    end
   end
 
   json.service_type_code
@@ -36,8 +51,8 @@ json.encounter do
   json.priority_code ""
   json.priority_code_system ""
   json.priority_code_display ""
-  json.period_start encounter.start_date
-  json.period_end encounter.end_date
+  json.period_start encounter.date_of_service
+  json.period_end encounter.date_end
   json.reason_code ""
   json.reason_code_system ""
   json.reason_code_display ""
