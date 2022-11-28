@@ -35,12 +35,12 @@ json.encounter do
       json.code_display participant.participant_type
     end
 
-    json.period
+    json.period do
       json.start
       json.end
     end
     
-    json.individual
+    json.individual do
       json.reference
     end
   end
