@@ -1,10 +1,10 @@
 class PulseOximetryObservation
   attr_accessor :oxygen_saturation, :inhaled_oxygen_concentration, :id, :code, :unit, :patient, :effective_start_date, :encounter, :business_entity, :provider, :code_display, :code_display_oximetry, :created_at
 
-  def initialize(observations, seperator="-")
+  def initialize(observations)
   	@oxygen_saturation = OpenStruct.new(observations.select{|a| a['code'] == ObservationCode::OXYGEN_SATURATION}.first)
   	@inhaled_oxygen_concentration = OpenStruct.new(observations.select{|a| a['code'] == ObservationCode::INHALED_OXYGEN_CONCENTRATION}.first)
-    @id = "#{@oxygen_saturation.id}-#{@inhaled_oxygen_concentration.id}#{seperator}#{ObservationType::PULSE_OXIMETRY}"
+    @id = "#{@oxygen_saturation.id}-#{@inhaled_oxygen_concentration.id}-#{ObservationType::PULSE_OXIMETRY}"
     @code = ObservationCode::PULSE_OXIMETRY
     @unit = "%"
     @patient = OpenStruct.new(oxygen_saturation.patient)
