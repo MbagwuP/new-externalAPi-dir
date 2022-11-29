@@ -1,10 +1,11 @@
 json.resource_count @count_summary unless @count_summary.nil?
 json.documentReferenceEntries @documents do |doc|
   doc = OpenStruct.new(doc)
+  patient = OpenStruct.new(doc.patient)
   json.documentReference do
     json.identifier doc.id
     json.text doc.title
-    json.status doc.full_status
+    json.status doc.full_status == "A" ? "Current" : "Superseded"
     json.patient_name 
     json.date @date || doc.created_at
 
@@ -22,8 +23,9 @@ json.documentReferenceEntries @documents do |doc|
       json.text nil
     end
     json.custodian do
-      json.identifier nil
-      json.name nil
+      json.identifier patient.business_entity_id
+      json.name 'Organization'
+
     end
 
     json.category do
@@ -37,11 +39,6 @@ json.documentReferenceEntries @documents do |doc|
       json.text nil
     end
     
-    json.author do
-      json.identifier doc.created_by
-      json.name doc.creator_name
-    end
-
 
     json.context do
       json.encounter do
@@ -56,8 +53,10 @@ json.documentReferenceEntries @documents do |doc|
 
     
     json.author do
-      json.identifier doc.created_by
-      json.name doc.creator_name
+      json.array! [:once] do
+        json.identifier doc.created_by
+        json.name doc.creator_name
+      end
     end
 
     json.content do
@@ -73,7 +72,10 @@ json.documentReferenceEntries @documents do |doc|
         end
       end
     end
-    json.partial! :patient, patient: OpenStruct.new(doc.patient)
+    json.account_number patient.external_id
+    json.mrn patient.chart_number
+    json.patient_name patient.full_name
+    json.external_id patient.external_id
     if @is_provenance_target_present
       json.partial! :_provenance, patient: OpenStruct.new(doc.patient), record: doc, 
             provider: OpenStruct.new(doc.provider), business_entity: OpenStruct.new(doc.business_entity), obj: 'Document'

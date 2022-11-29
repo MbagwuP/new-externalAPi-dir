@@ -1,4 +1,6 @@
 doc = OpenStruct.new @document
+patient = OpenStruct.new(doc.patient)
+
 
   json.documentReference do
     json.identifier doc.id
@@ -40,15 +42,17 @@ doc = OpenStruct.new @document
       end
     end
     json.custodian do
-        json.identifier nil
-        json.name nil
+		  json.identifier patient.business_entity_id
+		  json.name 'Organization'
     end
 
 
     
     json.author do
-      json.identifier doc.created_by
-      json.name doc.creator_name
+      json.array! [:once] do
+        json.identifier doc.created_by
+        json.name doc.creator_name
+      end
     end
 
     json.content do
@@ -64,8 +68,8 @@ doc = OpenStruct.new @document
         end
       end
     end
-    
-    json.patient do
-      json.partial! :patient, patient: OpenStruct.new(doc.patient)
-    end
-  end
+    json.account_number patient.external_id
+    json.mrn patient.chart_number
+    json.patient_name patient.full_name
+    json.external_id patient.external_id
+end
