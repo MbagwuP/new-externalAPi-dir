@@ -42,7 +42,7 @@ class ApiService < Sinatra::Base
 	    result_hash[:provider] = provider
 	    result_hash[:contact] = contact
 	    result_hash[:business_entity] = business_entity
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
     when 'Smoking Status'
@@ -59,23 +59,23 @@ class ApiService < Sinatra::Base
 	    result_hash[:provider] = provider
 	    result_hash[:contact] = contact
 	    result_hash[:business_entity] = business_entity
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
 	  when 'Immunization'
 	   	immunizations = resp['immunizations']
 	   	result_hash[:resources] = immunizations
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
 		when 'Condition'
 			result_hash[:resources] = resp['problems']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
     when 'Patient'
       result_hash[:resources] = resp['patients']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
 		when 'Careplan'
@@ -89,25 +89,25 @@ class ApiService < Sinatra::Base
       result_hash[:contact] = resp['contact']
       result_hash[:business_entity] = resp['business_entity']['business_entity']
 
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = resources.entries.length
       end
     when 'Careteam'
       result_hash[:resources] = resp['care_team_members']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Device'
       result_hash[:resources] = resp.map { |e| e['implantable_device'] }
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Procedure'
       result_hash[:resources] = resp['procedures']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
-      when 'Medication'
+    when 'Medication'
       result_hash[:resources] = resp['medications']
       if options[:intent]
         result_hash[:include_intent_target] = options[:intent].split(",") if options[:intent].include? ","
@@ -122,7 +122,7 @@ class ApiService < Sinatra::Base
       else
         result_hash[:include_status_target] = []
       end
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
     when 'Documentreference'
@@ -130,7 +130,7 @@ class ApiService < Sinatra::Base
       result_hash[:category] = options[:category] || nil
       result_hash[:date] = options[:date] || nil
       result_hash[:type] = type || nil
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Diagnosticreport'
@@ -142,12 +142,12 @@ class ApiService < Sinatra::Base
       result_hash[:resources] = ResultSection.new(diagnostic_reports_section)
       result_hash[:patient] = resp['patient']['patient']
       result_hash[:business_entity] = resp['business_entity']['business_entity']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Allergyintolerances'
       result_hash[:resources] = resp['allergies']
-      if options[:summary] == "count"
+      if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
     when 'Observation'
@@ -155,7 +155,7 @@ class ApiService < Sinatra::Base
       if options[:code] == ObservationCode::LABORATORY || options[:category] == 'laboratory'
         result_hash[:resources] = resp['lab_request_test_results']
 
-        if options[:summary] == "count"
+        if options[:summary] == "count" || options[:resource_counts] == "true"
           result_hash[:count_summary] =  result_hash[:resources].entries.length
         end
       elsif options[:code] == ObservationCode::SMOKING_STATUS
@@ -170,7 +170,7 @@ class ApiService < Sinatra::Base
         result_hash[:contact] = resp['contact']
         result_hash[:business_entity] = resp['business_entity']['business_entity']
 
-        if options[:summary] == "count"
+        if options[:summary] == "count" || options[:resource_counts] == "true"
           result_hash[:count_summary] =  result_hash[:resources].entries.length
         end
       else
@@ -184,7 +184,7 @@ class ApiService < Sinatra::Base
         result_hash[:resources] = @observation_entries
         result_hash[:blood_pressure_observation] = @blood_pressure_observation
         result_hash[:pulse_oximetry_observation] = @pulse_oximetry_observation
-        if options[:summary] == "count"
+        if options[:summary] == "count" || options[:resource_counts] == "true"
           result_hash[:count_summary] =  result_hash[:resources].entries.length
         end
       end
