@@ -7,7 +7,7 @@ json.documentReferenceEntries @documents do |doc|
     json.text doc.title
     json.status doc.full_status == "A" ? "Current" : "Superseded"
     json.patient_name 
-    json.date @date || doc.created_at
+    json.date doc.created_at
 
     json.description doc.description
 
@@ -43,10 +43,10 @@ json.documentReferenceEntries @documents do |doc|
     json.context do
       json.encounter do
         json.identifier nil
-        json.name nil
+        json.name "Encounter"
       end
       json.period do
-        json.start nil
+        json.start doc.created_at
         json.end nil
       end
     end
@@ -76,10 +76,9 @@ json.documentReferenceEntries @documents do |doc|
     json.mrn patient.chart_number
     json.patient_name patient.full_name
     json.external_id patient.external_id
-    if @is_provenance_target_present
-      json.partial! :_provenance, patient: OpenStruct.new(doc.patient), record: doc, 
-            provider: OpenStruct.new(doc.provider), business_entity: OpenStruct.new(doc.business_entity), obj: 'Document'
-    end
   end
+  
+      json.partial! :_provenance, patient: OpenStruct.new(doc.patient), record: doc, 
+            provider: OpenStruct.new(doc.provider), business_entity: OpenStruct.new(doc.business_entity), obj: 'Document' if @is_provenance_target_present
 end
 

@@ -34,10 +34,10 @@ patient = OpenStruct.new(doc.patient)
     json.context do
       json.encounter do
         json.identifier nil
-        json.name nil
+        json.name "Encounter"
       end
       json.period do
-        json.start nil
+        json.start doc.created_at
         json.end nil
       end
     end
