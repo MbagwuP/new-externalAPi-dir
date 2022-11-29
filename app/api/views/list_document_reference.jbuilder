@@ -15,15 +15,15 @@ json.documentReferenceEntries @documents do |doc|
       json.coding do
         json.array!([:once]) do
           json.code @type
-
-          json.code_system nil
-          json.code_display nil
+          json.code_system "loinc"
+          json.code_display "Laboratory report"
         end
       end
       json.text nil
     end
     json.custodian do
-      json.identifier patient.business_entity_id
+
+      json.identifier current_business_entity
       json.name 'Organization'
 
     end
@@ -32,8 +32,8 @@ json.documentReferenceEntries @documents do |doc|
       json.coding do
         json.array!([:once]) do
           json.code @category
-          json.code_system nil
-          json.code_display nil
+          json.code_system "http://hl7.org/fhir/us/core/CodeSystem/us-core-documentreference-category"
+          json.code_display "Clinical Note"
         end
       end
       json.text nil

@@ -5,16 +5,16 @@ patient = OpenStruct.new(doc.patient)
   json.documentReference do
     json.identifier doc.id
     json.text doc.title
-    json.status doc.full_status
+    json.status doc.full_status == "A" ? "Current" : "Superseded"
     json.date doc.created_at
     json.description doc.description
 
     json.type do
       json.coding do
         json.array!([:once]) do
-          json.code nil
-          json.code_system nil
-          json.code_display nil
+          json.code "11502-2"
+          json.code_system "loinc"
+          json.code_display "Laboratory report"
         end
       end
       json.text nil
@@ -42,7 +42,7 @@ patient = OpenStruct.new(doc.patient)
       end
     end
     json.custodian do
-		  json.identifier patient.business_entity_id
+		  json.identifier current_business_entity
 		  json.name 'Organization'
     end
 

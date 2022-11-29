@@ -29,9 +29,9 @@ class ApiService < Sinatra::Base
 
     @documents = resp['documents']
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
-    @category = params[:category] || nil
+    @category = params[:category] || "clinical-note"
     @date = params[:date] || nil
-    @type = params[:type] || nil
+    @type = params[:type] || "11502-2"
 
     if params[:_summary] == "count"
       @count_summary =  @documents.entries.length
