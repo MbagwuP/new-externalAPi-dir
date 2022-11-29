@@ -86,7 +86,7 @@ class ApiService < Sinatra::Base
         base_path = "vital_observations/list_by_observation_code.json"
         params = {observation_id: id}
         resp = call_resource(base_path, resource, params)
-        @resource = PulseOximetryObservation.new(resp['observations'])
+        @resource = PulseOximetryObservation.new(resp['observations'], "")
         @patient = @resource.patient
         @business_entity = @resource.business_entity
         @provider = @resource.provider
