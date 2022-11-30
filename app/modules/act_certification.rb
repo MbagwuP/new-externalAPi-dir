@@ -6,7 +6,7 @@ module ActCertification
       Patient: "multipatient_list_patients",
       Careplan: "multipatient_list_care_plans",
       Careteam: "multipatient_list_care_team",
-      Device: "multipatient_list_medical_devices",
+      # Device: "multipatient_list_medical_devices",
       Procedure: "multipatient_list_procedures",
       Medication: "multipatient_list_medication_orders",
       Documentreference: "multipatient_list_document_reference",
