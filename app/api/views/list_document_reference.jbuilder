@@ -42,7 +42,7 @@ json.documentReferenceEntries @documents do |doc|
 
     json.context do
       json.encounter do
-        json.identifier nil
+        json.identifier "5926694"
         json.name "Encounter"
       end
       json.period do
