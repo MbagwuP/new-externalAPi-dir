@@ -127,9 +127,9 @@ class ApiService < Sinatra::Base
       end
     when 'Documentreference'
       result_hash[:resources] = resp['documents']
-      result_hash[:category] = options[:category] || nil
+      result_hash[:category] = options[:category] || "clinical-note"
       result_hash[:date] = options[:date] || nil
-      result_hash[:type] = type || nil
+      result_hash[:type] = type || "11502-2"
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
@@ -140,6 +140,9 @@ class ApiService < Sinatra::Base
       diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
       result_hash[:resources] = ResultSection.new(diagnostic_reports_section)
+
+      result_hash[:encounter] = resp['encounter']['encounter']
+      result_hash[:provider] = resp['provider']['provider']
       result_hash[:patient] = resp['patient']['patient']
       result_hash[:business_entity] = resp['business_entity']['business_entity']
       if options[:summary] == "count" || options[:resource_counts] == "true"

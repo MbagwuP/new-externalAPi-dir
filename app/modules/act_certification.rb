@@ -9,13 +9,13 @@ module ActCertification
       Device: "multipatient_list_medical_devices",
       Procedure: "multipatient_list_procedures",
       Medication: "multipatient_list_medication_orders",
-      # Documentreference: "multipatient_list_document_reference",
+      Documentreference: "multipatient_list_document_reference",
       Allergyintolerances: "multipatient_list_allergy_intolerance",
       Observation: {
         "5778-6" => "multipatient_list_lab_results",
         "72166-2" => "multipatient_list_observations_smoking_status",
         "1" => "multipatient_list_observations"
-      }
-      # Diagnosticreport: "multipatient_list_diagnostic_reports",
+      },
+      Diagnosticreport: "multipatient_list_diagnostic_reports",
   }
 end

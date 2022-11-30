@@ -8,7 +8,11 @@ class ApiService < Sinatra::Base
     @total_counts = []
     if params[:_resource_counts] == "true"
       ActCertification::Types.keys.each do |key|
-        process_call(key,params,@patient_ids)
+        begin
+          process_call(key,params,@patient_ids)
+        ensure
+          next
+        end
       end
     else
       type = params[:_type]
