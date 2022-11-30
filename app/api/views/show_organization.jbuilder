@@ -5,7 +5,7 @@ phones = organization.phones
 primary_address = addresses.find {|address| address["is_primary"] == true}
 
 json.organization do |json|
-  json.identifier organization.id
+  json.identifier organization.guid
   json.npi organization.npi
   json.active organization.status
   json.clia " "
