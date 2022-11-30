@@ -23,14 +23,13 @@ class ApiService < Sinatra::Base
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
-      params: { patient_id: patient_id },
+      params: { patient_id: patient_id, date: params[:date] },
       rescue_string: "Document reference "
     )
 
     @documents = resp['documents']
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
     @category = params[:category] || "clinical-note"
-    @date = params[:date] || nil
     @type = params[:type] || "11502-2"
 
     if params[:_summary] == "count"
