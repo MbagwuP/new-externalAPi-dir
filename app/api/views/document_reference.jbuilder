@@ -58,7 +58,7 @@ patient = OpenStruct.new(doc.patient)
     json.content do
       json.array! [:once] do
         json.attachment do
-          json.content_type doc.document_format
+          json.content_type "image/tiff"
           json.data RestClient.get(doc.document_url).to_s
         end
         json.format do
