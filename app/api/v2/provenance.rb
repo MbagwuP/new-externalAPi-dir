@@ -97,8 +97,12 @@ class ApiService < Sinatra::Base
         @provider = @resource.provider
         @obj = resource
       when "Blood-pressure"
+        observation_id_with_enum = id.split("-")
+        type_code = observation_id_with_enum.last
+        observation_id_with_enum.pop()
+        observation_id_array = observation_id_with_enum
         base_path = "vital_observations/list_by_observation_code.json"
-        params = {observation_id: id}
+        params = {observation_id: observation_id_array}
         resp = call_resource(base_path, resource, params)
         @resource = BloodPressureObservation.new(resp['observations'])
         @patient = @resource.patient
