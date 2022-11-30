@@ -1,4 +1,4 @@
-json.deviceEntriesList do
+
   json.array! @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     first_medical_device = OpenStruct.new(response[:resources].first)
@@ -21,4 +21,4 @@ json.deviceEntriesList do
       end
     end
   end
-end
+

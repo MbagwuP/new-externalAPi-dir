@@ -1,4 +1,4 @@
-json.careTeamEntriesList do
+
   json.array! @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.careTeamEntries response[:resources].entries do |careTeam|
@@ -67,4 +67,4 @@ json.careTeamEntriesList do
       end
     end
   end
-end
+

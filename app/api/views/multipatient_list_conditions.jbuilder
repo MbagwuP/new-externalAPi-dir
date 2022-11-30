@@ -1,4 +1,4 @@
-json.conditionEntriesList do
+
   json.array! @responses do |conditions|
     first_condition = OpenStruct.new(conditions.first)
     patient = OpenStruct.new(first_condition.patient)
@@ -24,4 +24,3 @@ json.conditionEntriesList do
       json.partial! :business_entity, business_entity: business_entity
     end
   end
-end

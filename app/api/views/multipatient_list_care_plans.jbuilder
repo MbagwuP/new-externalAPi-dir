@@ -1,4 +1,4 @@
-json.carePlanEntriesList do
+
   json.array! @responses do |response|
     position_of_care_plan=0
 
@@ -64,4 +64,3 @@ json.carePlanEntriesList do
       end
     end
   end
-end

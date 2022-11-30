@@ -1,6 +1,5 @@
-json.allergyIntoleranceEntriesList do
-  json.array! @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
+json.array! @responses do |response|
+  json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.allergyIntoleranceEntries response[:resources].entries do |allergy|
       allergyItem = OpenStruct.new(allergy)
       json.partial! :allergy, allergy: allergyItem,
@@ -8,6 +7,5 @@ json.allergyIntoleranceEntriesList do
                     business_entity: OpenStruct.new(allergyItem.business_entity),
                     provider: OpenStruct.new(allergyItem.provider),
                     include_provenance_target: @include_provenance_target
-    end
   end
 end

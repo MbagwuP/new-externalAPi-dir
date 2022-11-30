@@ -14,6 +14,12 @@ class ApiService < Sinatra::Base
           next
         end
       end
+      counts = {
+          fhir_resource: 'Provenance ',
+          count: @all_resource_count
+      }
+      @all_resource_count = @all_resource_count * 2
+      @total_counts << counts
     else
       type = params[:_type]
       process_call(type,params,@patient_ids)
@@ -85,6 +91,24 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_immunizations
+      when 'Organization'
+        counts = {
+            fhir_resource: 'Organization',
+            count: 0
+        }
+        @total_counts << counts
+      when 'Location'
+        counts = {
+            fhir_resource: 'Location',
+            count: 0
+        }
+        @total_counts << counts
+      when 'Encounter'
+        counts = {
+            fhir_resource: 'Encounter',
+            count: 0
+        }
+        @total_counts << counts
       when 'Condition'
         @responses = []
         resource_counts = 0

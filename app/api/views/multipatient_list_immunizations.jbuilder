@@ -1,4 +1,4 @@
-json.immunizationEntriesList do
+
   json.array! @responses  do |immunizations|
     json.immunizationEntries immunizations do |immunization|
       immunizationItem = OpenStruct.new(immunization)
@@ -10,4 +10,4 @@ json.immunizationEntriesList do
                     include_provenance_target: @include_provenance_target
     end
   end
-end
+

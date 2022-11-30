@@ -1,4 +1,4 @@
-json.ObservationEntriesList do
+
   json.array! @responses  do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.ObservationEntries response[:resources].entries do |smoking_status|
@@ -12,4 +12,4 @@ json.ObservationEntriesList do
                     include_provenance_target: @include_provenance_target
     end
   end
-end
+

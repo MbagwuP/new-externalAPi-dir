@@ -1,4 +1,4 @@
-json.patientEntriesList do
+
   json.array! @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.patientEntries response[:resources].entries do |patient|
@@ -7,4 +7,4 @@ json.patientEntriesList do
                     include_provenance_target: @include_provenance_target
     end
   end
-end
+

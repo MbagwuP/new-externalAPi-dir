@@ -1,4 +1,4 @@
-json.documentReferenceEntriesList do
+
   json.array! @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.documentReferenceEntries response[:resources].entries do |doc|
@@ -85,4 +85,3 @@ json.documentReferenceEntriesList do
     end
   end
 
-end
