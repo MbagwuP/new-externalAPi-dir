@@ -4,7 +4,7 @@ encounter = OpenStruct.new(medication.encounter)
 business_entity = OpenStruct.new(medication.business_entity)
 patient_reported = medication.patient_reported
 
-if ((valid_intents.include? intent(patient_reported) || valid_intents.count == 0) || (valid_status.include? medication.status || valid_status.count == 0))
+if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1) && ((valid_status.include? medication.status )|| valid_status.count<1))
   dosage_instructions = [
     {
       text: medication.prescription_instructions,
