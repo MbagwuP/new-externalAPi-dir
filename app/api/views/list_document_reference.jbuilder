@@ -23,7 +23,7 @@ json.documentReferenceEntries @documents do |doc|
     end
     json.custodian do
 
-      json.identifier current_business_entity
+      json.identifier doc.business_entity["id"]
       json.name 'Organization'
 
     end

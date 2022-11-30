@@ -42,7 +42,7 @@ patient = OpenStruct.new(doc.patient)
       end
     end
     json.custodian do
-		  json.identifier current_business_entity
+		  json.identifier doc.business_entity["id"]
 		  json.name 'Organization'
     end
 

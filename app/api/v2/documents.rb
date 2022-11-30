@@ -16,18 +16,29 @@ class ApiService < Sinatra::Base
   end
 
   get '/v2/documents' do
-    patient_id = params[:patient_id]
-    validate_patient_id_param(patient_id)
-
-    base_path = "patients/#{patient_id}/documents/list_by_patient_id.json"
+    if params[:id]
+      base_path = "documents/#{params[:id]}.json"
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
-      params: { patient_id: patient_id, date: params[:date] },
+      params: { id: params[:id] },
       rescue_string: "Document reference "
     )
+    @documents = [resp['document']]
+    else
+      patient_id = params[:patient_id]
+      validate_patient_id_param(patient_id)
 
-    @documents = resp['documents']
+      base_path = "patients/#{patient_id}/documents/list_by_patient_id.json"
+
+      resp = evaluate_current_internal_request_header_and_execute_request(
+        base_path: base_path,
+        params: { patient_id: patient_id, date: params[:date] },
+        rescue_string: "Document reference "
+      )
+
+      @documents = resp['documents']
+    end
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
     @category = params[:category] || "clinical-note"
     @type = params[:type] || "11502-2"
