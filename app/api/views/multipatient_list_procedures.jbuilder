@@ -1,8 +1,6 @@
-
-  json.array! @responses do |response|
+json.procedureEntries @responses do |procedure|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
-    json.procedureEntries response[:resources] do |procedure|
-      json.partial! :procedure, procedure: OpenStruct.new(procedure)
-    end
-  end
+    json.partial! :procedure, procedure: OpenStruct.new(procedure)
+end
+
 
