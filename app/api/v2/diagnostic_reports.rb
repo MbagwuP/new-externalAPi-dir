@@ -22,6 +22,8 @@ class ApiService < Sinatra::Base
 
     @diagnostic_report = ResultSection.new(diagnostic_reports_section)
     @patient = resp['patient']['patient']
+    @lab_results = resp['lab_results'][0]['lab_request_test']
+
     @business_entity = resp['business_entity']['business_entity']
     @encounter = resp['encounter']['encounter']
     @provider = resp['provider']['provider']
