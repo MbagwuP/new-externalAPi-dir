@@ -14,7 +14,7 @@ class ApiService < Sinatra::Base
     )
 
     @encounter = resp['encounter']
-
+    
     status HTTP_OK
     jbuilder :show_encounter
   end
