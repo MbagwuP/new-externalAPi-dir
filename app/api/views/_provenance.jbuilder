@@ -16,7 +16,7 @@ json.provenance do
 		json.end nil
 	end
 
-	json.recorded_date record.created_at || record.start_date || record.onset_date
+	json.recorded_date record.created_at || record.start_date || record.onset_date || record.immunization_record_created_at || record.procedure_effective_from
 	json.location do
 		json.identifier nil
 		json.name nil

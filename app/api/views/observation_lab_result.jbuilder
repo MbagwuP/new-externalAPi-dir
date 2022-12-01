@@ -1,9 +1,9 @@
-
-json.observation do 
-	json.labResult do
-		json.labResult do
-			json.partial! :patient, patient: patient
-			json.identifier lab_result.id
+lab_result = OpenStruct.new @lab_result
+json.observation do
+    json.labResult do
+        json.lab_result do
+            json.partial! :patient, patient: @patient
+            json.identifier lab_result.id
 			json.text lab_result.lab_request_test_description
 			json.text_status 'generated'
 			json.result_status 'final'
@@ -33,20 +33,14 @@ json.observation do
 			end
 
 			json.provider do
-				json.partial! :provider_extra_light, provider: provider
+				json.partial! :provider_extra_light, provider: @provider
 			end
 
 			json.business_entity do
-				json.partial! :business_entity, business_entity: business_entity
+				json.partial! :business_entity, business_entity: @business_entity
 			end
-			if include_provenance_target
-      			json.partial! :_provenance, patient: patient, record: lab_result, 
-            		provider: provider, business_entity: business_entity, obj: 'Lab-Result'
-			end
-		end
-		if include_provenance_target
-  			json.partial! :_provenance, patient: patient, record: lab_result, 
-            	provider: provider, business_entity: business_entity, obj: 'labResult'
-  		end
-	end
+
+
+        end
+    end
 end

@@ -83,17 +83,26 @@ class ApiService < Sinatra::Base
         @provider = OpenStruct.new(@resource.provider)
         @obj = resource
       when "Pulse-Oximetry"
+        observation_id_with_enum = id.split("-")
+        type_code = observation_id_with_enum.last
+        observation_id_with_enum.pop()
+        observation_id_array = observation_id_with_enum
         base_path = "vital_observations/list_by_observation_code.json"
-        params = {observation_id: id}
+        params = {observation_id: observation_id_array}
         resp = call_resource(base_path, resource, params)
+
         @resource = PulseOximetryObservation.new(resp['observations'])
         @patient = @resource.patient
         @business_entity = @resource.business_entity
         @provider = @resource.provider
         @obj = resource
       when "Blood-pressure"
+        observation_id_with_enum = id.split("-")
+        type_code = observation_id_with_enum.last
+        observation_id_with_enum.pop()
+        observation_id_array = observation_id_with_enum
         base_path = "vital_observations/list_by_observation_code.json"
-        params = {observation_id: id}
+        params = {observation_id: observation_id_array}
         resp = call_resource(base_path, resource, params)
         @resource = BloodPressureObservation.new(resp['observations'])
         @patient = @resource.patient
@@ -138,6 +147,14 @@ class ApiService < Sinatra::Base
         @business_entity = OpenStruct.new resp["document"]["business_entity"]
         @patient = OpenStruct.new resp["document"]["patient"]
         @provider = OpenStruct.new resp["document"]["provider"]
+        @obj = resource
+      when "Encounter"
+        base_path = "encounters/details/#{encounter_id}.json"
+        resp = call_resource(base_path, resource)
+        @resource = OpenStruct.new resp['encounter']
+        @patient = OpenStruct.new(@resource.patient)
+        @business_entity = OpenStruct.new(@resource.business_entity)
+        @provider = OpenStruct.new(@resource.attending_provider) || OpenStruct.new(@resource.supervising_provider)
         @obj = resource
 
       end

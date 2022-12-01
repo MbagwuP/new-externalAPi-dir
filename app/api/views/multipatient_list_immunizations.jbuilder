@@ -1,6 +1,4 @@
-json.immunizationEntriesList do
-  json.array! @responses  do |immunizations|
-    json.immunizationEntries immunizations do |immunization|
+json.immunization @responses do |immunization|
       immunizationItem = OpenStruct.new(immunization)
       json.resource_count immunization[:count_summary] unless immunization[:count_summary].nil?
       json.partial! :immunization, immunization: immunizationItem,
@@ -8,6 +6,6 @@ json.immunizationEntriesList do
                     business_entity: OpenStruct.new(immunizationItem.business_entity),
                     provider: OpenStruct.new(immunizationItem.provider),
                     include_provenance_target: @include_provenance_target
-    end
+
   end
-end
+

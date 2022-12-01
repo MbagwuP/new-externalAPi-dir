@@ -2,8 +2,10 @@ class ApiService < Sinatra::Base
 
   get '/v2/medical_devices/:id' do
     medical_device_id = params[:id]
-    base_path = "implantable_devices/#{medical_device_id}/find_by_id.json"
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    @summary = params[:_summary] if params[:_summary].present?
 
+    base_path = "implantable_devices/#{medical_device_id}/find_by_id.json"
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
       params: {},
@@ -19,6 +21,7 @@ class ApiService < Sinatra::Base
   get '/v2/medical_devices' do
     patient_id = params[:patient_id]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    @summary = params[:_summary] if params[:_summary].present?
 
     validate_patient_id_param(patient_id)
 

@@ -1,7 +1,7 @@
-json.careTeamEntriesList do
-  json.array! @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
-    json.careTeamEntries response[:resources].entries do |careTeam|
+json.careTeam @responses do |careTeam|
+  # json.array! @responses do |response|
+  #   json.resource_count response[:count_summary] unless response[:count_summary].nil?
+  #   json.careTeamEntries response[:resources].entries do |careTeam|
 
       careTeam = OpenStruct.new(careTeam)
       patient = OpenStruct.new(careTeam.patient)
@@ -66,5 +66,5 @@ json.careTeamEntriesList do
                       obj: 'CareTeam'
       end
     end
-  end
-end
+  # end
+

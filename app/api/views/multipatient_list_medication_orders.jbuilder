@@ -1,4 +1,4 @@
-json.medicationsEntriesList do
+
   json.array! @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
     json.medications response[:resources].entries do |medication|
@@ -9,4 +9,4 @@ json.medicationsEntriesList do
                     provenance: @include_provenance_target
     end
   end
-end
+

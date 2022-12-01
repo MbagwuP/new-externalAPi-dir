@@ -11,10 +11,10 @@ json.diagnosticReport do
     json.account_number patient.external_id
 
     json.mrn patient.chart_number
-    json.patient_name patient.full_name
+    json.patient_name @lab_results["patient_first_name"] + " " + @lab_results["patient_last_name"]
+    json.identifier @lab_results["id"]
     json.external_id patient.external_id
-
-
+    json.text @lab_results["lab_request_test_description"]
     json.status "final"
     json.text_status 'generated'
     json.category_code category_code
@@ -22,21 +22,30 @@ json.diagnosticReport do
     json.category_code_display "Laboratory"
     json.category_code_text "Laboratory"
     json.code @diagnostic_report.code.code
+    json.code_text @lab_results["lab_request_test_description"]
+    json.code_display @lab_results["lab_request_test_description"]
+    json.lab_test_code_system @lab_results["lab_request_test_code"]
+    json.effective_period_start @lab_results["ordered_at"]
+    json.effective_period_end @lab_results["updated_at"]
     json.test_date test_date
-    # json.test @diagnostic_report
 
     json.labResult do
-      json.partial! :patient, patient: patient
-      json.identifier lab_result.id
-      json.text lab_result.text
+      json.account_number patient.external_id
+
+      json.mrn patient.chart_number
+      json.patient_name @lab_results["patient_first_name"] + " " + @lab_results["patient_last_name"]
+      json.identifier @lab_results["id"]
+      json.text  @lab_results["lab_request_test_description"]
       json.text_status 'generated'
       json.result_status 'final'
-      json.lab_test_code lab_result.lab_test_code
-      json.lab_test_code_system lab_result.lab_test_code_system
-      json.lab_test_code_display lab_result.text
-      json.lab_test_code_text lab_result.text
-      json.effective_period_start lab_result.measured_at
-      json.effective_period_end nil
+      json.lab_test_code @diagnostic_report.code.code
+      json.lab_test_code_system "http://hl7.org/fhir/DiagnosticReport-category"
+      json.lab_test_code_display @diagnostic_report.code.displayName
+      json.code_text @lab_results["lab_request_test_description"]
+      json.code_display @lab_results["lab_request_test_description"]
+      json.lab_test_code_system @lab_results["lab_request_test_code"]
+      json.effective_period_start @lab_results["ordered_at"]
+      json.effective_period_end @lab_results["updated_at"]
       json.result_value do
         json.value lab_result.measure_value
         json.value_unit lab_result.measure_unit
@@ -60,24 +69,9 @@ json.diagnosticReport do
       end
     end
 
-    json.lab_results @diagnostic_report.entries do |lab_result|
-      json.lab_test_code lab_result.code.code
-      json.lab_test_code_system lab_result.code.codeSystem
-      json.lab_test_code_display
-      json.lab_test_code_text lab_result.code.displayName
-
-
-      json.result_status lab_result.status
-      json.test_date lab_result.start_date
-      json.result_value do
-        json.value lab_result.measure_value
-        json.value_unit lab_result.measure_unit
-        json.value lab_result.measure_value
-        json.unit lab_result.measure_unit
-      end
-    end
     json.subject do
       json.reference "Patient/"+patient.external_id
+      json.display @lab_results["patient_first_name"] + " " + @lab_results["patient_last_name"]
     end
 
     json.encounter do
