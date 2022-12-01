@@ -34,7 +34,7 @@ class ApiService < Sinatra::Base
       @social_history = SocialHistorySection.new(social_history_section)
       @patient = resp['patient']['patient']
       @business_entity = resp['business_entity']['business_entity']
-      @provider = resp['provider']
+      @provider = resp['provider']['provider']
       @contact = resp['contact']
 
       if params[:_summary] == "count"
