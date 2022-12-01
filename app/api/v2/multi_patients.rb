@@ -1,6 +1,6 @@
 class ApiService < Sinatra::Base
 
-  get '/v2/Group/:id/$export' do
+  get '/v2/Group/:id/export' do
     @patients = group_patients(params[:id])
     @patient_ids = @patients.collect {|pat| pat["patient"]["external_id"] }
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
@@ -46,7 +46,6 @@ class ApiService < Sinatra::Base
 
   def process_call(type,params,patient_ids)
     @patient_ids = patient_ids
-
     case type.to_s
       when 'Goal'
         @responses = []
@@ -348,7 +347,6 @@ class ApiService < Sinatra::Base
         # status HTTP_OK
 
       else
-
     end
   end
 
