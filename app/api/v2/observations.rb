@@ -16,7 +16,10 @@ class ApiService < Sinatra::Base
 
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     if params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory'
-      @lab_results = resp['lab_request_test_results']
+      @lab_results =resp["lab_results"]
+      @patient = resp["patient"]["patient"]
+      @provider = resp["provider"]["provider"]
+      @business_entity = resp["business_entity"][0]["business_entity"]
       @observation_type = ObservationType::LAB_REQUEST
 
       if params[:_summary] == "count"
@@ -61,6 +64,21 @@ class ApiService < Sinatra::Base
     end
   end
 
+  get '/v2/observation/lab_result/:id' do
+    base_path = "labs/get_results_by_patient_and_code.json"
+    parameters = { id: params[:id] }
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: parameters,
+      rescue_string: "Observation"
+    )
+    @lab_result = resp["lab_results"]["lab_request_test"]
+    @patient = OpenStruct.new resp["patient"]["patient"]
+    @provider = OpenStruct.new resp["provider"]["provider"]
+    @business_entity = OpenStruct.new resp["business_entity"]["business_entity"]
+    status HTTP_OK
+    jbuilder :observation_lab_result
+  end
 
   # /v2/observations/{guid}
   # /v2/observations/{integer_id}
@@ -70,8 +88,6 @@ class ApiService < Sinatra::Base
     observation_id_with_enum.pop()
     observation_id_array = observation_id_with_enum
     case type_code.to_i
-    when ObservationType::LAB_REQUEST
-    #Smoking Status - patient id is used as observation id
     when ObservationType::SMOKING_STATUS
       patient_id = params[:observation_id].chop.chop
       base_path = "patient_summary/generate_json_by_patient_id_and_component.json"
