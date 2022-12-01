@@ -2,12 +2,15 @@
 json.observation do 
 	json.labResult do
 		json.labResult do
-			json.partial! :patient, patient: patient
+			json.account_number patient.external_id
+			json.mrn patient.chart_number
+			json.patient_name patient.full_name
+			json.external_id patient.external_id
 			json.identifier lab_result.id
 			json.text lab_result.lab_request_test_description
 			json.text_status 'generated'
 			json.result_status 'final'
-			json.lab_test_code lab_result.lab_request_test_code
+			json.lab_test_code code
 			json.lab_test_code_system lab_result.lab_test_code_system
 			json.lab_test_code_display lab_result.lab_request_test_description
 			json.lab_test_code_text lab_result.text
