@@ -82,6 +82,13 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+
+        @responses =  @responses.flatten.to_a
+        @res = []
+        @responses.each do |res|
+          @res << res[:resources]
+        end
+        @responses = @res.flatten.to_a
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Immunization',
@@ -162,6 +169,12 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @responses =  @responses.flatten.to_a
+        @res = []
+        @responses.each do |res|
+          @res << res[:resources]
+        end
+        @responses = @res.flatten.to_a
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Careteam',
@@ -183,6 +196,12 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @responses =  @responses.flatten.to_a
+        @res = []
+        @responses.each do |res|
+          @res << res[:resources]
+        end
+        @responses = @res.flatten.to_a
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Allergyintolerances',
