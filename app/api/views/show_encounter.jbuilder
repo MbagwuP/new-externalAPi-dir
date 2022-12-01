@@ -44,12 +44,12 @@ else
       end
 
       json.period do
-        json.start participant.effective_from #add to webservices
-        json.end participant.effective_to #add to webservices
+        json.start encounter.start_time #participant.effective_from #add to webservices
+        json.end encounter.end_time #participant.effective_to #add to webservices
       end
 
       json.individual do
-        json.reference "Practitioner/" + participant.npi.to_s
+        json.reference "Practitioner" + '/' + participant.npi.to_s
       end
     end
 
@@ -59,7 +59,7 @@ else
     json.priority_code nil
     json.priority_code_system nil
     json.priority_code_display nil
-    json.period_start encounter.date_of_service #add to webservices
+    json.period_start encounter.start_time #encounter.date_of_service #add to webservices
     json.period_end encounter.end_time
     json.reason_code nature_of_visit.code
     json.reason_code_system "snomed"
@@ -81,9 +81,9 @@ else
     end
 
     json.location do
-      json.id location.id
+      json.identifier location.id
       json.name location.name
-      json.status location.status
+      #json.status location.status
     end
 
     json.healthcare_entity do
