@@ -13,8 +13,6 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
     }
   ]
   if (@medication_endpoint)
-    json.medication do
-      json.medication do
         json.identifier medication.id
         json.code do
           json.coding do
@@ -28,8 +26,6 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
           json.text dosage_instructions[0][:text]
 
           json.status medication.status
-        end
-      end
     end
   else
 
@@ -52,7 +48,9 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
       json.partial! :encounter, encounter: encounter
     end
     json.medication do
-      json.reference "medication/#{medication.id}"
+
+      json.reference "Medication/#{medication.id}"
+
     end
     json.requester do
       if patient_reported
