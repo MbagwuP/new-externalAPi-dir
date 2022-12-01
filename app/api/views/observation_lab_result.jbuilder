@@ -1,7 +1,7 @@
 lab_result = OpenStruct.new @lab_result
 json.observation do 
     json.labResult do
-        json.lab_result do
+        json.labResult do
             json.account_number @patient.external_id
 			json.mrn @patient.chart_number
 			json.patient_name @patient.full_name
