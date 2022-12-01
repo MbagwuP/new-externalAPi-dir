@@ -11,12 +11,32 @@ class ApiService < Sinatra::Base
       params: params,
       rescue_string: 'Medication order'
     )
+    @include_intent_target = []
+    @include_status_target = []
 
     @medication = resp['medications'].first
     status HTTP_OK
     jbuilder :show_medication_order
   end
+  get '/v2/medication/:id' do
 
+    medication_id = params[:id]
+    business_entity_id = current_business_entity
+    base_path = "businesses/#{business_entity_id}/medications/find_by_id.json"
+    params = { id: medication_id }
+
+    resp = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: params,
+      rescue_string: 'Medication order'
+    )
+    @include_intent_target = []
+    @include_status_target = []
+    @medication_endpoint=true
+    @medication = resp['medications'].first
+    status HTTP_OK
+    jbuilder :show_medication_order
+  end
   get '/v2/medications' do
     patient_id = params[:patient_id]
     base_path = "patients/#{patient_id}/medications_list.json"
