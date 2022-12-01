@@ -19,6 +19,9 @@ module ActCertification
       Diagnosticreport: "multipatient_list_diagnostic_reports",
       Organization: "",
       Location: "",
-      Encounter: ""
+      Encounter: "",
+      Organization: "multipatient_list_organization"
+
+
   }
 end

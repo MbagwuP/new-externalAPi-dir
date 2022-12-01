@@ -97,12 +97,6 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_immunizations
-      when 'Organization'
-        counts = {
-            fhir_resource: 'Organization',
-            count: 0
-        }
-        @total_counts << counts
       when 'Location'
         counts = {
             fhir_resource: 'Location',
@@ -364,7 +358,17 @@ class ApiService < Sinatra::Base
         }
         @total_counts << counts
         # status HTTP_OK
-
+      when 'Organization'
+        base_path = "businesses/#{current_business_entity}/details.json" 
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Organization '
+        )
+        @responses = resp['business_entity']
+        if params[:_summary] == "count"
+          @count_summary =  resp.length
+        end
       else
     end
   end

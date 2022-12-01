@@ -65,7 +65,7 @@
           json.array! [:once] do
             json.attachment do
               json.content_type doc.document_format
-              json.data RestClient.get(doc.document_url).to_s
+              json.data ""
             end
             json.format do
               json.code 'urn:ihe:iti:xds:2017:mimeTypeSufficient'
