@@ -18,6 +18,7 @@ class ApiService < Sinatra::Base
     params[:gender] = options[:gender] if options[:gender].present?
     params[:mrn] =  options[:mrn] if options[:mrn].present?
     params[:intent] = options[:intent] if options[:intent].present?
+    params[:scope] = options[:scope] if options[:scope].present?
 
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,

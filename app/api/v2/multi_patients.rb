@@ -145,7 +145,8 @@ class ApiService < Sinatra::Base
         resource_counts = 0
         options = {
             summary: params[:_summary],
-            resource_counts: params[:_resource_counts]
+            resource_counts: params[:_resource_counts],
+            scope: 'multi'
         }
         @patient_ids.each do |patient_id|
           response  = get_response(patient_id, 'Encounter', options)
