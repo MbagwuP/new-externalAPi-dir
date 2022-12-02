@@ -1,6 +1,6 @@
 doc = OpenStruct.new @document
 patient = OpenStruct.new(doc.patient)
-
+provider = OpenStruct.new(doc.provider)
 
   json.documentReference do
     json.identifier doc.id
@@ -46,12 +46,10 @@ patient = OpenStruct.new(doc.patient)
 		  json.name 'Organization'
     end
 
-
-    
     json.author do
       json.array! [:once] do
-        json.identifier doc.created_by
-        json.name doc.creator_name
+        json.identifier provider['id']
+        json.name "Practitioner"
       end
     end
 
