@@ -78,7 +78,7 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
-		when 'Careplan'
+		when 'CarePlan'
       patient_summary = resp['patient_summary']
       patient_summary = JSON.parse(patient_summary) if patient_summary
       plan_of_treatment_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
@@ -92,7 +92,7 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = resources.entries.length
       end
-    when 'Careteam'
+    when 'CareTeam'
       result_hash[:resources] = resp['care_team_members']
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
@@ -112,13 +112,13 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
-    when 'Documentreference'
+    when 'DocumentReference'
       result_hash[:resources] = resp['documents']
 
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
-    when 'Diagnosticreport'
+    when 'DiagnosticReport'
       patient_summary = resp['patient_summary']
       patient_summary = JSON.parse(patient_summary) if patient_summary
 
@@ -133,7 +133,7 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
-    when 'Allergyintolerances'
+    when 'AllergyIntolerances'
       result_hash[:resources] = resp['allergies']
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
@@ -192,21 +192,21 @@ class ApiService < Sinatra::Base
 			"patients/#{patient_id}/immunizations.json"
 		when "Condition"
 			"patients/#{patient_id}/problems.json"
-		when "Careplan"
+		when "CarePlan"
 			"patient_summary/generate_json_by_patient_id_and_component.json"
-    when "Careteam"
+    when "CareTeam"
       "businesses/#{current_business_entity}/patients/#{patient_id}/care_team_members.json"
-    when 'Allergyintolerances'
+    when 'AllergyIntolerances'
       "patient_allergies/list_by_patient.json"
     when 'Patient'
       "patients/search/v2.json"
-    when 'Documentreference'
+    when 'DocumentReference'
       "patients/#{patient_id}/documents/list_by_patient_id.json"
     when 'Medication'
       "patients/#{patient_id}/medications_list.json"
     when 'Procedure'
       "procedure_tests/list_by_patient.json"
-    when 'Diagnosticreport'
+    when 'DiagnosticReport'
       "patient_summary/generate_json_by_patient_id_and_component.json"
     when 'Device'
       "implantable_devices/list_by_patient.json"

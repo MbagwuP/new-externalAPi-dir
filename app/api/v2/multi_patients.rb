@@ -144,7 +144,7 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_conditions
-      when 'Careplan'
+      when 'CarePlan'
         @responses = []
         resource_counts = 0
         options = {
@@ -153,7 +153,7 @@ class ApiService < Sinatra::Base
             summary: params[:_summary]
         }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Careplan',options)
+          response = get_response(patient_id,'CarePlan',options)
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
@@ -167,13 +167,13 @@ class ApiService < Sinatra::Base
         @responses = @res
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
-            fhir_resource: 'Careplan',
+            fhir_resource: 'CarePlan',
             count: resource_counts
         }
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_care_plans
-      when 'Careteam'
+      when 'CareTeam'
         @responses = []
         resource_counts = 0
         options = {
@@ -182,7 +182,7 @@ class ApiService < Sinatra::Base
             summary: params[:_summary]
         }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Careteam',options)
+          response = get_response(patient_id,'CareTeam',options)
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
@@ -194,13 +194,13 @@ class ApiService < Sinatra::Base
         @responses = @res.flatten.to_a
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
-            fhir_resource: 'Careteam',
+            fhir_resource: 'CareTeam',
             count: resource_counts
         }
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_care_team
-      when 'Allergyintolerances'
+      when 'AllergyIntolerances'
         @responses = []
         resource_counts = 0
         options = {
@@ -209,7 +209,7 @@ class ApiService < Sinatra::Base
             summary: params[:_summary]
         }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Allergyintolerances',options)
+          response = get_response(patient_id,'AllergyIntolerances',options)
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
@@ -221,7 +221,7 @@ class ApiService < Sinatra::Base
         @responses = @res.flatten.to_a
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
-            fhir_resource: 'Allergyintolerances',
+            fhir_resource: 'AllergyIntolerances',
             count: resource_counts
         }
         @total_counts << counts
@@ -329,7 +329,7 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_medication_orders
-      when 'Documentreference'
+      when 'DocumentReference'
         @responses = []
         resource_counts = 0
         options = {
@@ -339,7 +339,7 @@ class ApiService < Sinatra::Base
             date: params[:date]
         }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Documentreference',options)
+          response = get_response(patient_id,'DocumentReference',options)
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
@@ -357,13 +357,13 @@ class ApiService < Sinatra::Base
 
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
-            fhir_resource: 'Documentreference',
+            fhir_resource: 'DocumentReference',
             count: resource_counts
         }
         @total_counts << counts
         # status HTTP_OK
         # jbuilder :multipatient_list_document_reference
-      when 'Diagnosticreport'
+      when 'DiagnosticReport'
         @responses = []
         resource_counts = 0
         options = {
@@ -372,13 +372,13 @@ class ApiService < Sinatra::Base
             ccd_components: ['labresults']
         }
         @patient_ids.each do |patient_id|
-          response = get_response(patient_id,'Diagnosticreport',options)
+          response = get_response(patient_id,'DiagnosticReport',options)
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
-            fhir_resource: 'Diagnosticreport',
+            fhir_resource: 'DiagnosticReport',
             count: resource_counts
         }
         @total_counts << counts
