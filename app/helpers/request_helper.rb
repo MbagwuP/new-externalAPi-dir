@@ -109,27 +109,12 @@ class ApiService < Sinatra::Base
       end
     when 'Medication'
       result_hash[:resources] = resp['medications']
-      if options[:intent]
-        result_hash[:include_intent_target] = options[:intent].split(",") if options[:intent].include? ","
-        result_hash[:include_intent_target] = [options[:intent]]  unless options[:intent].include? ","
-      else
-        result_hash[:include_intent_target] = []
-      end
-
-      if options[:status]
-        result_hash[:include_status_target] = options[:status].split(",") if options[:status].include? ","
-        result_hash[:include_status_target] = [options[:status]] unless options[:status].include? ","
-      else
-        result_hash[:include_status_target] = []
-      end
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
     when 'Documentreference'
       result_hash[:resources] = resp['documents']
-      result_hash[:category] = options[:category] || "clinical-note"
-      result_hash[:date] = options[:date] || nil
-      result_hash[:type] = type || "11502-2"
+
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end

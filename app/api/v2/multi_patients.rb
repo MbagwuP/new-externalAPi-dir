@@ -298,6 +298,29 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+
+        if params[:intent]
+          @include_intent_target = params[:intent].split(",") if params[:intent].include? ","
+          @include_intent_target  = [params[:intent]]  unless params[:intent].include? ","
+        else
+          @include_intent_target  = []
+        end
+
+        if options[:status]
+          @include_status_target = params[:status].split(",") if params[:status].include? ","
+          @include_status_target = [params[:status]] unless params[:status].include? ","
+        else
+          @include_status_target = []
+        end
+
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {medication: ele, count_summary: ele[:count_summary]}
+          end
+        end
+        @responses = @res
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Medication',
@@ -320,6 +343,18 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {doc: ele, count_summary: ele[:count_summary]}
+          end
+        end
+        @responses = @res
+        @category = params[:category] || "clinical-note"
+        @date = params[:date] || nil
+        @type = type || "11502-2"
+
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Documentreference',
