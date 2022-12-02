@@ -139,12 +139,6 @@ class ApiService < Sinatra::Base
         end
         # status HTTP_OK
         # jbuilder :multipatient_list_immunizations
-      when 'Location'
-        counts = {
-            fhir_resource: 'Location',
-            count: 0
-        }
-        @total_counts << counts
       when 'Encounter'
         counts = {
             fhir_resource: 'Encounter',
@@ -380,7 +374,53 @@ class ApiService < Sinatra::Base
         # status HTTP_OK
         # jbuilder :multipatient_list_medical_devices
 
+      when 'MedicationRequest'
+        @responses = []
+        resource_counts = 0
+        options = {
+            status: params[:status],
+            resource_counts: params[:_resource_counts],
+            summary: params[:_summary],
+            intent: params[:intent]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'MedicationRequest',options)
+          @responses << response
+          resource_counts = resource_counts + (response[:count_summary] || 0) if response
+        end
+
+        if params[:intent]
+          @include_intent_target = params[:intent].split(",") if params[:intent].include? ","
+          @include_intent_target  = [params[:intent]]  unless params[:intent].include? ","
+        else
+          @include_intent_target  = []
+        end
+
+        if options[:status]
+          @include_status_target = params[:status].split(",") if params[:status].include? ","
+          @include_status_target = [params[:status]] unless params[:status].include? ","
+        else
+          @include_status_target = []
+        end
+
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {medication: ele, count_summary: ele[:count_summary]}
+          end
+        end
+        @responses = @res
+        @all_resource_count = @all_resource_count + resource_counts
+        counts = {
+            fhir_resource: 'MedicationRequest',
+            count: resource_counts
+        }
+        @total_counts << counts
+        # status HTTP_OK
+        # jbuilder :multipatient_list_medication_orders
       when 'Medication'
+        @medication_endpoint=true
         @responses = []
         resource_counts = 0
         options = {
@@ -434,7 +474,7 @@ class ApiService < Sinatra::Base
           @provenances.push(prov)
         end
         # status HTTP_OK
-        # jbuilder :multipatient_list_medication_orders
+        # jbuilder :multipatient_list_medications
       when 'DocumentReference'
         @responses = []
         resource_counts = 0
@@ -555,7 +595,17 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
-        @res = @responses.flatten
+        unless params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory' || params[:code] == ObservationCode::SMOKING_STATUS
+          @res = []
+          @responses =  @responses.flatten.to_a
+          @responses.each do |obj|
+            obj[:resources].each do |ele|
+              @res << {observation: ele, blood_pressure_observation: obj[:blood_pressure_observation],
+                       pulse_oximetry_observation: obj[:pulse_oximetry_observation], count_summary: obj[:count_summary]}
+              end
+            end
+          @responses = @res
+        end
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Observation',
@@ -589,6 +639,60 @@ class ApiService < Sinatra::Base
 
         counts = {
             fhir_resource: 'Organization',
+            count: resource_counts
+        }
+        @total_counts << counts
+      when 'Practitioner'
+        resource_counts = 0
+        base_path = "public/businesses/#{current_business_entity}/providers.json" 
+
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Practitioner '
+        )
+        @responses = resp['providers']
+        @count_summary =  @responses.length
+        resource_counts = @count_summary
+        base_path = "businesses/#{current_business_entity}/details.json" 
+
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Organization '
+        )    
+        @organization = resp['business_entity']
+
+        @all_resource_count = @all_resource_count + resource_counts
+
+        counts = {
+            fhir_resource: 'Practitioner',
+            count: resource_counts
+        }
+        @total_counts << counts
+
+      when 'Location'
+        resource_counts = 0
+        base_path = "public/businesses/#{current_business_entity}/locations.json"
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Location '
+        )
+        @responses = resp['locations']
+        @count_summary =  @responses.length
+        resource_counts = @count_summary
+        base_path = "businesses/#{current_business_entity}/details.json" 
+
+        org_resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Organization '
+        )    
+        @organization = org_resp['business_entity']
+        @all_resource_count = @all_resource_count + resource_counts
+        counts = {
+            fhir_resource: 'Location',
             count: resource_counts
         }
         @total_counts << counts

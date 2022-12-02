@@ -12,7 +12,6 @@ class ApiService < Sinatra::Base
       params: { patient_id: patient_id, ccd_components: ['labresults'], code: params[:code], category: params[:category],date: params[:date]},
       rescue_string: "Diagnostic report "
     )
-    binding.pry
     @include_code_target = params[:code] || nil
     @include_category_target = params[:category] || nil
     @include_date_target = params[:date] || nil

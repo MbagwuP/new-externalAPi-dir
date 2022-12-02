@@ -8,7 +8,8 @@ module ActCertification
       CareTeam: "multipatient_list_care_team",
       Device: "multipatient_list_medical_devices",
       Procedure: "multipatient_list_procedures",
-      Medication: "multipatient_list_medication_orders",
+      MedicationRequest: "multipatient_list_medication_orders",
+      Medication: "multipatient_list_medications",
       DocumentReference: "multipatient_list_document_reference",
       AllergyIntolerances: "multipatient_list_allergy_intolerance",
       Observation: {
@@ -17,11 +18,11 @@ module ActCertification
         "1" => "multipatient_list_observations"
       },
       DiagnosticReport: "multipatient_list_diagnostic_reports",
-      Location: "",
+      Location: "multipatient_list_locations",
       Encounter: "",
       Organization: "multipatient_list_organization",
-      provenance: "multi_patient_provenance"
-
+      provenance: "multi_patient_provenance",
+      Practitioner: "multipatient_list_practitioners"
 
   }
 end
