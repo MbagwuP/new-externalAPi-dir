@@ -7,7 +7,7 @@ class ApiService < Sinatra::Base
     @all_resource_count = 0
     @provenances = []
     @total_counts = []
-    if params[:_type] == "provenance"
+    if params[:_type] == "Provenance"
       ActCertification::Types.keys.each do |key|
         begin
           process_call(key,params,@patient_ids)
@@ -16,7 +16,6 @@ class ApiService < Sinatra::Base
         end
       end
     end
-
     if params[:_resource_counts] == "true"
       ActCertification::Types.keys.each do |key|
         begin
@@ -26,7 +25,7 @@ class ApiService < Sinatra::Base
         end
       end
       counts = {
-          fhir_resource: 'Provenance ',
+          fhir_resource: 'Provenance',
           count: @all_resource_count
       }
       @all_resource_count = @all_resource_count * 2
