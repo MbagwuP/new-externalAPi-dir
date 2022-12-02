@@ -172,6 +172,7 @@ class ApiService < Sinatra::Base
         result_hash[:resources] = @observation_entries
         result_hash[:blood_pressure_observation] = @blood_pressure_observation
         result_hash[:pulse_oximetry_observation] = @pulse_oximetry_observation
+        result_hash[:observation_type] = @observation_type
         if options[:summary] == "count" || options[:resource_counts] == "true"
           result_hash[:count_summary] =  result_hash[:resources].entries.length
         end

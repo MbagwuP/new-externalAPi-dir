@@ -424,6 +424,18 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+
+        unless params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory' || params[:code] == ObservationCode::SMOKING_STATUS
+          @res = []
+          @responses =  @responses.flatten.to_a
+          @responses.each do |obj|
+            obj[:resources].each do |ele|
+              @res << {observation: ele, blood_pressure_observation: obj[:blood_pressure_observation],
+                       pulse_oximetry_observation: obj[:pulse_oximetry_observation], count_summary: obj[:count_summary]}
+              end
+            end
+          @responses = @res
+        end
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Observation',
