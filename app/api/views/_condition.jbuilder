@@ -4,7 +4,7 @@ json.patient_name patient.full_name
 json.identifier condition.id
 json.id condition.id
 json.clinical_status condition.active == "yes" ? "active" : "inactive"
-json.verification_status condition.status
+json.verification_status "unconfirmed"
 json.category_code "encounter-diagnosis"
 json.categoryCode "encounter-diagnosis"
 
