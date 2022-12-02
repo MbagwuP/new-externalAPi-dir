@@ -2,7 +2,6 @@ careTeam = OpenStruct.new(@careTeam)
 patient = OpenStruct.new(careTeam.patient)
 business_entity = OpenStruct.new(careTeam.business_entity)
 provider = OpenStruct.new(careTeam.provider)
-
 json.careTeam do
   json.account_number patient.external_id
   json.mrn patient.chart_number
@@ -40,8 +39,8 @@ json.careTeam do
       end
       json.member do
         if role == 'Physician'
-          json.reference "Practitioner/#{careTeam['member_id']}"
-          json.display careTeam['member_full_name']
+          json.reference "Practitioner/#{provider['id']}"
+          json.display ""
         else
           json.reference "Patient/#{patient.external_id}"
           json.display patient.full_name

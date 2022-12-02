@@ -462,6 +462,34 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+      when 'Practitioner'
+        resource_counts = 0
+        base_path = "public/businesses/#{current_business_entity}/providers.json" 
+
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Practitioner '
+        )
+        @responses = resp['providers']
+        @count_summary =  @responses.length
+        resource_counts = @count_summary
+        base_path = "businesses/#{current_business_entity}/details.json" 
+
+        resp = evaluate_current_internal_request_header_and_execute_request(
+          base_path: base_path,
+          params: {},
+          rescue_string: 'Organization '
+        )    
+        @organization = resp['business_entity']
+
+        @all_resource_count = @all_resource_count + resource_counts
+
+        counts = {
+            fhir_resource: 'Practitioner',
+            count: resource_counts
+        }
+        @total_counts << counts
       else
     end
   end
