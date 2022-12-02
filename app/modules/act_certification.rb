@@ -17,7 +17,7 @@ module ActCertification
         "1" => "multipatient_list_observations"
       },
       DiagnosticReport: "multipatient_list_diagnostic_reports",
-      Location: "",
+      Location: "multipatient_list_locations",
       Encounter: "",
       Organization: "multipatient_list_organization",
       Practitioner: "multipatient_list_practitioners"
