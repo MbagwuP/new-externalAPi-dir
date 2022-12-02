@@ -60,6 +60,15 @@ class ApiService < Sinatra::Base
           @responses << response if response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {goal: ele, patient: obj[:patient], provider: obj[:provider], business_entity: obj[:business_entity], contact: obj[:contact],
+                     count_summary: obj[:count_summary]}
+          end
+        end
+        @responses = @res
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Goal',
@@ -148,6 +157,14 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {carePlan: ele, patient: obj[:patient], provider: obj[:provider], business_entity: obj[:business_entity], contact: obj[:contact]}
+          end
+        end
+        @responses = @res
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Careplan',
@@ -249,6 +266,15 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].each do |ele|
+
+            @res << {medical_device: ele}
+          end
+        end
+        @responses = @res
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Device',
