@@ -12,7 +12,7 @@ provider = OpenStruct.new(doc.provider)
     json.type do
       json.coding do
         json.array!([:once]) do
-          json.code "11502-2"
+          json.code @type
           json.code_system "loinc"
           json.code_display "Laboratory report"
         end

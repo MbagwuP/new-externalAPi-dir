@@ -14,7 +14,7 @@ json.documentReferenceEntries @documents do |doc|
     json.type do
       json.coding do
         json.array!([:once]) do
-          json.code @type
+          json.code doc.type
           json.code_system "loinc"
           json.code_display "Laboratory report"
         end
@@ -54,8 +54,8 @@ json.documentReferenceEntries @documents do |doc|
     
     json.author do
       json.array! [:once] do
-        json.identifier doc.created_by
-        json.name doc.creator_name
+        json.identifier doc.provider['id']
+        json.name "Practitioner"
       end
     end
 

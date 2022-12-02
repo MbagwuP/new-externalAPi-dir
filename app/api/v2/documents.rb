@@ -1,5 +1,13 @@
 class ApiService < Sinatra::Base
 
+  TYPES = {
+    "PROGRESS NOTE" => "11506-3",
+    "PROCEDURE NOTE" => "28570-0",
+    "HISTORY AND PHYSICAL" => "34117-2",
+    "DISCHARGE SUMMARY" => "18842-5",
+    "CONSULT" => "11488-4" 
+  }
+
   get '/v2/document/:id' do
     doc_id = params[:id]
     base_path = "documents/#{doc_id}.json"
@@ -10,7 +18,9 @@ class ApiService < Sinatra::Base
       rescue_string: "Document reference "
     )
     @document = resp['document']
-  
+    keys = TYPES.keys
+    keys=keys.select{|k| k.start_with? @document["document_source_name"].upcase}
+    @type = TYPES[keys[0]] || "11502-2"
     status HTTP_OK
     jbuilder :document_reference
   end
@@ -41,8 +51,11 @@ class ApiService < Sinatra::Base
     end
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
     @category = params[:category] || "clinical-note"
-    @type = params[:type] || "11502-2"
-
+    keys = TYPES.keys
+    @documents = @documents.each do |doc|
+      keys=keys.select{|k| k.start_with? doc["document_source_name"].upcase}
+      doc["type"] = params[:type] || TYPES[keys[0]] || "11502-2"
+    end
     if params[:_summary] == "count"
       @count_summary =  @documents.entries.length
     end
