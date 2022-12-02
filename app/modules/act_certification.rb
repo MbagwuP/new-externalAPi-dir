@@ -8,7 +8,8 @@ module ActCertification
       CareTeam: "multipatient_list_care_team",
       Device: "multipatient_list_medical_devices",
       Procedure: "multipatient_list_procedures",
-      Medication: "multipatient_list_medication_orders",
+      MedicationRequest: "multipatient_list_medication_orders",
+      Medication: "multipatient_list_medications",
       DocumentReference: "multipatient_list_document_reference",
       AllergyIntolerances: "multipatient_list_allergy_intolerance",
       Observation: {
