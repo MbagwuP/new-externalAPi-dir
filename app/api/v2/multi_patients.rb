@@ -371,6 +371,7 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         # status HTTP_OK
       when 'Organization'
+        resource_counts = 0
         base_path = "businesses/#{current_business_entity}/details.json" 
         resp = evaluate_current_internal_request_header_and_execute_request(
           base_path: base_path,
@@ -378,9 +379,16 @@ class ApiService < Sinatra::Base
           rescue_string: 'Organization '
         )
         @responses = resp['business_entity']
-        if params[:_summary] == "count"
-          @count_summary =  resp.length
-        end
+        @count_summary =  resp.length
+        resource_counts = @count_summary
+
+        @all_resource_count = @all_resource_count + resource_counts
+
+        counts = {
+            fhir_resource: 'Organization',
+            count: resource_counts
+        }
+        @total_counts << counts
       else
     end
   end
