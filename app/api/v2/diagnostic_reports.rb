@@ -14,7 +14,6 @@ class ApiService < Sinatra::Base
     @patient = OpenStruct.new resp["patient"]["patient"]
     @provider = OpenStruct.new resp["provider"]["provider"]
     @business_entity = OpenStruct.new resp["business_entity"]["business_entity"]
-
     base_path1 = "patient_summary/generate_json_by_patient_id_and_component.json"
 
     resp1 = evaluate_current_internal_request_header_and_execute_request(
@@ -23,7 +22,7 @@ class ApiService < Sinatra::Base
       rescue_string: "Diagnostic report "
     )
     patient_summary = resp1['patient_summary']
-
+    @encounter = resp1['encounter']['encounter']
     patient_summary = JSON.parse(patient_summary) if patient_summary
     diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 

@@ -68,6 +68,25 @@ json.diagnosticReport do
     end
   end
 
+  json.subject do
+    json.reference "Patient/"+patient.external_id
+    json.display lab_result['lab_request_test']["patient_first_name"] + " " + lab_result['lab_request_test']["patient_last_name"]
+  end
+
+  json.encounter do
+    json.reference "Encounter/#{@encounter['id']}"
+  end
+  json.performer do
+    json.reference "Practitioner/"+provider['id'].to_s
+  end
+
+  json.patient do
+    json.partial! :patient, patient: OpenStruct.new(@patient)
+  end
+
+  json.business_entity do
+    json.partial! :business_entity, business_entity: OpenStruct.new(@business_entity)
+  end
 
 
 end
