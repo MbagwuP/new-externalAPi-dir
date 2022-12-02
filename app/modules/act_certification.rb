@@ -11,7 +11,7 @@ module ActCertification
       MedicationRequest: "multipatient_list_medication_orders",
       Medication: "multipatient_list_medications",
       DocumentReference: "multipatient_list_document_reference",
-      AllergyIntolerances: "multipatient_list_allergy_intolerance",
+      AllergyIntolerance: "multipatient_list_allergy_intolerance",
       Observation: {
         "5778-6" => "multipatient_list_lab_results",
         "72166-2" => "multipatient_list_observations_smoking_status",

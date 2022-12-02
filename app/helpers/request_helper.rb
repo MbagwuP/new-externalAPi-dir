@@ -138,7 +138,7 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
       end
-    when 'AllergyIntolerances'
+    when 'AllergyIntolerance'
       result_hash[:resources] = resp['allergies']
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].length
@@ -202,7 +202,7 @@ class ApiService < Sinatra::Base
 			"patient_summary/generate_json_by_patient_id_and_component.json"
     when "CareTeam"
       "businesses/#{current_business_entity}/patients/#{patient_id}/care_team_members.json"
-    when 'AllergyIntolerances'
+    when 'AllergyIntolerance'
       "patient_allergies/list_by_patient.json"
     when 'Patient'
       "patients/search/v2.json"
