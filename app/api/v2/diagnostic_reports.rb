@@ -12,6 +12,7 @@ class ApiService < Sinatra::Base
       params: { patient_id: patient_id, ccd_components: ['labresults'], code: params[:code], category: params[:category],date: params[:date]},
       rescue_string: "Diagnostic report "
     )
+    binding.pry
     @include_code_target = params[:code] || nil
     @include_category_target = params[:category] || nil
     @include_date_target = params[:date] || nil
@@ -22,7 +23,7 @@ class ApiService < Sinatra::Base
 
     @diagnostic_report = ResultSection.new(diagnostic_reports_section)
     @patient = resp['patient']['patient']
-    @lab_results = resp['lab_results'][0]['lab_request_test']
+    @lab_results = resp['lab_results']
 
     @business_entity = resp['business_entity']['business_entity']
     @encounter = resp['encounter']['encounter']
