@@ -21,6 +21,7 @@ module ActCertification
       Location: "multipatient_list_locations",
       Encounter: "",
       Organization: "multipatient_list_organization",
+      provenance: "multi_patient_provenance",
       Practitioner: "multipatient_list_practitioners"
 
   }

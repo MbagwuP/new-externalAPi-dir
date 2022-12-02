@@ -5,7 +5,18 @@ class ApiService < Sinatra::Base
     @patient_ids = @patients.collect {|pat| pat["patient"]["external_id"] }
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     @all_resource_count = 0
+    @provenances = []
     @total_counts = []
+    if params[:_type] == "provenance"
+      ActCertification::Types.keys.each do |key|
+        begin
+          process_call(key,params,@patient_ids)
+        ensure
+          next
+        end
+      end
+    end
+
     if params[:_resource_counts] == "true"
       ActCertification::Types.keys.each do |key|
         begin
@@ -75,6 +86,17 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: response[:goal],
+            patient: OpenStruct.new(response[:patient]),
+            provider: OpenStruct.new(response[:provider]),
+            business_entity: OpenStruct.new(response[:business_entity]),
+            obj: "Goal"
+
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_goals
       when 'Immunization'
@@ -104,6 +126,17 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response),
+            patient: OpenStruct.new(response["patient"]),
+            provider: OpenStruct.new(response["provider"]),
+            business_entity: OpenStruct.new(response["business_entity"]),
+            obj: "Immunization"
+
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_immunizations
       when 'Encounter'
@@ -136,6 +169,17 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response),
+            patient: OpenStruct.new(response["patient"]),
+            provider: OpenStruct.new(response["provider"]),
+            business_entity: OpenStruct.new(response["business_entity"]),
+            obj: "Condition"
+
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_conditions
       when 'CarePlan'
@@ -165,6 +209,17 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: response[:carePlan],
+            patient: OpenStruct.new(response[:patient]),
+            provider: OpenStruct.new(response[:provider]),
+            business_entity: OpenStruct.new(response[:business_entity]),
+            obj: "CarePlan"
+
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_care_plans
       when 'CareTeam'
@@ -192,6 +247,18 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+
+        @res.flatten.each do |response|
+          prov = {
+            resource: OpenStruct.new(response),
+            patient: OpenStruct.new(response["patient"]),
+            provider: OpenStruct.new(response["provider"]),
+            business_entity: OpenStruct.new(response["business_entity"]),
+            obj: "CareTeam"
+          }
+          @provenances.push(prov)
+        end
+
         # status HTTP_OK
         # jbuilder :multipatient_list_care_team
       when 'AllergyIntolerances'
@@ -219,7 +286,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
-
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response),
+            patient: OpenStruct.new(response["patient"]),
+            provider: OpenStruct.new(response["provider"]),
+            business_entity: OpenStruct.new(response["business_entity"]),
+            obj: "CareTeam"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
 
       when 'Procedure'
@@ -246,6 +322,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response),
+            patient: OpenStruct.new(response["patient"]),
+            provider: OpenStruct.new(response["provider"]),
+            business_entity: OpenStruct.new(response["business_entity"]),
+            obj: "Procedure"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_procedures
       when 'Device'
@@ -275,6 +361,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response[:medical_device]),
+            patient: OpenStruct.new(response[:medical_device]["patient"]),
+            provider: OpenStruct.new(:id => response[:medical_device]["patient"]["provider_id"]),
+            business_entity: OpenStruct.new(:id => response[:medical_device]["patient"]["be_id"]),
+            obj: "Device"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_medical_devices
 
@@ -367,6 +463,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response[:medication]),
+            patient: OpenStruct.new(response[:medication]["patient"]),
+            provider: OpenStruct.new(response[:medication]["provider"]),
+            business_entity: OpenStruct.new(response[:medication]["business_entity"]),
+            obj: "Medication"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_medications
       when 'DocumentReference'
@@ -401,6 +507,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response[:doc]),
+            patient: OpenStruct.new(response[:doc]["patient"]),
+            provider: OpenStruct.new(response[:doc]["provider"]),
+            business_entity: OpenStruct.new(response[:doc]["business_entity"]),
+            obj: "Document"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_document_reference
       when 'DiagnosticReport'
@@ -422,6 +538,17 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+
+        # @responses.each do |response|
+        #   prov = {
+        #     resource: OpenStruct.new(response[:doc]),
+        #     patient: OpenStruct.new(response[:doc]["patient"]),
+        #     provider: OpenStruct.new(response[:doc]["provider"]),
+        #     business_entity: OpenStruct.new(response[:doc]["business_entity"]),
+        #     obj: "Document"
+        #   }
+        #   @provenances.push(prov)
+        # end
         # status HTTP_OK
         # jbuilder :multipatient_list_diagnostic_reports
       when 'Patient'
@@ -446,9 +573,13 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
-        # status HTTP_OK
-        # jbuilder :multipatient_list_patients
-
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response[:resources][0]["patient"]),
+            obj: "patient"
+          }
+          @provenances.push(prov)
+        end
       when 'Observation'
         @responses = []
         resource_counts = 0
@@ -464,7 +595,6 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
-
         unless params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory' || params[:code] == ObservationCode::SMOKING_STATUS
           @res = []
           @responses =  @responses.flatten.to_a
@@ -482,6 +612,16 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
+        # @res.each do |response|
+        #   prov = {
+        #     resource: OpenStruct.new(response[:doc]),
+        #     patient: OpenStruct.new(response[:doc]["patient"]),
+        #     provider: OpenStruct.new(response[:doc]["provider"]),
+        #     business_entity: OpenStruct.new(response[:doc]["business_entity"]),
+        #     obj: "Document"
+        #   }
+        #   @provenances.push(prov)
+        # end
         # status HTTP_OK
       when 'Organization'
         resource_counts = 0
