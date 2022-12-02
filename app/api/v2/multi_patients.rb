@@ -278,7 +278,53 @@ class ApiService < Sinatra::Base
         # status HTTP_OK
         # jbuilder :multipatient_list_medical_devices
 
+      when 'MedicationRequest'
+        @responses = []
+        resource_counts = 0
+        options = {
+            status: params[:status],
+            resource_counts: params[:_resource_counts],
+            summary: params[:_summary],
+            intent: params[:intent]
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'MedicationRequest',options)
+          @responses << response
+          resource_counts = resource_counts + (response[:count_summary] || 0) if response
+        end
+
+        if params[:intent]
+          @include_intent_target = params[:intent].split(",") if params[:intent].include? ","
+          @include_intent_target  = [params[:intent]]  unless params[:intent].include? ","
+        else
+          @include_intent_target  = []
+        end
+
+        if options[:status]
+          @include_status_target = params[:status].split(",") if params[:status].include? ","
+          @include_status_target = [params[:status]] unless params[:status].include? ","
+        else
+          @include_status_target = []
+        end
+
+        @res = []
+        @responses =  @responses.flatten.to_a
+        @responses.each do |obj|
+          obj[:resources].entries.each do |ele|
+            @res << {medication: ele, count_summary: ele[:count_summary]}
+          end
+        end
+        @responses = @res
+        @all_resource_count = @all_resource_count + resource_counts
+        counts = {
+            fhir_resource: 'MedicationRequest',
+            count: resource_counts
+        }
+        @total_counts << counts
+        # status HTTP_OK
+        # jbuilder :multipatient_list_medication_orders
       when 'Medication'
+        @medication_endpoint=true
         @responses = []
         resource_counts = 0
         options = {
@@ -322,7 +368,7 @@ class ApiService < Sinatra::Base
         }
         @total_counts << counts
         # status HTTP_OK
-        # jbuilder :multipatient_list_medication_orders
+        # jbuilder :multipatient_list_medications
       when 'DocumentReference'
         @responses = []
         resource_counts = 0

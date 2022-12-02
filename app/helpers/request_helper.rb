@@ -107,6 +107,11 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
+    when 'MedicationRequest'
+      result_hash[:resources] = resp['medications']
+      if options[:summary] == "count" || options[:resource_counts] == "true"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
     when 'Medication'
       result_hash[:resources] = resp['medications']
       if options[:summary] == "count" || options[:resource_counts] == "true"
@@ -203,6 +208,8 @@ class ApiService < Sinatra::Base
       "patients/search/v2.json"
     when 'DocumentReference'
       "patients/#{patient_id}/documents/list_by_patient_id.json"
+    when 'MedicationRequest'
+      "patients/#{patient_id}/medications_list.json"
     when 'Medication'
       "patients/#{patient_id}/medications_list.json"
     when 'Procedure'
