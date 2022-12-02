@@ -43,6 +43,8 @@ class ApiService < Sinatra::Base
       else
         jbuilder :multipatient_list_observations
       end
+    elsif params[:_type] == "Encounter"
+      jbuilder :multipatient_list_encounters
     elsif params[:_resource_counts] == "true"
       jbuilder :multipatient_resource_counts
     else
@@ -139,9 +141,27 @@ class ApiService < Sinatra::Base
         # status HTTP_OK
         # jbuilder :multipatient_list_immunizations
       when 'Encounter'
+        @responses = []
+        resource_counts = 0
+        options = {
+            summary: params[:_summary],
+            resource_counts: params[:_resource_counts]
+        }
+        @patient_ids.each do |patient_id|
+          response  = get_response(patient_id, 'Encounter', options)
+          @responses << response
+          resource_counts = resource_counts + (response[:count_summary] || 0) if response
+        end
+        @responses =  @responses.flatten.to_a
+        @res = []
+        @responses.each do |res|
+          @res << res[:resources]
+        end
+        @responses = @res.flatten.to_a
+        @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Encounter',
-            count: 0
+            count: resource_counts
         }
         @total_counts << counts
       when 'Condition'

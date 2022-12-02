@@ -68,6 +68,11 @@ class ApiService < Sinatra::Base
       if options[:summary] == "count" || options[:resource_counts] == "true"
         result_hash[:count_summary] = result_hash[:resources].entries.length
       end
+		when 'Encounter'
+			result_hash[:resources] = resp['encounters']
+      if options[:summary] == "count" || options[:resource_counts] == "true"
+        result_hash[:count_summary] = result_hash[:resources].entries.length
+      end
 		when 'Condition'
 			result_hash[:resources] = resp['problems']
       if options[:summary] == "count" || options[:resource_counts] == "true"
@@ -196,6 +201,8 @@ class ApiService < Sinatra::Base
 			"patient_summary/generate_json_by_patient_id_and_component.json"
 		when "Immunization"
 			"patients/#{patient_id}/immunizations.json"
+		when "Encounter"
+			"patients/#{patient_id}/encounters.json"
 		when "Condition"
 			"patients/#{patient_id}/problems.json"
 		when "CarePlan"
