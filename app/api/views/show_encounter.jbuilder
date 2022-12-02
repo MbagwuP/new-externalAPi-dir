@@ -49,7 +49,7 @@ else
       end
 
       json.individual do
-        json.reference "Practitioner" + '/' + participant.npi.to_s
+        json.reference "Practitioner" + '/' + participant.id.to_s
       end
     end
 
@@ -107,7 +107,10 @@ else
     be_object = business_entity
     be_object = OpenStruct.new(:id => 0) if !be_object
 
-    json.partial! :provenance, patient: patient, record: encounter, provider: provider_object, business_entity: be_object, obj: 'Encounter'
+    location_object = location
+    location_object = OpenStruct.new(:id => 0) if !location_object
+
+    json.partial! :provenance, patient: patient, record: encounter, provider: provider_object, business_entity: be_object, location: location_object, obj: 'Encounter'
   end
 
 end #@summary
