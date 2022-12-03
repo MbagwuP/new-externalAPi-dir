@@ -3,8 +3,9 @@ provider = OpenStruct.new(medication.provider)
 encounter = OpenStruct.new(medication.encounter)
 business_entity = OpenStruct.new(medication.business_entity)
 patient_reported = medication.patient_reported
-json.medicationRequest do
-  if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1) && ((valid_status.include? medication.status )|| valid_status.count<1))
+if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1) && ((valid_status.include? medication.status )|| valid_status.count<1))
+
+  json.medicationRequest do
     dosage_instructions = [
       {
         text: medication.prescription_instructions,
@@ -106,27 +107,28 @@ json.medicationRequest do
 
   end
 
-end
 
-if provenance
-  json.partial! :provenance, patient: patient, record: medication, provider: provider, business_entity: business_entity, obj: 'Medication'
-end
+  if provenance
+    json.partial! :provenance, patient: patient, record: medication, provider: provider, business_entity: business_entity, obj: 'Medication'
+  end
 
-if (@include_medication_target)
-json.medication do
+  if (@include_medication_target)
+    json.medication do
 
-    json.identifier medication.id
-    json.code do
-      json.coding do
-        json.array!([:once]) do
-          json.code_system 'ndc'
-          json.code medication.ndc_code
-          json.code_display medication.drug_name
+      json.identifier medication.id
+      json.code do
+        json.coding do
+          json.array!([:once]) do
+            json.code_system 'ndc'
+            json.code medication.ndc_code
+            json.code_display medication.drug_name
+          end
+
         end
-
+        json.status medication.status
       end
-      json.status medication.status
     end
+
   end
 
 end
