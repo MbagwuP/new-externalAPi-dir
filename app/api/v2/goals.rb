@@ -3,7 +3,7 @@ class ApiService < Sinatra::Base
   get '/v2/goals' do
     validate_patient_id_param(params[:patient_id])
 
-    response = get_response(params[:patient_id],'Goal',{ccd_component: ['goals']})
+    response = get_response(params[:patient_id],'Goal',{ccd_components: ['goals']})
     
     @goal = response[:resources]
     @patient = response[:patient]

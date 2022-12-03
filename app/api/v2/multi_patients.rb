@@ -63,7 +63,7 @@ class ApiService < Sinatra::Base
         @responses = []
         options = {
             resource_counts: params[:_resource_counts],
-            ccd_component: ['goals'],
+            ccd_components: ['goals'],
             summary: params[:_summary]
         }
         resource_counts = 0
@@ -205,7 +205,7 @@ class ApiService < Sinatra::Base
         @responses = []
         resource_counts = 0
         options = {
-            ccd_component: ['plan_of_treatment'],
+            ccd_components: ['plan_of_treatment'],
             resource_counts: params[:_resource_counts],
             summary: params[:_summary]
         }
@@ -611,7 +611,7 @@ class ApiService < Sinatra::Base
         @responses = []
         resource_counts = 0
         options = {
-            ccd_component: ['social_history'],
+            ccd_components: ['social_history'],
             resource_counts: params[:_resource_counts],
             summary: params[:_summary],
             code: params[:code],
