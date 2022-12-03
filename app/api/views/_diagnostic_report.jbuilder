@@ -78,9 +78,7 @@ json.diagnosticReport do
     json.performer do
       json.reference "Practitioner/"+provider['id'].to_s
     end
-    if include_provenance_target
-      json.partial! :provenance, patient: patient, record: lab_result, provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
-    end
+
     json.patient do
       json.partial! :patient, patient: patient
     end
@@ -89,4 +87,8 @@ json.diagnosticReport do
       json.partial! :business_entity, business_entity: business_entity
     end
 
+end
+
+if include_provenance_target
+  json.partial! :provenance, patient: patient, record: lab_result, provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
 end
