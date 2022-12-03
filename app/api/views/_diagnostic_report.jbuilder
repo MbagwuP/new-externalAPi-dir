@@ -76,7 +76,9 @@ json.diagnosticReport do
     end
 
     json.performer do
-      json.reference "Practitioner/"+provider['id'].to_s
+      json.array!([:once]) do
+        json.reference "Practitioner/"+provider['id'].to_s
+      end
     end
 
     json.patient do
