@@ -5,27 +5,29 @@ provider = OpenStruct.new(provider)
 test_date="2015-02-03T05:00:00+05:00"
 default_category_code="LAB"
 json.diagnosticReport do
-    json.account_number patient.external_id
+  json.account_number patient.external_id
 
-    json.mrn patient.chart_number
-    json.patient_name diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
-    json.identifier diagnostic_lab['lab_request_test']["id"]
-    json.external_id patient.external_id
-    json.text diagnostic_lab['lab_request_test']["lab_request_test_description"]
-    json.status "final"
-    json.text_status 'generated'
-    json.category_code diagnostic_lab['lab_request_test']["loinc"] || default_category_code
-    json.category_code_system "http://hl7.org/fhir/DiagnosticReport-category"
-    json.category_code_display "Laboratory"
-    json.category_code_text "Laboratory"
-    json.code diagnostic_report.code.code
-    json.code_text diagnostic_lab['lab_request_test']["lab_request_test_description"]
-    json.code_display diagnostic_lab['lab_request_test']["lab_request_test_description"]
-    json.lab_test_code_system diagnostic_lab['lab_request_test']["lab_request_test_code"]
-    json.effective_period_start diagnostic_lab['lab_request_test']["ordered_at"]
-    json.effective_period_end diagnostic_lab['lab_request_test']["updated_at"]
-    json.test_date test_date
-    json.labResult do
+  json.mrn patient.chart_number
+  json.patient_name diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
+  json.identifier diagnostic_lab['lab_request_test']["id"]
+  json.external_id patient.external_id
+  json.text diagnostic_lab['lab_request_test']["lab_request_test_description"]
+  json.status "final"
+  json.text_status 'generated'
+  json.category_code diagnostic_lab['lab_request_test']["loinc"] || default_category_code
+  json.category_code_system "http://hl7.org/fhir/DiagnosticReport-category"
+  json.category_code_display "Laboratory"
+  json.category_code_text "Laboratory"
+  json.code diagnostic_report.code.code
+  json.code_text diagnostic_lab['lab_request_test']["lab_request_test_description"]
+  json.code_display diagnostic_lab['lab_request_test']["lab_request_test_description"]
+  json.lab_test_code_system diagnostic_lab['lab_request_test']["lab_request_test_code"]
+  json.effective_period_start diagnostic_lab['lab_request_test']["ordered_at"]
+  json.effective_date diagnostic_lab['lab_request_test']["ordered_at"]
+  json.effective_period_end diagnostic_lab['lab_request_test']["updated_at"]
+  json.test_date test_date
+  json.labResult do
+    json.array!([:once]) do
       labs_result=diagnostic_lab['lab_request_test']
       json.account_number patient.external_id
 
@@ -41,6 +43,7 @@ json.diagnosticReport do
       json.code_text labs_result["lab_request_test_description"]
       json.code_display labs_result["lab_request_test_description"]
       json.lab_test_code_system labs_result["lab_request_test_code"]
+      json.effective_date labs_result["ordered_at"]
       json.effective_period_start labs_result["ordered_at"]
       json.effective_period_end labs_result["updated_at"]
       json.result_value do
@@ -65,29 +68,35 @@ json.diagnosticReport do
         json.partial! :business_entity, business_entity: business_entity
       end
     end
+  end
 
-    json.subject do
-      json.reference "Patient/"+patient.external_id
-      json.display diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
-    end
+  json.subject do
+    json.reference "Patient/"+patient.external_id
+    json.display diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
+  end
 
-    json.encounter do
-      json.reference "Encounter/#{encounter['id']}"
-    end
+  json.presented_form do
+    json.content_type "image/tiff"
+    json.data ""
+  end
 
-    json.performer do
-      json.array!([:once]) do
-        json.reference "Practitioner/"+provider['id'].to_s
-      end
-    end
+  json.encounter do
+    json.reference "Encounter/#{encounter['id']}"
+  end
 
-    json.patient do
-      json.partial! :patient, patient: patient
+  json.performer do
+    json.array!([:once]) do
+      json.reference "Practitioner/"+provider['id'].to_s
     end
+  end
 
-    json.business_entity do
-      json.partial! :business_entity, business_entity: business_entity
-    end
+  json.patient do
+    json.partial! :patient, patient: patient
+  end
+
+  json.business_entity do
+    json.partial! :business_entity, business_entity: business_entity
+  end
 
 end
 
