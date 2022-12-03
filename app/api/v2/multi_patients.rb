@@ -91,10 +91,9 @@ class ApiService < Sinatra::Base
           prov = {
             resource: response[:goal],
             patient: OpenStruct.new(response[:patient]),
-            provider: OpenStruct.new(response[:provider]),
+            provider: OpenStruct.new(response[:provider]["provider"]),
             business_entity: OpenStruct.new(response[:business_entity]),
             obj: "Goal"
-
           }
           @provenances.push(prov)
         end
@@ -233,7 +232,7 @@ class ApiService < Sinatra::Base
           prov = {
             resource: response[:carePlan],
             patient: OpenStruct.new(response[:patient]),
-            provider: OpenStruct.new(response[:provider]),
+            provider: OpenStruct.new(response[:provider]["provider"]),
             business_entity: OpenStruct.new(response[:business_entity]),
             obj: "CarePlan"
 
@@ -484,10 +483,11 @@ class ApiService < Sinatra::Base
         }
         @total_counts << counts
         @responses.each do |response|
+          provider = response[:medication]["provider"]["id"].nil? ? {id: response[:medication]["patient"]["provider_id"]} : response[:medication]["provider"]
           prov = {
             resource: OpenStruct.new(response[:medication]),
             patient: OpenStruct.new(response[:medication]["patient"]),
-            provider: OpenStruct.new(response[:medication]["provider"]),
+            provider: OpenStruct.new(provider),
             business_entity: OpenStruct.new(response[:medication]["business_entity"]),
             obj: "Medication"
           }
