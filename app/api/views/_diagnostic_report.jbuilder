@@ -1,35 +1,32 @@
-patient = OpenStruct.new(@patient)
+patient = OpenStruct.new(patient)
 lab_result = OpenStruct.new(lab_result)
-business_entity = OpenStruct.new(@business_entity)
-provider = OpenStruct.new(@provider)
+business_entity = OpenStruct.new(business_entity)
+provider = OpenStruct.new(provider)
 test_date="2015-02-03T05:00:00+05:00"
-category_code="LAB"
+default_category_code="LAB"
 json.diagnosticReport do
-
-  if ((@include_code_target == @diagnostic_report.code.code || @include_code_target == nil) && (@include_category_target == category_code || @include_category_target == nil) && (@include_date_target == test_date || @include_date_target == nil))
-
     json.account_number patient.external_id
 
     json.mrn patient.chart_number
-    json.patient_name @lab_results[0]['lab_request_test']["patient_first_name"] + " " + @lab_results[0]['lab_request_test']["patient_last_name"]
-    json.identifier @lab_results[0]['lab_request_test']["id"]
+    json.patient_name diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
+    json.identifier diagnostic_lab['lab_request_test']["id"]
     json.external_id patient.external_id
-    json.text @lab_results[0]['lab_request_test']["lab_request_test_description"]
+    json.text diagnostic_lab['lab_request_test']["lab_request_test_description"]
     json.status "final"
     json.text_status 'generated'
-    json.category_code category_code
+    json.category_code diagnostic_lab['lab_request_test']["loinc"] || default_category_code
     json.category_code_system "http://hl7.org/fhir/DiagnosticReport-category"
     json.category_code_display "Laboratory"
     json.category_code_text "Laboratory"
-    json.code @diagnostic_report.code.code
-    json.code_text @lab_results[0]['lab_request_test']["lab_request_test_description"]
-    json.code_display @lab_results[0]['lab_request_test']["lab_request_test_description"]
-    json.lab_test_code_system @lab_results[0]['lab_request_test']["lab_request_test_code"]
-    json.effective_period_start @lab_results[0]['lab_request_test']["ordered_at"]
-    json.effective_period_end @lab_results[0]['lab_request_test']["updated_at"]
+    json.code diagnostic_report.code.code
+    json.code_text diagnostic_lab['lab_request_test']["lab_request_test_description"]
+    json.code_display diagnostic_lab['lab_request_test']["lab_request_test_description"]
+    json.lab_test_code_system diagnostic_lab['lab_request_test']["lab_request_test_code"]
+    json.effective_period_start diagnostic_lab['lab_request_test']["ordered_at"]
+    json.effective_period_end diagnostic_lab['lab_request_test']["updated_at"]
     json.test_date test_date
-    json.labResult @lab_results do |lab_result_value|
-      labs_result=lab_result_value['lab_request_test']
+    json.labResult do
+      labs_result=diagnostic_lab['lab_request_test']
       json.account_number patient.external_id
 
       json.mrn patient.chart_number
@@ -38,9 +35,9 @@ json.diagnosticReport do
       json.text  labs_result["lab_request_test_description"]
       json.text_status 'generated'
       json.result_status 'final'
-      json.lab_test_code @diagnostic_report.code.code
+      json.lab_test_code diagnostic_report.code.code
       json.lab_test_code_system "http://hl7.org/fhir/DiagnosticReport-category"
-      json.lab_test_code_display @diagnostic_report.code.displayName
+      json.lab_test_code_display diagnostic_report.code.displayName
       json.code_text labs_result["lab_request_test_description"]
       json.code_display labs_result["lab_request_test_description"]
       json.lab_test_code_system labs_result["lab_request_test_code"]
@@ -71,7 +68,7 @@ json.diagnosticReport do
 
     json.subject do
       json.reference "Patient/"+patient.external_id
-      json.display @lab_results[0]['lab_request_test']["patient_first_name"] + " " + @lab_results[0]['lab_request_test']["patient_last_name"]
+      json.display diagnostic_lab['lab_request_test']["patient_first_name"] + " " + diagnostic_lab['lab_request_test']["patient_last_name"]
     end
 
     json.encounter do
@@ -85,12 +82,11 @@ json.diagnosticReport do
       json.partial! :provenance, patient: patient, record: lab_result, provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
     end
     json.patient do
-      json.partial! :patient, patient: OpenStruct.new(@patient)
+      json.partial! :patient, patient: patient
     end
 
     json.business_entity do
-      json.partial! :business_entity, business_entity: OpenStruct.new(@business_entity)
+      json.partial! :business_entity, business_entity: business_entity
     end
-  end
 
 end

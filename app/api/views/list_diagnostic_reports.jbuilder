@@ -1,5 +1,5 @@
-json.diagnosticReportEntries Array.wrap(@diagnostic_report) do |diagnostic_report|
-  json.partial! :diagnostic_report, diagnostic_report: diagnostic_report, encounter: @encounter, provider: @provider, include_provenance_target:@include_provenance_target
+json.diagnosticReportEntries @lab_results do |diagnostic_lab|
+  json.partial! :diagnostic_report, diagnostic_report: @diagnostic_report, diagnostic_lab: diagnostic_lab, encounter: @encounter, provider: @provider, patient: @patient, business_entity: @business_entity, include_provenance_target:@include_provenance_target
 end
 
 

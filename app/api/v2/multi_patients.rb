@@ -549,8 +549,15 @@ class ApiService < Sinatra::Base
         }
         @patient_ids.each do |patient_id|
           response = get_response(patient_id,'DiagnosticReport',options)
-          @responses << response
-          resource_counts = resource_counts + (response[:count_summary] || 0) if response
+          response[:lab_results].each do |lab_result|
+            lab_result[:diagnostic_header] = response[:resources]
+            lab_result[:encounter] = response[:encounter]
+            lab_result[:provider] = response[:provider]
+            lab_result[:patient] = response[:patient]
+            lab_result[:business_entity] = response[:business_entity]
+            @responses << lab_result
+          end
+          resource_counts = resource_counts + (response[:lab_results].count || 0) if response
         end
         @all_resource_count = @all_resource_count + resource_counts
         counts = {

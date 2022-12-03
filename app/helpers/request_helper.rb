@@ -9,7 +9,7 @@ class ApiService < Sinatra::Base
 
 		params = {}
     params[:patient_id] = patient_id
-    params[:ccd_components] = options[:ccd_component] if options[:ccd_component].present?
+    params[:ccd_components] = options[:ccd_components] if options[:ccd_components].present?
     params[:date] = options[:date] if options[:date].present?
     params[:status] = options[:status] if options[:status].present?
     params[:code] = get_observations_code(options[:code]) if options[:code].present?
@@ -18,6 +18,7 @@ class ApiService < Sinatra::Base
     params[:gender] = options[:gender] if options[:gender].present?
     params[:mrn] =  options[:mrn] if options[:mrn].present?
     params[:intent] = options[:intent] if options[:intent].present?
+
     params[:scope] = options[:scope] if options[:scope].present?
 
     resp = evaluate_current_internal_request_header_and_execute_request(
@@ -132,7 +133,6 @@ class ApiService < Sinatra::Base
     when 'DiagnosticReport'
       patient_summary = resp['patient_summary']
       patient_summary = JSON.parse(patient_summary) if patient_summary
-
       diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
       result_hash[:resources] = ResultSection.new(diagnostic_reports_section)
@@ -140,9 +140,10 @@ class ApiService < Sinatra::Base
       result_hash[:encounter] = resp['encounter']['encounter']
       result_hash[:provider] = resp['provider']['provider']
       result_hash[:patient] = resp['patient']['patient']
+      result_hash[:lab_results] = resp['lab_results']
       result_hash[:business_entity] = resp['business_entity']['business_entity']
       if options[:summary] == "count" || options[:resource_counts] == "true"
-        result_hash[:count_summary] = result_hash[:resources].length
+        result_hash[:count_summary] = result_hash[:lab_results].length
       end
     when 'AllergyIntolerance'
       result_hash[:resources] = resp['allergies']

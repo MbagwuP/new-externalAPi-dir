@@ -1,8 +1,7 @@
 
-  json.array! @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
-    json.diagnosticReportEntries Array.wrap(response[:resources]) do |diagnostic_report|
-      json.partial! :diagnostic_report, diagnostic_report: diagnostic_report, encounter: response[:encounter], provider: response[:provider], include_provenance_target:@include_provenance_target
-    end
-  end
+
+json.diagnosticReportEntries @responses do |diagnostic_lab|
+  json.partial! :diagnostic_report, diagnostic_report: diagnostic_lab[:diagnostic_header], diagnostic_lab: diagnostic_lab, encounter: diagnostic_lab[:encounter], provider: diagnostic_lab[:provider], patient: diagnostic_lab[:patient], business_entity: diagnostic_lab[:business_entity], include_provenance_target:@include_provenance_target
+end
+
 

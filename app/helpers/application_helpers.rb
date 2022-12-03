@@ -682,6 +682,24 @@ class ApiService < Sinatra::Base
     api_svc_halt HTTP_BAD_REQUEST, '{error: Patient ID must be a valid GUID.}' unless patient_id.is_guid?
   end
 
+  def fhir_date_compare(data_date, filter)
+    operator = filter[0..2]
+    filter_date = DateTime.parse(filter)
+    data_date = DateTime.parse(data_date)
+    case operator
+    when 'gt'
+      data_date > filter_date
+    when 'lt'
+      data_date < filter_date
+    when 'le'
+      data_date <= filter_date
+    when 'ge'
+      data_date >= filter_date
+    else
+      data_date == filter_date
+    end
+  end
+
   def participant_role(member_type)
    return "RelatedPerson" if member_type == "Vo::Person"
    return "Physician" if member_type == "Physician"
