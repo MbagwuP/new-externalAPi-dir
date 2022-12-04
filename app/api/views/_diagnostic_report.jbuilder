@@ -33,7 +33,7 @@ json.diagnosticReport do
 
       json.mrn patient.chart_number
       json.patient_name labs_result["patient_first_name"] + " " + labs_result["patient_last_name"]
-      json.identifier labs_result["id"]
+      json.identifier "#{labs_result["id"]}-#{ObservationType::LAB_REQUEST}"
       json.text  labs_result["lab_request_test_description"]
       json.text_status 'generated'
       json.result_status 'final'
@@ -103,5 +103,5 @@ json.diagnosticReport do
 end
 
 if include_provenance_target
-  json.partial! :provenance, patient: patient, record: OpenStruct.new(diagnostic_lab), provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
+  json.partial! :provenance, patient: patient, record: OpenStruct.new(diagnostic_lab['lab_request_test']), provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
 end

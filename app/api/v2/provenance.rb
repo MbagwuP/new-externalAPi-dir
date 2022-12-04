@@ -156,6 +156,16 @@ class ApiService < Sinatra::Base
         @business_entity = OpenStruct.new(@resource.business_entity)
         @provider = OpenStruct.new(@resource.attending_provider) || OpenStruct.new(@resource.supervising_provider)
         @obj = resource
+      when "DiagnosticReport"
+        base_path = "labs/get_results_by_patient_and_code.json"
+        parameters = { id: id }
+        resp = call_resource(base_path, resource, parameters)
+        @resource = resp["lab_results"]["lab_request_test"]
+        @resource = OpenStruct.new @resource
+        @patient = OpenStruct.new resp["patient"]["patient"]
+        @provider = OpenStruct.new resp["provider"]["provider"]
+        @business_entity = OpenStruct.new resp["business_entity"]["business_entity"]
+        @obj = resource
       when "labResult"
         observation_id_with_enum = id.split("-")
         type_code = observation_id_with_enum.last

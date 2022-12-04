@@ -34,7 +34,7 @@ json.diagnosticReport do
 
       json.mrn patient.chart_number
       json.patient_name lab_result['lab_request_test']["patient_first_name"] + " " + lab_result['lab_request_test']["patient_last_name"]
-      json.identifier lab_result['lab_request_test']["id"]
+      json.identifier "#{lab_result["lab_request_test"]["id"]}-#{ObservationType::LAB_REQUEST}"
       json.text  lab_result['lab_request_test']["lab_request_test_description"]
       json.text_status 'generated'
       json.result_status 'final'
