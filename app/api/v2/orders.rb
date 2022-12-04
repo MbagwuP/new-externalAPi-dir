@@ -22,6 +22,7 @@ class ApiService < Sinatra::Base
     @include_status_target = []
 
     @medication = resp['medications'].first
+    @medication['status'] = STATUS[@medication['status']]
     status HTTP_OK
     jbuilder :show_medication_order
   end
