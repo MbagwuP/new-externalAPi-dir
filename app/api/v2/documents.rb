@@ -1,11 +1,11 @@
 class ApiService < Sinatra::Base
 
   TYPES = {
-    "PROGRESS NOTE" => "11506-3",
-    "PROCEDURE NOTE" => "28570-0",
-    "HISTORY AND PHYSICAL" => "34117-2",
+    "Progress notes" => "11506-3",
+    "Procedure Notes" => "28570-0",
+    "History and Physical" => "34117-2",
     "DISCHARGE SUMMARY" => "18842-5",
-    "CONSULT" => "11488-4" 
+    "CONSULTS NOTE" => "11488-4" 
   }
 
   get '/v2/document/:id' do
@@ -19,7 +19,8 @@ class ApiService < Sinatra::Base
     )
     @document = resp['document']
     keys = TYPES.keys
-    keys=keys.select{|k| k.start_with? @document["document_source_name"].upcase}
+    target = @document["document_source_name"].upcase.split(" ")[0]
+    keys=keys.select{|k| k.upcase.include? target}
     @type = TYPES[keys[0]] || "11502-2"
     status HTTP_OK
     jbuilder :document_reference
@@ -51,11 +52,13 @@ class ApiService < Sinatra::Base
     end
     @is_provenance_target_present = params[:_revinclude] == 'Provenance:target' ? true : false
     @category = params[:category] || "clinical-note"
-    keys = TYPES.keys
+    @keys = TYPES.keys
     @documents = @documents.each do |doc|
-      keys=keys.select{|k| k.start_with? doc["document_source_name"].upcase}
-      doc["type"] = params[:type] || TYPES[keys[0]] || "11502-2"
-    end
+        target = doc["document_source_name"].upcase.split(" ")[0]
+        keys=@keys.select{|k| k.upcase.include? target}
+        doc["type"] = TYPES[keys[0]] || "11502-2"
+      end
+    @documents = @documents.select{|doc| doc["type"] == params[:type]} if params[:type].present?
     if params[:_summary] == "count"
       @count_summary =  @documents.entries.length
     end
