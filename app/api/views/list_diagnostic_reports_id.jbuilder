@@ -17,12 +17,13 @@ json.diagnosticReport do
   json.status "final"
   json.text_status 'generated'
   json.category_code category_code
-  json.category_code_system "http://hl7.org/fhir/DiagnosticReport-category"
+  json.category_code_system "http://terminology.hl7.org/CodeSystem/v2-0074"
   json.category_code_display "Laboratory"
   json.category_code_text "Laboratory"
   json.code @diagnostic_report.code.code
   json.code_text lab_result['lab_request_test']["lab_request_test_description"]
   json.code_display lab_result['lab_request_test']["lab_request_test_description"]
+  json.code_system "http://loinc.org/"
   json.lab_test_code_system lab_result['lab_request_test']["lab_request_test_code"]
   json.effective_period_start lab_result['lab_request_test']["ordered_at"]
   json.effective_date lab_result['lab_request_test']["ordered_at"]
