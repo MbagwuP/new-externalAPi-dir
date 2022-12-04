@@ -11,25 +11,9 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
       date_end: medication.effective_to
     }
   ]
+
   if (@medication_endpoint)
-    json.identifier medication.id
-    json.code do
-      json.coding do
-        json.array!([:once]) do
-          json.code_system 'ndc'
-          json.code medication.ndc_code
-          json.code_display medication.drug_name
-        end
-
-      end
-      json.text dosage_instructions[0][:text]
-
-      json.status medication.status
-    end
-  end
-  json.medicationRequest do
-
-    if (@medication_endpoint)
+    json.medication do
       json.identifier medication.id
       json.code do
         json.coding do
@@ -44,8 +28,9 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
 
         json.status medication.status
       end
-    else
-
+    end
+  else
+    json.medicationRequest do
       json.account_number patient.external_id
 
       json.mrn patient.chart_number
@@ -118,11 +103,7 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
         json.partial! :business_entity, business_entity: business_entity
       end
     end
-
-
-
   end
-
 
   if provenance
     json.partial! :provenance, patient: patient, record: medication, provider: provider, business_entity: business_entity, obj: 'Medication'
@@ -130,24 +111,20 @@ if (( (valid_intents.include? intent(patient_reported)) || valid_intents.count<1
 
   if (@include_medication_target)
     json.medication do
-
-      json.medication do
-        json.identifier medication.id
-        json.code do
-          json.coding do
-            json.array!([:once]) do
-              json.code_system 'ndc'
-              json.code medication.ndc_code
-              json.code_display medication.drug_name
-            end
-
+      json.identifier medication.id
+      json.code do
+        json.coding do
+          json.array!([:once]) do
+            json.code_system 'ndc'
+            json.code medication.ndc_code
+            json.code_display medication.drug_name
           end
+
         end
-        json.status medication.status
-
       end
-    end
+      json.status medication.status
 
+    end
   end
 
 end

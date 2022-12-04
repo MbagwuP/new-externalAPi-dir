@@ -103,5 +103,5 @@ json.diagnosticReport do
 end
 
 if include_provenance_target
-  json.partial! :provenance, patient: patient, record: lab_result, provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
+  json.partial! :provenance, patient: patient, record: OpenStruct.new(diagnostic_lab), provider: provider, business_entity: business_entity, obj: 'DiagnosticReport'
 end

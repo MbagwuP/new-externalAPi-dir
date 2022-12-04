@@ -49,6 +49,7 @@ class ApiService < Sinatra::Base
     )
     @medications = resp['medications']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+    @include_medication_target = params[:_include] == 'MedicationRequest:medication' ? true : false
     if (params[:intent])
       @include_intent_target=params[:intent].split(",") if params[:intent].include? ","
       @include_intent_target = [params[:intent]]  unless params[:intent].include? ","
