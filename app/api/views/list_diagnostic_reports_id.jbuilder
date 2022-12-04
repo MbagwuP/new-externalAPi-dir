@@ -72,7 +72,12 @@ json.diagnosticReport do
     json.reference "Patient/"+patient.external_id
     json.display lab_result['lab_request_test']["patient_first_name"] + " " + lab_result['lab_request_test']["patient_last_name"]
   end
-
+  json.presented_form do
+    json.array!([:once]) do
+      json.content_type "image/tiff"
+      json.data ""
+    end
+  end
   json.encounter do
     json.reference "Encounter/#{@encounter['id']}"
   end
