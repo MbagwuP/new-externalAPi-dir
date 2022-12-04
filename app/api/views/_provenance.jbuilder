@@ -49,7 +49,7 @@ json.provenance do
 		json.child! do
 			json.type_coding do
 				json.code "transmitter"
-        json.code_system "http://hl7.org/fhir/us/core/STU5.0.1/CodeSystem-us-core-provenance-participant-type"
+        json.code_system "http://hl7.org/fhir/us/core/CodeSystem/us-core-provenance-participant-type"
         json.code_display "Transmitter"
 			end
 			json.who do

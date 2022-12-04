@@ -1,5 +1,12 @@
 class ApiService < Sinatra::Base
 
+  STATUS = {
+    "active" => "active",
+    "inactive" => "stopped",
+    "created" => "draft",
+    "N/A" => "unkown"
+  }
+
   get '/v2/medications/:id' do
     medication_id = params[:id]
     business_entity_id = current_business_entity
@@ -48,6 +55,9 @@ class ApiService < Sinatra::Base
       rescue_string: 'Medication order list'
     )
     @medications = resp['medications']
+    @medications.each do |medication|
+      medication['status'] = STATUS[medication['status']]
+    end
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     @include_medication_target = params[:_include] == 'MedicationRequest:medication' ? true : false
     if (params[:intent])
