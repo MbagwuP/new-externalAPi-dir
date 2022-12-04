@@ -5,6 +5,7 @@ class ApiService < Sinatra::Base
     validate_patient_id_param(patient_id)
     code_for_path = params[:category] == "laboratory" ? "5778-6" : params[:code] 
     base_path = get_observations_path(code_for_path)
+
     code = get_observations_code(params[:code])
     parameters = { patient_id: patient_id, code: code, date: params[:date], ccd_components: ['social_history'] }
 

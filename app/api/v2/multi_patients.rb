@@ -623,6 +623,7 @@ class ApiService < Sinatra::Base
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
         unless params[:code] == ObservationCode::LABORATORY || params[:category] == 'laboratory' || params[:code] == ObservationCode::SMOKING_STATUS
+
           @res = []
           @responses =  @responses.flatten.to_a
           @responses.each do |obj|
@@ -633,6 +634,51 @@ class ApiService < Sinatra::Base
             end
           @responses = @res
         end
+        @all_resource_count = @all_resource_count + resource_counts
+
+        options = {
+            resource_counts: params[:_resource_counts],
+            summary: params[:_summary],
+            code: ObservationCode::LABORATORY,
+            ccd_components: ['social_history']
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Observation',options)
+          lab_results =response[:resources]["lab_results"]
+          if lab_results.present?
+            lab_results = lab_results.each do |lab_result|
+              lab_result["lab_request_test"]["id"] = "#{lab_result["lab_request_test"]["id"]}-#{ObservationType::LAB_REQUEST}"
+            end
+            lab_results.each do |ele|
+              @responses << {observation: ele, patient: response[:resources]["patient"]["patient"], 
+                        observation_type: ObservationType::LAB_REQUEST, code: "5778-6",
+                        provider: response[:resources]["provider"]["provider"], 
+                        business_entity: response[:resources]["business_entity"][0]["business_entity"], }
+            end
+
+            resource_counts = resource_counts + (response[:count_summary] || 0) if response
+          end
+        end
+
+        @all_resource_count = @all_resource_count + resource_counts
+        options = {
+            resource_counts: params[:_resource_counts],
+            summary: params[:_summary],
+            code: ObservationCode::SMOKING_STATUS,
+            ccd_components: ['social_history']
+        }
+        @patient_ids.each do |patient_id|
+          response = get_response(patient_id,'Observation', options)
+            if response[:resources].entries.present?
+              @responses << {observation: response[:resources], patient: response[:patient], 
+                        observation_type: ObservationType::SMOKING_STATUS, code: response[:resources].code,
+                        provider: response[:provider]["provider"], 
+                        business_entity: response[:business_entity], }
+            end
+
+          resource_counts = resource_counts + (response[:count_summary] || 0) if response
+        end
+    
         @all_resource_count = @all_resource_count + resource_counts
         counts = {
             fhir_resource: 'Observation',

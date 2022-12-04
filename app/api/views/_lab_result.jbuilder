@@ -1,4 +1,3 @@
-
 json.observation do 
 	json.labResult do
 		json.labResult do

@@ -1,7 +1,6 @@
 
 json.ObservationEntries @responses do |response|
     json.resource_count response[:count_summary] unless response[:count_summary].nil?
-    # json.ObservationEntries response[:resources] do |observation|
       if response[:observation].class == BloodPressureObservation
         json.partial! :blood_pressure_observation,
                       observation: response[:blood_pressure_observation],
@@ -13,11 +12,29 @@ json.ObservationEntries @responses do |response|
                       observation_type: response[:observation_type],
                       include_provenance_target: @include_provenance_target
       else
-        json.partial! :observation,
+        if response[:observation].class == SocialHistorySection
+          json.partial! :observation_smoking_status, 
+          smoking_status: response[:observation].entries.first,
+          social_history_code: response[:observation].code, 
+          patient: OpenStruct.new(response[:patient]), business_entity: OpenStruct.new(response[:business_entity]),
+          provider: OpenStruct.new(response[:provider]), contact: OpenStruct.new(response[:contact]), 
+          include_provenance_target: false
+        elsif response[:observation]['lab_request_test'].present?
+             json.partial! :lab_result, lab_result:  OpenStruct.new(response[:observation]["lab_request_test"]), 
+             provider:  OpenStruct.new(response[:provider]), 
+             patient:  OpenStruct.new(response[:patient]),
+             business_entity:  OpenStruct.new(response[:business_entity]), 
+             code:  response[:code], observation_type:  response[:observation_type],
+             include_provenance_target: false
+
+        else
+          json.partial! :observation,
                       observation: OpenStruct.new(response[:observation]),
                       observation_type: response[:observation_type],
                       include_provenance_target: @include_provenance_target
+        end
       end
     end
-  # end
+
+
 

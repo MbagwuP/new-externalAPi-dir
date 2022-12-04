@@ -153,8 +153,7 @@ class ApiService < Sinatra::Base
     when 'Observation'
 
       if options[:code] == ObservationCode::LABORATORY || options[:category] == 'laboratory'
-        result_hash[:resources] = resp['lab_request_test_results']
-
+        result_hash[:resources] = resp
         if options[:summary] == "count" || options[:resource_counts] == "true"
           result_hash[:count_summary] =  result_hash[:resources].entries.length
         end
