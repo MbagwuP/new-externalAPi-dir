@@ -33,7 +33,7 @@ json.provenance do
 		json.child! do
 			json.type_coding do
 				json.code "author"
-        json.code_system "http://hl7.org/fhir/us/core/STU5.0.1/CodeSystem-us-core-provenance-participant-type.html"
+        json.code_system "http://hl7.org/fhir/us/core/STU5.0.1/CodeSystem-us-core-provenance-participant-type"
         json.code_display "Author"
 			end
 			json.who do
