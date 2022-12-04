@@ -683,7 +683,7 @@ class ApiService < Sinatra::Base
   end
 
   def fhir_date_compare(data_date, filter)
-    operator = filter[0..2]
+    operator = filter[0..1]
     filter_date = DateTime.parse(filter)
     data_date = DateTime.parse(data_date)
     case operator
