@@ -48,7 +48,6 @@ class ApiService < Sinatra::Base
       rescue_string: 'Medication order list'
     )
     @medications = resp['medications']
-    @include_medication_target = params[:_include] == 'MedicationRequest:medication' ? true : false
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
     if (params[:intent])
       @include_intent_target=params[:intent].split(",") if params[:intent].include? ","
