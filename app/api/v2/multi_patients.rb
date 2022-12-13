@@ -566,16 +566,16 @@ class ApiService < Sinatra::Base
         }
         @total_counts << counts
 
-        # @responses.each do |response|
-        #   prov = {
-        #     resource: OpenStruct.new(response[:doc]),
-        #     patient: OpenStruct.new(response[:doc]["patient"]),
-        #     provider: OpenStruct.new(response[:doc]["provider"]),
-        #     business_entity: OpenStruct.new(response[:doc]["business_entity"]),
-        #     obj: "Document"
-        #   }
-        #   @provenances.push(prov)
-        # end
+        @responses.each do |response|
+          prov = {
+            resource: OpenStruct.new(response[:diagnostic_header]),
+            patient: OpenStruct.new(response[:patient]),
+            provider: OpenStruct.new(response[:provider]),
+            business_entity: OpenStruct.new(response[:provider]),
+            obj: "DiagnosticReport"
+          }
+          @provenances.push(prov)
+        end
         # status HTTP_OK
         # jbuilder :multipatient_list_diagnostic_reports
       when 'Patient'
@@ -685,17 +685,46 @@ class ApiService < Sinatra::Base
             count: resource_counts
         }
         @total_counts << counts
-        # @res.each do |response|
-        #   prov = {
-        #     resource: OpenStruct.new(response[:doc]),
-        #     patient: OpenStruct.new(response[:doc]["patient"]),
-        #     provider: OpenStruct.new(response[:doc]["provider"]),
-        #     business_entity: OpenStruct.new(response[:doc]["business_entity"]),
-        #     obj: "Document"
-        #   }
-        #   @provenances.push(prov)
-        # end
-        # status HTTP_OK
+        @responses.each do |response|
+          if response[:observation].class == BloodPressureObservation
+            add_provenance(resource_name: 'Blood-pressure',
+              resource_object: response[:blood_pressure_observation],
+              patient: response[:blood_pressure_observation].patient,
+              provider: response[:blood_pressure_observation].provider,
+              business_entity: response[:blood_pressure_observation].business_entity
+            )
+          elsif response[:observation].class == PulseOximetryObservation
+            add_provenance(resource_name: 'Pulse-Oximetry',
+              resource_object: response[:pulse_oximetry_observation],
+              patient: response[:pulse_oximetry_observation].patient,
+              business_entity: response[:pulse_oximetry_observation].business_entity,
+              provider: response[:pulse_oximetry_observation].provider
+            )
+          elsif response[:observation].class == SocialHistorySection
+            response[:observation].entries.each do |entry|
+              add_provenance(resource_name: 'Smoking-Status',
+                resource_object: entry,
+                patient: OpenStruct.new(response[:patient]),
+                business_entity: OpenStruct.new(response[:business_entity]),
+                provider: OpenStruct.new(response[:provider])
+              )
+            end
+          elsif response[:observation]['lab_request_test'].present?
+            add_provenance(resource_name: 'labResult',
+              resource_object: OpenStruct.new(response[:observation]["lab_request_test"]), 
+              provider: OpenStruct.new(response[:provider]),
+              patient: OpenStruct.new(response[:patient]),
+              business_entity: OpenStruct.new(response[:business_entity])
+            )
+          else
+            add_provenance(resource_name: 'Observation',
+              resource_object: OpenStruct.new(response[:observation]),
+              patient: OpenStruct.new(response[:observation]["patient"]),
+              business_entity: OpenStruct.new(response[:observation]["business_entity"]),
+              provider: OpenStruct.new(response[:observation]["provider"])
+            )
+          end
+        end
       when 'Organization'
         resource_counts = 0
         base_path = "businesses/#{current_business_entity}/details.json" 
@@ -772,5 +801,15 @@ class ApiService < Sinatra::Base
       else
     end
   end
-
+  private
+    def add_provenance(args)
+      prov = {
+        resource: args[:resource_object],
+        patient: args[:patient],
+        provider: args[:provider],
+        business_entity: args[:business_entity],
+        obj: args[:resource_name]
+      }
+      @provenances.push(prov)
+    end
 end
