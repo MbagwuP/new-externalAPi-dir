@@ -10,6 +10,25 @@ class ApiService < Sinatra::Base
       rescue_string: "Diagnostic report "
     )
 
+
+    base_path = "documents/#{params_1}.json"
+
+    resp_doc = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: { id: params_1 },
+      rescue_string: "Document reference "
+    )
+    @document = resp_doc['document']
+    doc_url=@document["document_url"]
+    @api_key=APP_API_KEY
+
+    begin
+      @data=RestClient.get(doc_url, api_key: @api_key)
+    rescue => e
+      @data=nil
+    end
+
+
     @lab_result = resp["lab_results"]
     @patient = OpenStruct.new resp["patient"]["patient"]
     @provider = OpenStruct.new resp["provider"]["provider"]
@@ -72,6 +91,25 @@ class ApiService < Sinatra::Base
     @encounter = resp['encounter']['encounter']
     @provider = resp['provider']['provider']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
+
+    lab_id=@lab_results[0]['lab_request_test']['id']
+    base_path = "documents/#{lab_id}.json"
+
+    resp_doc = evaluate_current_internal_request_header_and_execute_request(
+      base_path: base_path,
+      params: { id: lab_id },
+      rescue_string: "Document reference "
+    )
+    @document = resp_doc['document']
+    doc_url=@document["document_url"]
+    @api_key=APP_API_KEY
+
+    begin
+      @data=RestClient.get(doc_url, api_key: @api_key)
+    rescue => e
+      @data=nil
+    end
+
     status HTTP_OK
     jbuilder :list_diagnostic_reports
   end

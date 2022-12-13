@@ -78,7 +78,7 @@ json.diagnosticReport do
   json.presented_form do
     json.array!([:once]) do
       json.content_type "image/tiff"
-      json.data ""
+      json.data @data
     end
   end
   json.encounter do
