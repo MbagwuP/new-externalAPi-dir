@@ -1,8 +1,8 @@
 class ApiService < Sinatra::Base
 
   TYPES = {
-    "Progress notes" => "11506-3",
-    "Procedure Notes" => "28570-0",
+    "Progress note" => "11506-3",
+    "Procedure Note" => "28570-0",
     "History and Physical" => "34117-2",
     "DISCHARGE SUMMARY" => "18842-5",
     "CONSULTS NOTE" => "11488-4" 
@@ -18,15 +18,17 @@ class ApiService < Sinatra::Base
       rescue_string: "Document reference "
     )
     @document = resp['document']
+    @api_key = APP_API_KEY
     keys = TYPES.keys
-    target = @document["document_source_name"].upcase.split(" ")[0]
-    keys=keys.select{|k| k.upcase.include? target}
+    target = @document["document_source_name"].upcase
+    keys=keys.select{|k| target.start_with? k.upcase}
     @type = TYPES[keys[0]] || "11502-2"
     status HTTP_OK
     jbuilder :document_reference
   end
 
   get '/v2/documents' do
+    @api_key = APP_API_KEY
     if params[:id]
       base_path = "documents/#{params[:id]}.json"
 
@@ -54,8 +56,8 @@ class ApiService < Sinatra::Base
     @category = params[:category] || "clinical-note"
     @keys = TYPES.keys
     @documents = @documents.each do |doc|
-        target = doc["document_source_name"].upcase.split(" ")[0]
-        keys=@keys.select{|k| k.upcase.include? target}
+        target = doc["document_source_name"].upcase
+        keys=@keys.select{|k| target.start_with? k.upcase}
         doc["type"] = TYPES[keys[0]] || "11502-2"
       end
     @documents = @documents.select{|doc| doc["type"] == params[:type]} if params[:type].present?
