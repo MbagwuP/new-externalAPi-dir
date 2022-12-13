@@ -57,7 +57,7 @@ provider = OpenStruct.new(doc.provider)
       json.array! [:once] do
         json.attachment do
           json.content_type "image/tiff"
-          json.data json.data RestClient.get(doc.document_url, api_key: @api_key)
+          json.data @doc
 
         end
         json.format do

@@ -63,7 +63,7 @@ json.documentReferenceEntries @documents do |doc|
       json.array! [:once] do
         json.attachment do
           json.content_type "image/tiff"
-          json.data RestClient.get(doc.document_url, api_key: @api_key)
+          json.data doc.content_data
         end
         json.format do
           json.code 'urn:ihe:iti:xds:2017:mimeTypeSufficient'

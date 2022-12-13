@@ -23,6 +23,9 @@ class ApiService < Sinatra::Base
     target = @document["document_source_name"].upcase
     keys=keys.select{|k| target.start_with? k.upcase}
     @type = TYPES[keys[0]] || "11502-2"
+    url = @document["document_url"]
+    internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
+    @doc = internal_signed_request.execute
     status HTTP_OK
     jbuilder :document_reference
   end
@@ -59,6 +62,9 @@ class ApiService < Sinatra::Base
         target = doc["document_source_name"].upcase
         keys=@keys.select{|k| target.start_with? k.upcase}
         doc["type"] = TYPES[keys[0]] || "11502-2"
+        url = doc["document_url"]
+        internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
+        doc["content_data"] = internal_signed_request.execute
       end
     @documents = @documents.select{|doc| doc["type"] == params[:type]} if params[:type].present?
     if params[:_summary] == "count"
