@@ -1,11 +1,10 @@
+json.resource_count @responses.count
 json.condition @responses do |condition|
 
     first_condition = OpenStruct.new(condition)
     patient = OpenStruct.new(first_condition.patient)
     business_entity = OpenStruct.new(first_condition.business_entity)
 
-
-      json.resource_count condition[:count_summary] unless condition[:count_summary].nil?
       json.condition do
         json.partial! :condition, condition: OpenStruct.new(condition), patient: patient, account_number: patient.external_id
       end

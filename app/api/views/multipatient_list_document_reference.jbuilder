@@ -1,6 +1,6 @@
 
+json.resource_count @responses.count
 json.documentReferenceEntries @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
       doc = response[:doc]
       doc = OpenStruct.new(doc)
       patient = OpenStruct.new(doc.patient)

@@ -1,3 +1,4 @@
+json.resource_count @provenances.count
 json.provenance @provenances do |provenance|
     if provenance[:obj] == "patient"
         json.partial! :patient_details_provenance, patient: provenance[:resource]

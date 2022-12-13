@@ -1,6 +1,6 @@
 
+json.resource_count @responses.count
 json.deviceEntries @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
     first_medical_device = OpenStruct.new(response[:medical_device])
     @patient = OpenStruct.new(first_medical_device.patient) #collection of devices is for one patient
 

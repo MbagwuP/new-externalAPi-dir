@@ -1,6 +1,6 @@
 
-  json.array! @responses  do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
+ json.resource_count @responses.count
+ json.array! @responses  do |response|
     json.ObservationEntries response[:resources].entries do |smoking_status|
       json.partial! :observation_smoking_status,
                     smoking_status: smoking_status,

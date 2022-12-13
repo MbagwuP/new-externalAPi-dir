@@ -1,3 +1,4 @@
+json.resource_count @responses.count
 json.immunization @responses do |immunization|
       immunizationItem = OpenStruct.new(immunization)
       json.resource_count immunization[:count_summary] unless immunization[:count_summary].nil?

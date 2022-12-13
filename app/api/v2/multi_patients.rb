@@ -26,9 +26,10 @@ class ApiService < Sinatra::Base
       end
       counts = {
           fhir_resource: 'Provenance',
-          count: @all_resource_count
+          count: @provenances.count
       }
-      @all_resource_count = @all_resource_count * 2
+
+      @all_resource_count = @all_resource_count + @provenances.count
       @total_counts << counts
     else
       type = params[:_type]
@@ -81,10 +82,12 @@ class ApiService < Sinatra::Base
           end
         end
         @responses = @res
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Goal',
-            count: resource_counts
+            count: @responses.count
+
         }
         @total_counts << counts
         @responses.each do |response|
@@ -120,10 +123,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Immunization',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -158,10 +162,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Encounter',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
       when 'Condition'
@@ -182,10 +187,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Condition',
-            count: resource_counts
+            count:  @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -222,10 +228,11 @@ class ApiService < Sinatra::Base
           end
         end
         @responses = @res
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'CarePlan',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -260,10 +267,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'CareTeam',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
 
@@ -299,10 +307,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'AllergyIntolerance',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -335,10 +344,11 @@ class ApiService < Sinatra::Base
           @res << res[:resources]
         end
         @responses = @res.flatten.to_a
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Procedure',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -374,10 +384,11 @@ class ApiService < Sinatra::Base
           end
         end
         @responses = @res
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Device',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -430,10 +441,11 @@ class ApiService < Sinatra::Base
           end
         end
         @responses = @res
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'MedicationRequest',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         # status HTTP_OK
@@ -476,10 +488,11 @@ class ApiService < Sinatra::Base
           end
         end
         @responses = @res
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Medication',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -521,10 +534,11 @@ class ApiService < Sinatra::Base
         @date = params[:date] || nil
         @type = type || "11502-2"
 
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'DocumentReference',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -559,10 +573,11 @@ class ApiService < Sinatra::Base
           end
           resource_counts = resource_counts + (response[:lab_results].count || 0) if response
         end
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'DiagnosticReport',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
 
@@ -594,10 +609,11 @@ class ApiService < Sinatra::Base
           @responses << response
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Patient',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -633,8 +649,7 @@ class ApiService < Sinatra::Base
               end
             end
           @responses = @res
-        end
-        @all_resource_count = @all_resource_count + resource_counts
+        end        
 
         options = {
             resource_counts: params[:_resource_counts],
@@ -660,7 +675,6 @@ class ApiService < Sinatra::Base
           end
         end
 
-        @all_resource_count = @all_resource_count + resource_counts
         options = {
             resource_counts: params[:_resource_counts],
             summary: params[:_summary],
@@ -679,10 +693,11 @@ class ApiService < Sinatra::Base
           resource_counts = resource_counts + (response[:count_summary] || 0) if response
         end
     
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Observation',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
         @responses.each do |response|
@@ -727,21 +742,23 @@ class ApiService < Sinatra::Base
         end
       when 'Organization'
         resource_counts = 0
+        @responses = []
+
         base_path = "businesses/#{current_business_entity}/details.json" 
         resp = evaluate_current_internal_request_header_and_execute_request(
           base_path: base_path,
           params: {},
           rescue_string: 'Organization '
         )
-        @responses = resp['business_entity']
+        @responses << resp['business_entity']
+
         @count_summary =  resp.length
         resource_counts = @count_summary
 
-        @all_resource_count = @all_resource_count + resource_counts
-
+        @all_resource_count = @all_resource_count + @responses.count
         counts = {
             fhir_resource: 'Organization',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
       when 'Practitioner'
@@ -765,11 +782,11 @@ class ApiService < Sinatra::Base
         )    
         @organization = resp['business_entity']
 
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
 
         counts = {
             fhir_resource: 'Practitioner',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
 
@@ -792,15 +809,17 @@ class ApiService < Sinatra::Base
           rescue_string: 'Organization '
         )    
         @organization = org_resp['business_entity']
-        @all_resource_count = @all_resource_count + resource_counts
+        @all_resource_count = @all_resource_count + @responses.count
+
         counts = {
             fhir_resource: 'Location',
-            count: resource_counts
+            count: @responses.count
         }
         @total_counts << counts
       else
     end
   end
+
   private
     def add_provenance(args)
       prov = {
@@ -812,4 +831,5 @@ class ApiService < Sinatra::Base
       }
       @provenances.push(prov)
     end
+
 end

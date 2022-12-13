@@ -1,6 +1,6 @@
 
+json.resource_count @responses.count
 json.medication @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
       json.partial! :medication,
                     medication: OpenStruct.new(response[:medication]),
                     valid_intents: @include_intent_target,

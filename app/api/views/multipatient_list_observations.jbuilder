@@ -1,6 +1,6 @@
 
+json.resource_count @responses.count
 json.ObservationEntries @responses do |response|
-    json.resource_count response[:count_summary] unless response[:count_summary].nil?
       if response[:observation].class == BloodPressureObservation
         json.partial! :blood_pressure_observation,
                       observation: response[:blood_pressure_observation],

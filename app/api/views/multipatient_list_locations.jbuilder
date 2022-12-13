@@ -1,4 +1,4 @@
-json.resource_count @count_summary unless @count_summary.nil?
+json.resource_count @responses.count
 json.location @responses do |location|
     address = OpenStruct.new(location["address"])
     phones = location['phones']

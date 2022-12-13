@@ -1,6 +1,5 @@
-json.resource_count @count_summary unless @count_summary.nil?
+json.resource_count @responses.count
 json.practitioner @responses do |practitioner|
-
     business_entity = OpenStruct.new(@organization)    
     first_name, last_name = practitioner['name'].split(' ')
     json.practitioner do

@@ -1,3 +1,4 @@
+json.resource_count @responses.count
 json.allergyIntolerance @responses do |allergy|
       allergyItem = OpenStruct.new(allergy)
       json.partial! :allergy, allergy: allergyItem,
