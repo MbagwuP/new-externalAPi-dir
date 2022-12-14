@@ -20,14 +20,8 @@ class ApiService < Sinatra::Base
     )
     @document = resp_doc['document']
     doc_url=@document["document_url"]
-    @api_key=APP_API_KEY
-
-    begin
-      @data=RestClient.get(doc_url, api_key: @api_key)
-    rescue => e
-      @data=nil
-    end
-
+    internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
+    @data = internal_signed_request.execute
 
     @lab_result = resp["lab_results"]
     @patient = OpenStruct.new resp["patient"]["patient"]
@@ -103,13 +97,8 @@ class ApiService < Sinatra::Base
       )
       @document = resp_doc['document']
       doc_url=@document["document_url"]
-      @api_key=APP_API_KEY
-
-      begin
-        @data=RestClient.get(doc_url, api_key: @api_key)
-      rescue => e
-        @data=nil
-      end
+      internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
+      @data = internal_signed_request.execute
     else
       @data=nil
     end
