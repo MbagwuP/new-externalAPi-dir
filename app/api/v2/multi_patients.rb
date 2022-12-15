@@ -571,6 +571,7 @@ class ApiService < Sinatra::Base
             lab_result[:business_entity] = response[:business_entity]
             @responses << lab_result
           end
+
           resource_counts = resource_counts + (response[:lab_results].count || 0) if response
         end
         @all_resource_count = @all_resource_count + @responses.count
@@ -580,13 +581,12 @@ class ApiService < Sinatra::Base
             count: @responses.count
         }
         @total_counts << counts
-
         @responses.each do |response|
           prov = {
-            resource: OpenStruct.new(response[:diagnostic_header]),
+            resource: response[:diagnostic_header],
             patient: OpenStruct.new(response[:patient]),
             provider: OpenStruct.new(response[:provider]),
-            business_entity: OpenStruct.new(response[:provider]),
+            business_entity: OpenStruct.new(response[:business_entity]),
             obj: "DiagnosticReport"
           }
           @provenances.push(prov)
