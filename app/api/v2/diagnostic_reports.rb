@@ -20,8 +20,14 @@ class ApiService < Sinatra::Base
     )
     @document = resp_doc['document']
     doc_url=@document["document_url"]
-    internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
-    @data = internal_signed_request.execute
+    @api_key=APP_API_KEY
+
+    begin
+      internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
+      @data = internal_signed_request.execute
+    rescue => e
+      @data=nil
+    end
 
     @lab_result = resp["lab_results"]
     @patient = OpenStruct.new resp["patient"]["patient"]
@@ -57,12 +63,12 @@ class ApiService < Sinatra::Base
     validate_patient_id_param(patient_id)
 
     base_path = "patient_summary/generate_json_by_patient_id_and_component.json"
-
     resp = evaluate_current_internal_request_header_and_execute_request(
       base_path: base_path,
       params: { patient_id: patient_id, ccd_components: ['labresults'], code: params[:code], category: params[:category],date: params[:date]},
       rescue_string: "Diagnostic report "
     )
+
     @include_code_target = params[:code] || nil
     @include_category_target = params[:category] || nil
     @include_date_target = params[:date] || nil
@@ -87,9 +93,8 @@ class ApiService < Sinatra::Base
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
     if @lab_results[0]
-    lab_id=@lab_results[0]['lab_request_test']['id']
+      lab_id=@lab_results[0]['lab_request_test']['id']
       base_path = "documents/#{lab_id}.json"
-
       resp_doc = evaluate_current_internal_request_header_and_execute_request(
         base_path: base_path,
         params: { id: lab_id },
@@ -97,12 +102,17 @@ class ApiService < Sinatra::Base
       )
       @document = resp_doc['document']
       doc_url=@document["document_url"]
-      internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
-      @data = internal_signed_request.execute
+      @api_key=APP_API_KEY
+
+      begin
+        internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
+        @data = internal_signed_request.execute
+      rescue => e
+        @data=nil
+      end
     else
       @data=nil
     end
-
     status HTTP_OK
     jbuilder :list_diagnostic_reports
   end
