@@ -583,7 +583,7 @@ class ApiService < Sinatra::Base
         @total_counts << counts
         @responses.each do |response|
           prov = {
-            resource: response[:diagnostic_header],
+            resource:  OpenStruct.new(response[:lab_request_test]),
             patient: OpenStruct.new(response[:patient]),
             provider: OpenStruct.new(response[:provider]),
             business_entity: OpenStruct.new(response[:business_entity]),
