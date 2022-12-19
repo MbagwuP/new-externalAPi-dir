@@ -15,12 +15,10 @@ class ApiService < Sinatra::Base
 
   post '/v2/referral_location/create' do
     request_body = get_request_JSON
-    @phone_type_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, request_body['phone']['phone_type_code'])
-    request_body['phone']['phone_type_id']  = @phone_type_id
-    @state_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, request_body['address']['state_code'])
-    request_body['address']['state_id']  = @state_id
-    @country_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, request_body['address']['country_name'])
-    request_body['address']['country_id']  = @country_id
+    request_body["addresses"].each {|address| address["state_id"] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, address["state_code"]) }
+    request_body["addresses"].each {|address| address["country_id"] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, "USA") }
+    request_body["phones"].each {|phone| phone["phone_type_id"] = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, phone["phone_type_code"]) }
+    request_body['is_active']  = true
 
     urlreferrallocationcreate = webservices_uri "referral_location/create.json", {token: escaped_oauth_token, current_business_entity_id:current_business_entity}
     begin
@@ -56,13 +54,6 @@ end
 
 post '/v2/referral_source/create' do
   request_body = get_request_JSON
-  @phone_type_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::PhoneType, request_body['phone']['phone_type_code'])
-  request_body['phone']['phone_type_id']  = @phone_type_id
-  @state_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, request_body['address']['state_code'])
-  request_body['address']['state_id']  = @state_id
-  @country_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, request_body['address']['country_name'])
-  request_body['address']['country_id']  = @country_id
-
   urlreferralsourcecreate = webservices_uri "referring_physician/create.json", {token: escaped_oauth_token, current_business_entity_id:current_business_entity}
   begin
     response = RestClient.post(urlreferralsourcecreate, request_body,
