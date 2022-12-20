@@ -1,7 +1,6 @@
 json.array! @resp do |txn|
   json.location_id txn['id']
   json.location_name txn['location_name']
-
   json.addresses txn['address'] do |address|
     json.line1 txn['address']['address']['line1']
     json.line2 txn['address']['address']['line2']
@@ -11,10 +10,10 @@ json.array! @resp do |txn|
     json.zip txn['address']['address']['zip_code']
   end
 
-  json.phones txn['phone'] do |phone|
-    json.phone_number txn['phone']['phone']['phone_number']
-    json.phone_type WebserviceResources::Converter.cc_id_to_code(WebserviceResources::PhoneType, txn['phone']['phone']['phone_type_id'])
-    json.phone_ext txn['phone']['phone']['phone_ext'] || txn['phone']['phone']['extension']
+  json.phones txn['phones'] do |phone|
+    json.phone_number phone['phone_number']
+    json.phone_type_code phone['phone_type_code']
+    json.extension phone['phone_ext']
   end
   
 end
