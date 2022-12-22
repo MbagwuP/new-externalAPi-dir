@@ -143,7 +143,7 @@ class ApiService < Sinatra::Base
       result_hash[:lab_results] = resp['lab_requests']
       result_hash[:business_entity] = resp['business_entity']['business_entity']
       if options[:summary] == "count" || options[:resource_counts] == "true"
-        result_hash[:count_summary] = result_hash[:lab_requests].length
+        result_hash[:count_summary] = result_hash[:lab_results].length
       end
     when 'AllergyIntolerance'
       result_hash[:resources] = resp['allergies']
