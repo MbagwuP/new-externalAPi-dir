@@ -18,9 +18,8 @@ class ApiService < Sinatra::Base
       params: { id: params_1 },
       rescue_string: "Document reference "
     )
-    @document = resp_doc['document']
-    doc_url=@document["document_url"]
-    @api_key=APP_API_KEY
+    @document = resp["lab_results"]["lab_request_test"]["document"] 
+    doc_url = @document["document_url"] || nil
 
     begin
       internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
