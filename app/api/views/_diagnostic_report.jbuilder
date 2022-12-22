@@ -79,7 +79,7 @@ json.diagnosticReport do
   json.presented_form do
     json.array!([:once]) do
       json.content_type "image/tiff"
-      json.data @data
+      json.data diagnostic_lab['lab_request_test']['data']
     end
   end
 

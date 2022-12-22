@@ -79,11 +79,10 @@ class ApiService < Sinatra::Base
 
     @diagnostic_report = ResultSection.new(diagnostic_reports_section)
     @patient = resp['patient']['patient']
-    @lab_results = resp['lab_results']
-    binding.pry
-    @lab_results = @include_category_target ? @lab_results.select { |lab_result| (lab_result['lab_request_test']['loinc'] || 'LAB') == @include_category_target } : @lab_results
+    @lab_requests = resp['lab_requests']
+    @lab_requests = @include_category_target ? @lab_requests.select { |lab_request| (lab_request['lab_request_test']['loinc'] || 'LAB') == @include_category_target } : @lab_requests
     # @lab_results = (@include_code_target && @diagnostic_report.code.code == @include_code_target) : @lab_results : @lab_results
-    @lab_results = @include_date_target ? @lab_results.select { |lab_result| fhir_date_compare(lab_result['lab_request_test']['ordered_at'], @include_date_target) } : @lab_results
+    @lab_requests = @include_date_target ? @lab_requests.select { |lab_request| fhir_date_compare(lab_request['lab_request_test']['ordered_at'], @include_date_target) } : @lab_requests
     # if ((@include_code_target == @diagnostic_report.code.code || @include_code_target == nil) &&
     # (@include_category_target == default_category_code || @include_category_target == nil) &&
     # (@include_date_target == test_date || @include_date_target == nil))
@@ -93,31 +92,22 @@ class ApiService < Sinatra::Base
     @provider = resp['provider']['provider']
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
-    document_hash = resp['document']
-    document_url = document_hash['document_url']
-
-    if document_url
-      # lab_id=@lab_results[0]['lab_request_test']['id']
-      # base_path = "documents/#{lab_id}.json"
-      # resp_doc = evaluate_current_internal_request_header_and_execute_request(
-      #   base_path: base_path,
-      #   params: { id: lab_id },
-      #   rescue_string: "Document reference "
-      # )
-      # @document = resp_doc['document']
-      # doc_url=@document["document_url"]
-      # @api_key=APP_API_KEY
-
-      # begin
-      binding.pry
-        internal_signed_request = sign_internal_request(url: document_url, method: :get, headers: {accept: :json})
-        @data = internal_signed_request.execute
-      # rescue => e
-        # @data=nil
-      # end
-    else
-      @data=nil
+    @lab_requests.each do |lab_request|
+      document_hash = lab_request['lab_request_test']['document']
+      document_url = document_hash ? document_hash['document_url'] : nil
+      if document_url
+        begin
+          internal_signed_request = sign_internal_request(url: document_url, method: :get, headers: {accept: :json})
+          data = internal_signed_request.execute
+        rescue => e
+          data=nil
+        end
+      else
+        data=nil
+      end
+      lab_request['lab_request_test']['data'] = data
     end
+
     status HTTP_OK
     jbuilder :list_diagnostic_reports
   end
