@@ -10,22 +10,18 @@ class ApiService < Sinatra::Base
       rescue_string: "Diagnostic report "
     )
 
+    document = resp["lab_results"]["lab_request_test"]["document"] 
+    doc_url = document ? document["document_url"] : nil  
 
-    base_path = "documents/#{params_1}.json"
-
-    resp_doc = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: { id: params_1 },
-      rescue_string: "Document reference "
-    )
-    @document = resp["lab_results"]["lab_request_test"]["document"] 
-    doc_url = @document["document_url"] || nil
-
-    begin
-      internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
-      @data = internal_signed_request.execute
-    rescue => e
-      @data=nil
+    if doc_url
+      begin
+        internal_signed_request = sign_internal_request(url: doc_url, method: :get, headers: {accept: :json})
+        @data = internal_signed_request.execute
+      rescue => e
+        @data=nil
+      end
+    else
+      @data = nil
     end
 
     @lab_result = resp["lab_results"]
