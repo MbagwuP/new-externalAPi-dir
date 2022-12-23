@@ -38,7 +38,7 @@ class ApiService < Sinatra::Base
     )
 
     @location = resp['location']
-    @business_entity = resp['business_entity']['business_entity']
+    @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
 
     status HTTP_OK
     jbuilder :show_location

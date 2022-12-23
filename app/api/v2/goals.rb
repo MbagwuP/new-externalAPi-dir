@@ -8,7 +8,8 @@ class ApiService < Sinatra::Base
     @goal = response[:resources]
     @patient = response[:patient]
     @business_entity = response[:business_entity]
-    @provider = response[:provider]['provider']
+    @provider = response[:provider] ? response[:provider]['provider'] : nil
+
     @contact = response[:contact]
     @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 

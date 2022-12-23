@@ -15,20 +15,21 @@ class ApiService < Sinatra::Base
       params: { patient_id: splited_params_ids[0], ccd_components: ['plan_of_treatment'] },
       rescue_string: "Care Plans "
     )
+
     patient_summary = resp['patient_summary']
     patient_summary = JSON.parse(patient_summary) if patient_summary
 
     plan_of_treatment_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
     @plan_of_treatment = PlanOfTreatmentSection.new(plan_of_treatment_section).entries[splited_params_ids[1].to_i-1]
-    @patient = resp['patient']['patient']
+    @patient = resp['patient'] ? resp['patient']['patient'] : nil
 
     if params[:_summary] == "count"
       @count_summary =  @plan_of_treatment.entries.length
     end
     @contact = resp['contact']
 
-    @business_entity = resp['business_entity']['business_entity']
+    @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
     @provider = resp['provider']
 
     status HTTP_OK
@@ -49,15 +50,16 @@ class ApiService < Sinatra::Base
     )
 
     patient_summary = resp['patient_summary']
-    patient_summary = JSON.parse(patient_summary) if patient_summary
 
+    patient_summary = JSON.parse(patient_summary) if patient_summary
     plan_of_treatment_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
     @plan_of_treatment = PlanOfTreatmentSection.new(plan_of_treatment_section)
     @contact = resp['contact']
-    @provider = resp['provider']['provider']
-    @patient = resp['patient']['patient']
-    @business_entity = resp['business_entity']['business_entity']
+    @patient = resp['patient'] ? resp['patient']['patient']  : nil
+    @provider= resp[:provider] ? resp[:provider]['provider'] : nil
+
+    @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
 
     if params[:_summary] == "count"
       @count_summary =  @plan_of_treatment.entries.length

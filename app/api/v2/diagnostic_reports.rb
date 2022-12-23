@@ -77,7 +77,7 @@ class ApiService < Sinatra::Base
     diagnostic_reports_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
 
     @diagnostic_report = ResultSection.new(diagnostic_reports_section)
-    @patient = resp['patient']['patient']
+    @patient = resp['patient'] ? resp['patient']['patient'] : nil
     @lab_requests = resp['lab_requests']
     @lab_requests = @include_category_target ? @lab_requests.select { |lab_request| (lab_request['lab_request_test']['loinc'] || 'LAB') == @include_category_target } : @lab_requests
     # @lab_results = (@include_code_target && @diagnostic_report.code.code == @include_code_target) : @lab_results : @lab_results
@@ -87,9 +87,9 @@ class ApiService < Sinatra::Base
     # (@include_date_target == test_date || @include_date_target == nil))
 
     if !@lab_requests.empty?
-      @business_entity = resp['business_entity']['business_entity']
-      @encounter = resp['encounter']['encounter']
-      @provider = resp['provider']['provider']
+      @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
+      @encounter = resp['encounter'] ? resp['encounter']['encounter'] : nil
+      @provider = resp['provider'] ? resp['provider']['provider'] : nil
       @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
       @lab_requests.each do |lab_request|

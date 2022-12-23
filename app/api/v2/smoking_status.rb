@@ -19,8 +19,8 @@ class ApiService < Sinatra::Base
     social_history_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
    
     @social_history = SocialHistorySection.new(social_history_section)
-    @patient = resp['patient']['patient']
-    @business_entity = resp['business_entity']['business_entity']
+    @patient = resp['patient'] ? resp['patient']['patient']: nil
+    @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
 
     status HTTP_OK
     jbuilder :list_smoking_status

@@ -21,9 +21,9 @@ class ApiService < Sinatra::Base
       @lab_results = @lab_results.each do |lab_result|
         lab_result["lab_request_test"]["id"] = "#{lab_result["lab_request_test"]["id"]}-#{ObservationType::LAB_REQUEST}"
       end
-      @patient = resp["patient"]["patient"]
-      @provider = resp["provider"]["provider"]
-      @business_entity = resp["business_entity"][0]["business_entity"]
+      @patient =  resp["patient"] ? resp["patient"]["patient"] : nil
+      @provider = resp["provider"] ? resp["provider"]["provider"] : nil
+      @business_entity = resp["business_entity"] ? resp["business_entity"][0]["business_entity"] : nil
       @observation_type = ObservationType::LAB_REQUEST
       @code = "5778-6"
       if params[:_summary] == "count"
@@ -39,9 +39,9 @@ class ApiService < Sinatra::Base
       social_history_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
    
       @social_history = SocialHistorySection.new(social_history_section)
-      @patient = resp['patient']['patient']
-      @business_entity = resp['business_entity']['business_entity']
-      @provider = resp['provider']['provider']
+      @patient = resp['patient'] ? resp['patient']['patient'] : nil
+      @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
+      @provider = resp['provider'] ? resp['provider']['provider'] : nil
       @contact = resp['contact']
 
       if params[:_summary] == "count"
@@ -105,8 +105,8 @@ class ApiService < Sinatra::Base
       social_history_section = patient_summary['ClinicalDocument']['component']['structuredBody']['component']['section']
    
       @social_history = SocialHistorySection.new(social_history_section)
-      @patient = resp['patient']['patient']
-      @business_entity = resp['business_entity']['business_entity']
+      @patient =  resp['patient'] ? resp['patient']['patient'] : nil
+      @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
       @provider = resp['provider']
       @contact = resp['contact']
       status HTTP_OK
