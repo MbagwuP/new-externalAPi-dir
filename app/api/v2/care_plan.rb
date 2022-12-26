@@ -57,7 +57,7 @@ class ApiService < Sinatra::Base
     @plan_of_treatment = PlanOfTreatmentSection.new(plan_of_treatment_section)
     @contact = resp['contact']
     @patient = resp['patient'] ? resp['patient']['patient']  : nil
-    @provider= resp[:provider] ? resp[:provider]['provider'] : nil
+    @provider= resp['provider'] ? resp['provider']['provider'] : nil
 
     @business_entity = resp['business_entity'] ? resp['business_entity']['business_entity'] : nil
 
