@@ -1,0 +1,7 @@
+module ObservationType
+	SMOKING_STATUS = 1
+	LAB_REQUEST = 2
+	VITAL_SIGNS = 3
+	BLOOD_PRESSURE = 4
+	PULSE_OXIMETRY = 5
+end

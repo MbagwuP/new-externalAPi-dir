@@ -14,6 +14,15 @@ DATE_REGEX = '\d{8}\z'
 DATE_MAX_LEN = 8
 TRUE_PARAM_VALUES = [1, '1', true, 'true'].freeze
 
+# code system constants
+SNOMED_CODE_SYSTEM = "snomed".freeze
+LIONIC_CODE_SYSTEM = "loinc".freeze
+UNIT_OF_MEASURE_CODE_SYSTEM = "unitsofmeasure".freeze
+CPT_CODE_SYSTEM = "http://www.ama-assn.org/go/cpt".freeze
+HOME_CODE_FROM_WEBSERVICE = 'H' # phone and address
+
+VALID_DATE_PARAMS = ["gt","lt","le","ge"]
+
 class ApiService < Sinatra::Base
 
   def local_timezone?
@@ -626,4 +635,144 @@ class ApiService < Sinatra::Base
     TRUE_PARAM_VALUES.include?(param)
   end
 
+  def status_by_dates(start_date, end_date)
+    status = "inactive"
+    time_now = Time.now
+
+    if start_date && end_date.nil?
+      status = "active" if start_date < time_now
+    elsif start_date && end_date
+      status = "active" if start_date < time_now && time_now < end_date
+    end
+
+    status
+  end
+
+  def status_by_any_active_participant(participants)
+    status = "inactive"
+    participants.each do |participant|
+      participant_status = status_by_dates(participant['effective_from'], participant['effective_to'])
+      return "active" if participant_status == "active"
+    end
+
+    status
+  end
+
+  def evaluate_current_internal_request_header_and_execute_request(base_path:, params:, rescue_string:, request_method: :get)
+    params.merge!({ business_entity_id: current_business_entity })
+
+    if current_internal_request_header
+      url = webservices_uri base_path, params
+      internal_signed_request = sign_internal_request(url: url, method: request_method, headers: {accept: :json})
+      resp = internal_signed_request.execute
+      # NOTE: change the structure of some attributes if it's a internal request.
+      @internal_request = true
+    else
+      url = webservices_uri base_path, params.merge(token: escaped_oauth_token)
+      resp = rescue_service_call rescue_string do
+        RestClient.get(url, api_key: APP_API_KEY)
+      end
+    end
+
+    JSON.parse(resp)
+  end
+
+  def validate_patient_id_param(patient_id)
+    api_svc_halt HTTP_BAD_REQUEST, '{error: Missing required patient_id params.}' unless patient_id
+    api_svc_halt HTTP_BAD_REQUEST, '{error: Patient ID must be a valid GUID.}' unless patient_id.is_guid?
+  end
+
+  def fhir_date_compare(data_date, filter)
+    operator = filter[0..1]
+    filter_date = DateTime.parse(filter)
+    data_date = DateTime.parse(data_date)
+    case operator
+    when 'gt'
+      data_date > filter_date
+    when 'lt'
+      data_date < filter_date
+    when 'le'
+      data_date <= filter_date
+    when 'ge'
+      data_date >= filter_date
+    else
+      data_date == filter_date
+    end
+  end
+
+  def participant_role(member_type)
+   return "RelatedPerson" if member_type == "Vo::Person"
+   return "Physician" if member_type == "Physician"
+
+   ""
+  end
+
+  def status_reason_from_reason_string(reason_text)
+    status_reason = { system: "http://terminology.hl7.org/CodeSystem/v3-ActReason" }
+
+    case reason_text
+    when "Religious exemption"
+      status_reason.merge({code: "RELIG", reason: "religious objection"})
+
+    when "Parental decision", "Patient decision", "Other refusal reason"
+      status_reason.merge({code: "PATOBJ", reason: "patient objection"})
+    else
+      {code: "", reason: "", system: ""}
+    end
+  end
+
+  def encounter_status(status)
+    case status
+    when "Open", "Pending Signature"
+      "in-progress"
+    when "Signed"
+      "completed"
+    else
+      "unknown"
+    end
+  end
+
+  def get_observations_path(code)
+    case code
+    when "5778-6"
+      "labs/get_results_by_patient_and_code.json"
+    when "72166-2"
+      "patient_summary/generate_json_by_patient_id_and_component.json"
+    else
+      "vital_observations/list_by_observation_code.json"
+    end
+  end
+
+  def get_observations_code(code)
+    case code
+    when ObservationCode::BODY_WEIGHT
+      ObservationCode::WEIGHT
+    when ObservationCode::BLOOD_PRESSURE
+      [ObservationCode::SYSTOLIC,ObservationCode::DIASTOLIC]
+    when ObservationCode::PULSE_OXIMETRY
+      [ObservationCode::OXYGEN_SATURATION,ObservationCode::INHALED_OXYGEN_CONCENTRATION]
+    else
+      code
+    end      
+  end
 end
+
+
+def get_phone_number(phones, phone_type_field, phone_code)
+  phone = phones.find {|phone| phone[phone_type_field] == phone_code} 
+
+  if phone.nil?
+    return nil
+  else
+    return phone['phone_number']
+  end
+end
+
+def validate_date_param(date_param)
+  if !VALID_DATE_PARAMS.include?(date_param[0, 2])
+    return "ge" + date_param
+  else
+    return date_param
+  end
+end
+

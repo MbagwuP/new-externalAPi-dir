@@ -1,4 +1,5 @@
-json.id provider['id']	
+
+json.identifier provider['id']
 json.npi provider['npi']
 json.name provider['name']
 json.email provider['email']
@@ -15,3 +16,5 @@ if (provider['primary_specialty'].present? && provider['primary_specialty']['spe
 else 
   json.specialty nil
 end
+json.last_name provider['last_name']
+json.first_name provider['first_name']
