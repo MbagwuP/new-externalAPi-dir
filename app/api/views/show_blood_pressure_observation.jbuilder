@@ -1,0 +1,1 @@
+json.partial! :blood_pressure_observation, observation: @blood_pressure_observation, observation_type: @observation_type, include_provenance_target: false
