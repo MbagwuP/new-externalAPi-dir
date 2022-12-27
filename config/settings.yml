@@ -16,10 +16,6 @@ development: &development
 localhost:
   *development
 
-# fix to run rspec
-test:
-  *development
-
 production:
   api_internal_svc_url: <%=ENV['CONFIG_API_INTERNAL_SVC_URL']%>
   api_internal_doc_srv_upld_url: https://dms.carecloud.com
