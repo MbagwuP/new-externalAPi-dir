@@ -1,1 +1,0 @@
-json.partial! :pulse_oximetry_observation, observation: @pulse_oximetry_observation, include_provenance_target: false

@@ -39,9 +39,6 @@ module Sinatra
         # ensure all responses are JSON, unless specified otherwise on a per-endpoint basis
         content_type 'application/json', :charset => 'utf-8'
 
-        # to handle patientid param like patient_id
-        params[:patient_id] = params[:patientid] if params[:patientid].present?
-
         if current_internal_request_header
           authentication_filter
         end

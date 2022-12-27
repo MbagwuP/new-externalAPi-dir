@@ -30,11 +30,13 @@ json.cancellation_details do
   json.comments appointment['cancellation_comments']
 end
 
+
 json.chief_complaint appointment['reason_for_visit']
 json.task_id appointment['task_id']
 json.updated_by_application appointment['updated_by_application']
 json.appointment_cancellation_reason_id appointment['appointment_cancellation_reason_id']
 json.arrived_at appointment['arrived_at']
+json.business_entity_id appointment['business_entity_id']
 json.comments appointment['comments']
 json.confirmation_details appointment['confirmation_details']
 json.departed_at appointment['departed_at']
@@ -55,22 +57,3 @@ json.end_time appointment['end_time']
 json.created_at appointment['created_at']
 json.updated_at appointment['updated_at']
 
-# NOTE: the structure of this response change if it's made by internal service with internal auth token.
-if defined?(@internal_request) && @internal_request
-  json.nature_of_visit do
-    json.id appointment['nature_of_visit_id']
-    json.name appointment['nature_of_visit_name']
-  end
-  json.business_entity do
-    json.id appointment['business_entity_id']
-    json.name appointment['business_entity_name']
-  end
-  json.attending_provider do
-    json.id appointment['provider_id']
-    json.npi appointment['provider_npi']
-    json.first_name appointment['provider_first_name']
-    json.last_name appointment['provider_last_name']
-  end
-else
-  json.business_entity_id appointment['business_entity_id']
-end

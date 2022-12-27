@@ -109,7 +109,6 @@ class ApiService < Sinatra::Base
       if (current_internal_request_header)
         internal_signed_request = sign_internal_request(url: url, method: :get, headers: {accept: :json})
         response = internal_signed_request.execute
-        internal_request = true
       else
         url  += "&token=#{escaped_oauth_token}"
         response = RestClient.get url, extapikey: ApiService::APP_API_KEY
@@ -133,10 +132,6 @@ class ApiService < Sinatra::Base
         phone['phone_type_code'] = WebserviceResources::Converter.cc_id_to_code(WebserviceResources::PhoneType, phone['phone_type'])
       end
     end
-
-    # fhir guarantor object is equal to responsible_party
-    parsed['patient']['guarantor'] = parsed['patient']['responsible_party'] if internal_request
-
     parsed = Fhir::PatientPresenter.new(parsed['patient']).as_json if request.accept.first.to_s == 'application/json+fhir'
     body(parsed.to_json); status HTTP_OK
   end
@@ -366,65 +361,6 @@ class ApiService < Sinatra::Base
     @tasks = JSON.parse(resp.body)
     status HTTP_OK
     jbuilder :list_tasks
-  end
-
-  get '/v2/patient' do
-    patientid = params[:patient_id]
-    validate_patient_id_param(patientid) if patientid
-
-    base_path = "patients/search/v2.json"
-    parameters = { patient_id: patientid, name: params[:name], dob: params[:birthdate], gender: params[:gender], mrn: params[:mrn]}
-
-    resp = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: parameters,
-      rescue_string: "Patients"
-    )
-
-    @patients = resp['patients']
-    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
-
-    if params[:_summary] == "count"
-      @count_summary =  @patients.entries.length
-    end
-
-    status HTTP_OK
-    jbuilder :list_patients
-  end
-
-  # /v2/patient/{guid}
-  # /v2/patient/{integer_id}
-  get /\/v2\/patient\/(?<patient_id>([a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12})|[0-9]*)$/ do |patient_id|
-    patientid = params[:patient_id]
-    validate_patient_id_param(patientid) if patientid
-
-    base_path = "patients/search/v2.json"
-    parameters = { patient_id: patientid }
-
-    resp = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: parameters,
-      rescue_string: "Patients"
-    )
-
-    @patient = resp['patients'].first    
-    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
-    status HTTP_OK
-    jbuilder :show_patient
-  end
-
-  get '/v2/patientlist' do
-    base_path = "patients/search/v2.json"
-    parameters = { elementary: 'true' }
-    resp = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: parameters,
-      rescue_string: "Patients"
-    )
-
-    @patients = resp['patients']
-    status HTTP_OK
-    jbuilder :patientlist
   end
 
 end
