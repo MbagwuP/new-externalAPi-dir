@@ -1,0 +1,1 @@
+json.partial! :procedure, procedure: OpenStruct.new(@procedure)
