@@ -37,7 +37,7 @@ json.observation do
 			json.effective_start_date observation.effective_start_date
 			json.value_quantity do
 				json.value observation.value
-				json.unit observation.code == ObservationCode::CIRCUMFERENCE_PERCENTILE ? "%" : observation.unit
+				json.unit get_unit(observation.code, observation.unit)
 				json.system 'unitsofmeasure'
 				json.code observation.unit_abbreviation
 			end
