@@ -37,9 +37,9 @@ json.observation do
 			json.effective_start_date observation.effective_start_date
 			json.value_quantity do
 				json.value observation.value
-				json.unit get_unit(observation.code, observation.unit)
+				json.unit get_unit(observation.code, observation.unit_abbreviation)
 				json.system 'unitsofmeasure'
-				json.code observation.unit_abbreviation
+				json.code get_unit(observation.code, observation.unit_abbreviation)
 			end
 
 			json.provider do
