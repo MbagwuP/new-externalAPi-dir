@@ -13,7 +13,7 @@ json.manufacture_date medical_device.date_of_manufacture
 json.expiration_date medical_device.expiration_date
 json.lot_number medical_device.lot_number
 json.serial_number medical_device.serial_number
-json.device_name "#{medical_device.brand_name.encode}, #{medical_device.gmdn_pt_name}"
+json.device_name "#{medical_device.brand_name.force_encoding("UTF-8")}, #{medical_device.gmdn_pt_name}"
 json.model_number medical_device.version_model
 json.type_code "704707009" #we need to add a field 'type_code'to ImplantableDevice table with the snomed code (medical_device.type_code)
 json.type_code_system "snomed"
