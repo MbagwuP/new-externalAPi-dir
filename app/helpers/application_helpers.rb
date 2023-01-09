@@ -673,7 +673,7 @@ class ApiService < Sinatra::Base
         RestClient.get(url, api_key: APP_API_KEY)
       end
     end
-    final_response = resp.scub("")
+    final_response = resp.scrub("")
     JSON.parse(final_response)
   end
 
