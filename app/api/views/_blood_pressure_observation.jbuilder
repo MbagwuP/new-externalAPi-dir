@@ -51,7 +51,7 @@ json.observation do
 					end
 					json.value_quantity do
 						json.value systolic_observation.value
-						json.unit systolic_observation.unit
+						json.unit systolic_observation.unit_abbreviation
 						json.system 'unitsofmeasure'
 						json.code systolic_observation.unit_abbreviation
 					end
@@ -70,7 +70,7 @@ json.observation do
 					end
 					json.value_quantity do
 						json.value diastolic_observation.value
-						json.unit diastolic_observation.unit
+						json.unit diastolic_observation.unit_abbreviation
 						json.system 'unitsofmeasure'
 						json.code diastolic_observation.unit_abbreviation
 					end
