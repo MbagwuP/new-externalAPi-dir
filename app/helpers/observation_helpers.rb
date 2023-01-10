@@ -10,6 +10,8 @@ class ApiService < Sinatra::Base
 			'/min'
 		when ObservationCode::HEART_RATE
 			'/min'
+		when ObservationCode::PEDIATRIC_WEIGHT_FOR_HEIGHT
+			'%'
 		else
 			unit
 		end			
