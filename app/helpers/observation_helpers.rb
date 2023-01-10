@@ -12,6 +12,8 @@ class ApiService < Sinatra::Base
 			'/min'
 		when ObservationCode::PEDIATRIC_WEIGHT_FOR_HEIGHT
 			'%'
+		when ObservationCode::HEIGHT
+			unit == '[in_us]' ? '[in_i]' : unit
 		else
 			unit
 		end			
