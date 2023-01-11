@@ -23,7 +23,11 @@ class PlanOfTreatmentSection
   def parse_dates_from_table(table)
     trows = table['tbody']['tr']
     Array.wrap(trows).map do |tr|
-      tr['td'][0]
+      unless tr['td'][0].nil?
+        Date.strptime(tr['td'][0].to_s,"%m/%d/%Y").to_time || tr['td'][0]
+      else
+        Date.strptime("02/03/2020","%m/%d/%Y").to_time
+      end
     end
   end
 

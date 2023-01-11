@@ -1,24 +1,22 @@
-lab_result = OpenStruct.new(lab_result)
-patient = OpenStruct.new(lab_result.patient)
-business_entity = OpenStruct.new(lab_result.business_entity)
-provider = OpenStruct.new(lab_result.provider)
-
 json.observation do 
 	json.labResult do
 		json.labResult do
-			json.partial! :patient, patient: patient
+			json.account_number patient.external_id
+			json.mrn patient.chart_number
+			json.patient_name patient.full_name
+			json.external_id patient.external_id
 			json.identifier lab_result.id
-			json.text lab_result.text
+			json.text lab_result.lab_request_test_description
 			json.text_status 'generated'
 			json.result_status 'final'
-			json.lab_test_code lab_result.lab_test_code
+			json.lab_test_code code
 			json.lab_test_code_system lab_result.lab_test_code_system
-			json.lab_test_code_display lab_result.text
+			json.lab_test_code_display lab_result.lab_request_test_description
 			json.lab_test_code_text lab_result.text
-			json.effective_period_start lab_result.measured_at
+			json.effective_period_start lab_result.ordered_at
 			json.effective_period_end nil
 			json.result_value do
-				json.value lab_result.result_value
+				json.value lab_result.lab_request_test_description
 				json.value_code nil
         json.value_code_system nil
         json.value_unit nil
@@ -26,8 +24,8 @@ json.observation do
 			json.reference_range_low do
 				json.value lab_result.reference_lower_bound
 				json.value_code nil
-        json.value_code_system nil
-        json.value_unit nil
+        		json.value_code_system nil
+        	json.value_unit nil
 			end
 			json.reference_range_high do
 				json.value lab_result.reference_upper_bound
@@ -43,6 +41,14 @@ json.observation do
 			json.business_entity do
 				json.partial! :business_entity, business_entity: business_entity
 			end
+			if include_provenance_target
+      			json.partial! :_provenance, patient: patient, record: lab_result, 
+            		provider: provider, business_entity: business_entity, obj: 'Lab-Result'
+			end
 		end
+		if include_provenance_target
+  			json.partial! :_provenance, patient: patient, record: lab_result, 
+            	provider: provider, business_entity: business_entity, obj: 'labResult'
+  		end
 	end
 end

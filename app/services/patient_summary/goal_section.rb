@@ -24,7 +24,9 @@ class GoalSection
     Array.wrap(trows).map do |tr|
       {
         title: tr['td'][0],
-        date: tr['td'][1]
+        date: tr['td'][1],
+        date_to: tr['td'][2],
+        id: tr['td'][3]
       }
     end
   end
@@ -38,6 +40,8 @@ class GoalSection
       OpenStruct.new({
         title: title_and_date[i][:title],
         start_date: title_and_date[i][:date],
+        target_date: title_and_date[i][:date_to],
+        id: title_and_date[i][:id],
         code: OpenStruct.new(entry_value['code']),
         status: entry_value['statusCode']['code']
       })

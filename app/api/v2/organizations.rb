@@ -1,5 +1,5 @@
 class ApiService < Sinatra::Base
-  get '/v2/organizations/:id' do
+  get '/v2/organization/:id' do
     organization_id = params[:id]
     base_path = "businesses/#{organization_id}/details.json" 
 
@@ -10,7 +10,6 @@ class ApiService < Sinatra::Base
     )
     
     @organization = resp['business_entity']
-
     status HTTP_OK
     jbuilder :show_organization
   end

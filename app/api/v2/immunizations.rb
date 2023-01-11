@@ -9,28 +9,21 @@ class ApiService < Sinatra::Base
       params: {},
       rescue_string: 'Immunization'
     )
-    
-    @immunization = resp['immunizations'].first
 
+    @immunization = resp['immunizations'].first    
     status HTTP_OK
     jbuilder :show_immunization
   end
 
   get '/v2/immunizations' do
-    patient_id = params[:patient_id]
-    base_path = "patients/#{patient_id}/immunizations.json"
-    parameters = { patient_id: patient_id }
-
-    validate_patient_id_param(patient_id)
+    response = get_response(params[:patient_id],'Immunization',{date: params[:date],status: params[:status]})
     
-    resp = evaluate_current_internal_request_header_and_execute_request(
-      base_path: base_path,
-      params: parameters,
-      rescue_string: 'Immunizations'
-    )
+    @immunizations = response[:resources]
+    @include_provenance_target = params[:_revinclude] == 'Provenance:target' ? true : false
 
-    @immunizations = resp['immunizations']
-
+    if params[:_summary] == "count"
+      @count_summary =  @immunizations.length
+    end
     status HTTP_OK
     jbuilder :list_immunizations
   end

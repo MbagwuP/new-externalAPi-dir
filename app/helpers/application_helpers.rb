@@ -21,6 +21,8 @@ UNIT_OF_MEASURE_CODE_SYSTEM = "unitsofmeasure".freeze
 CPT_CODE_SYSTEM = "http://www.ama-assn.org/go/cpt".freeze
 HOME_CODE_FROM_WEBSERVICE = 'H' # phone and address
 
+VALID_DATE_PARAMS = ["gt","lt","le","ge"]
+
 class ApiService < Sinatra::Base
 
   def local_timezone?
@@ -671,13 +673,31 @@ class ApiService < Sinatra::Base
         RestClient.get(url, api_key: APP_API_KEY)
       end
     end
-
-    JSON.parse(resp)
+    final_response = resp.scrub("")
+    JSON.parse(final_response)
   end
 
   def validate_patient_id_param(patient_id)
     api_svc_halt HTTP_BAD_REQUEST, '{error: Missing required patient_id params.}' unless patient_id
     api_svc_halt HTTP_BAD_REQUEST, '{error: Patient ID must be a valid GUID.}' unless patient_id.is_guid?
+  end
+
+  def fhir_date_compare(data_date, filter)
+    operator = filter[0..1]
+    filter_date = DateTime.parse(filter)
+    data_date = DateTime.parse(data_date)
+    case operator
+    when 'gt'
+      data_date > filter_date
+    when 'lt'
+      data_date < filter_date
+    when 'le'
+      data_date <= filter_date
+    when 'ge'
+      data_date >= filter_date
+    else
+      data_date == filter_date
+    end
   end
 
   def participant_role(member_type)
@@ -721,5 +741,37 @@ class ApiService < Sinatra::Base
     else
       "vital_observations/list_by_observation_code.json"
     end
+  end
+
+  def get_observations_code(code)
+    case code
+    when ObservationCode::BODY_WEIGHT
+      ObservationCode::WEIGHT
+    when ObservationCode::BLOOD_PRESSURE
+      [ObservationCode::SYSTOLIC,ObservationCode::DIASTOLIC]
+    when ObservationCode::PULSE_OXIMETRY
+      [ObservationCode::OXYGEN_SATURATION,ObservationCode::INHALED_OXYGEN_CONCENTRATION]
+    else
+      code
+    end      
+  end
+end
+
+
+def get_phone_number(phones, phone_type_field, phone_code)
+  phone = phones.find {|phone| phone[phone_type_field] == phone_code} 
+
+  if phone.nil?
+    return nil
+  else
+    return phone['phone_number']
+  end
+end
+
+def validate_date_param(date_param)
+  if !VALID_DATE_PARAMS.include?(date_param[0, 2])
+    return "ge" + date_param
+  else
+    return date_param
   end
 end
