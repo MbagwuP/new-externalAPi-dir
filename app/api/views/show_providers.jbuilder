@@ -1,3 +1,3 @@
-json.providers @providers do |provider|
-	json.partial! :provider, provider: provider 
+json.providers @providers do |base_provider|
+	json.partial! :base_provider, base_provider: base_provider 
 end
