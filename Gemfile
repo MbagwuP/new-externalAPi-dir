@@ -53,6 +53,8 @@ group :development, :localhost, :test do
   gem 'pry-rescue'
   gem 'pry-stack_explorer'
   gem 'awesome_print'
+  gem 'ruby-debug-ide'
+  gem 'debase'
   # gem 'dotenv' already declared above
 end
 

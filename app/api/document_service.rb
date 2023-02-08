@@ -4,6 +4,7 @@
 #
 # Version:    1.0
 
+require 'securerandom'
 
 class ApiService < Sinatra::Base
 
@@ -33,6 +34,8 @@ class ApiService < Sinatra::Base
   # --> if patient not found: 404
   # --> if bad request: 400
   post '/v1/documents/patient/:patientid/upload?' do
+
+    LOG.debug("__ENCODING__: #{__ENCODING__}, Encoding.default_external: #{Encoding.default_external}")
 
     ## parameters passed in
     #LOG.debug(params[:metadata])
@@ -67,49 +70,59 @@ class ApiService < Sinatra::Base
     # if it's an OAuth token get cbe from session, otherwise call webservices    
     business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
-    local_file = create_local_file(patientid, params)
+
+    document_name = request_body['document']['name']
+    document_binary = params['payload'][:tempfile]
 
     # http://stackoverflow.com/questions/51572/determine-file-type-in-ruby
-    file_type = File.extname(local_file)
+    file_extension = File.extname(document_name)
 
-    document_type_regex = File.extname(local_file)
+    LOG.debug("Document file name: #{document_name}, Document file extension: #{file_extension}")
 
-    if document_type_regex == '.jpg'
-      document_type_regex = '.jpg'
-      file_type_name = "JPG"
-    else
-      document_type_regex = '.pdf'
-      file_type_name = "PDF"
+    if file_extension.empty?
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"File name must have an extension. File name: #{document_name}\"}"
     end
 
-    #application/pdf; charset=binary
-    api_svc_halt HTTP_BAD_REQUEST, '{"error":"Document must be of type PDF or JPG "}' if file_type.match(document_type_regex) == nil
+    format = file_extension.delete('.').upcase
 
-    ## helpful articles
-    ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
-    ##   http://leejava.wordpress.com/2009/07/30/upload-file-from-rest-in-ruy-on-rail-with-json-format/
-    ##
-    ## Request test:
-    ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
-    response = dms_upload(local_file, pass_in_token)
+    LOG.debug("Document format: #{format}")
 
-    handler_id = response["nodeid"]
+    valid_formats = ['BMP', 'DOC', 'DOCX', 'GIF', 'JPG', 'JPEG', 'PDF', 'PNG', 'PPT', 'PPTX', 'RTF', 'TIF', 'TIFF', 'XLS', 'XLSX']
 
-    ## use rest client to do multipart form upload
-    FileUtils.remove(local_file)
+    unless valid_formats.include?(format)
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The #{format} document format is not supported. It must be one of: #{valid_formats.join(',')}\"}"
+    end
 
-    ## add required entities to the request
-    request_body['document']['patient_id'] = patientid
-    request_body['document']['handler'] = handler_id
-    request_body['document']['source'] = 1 if request_body['document']['source'].blank?
-    request_body['document']['format'] = file_type_name
+    begin
+      local_file_name = create_local_file_by_name(patientid, document_binary, document_name)
 
-    #LOG.debug "Request body "
-    #LOG.debug(request_body.to_s)
+      ## helpful articles
+      ##   http://stackoverflow.com/questions/3938569/how-do-i-upload-a-file-with-metadata-using-a-rest-web-service
+      ##   http://leejava.wordpress.com/2009/07/30/upload-file-from-rest-in-ruy-on-rail-with-json-format/
+      ##
+      ## Request test:
+      ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
+      response = dms_upload(local_file_name, pass_in_token)
 
-    response = create_document(patientid, pass_in_token, request_body)
-    @resp = JSON.parse(response)
-    jbuilder :show_document
+      handler_id = response["nodeid"]      
+
+      ## add required entities to the request
+      request_body['document']['patient_id'] = patientid
+      request_body['document']['handler'] = handler_id
+      request_body['document']['source'] = 1 if request_body['document']['source'].blank?
+      request_body['document']['format'] = format
+
+      #LOG.debug "Request body "
+      #LOG.debug(request_body.to_s)
+
+      response = create_document(patientid, pass_in_token, request_body)
+      @resp = JSON.parse(response)
+      jbuilder :show_document    
+    ensure
+      unless local_file_name.nil?
+        FileUtils.remove(local_file_name)
+      end
+    end
   end
 
   # Upload document to patient
@@ -428,12 +441,19 @@ class ApiService < Sinatra::Base
     status HTTP_OK
   end
 
+
   def create_local_file(patientid, params)
-    # Now the picture is an IO object!
     document_binary = params['payload'][:tempfile]
     document_name = params['payload'][:filename]
+
+    return create_local_file_by_name(patientid, document_binary, document_name)
+  end
+
+  def create_local_file_by_name(patientid, document_binary, document_name)
     #rewind this file
     document_binary.rewind
+
+    file_extension = File.extname(document_name)
 
     # Save the file
     # I end up having to save this local to post it again. I looked through a few articles to find out how to avoid
@@ -445,9 +465,8 @@ class ApiService < Sinatra::Base
     internal_file_name = ''
     internal_file_name << patientid
     internal_file_name << '-'
-    internal_file_name << rand(150).to_s
-    internal_file_name << '-'
-    internal_file_name << document_name
+    internal_file_name << SecureRandom.uuid
+    internal_file_name << file_extension
 
     # Handle Content-Transfer-Encoding scheme
     ##  https://tools.ietf.org/html/rfc2045#section-6
