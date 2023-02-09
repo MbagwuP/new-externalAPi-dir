@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    command: bundle exec rdebug-ide --debug --host 0.0.0.0 --port 1234 --dispatcher-port 26162 -- /usr/local/bundle/bin/rackup -o 0.0.0.0 -p 4567
+
+    environment:
+      - RUBY_ENV=development
+    ports:
+      - "4567:4567"
+      # Debugging ports
+      - "1234:1234"
+      - "26162:26162"
+    volumes:
+      - .:/external_api
+
+    tty: true
+    stdin_open: true
