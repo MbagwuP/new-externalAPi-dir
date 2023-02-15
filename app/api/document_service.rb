@@ -71,6 +71,18 @@ class ApiService < Sinatra::Base
     business_entity = oauth_request? ? current_business_entity : get_business_entity(pass_in_token)
     patientid = get_internal_patient_id(patientid, business_entity, pass_in_token)
 
+    if request_body['document'].nil?
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The document is missing from the POST\"}"
+    end
+
+    if request_body['document']['name'].nil?
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The document.name is missing from the POST\"}"
+    end
+
+    if params['payload'].nil?
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The payload is missing from the POST\"}"
+    end
+
     document_name = request_body['document']['name']
     document_binary = params['payload'][:tempfile]
 
