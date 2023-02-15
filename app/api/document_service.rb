@@ -492,7 +492,11 @@ class ApiService < Sinatra::Base
     urldoccrt << CGI::escape(pass_in_token)
 
     begin
+      LOG.debug("Posting document to webservices. URL: #{urldoccrt}, Body: #{request_body.to_json}")
+
       response = RestClient.post(urldoccrt, request_body.to_json, :content_type => :json)
+
+      LOG.debug "Posted document to webservices response: #{response.inspect}"
     rescue => e
       begin
         errmsg = "Document Creation Failed - #{e.message}"
@@ -507,10 +511,15 @@ class ApiService < Sinatra::Base
 
   ## upload the document to the DMS server
   def dms_upload (file_path, token, params = {})
+    LOG.debug "Dms::DocumentAPI uploading file: #{file_path}, params: #{file_path}"
+
     file = File.new(file_path, 'rb')
     options = params.merge(file: file, token: token)
+
     res = JSON.parse(post("#{DOC_SERVICE_URL}/documents",options))
-    #LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
+
+    LOG.debug "Dms::DocumentAPI upload response: #{res.inspect}"
+
     return res
   end
 

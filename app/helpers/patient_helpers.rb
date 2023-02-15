@@ -84,7 +84,7 @@ class ApiService < Sinatra::Base
       urlpatient << '/externalid.json?token='
       urlpatient << CGI::escape(pass_in_token)
 
-      #LOG.debug("url for patient: " + urlpatient)
+      LOG.debug("url for patient: " + urlpatient)
 
       begin
         resp = RestClient.get(urlpatient)
