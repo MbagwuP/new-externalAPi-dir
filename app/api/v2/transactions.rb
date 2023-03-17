@@ -105,7 +105,7 @@ class ApiService < Sinatra::Base
       request_body = get_request_JSON
       urlclaimsave = webservices_uri "claims/save-claim-data.json", {token: escaped_oauth_token}
       @resp = rescue_service_call 'Save Claim' do
-        RestClient.post(urlclaimsave, request_body)
+        RestClient.post(urlclaimsave, request_body.to_json, :content_type => :json)
       end
 
       @resp = JSON.parse(@resp)
