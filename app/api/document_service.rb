@@ -3,9 +3,7 @@
 #
 #
 # Version:    1.0
-
 require 'securerandom'
-
 class ApiService < Sinatra::Base
 
 
@@ -102,7 +100,7 @@ class ApiService < Sinatra::Base
     valid_formats = ['BMP', 'DOC', 'DOCX', 'GIF', 'JPG', 'JPEG', 'PDF', 'PNG', 'PPT', 'PPTX', 'RTF', 'TIF', 'TIFF', 'XLS', 'XLSX']
 
     unless valid_formats.include?(format)
-      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The #{format} document format is not supported. It must be one of: #{valid_formats.join(',')}\"}"
+      api_svc_halt HTTP_BAD_REQUEST, "{\"error\":\"The #{format} file type is not supported. It must be one of: #{valid_formats.join(',')}\"}"
     end
 
     begin
@@ -114,7 +112,14 @@ class ApiService < Sinatra::Base
       ##
       ## Request test:
       ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
-      response = dms_upload(local_file_name, pass_in_token)
+      begin
+        response = dms_upload(local_file_name, pass_in_token)
+      rescue Errno::ECONNREFUSED
+        api_svc_halt HTTP_SERVICE_UNAVAILABLE, "upload service is unavailable"
+      rescue => e
+        LOG.warn "#{e.message}:#{e.http_body}"
+        api_svc_halt e.http_code, "#{e.message}:#{e.http_body}"
+      end  
 
       handler_id = response["nodeid"]      
 
@@ -313,7 +318,14 @@ class ApiService < Sinatra::Base
     ##
     ## Request test:
     ##   curl -F "metadata=<documenttest2.json" -F "payload=@example.pdf" http://localhost:9292/v1/documents/patient/legacy_patient_id-13525-1/upload\?authentication\=AQIC5wM2LY4Sfcwea7zIYP8QQwMd6vvB8bHXOVDwT8mU73U%3D%40AAJTSQACMDMAAlNLAAstMTM0MDgzNjcwNQACUzEAAjAx%23
-    response = dms_upload(local_file, pass_in_token)
+    begin
+      response = dms_upload(local_file, pass_in_token)
+    rescue Errno::ECONNREFUSED
+      api_svc_halt HTTP_SERVICE_UNAVAILABLE, "upload service is unavailable"
+    rescue => e
+      LOG.warn "#{e.message}:#{e.http_body}"
+      api_svc_halt e.http_code, "#{e.message}:#{e.http_body}"
+    end  
 
     handler_id = response["nodeid"]
 
