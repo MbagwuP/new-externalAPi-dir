@@ -31,6 +31,12 @@ class ApiService < Sinatra::Base
   post '/v2/referral_location/create' do
     request_body = get_request_JSON
 
+    error_message = validate_phone_and_fax(request_body)
+    if error_message 
+      errmsg = "Referral Location Creation Failed - The phones array must contain 2 elements. A phone number for a fax machine, and a phone number associated to the location"
+      api_svc_halt HTTP_BAD_REQUEST, errmsg
+    end
+
     @state_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::State, request_body['address']['state_code'])
     request_body['address']['state_id']  = @state_id
     @country_id = WebserviceResources::Converter.code_to_cc_id(WebserviceResources::Country, "USA")
@@ -119,5 +125,23 @@ post '/v2/referral_source/create' do
   status HTTP_CREATED
 end
 
+private
+
+def validate_phone_and_fax(request_body)
+  phone_type_codes = []
+  fax = nil
+  request_body["phones"].each do |phone|
+    if phone["phone_type_code"] == "M" or phone["phone_type_code"] == "P" or phone["phone_type_code"] == "C" or phone["phone_type_code"] == "H" or phone["phone_type_code"] == "B"
+      phone_type_codes << phone["phone_type_code"]
+    elsif phone["phone_type_code"] == "F"
+      fax = phone
+    end
+  end
  
+  if fax.nil?
+    return "Fax is missing"
+  elsif phone_type_codes.empty?
+    return "Phone is missing"
+  end
+end
 end
