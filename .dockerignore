@@ -7,7 +7,7 @@
 .codeclimate.yml
 .dockerignore
 .pryrc
-.env.sample
+#.env.sample
 .*.sw[a-z]
 .build
 .ruby-gemset

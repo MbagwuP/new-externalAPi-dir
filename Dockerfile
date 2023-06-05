@@ -18,7 +18,7 @@ WORKDIR /external_api
 
 COPY . ./
 
-RUN bundle check || bundle install
+RUN /root/.rbenv/shims/bundle install
 
 EXPOSE 4567
 # Debugging ports

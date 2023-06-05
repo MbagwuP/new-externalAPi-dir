@@ -12,3 +12,5 @@
 *.orig
 /.notes/
 /.vscode/
+app_external-0.1.4/
+ccbase-0.3.25/

@@ -1,12 +1,9 @@
-FROM ruby:2.1.7
+FROM ubuntu:14.04
 
-RUN gem install bundler -v 1.17.3
-
-RUN apt-get clean && apt-get update && apt-get install -y --force-yes locales
+RUN apt-get update -qq
 
 # Set the locale
-RUN locale-gen en_US.UTF-8
-
+RUN apt-get install -y locales && locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
@@ -14,10 +11,50 @@ ENV LC_ALL en_US.UTF-8
 # Newer versions of Ruby use the above environment variables for the encoding, but this version needs explicit option setting
 ENV RUBYOPT='-E utf-8'
 
+# install pre-requisities for rbenv/ruby
+RUN apt-get install -y git-core curl zlib1g-dev build-essential libssl-dev libreadline-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev libxslt1-dev libcurl4-openssl-dev python-software-properties libffi-dev
+
+# needed for "bundle install" to work
+RUN apt-get install -y libpq-dev unixodbc-dev hunspell
+RUN apt-get install -y unzip
+
+# install aws cli
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+RUN unzip awscliv2.zip
+RUN ./aws/install
+RUN rm -fr aws
+
+# Create the .aws config directory because it will be used in mount statements at runtime
+RUN mkdir /root/.aws
+
+# install rbenv and ruby
+RUN git clone https://github.com/rbenv/rbenv.git ~/.rbenv && \
+    echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(rbenv init -)"' >> ~/.bashrc && \
+    git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build && \
+    echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc && \
+    $HOME/.rbenv/bin/rbenv install 2.1.7 && \
+    $HOME/.rbenv/bin/rbenv global 2.1.7
+
+# Set environment variables for Docker
+ENV PATH /root/.rbenv/bin:$PATH
+ENV PATH /root/.rbenv/shims:$PATH
+
+# Install bundler after Ruby is installed and rbenv is set up
+RUN /root/.rbenv/shims/gem install bundler -v '1.17.3'
+
+RUN mkdir /app
 WORKDIR /external_api
 
-COPY . ./
+# copy the Gemfile and Gemfile.lock for installing required gems
+COPY Gemfile Gemfile
+COPY Gemfile.lock Gemfile.lock
 
-RUN bundle check || bundle install
+# The Gemfile contains references to local gems in the vendor directory so we need it in the image for the "bundle install" command
+COPY  . ./
 
-EXPOSE 4567
+RUN /root/.rbenv/shims/bundle install && mkdir -p tmp/pids
+
+EXPOSE 3000
+
+CMD ["/bin/bash", "-c", "/root/.rbenv/shims/bundle exec puma -p 3000 -C config/config.rb"]

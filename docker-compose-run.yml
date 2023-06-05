@@ -3,7 +3,7 @@ services:
   web:
     build: 
       context: .
-      dockerfile: ./Dockerfile.run
+      dockerfile: ./Dockerfile
 
     command: bundle exec rackup -o 0.0.0.0 -p 4567
 

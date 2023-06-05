@@ -8,6 +8,7 @@ gem 'tzinfo'
 gem 'tilt-jbuilder', '>= 0.4.0', :require => 'sinatra/jbuilder'
 gem 'oj', '~> 2.10.0'
 gem 'stoplight', '~> 1.1'
+gem 'puma'
 
 
 # cache
