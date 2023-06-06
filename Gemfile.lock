@@ -193,7 +193,7 @@ DEPENDENCIES
   pry-byebug
   pry-rescue
   pry-stack_explorer
-  puma (~> 3.11.4)
+  puma
   rack-test
   rake
   require_all
