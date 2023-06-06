@@ -1,0 +1,5 @@
+source "https://supermarket.chef.io"
+
+metadata
+
+cookbook 'cc_filebeat', git: 'git@github.com:cc-sysops/cc_filebeat.git', branch: 'master'

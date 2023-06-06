@@ -1,0 +1,6 @@
+source "https://supermarket.chef.io"
+
+metadata
+
+cookbook "ccbase", git: "git@github.com:/cc-sysops/ccbase.git", branch: "master"
+cookbook "rack_server", git: "git@github.com:/cc-sysops/rack_server.git", branch: "master"

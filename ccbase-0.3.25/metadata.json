@@ -1,0 +1,49 @@
+{
+  "name": "ccbase",
+  "description": "Installs/Configures ccbase",
+  "long_description": "Installs/Configures ccbase",
+  "maintainer": "CareCloud Devops",
+  "maintainer_email": "devops@carecloud.com",
+  "license": "All rights reserved",
+  "platforms": {
+  },
+  "dependencies": {
+    "apt": "~> 2.9.2",
+    "motd-tail": "~> 3.0.0",
+    "ntp": "~> 1.9.0",
+    "timezone-ii": "~> 0.2.0",
+    "artifact": "~> 1.12.2",
+    "bash": "~> 0.1.2",
+    "cc_filebeat": "~> 0.0.1",
+    "s3_file": "~> 2.8.5"
+  },
+  "recommendations": {
+  },
+  "suggestions": {
+  },
+  "conflicting": {
+  },
+  "providing": {
+  },
+  "replacing": {
+  },
+  "attributes": {
+  },
+  "groupings": {
+  },
+  "recipes": {
+  },
+  "version": "0.3.25",
+  "source_url": "",
+  "issues_url": "",
+  "privacy": false,
+  "chef_versions": [
+
+  ],
+  "ohai_versions": [
+
+  ],
+  "gems": [
+
+  ]
+}

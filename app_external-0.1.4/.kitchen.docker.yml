@@ -1,0 +1,32 @@
+---
+driver:
+  name: docker
+  customize:
+    memory: 4056
+
+provisioner:
+  name: chef_zero
+  environments_path: test/environments
+  data_bags_path: test/data_bags
+  encrypted_data_bag_secret_key_path: ../encrypted_data_bag_secret
+  client_rb:
+    environment: build
+
+platforms:
+  - name: ubuntu-14.04
+    driver_config:
+      image: "063112144237.dkr.ecr.us-east-1.amazonaws.com/carecloud/rack_server:nginx-passenger-ruby_1.8.0-4.0.59-2.1.7-6"
+      forward:
+      - 3000:80
+      platform: ubuntu
+
+suites:
+  - name: default
+    run_list:
+      - recipe[ccbase::setup]
+      - recipe[app_external::default]
+      - recipe[app_external::deploy]
+    attributes:
+      ccbase:
+        bundle: false
+        config_ctxt_environment: true

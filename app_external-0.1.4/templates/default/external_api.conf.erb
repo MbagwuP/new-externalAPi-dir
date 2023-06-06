@@ -1,0 +1,19 @@
+server {
+
+  listen 80 default_server;
+  server_name _; # This is just an invalid value which will never trigger on a real hostname.
+  server_name_in_redirect off;
+
+  root <%= @deploy_to %>/current/public;
+  passenger_enabled on;
+  passenger_rolling_restarts on;
+  <% unless node['virtualization']['system'] == "docker" %>
+  passenger_app_env <%= node.chef_environment %>;
+  <% end %>
+  passenger_start_timeout 180;
+
+  access_log  /var/log/nginx/<%= @app_name %>.access.json;
+  error_log /var/log/nginx/<%= @app_name %>.error.log;
+
+  client_max_body_size 20m;
+}
